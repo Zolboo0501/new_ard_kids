@@ -1,0 +1,15 @@
+import 'dart:async';
+
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+/// Loads the app font for every test so text is measured like on a device
+/// (the default test font renders each glyph as a wide square, which causes
+/// false layout overflows with Cyrillic copy).
+Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  final loader = FontLoader('Comfortaa')
+    ..addFont(rootBundle.load('assets/fonts/Comfortaa-VariableFont_wght.ttf'));
+  await loader.load();
+  await testMain();
+}

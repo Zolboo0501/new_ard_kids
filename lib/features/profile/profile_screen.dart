@@ -1,0 +1,497 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../app/routes.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/ui.dart';
+
+/// "Профайл": kid profile, parent link summary and settings entry points.
+///
+/// With [embedded] it is shown as a tab inside the home shell (no back button
+/// and extra bottom padding for the floating nav bar).
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key, this.embedded = false});
+
+  final bool embedded;
+
+  Future<void> _logout(BuildContext context) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          'Системээс гарах уу?',
+          style: comfortaa(size: 16, weight: FontWeight.w700),
+        ),
+        content: Text(
+          'Дахин нэвтрэхэд утасны дугаар болон код шаардлагатай.',
+          style: comfortaa(size: 13, color: AppColors.slate500),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              'Болих',
+              style: comfortaa(
+                size: 13,
+                weight: FontWeight.w700,
+                color: AppColors.slate500,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              'Гарах',
+              style: comfortaa(
+                size: 13,
+                weight: FontWeight.w700,
+                color: AppColors.rose600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    context.go(AppRoutes.auth);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const bg = Color(0xFFF4F6FB);
+    void go(String r) => context.push(r);
+    final bottom = MediaQuery.paddingOf(context).bottom + (embedded ? 110 : 24);
+
+    final body = ListView(
+      padding: EdgeInsets.fromLTRB(20, 12, 20, bottom),
+      children: [
+        AppCard(
+          radius: 24,
+          padding: const EdgeInsets.all(20),
+          borderColor: AppColors.slate100,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Semantics(
+                    button: true,
+                    label: 'Аватар солих',
+                    child: GestureDetector(
+                      onTap: () => context.push(AppRoutes.avatarPickerEdit),
+                      child: ProfileAvatar(
+                        size: 80,
+                        badge: Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: AppColors.sky500,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: const Icon(
+                            Icons.edit_rounded,
+                            size: 13,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const StatusBadge(
+                          label: 'Сурагч карт',
+                          icon: Icons.badge_outlined,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Бат-Ирээдүй Т.',
+                          style: comfortaa(size: 20, weight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '12 настай • @bat_ireedui',
+                          style: comfortaa(size: 12, color: AppColors.slate400),
+                        ),
+                        Text(
+                          'ID: 889201',
+                          style: comfortaa(size: 11, color: AppColors.slate400),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 28, color: AppColors.slate100),
+              Row(
+                children: [
+                  Text(
+                    '✨ Дараагийн түвшин',
+                    style: comfortaa(
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate500,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '120 / 200 XP',
+                    style: comfortaa(
+                      size: 11,
+                      weight: FontWeight.w700,
+                      color: AppColors.sky600,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const ProgressTrack(value: 0.6, height: 10),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        AppCard(
+          radius: 24,
+          padding: const EdgeInsets.all(16),
+          borderColor: AppColors.slate100,
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: AppColors.emerald50,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.family_restroom_rounded,
+                      size: 15,
+                      color: AppColors.emerald600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'ЭЦЭГ ЭХИЙН ХОЛБОЛТ',
+                      style: comfortaa(
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate700,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
+                  const StatusBadge(
+                    label: '✓ Идэвхтэй',
+                    tone: BadgeTone.emerald,
+                  ),
+                ],
+              ),
+              const Divider(height: 24, color: AppColors.slate100),
+              Row(
+                children: [
+                  const MascotTile(
+                    asset: Mascots.catHeart,
+                    background: AppColors.pink50,
+                    label: 'Ээж (Б. Саруул)',
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Ээж (Б. Саруул)',
+                          style: comfortaa(size: 12, weight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Голомт банк • Баталгаажсан',
+                          style: comfortaa(size: 11, color: AppColors.slate400),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SoftButton(
+                    label: 'Хянах',
+                    height: 32,
+                    onPressed: () => go(AppRoutes.parentLink),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.slate50.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.slate100),
+                ),
+                child: Column(
+                  children: [
+                    _LimitRow(
+                      label: 'Өдрийн зарцуулалтын хязгаар:',
+                      value: formatMnt(50000),
+                      color: AppColors.slate800,
+                    ),
+                    const SizedBox(height: 6),
+                    _LimitRow(
+                      label: 'Өнөөдөр үлдсэн:',
+                      value: formatMnt(31300),
+                      color: AppColors.emerald600,
+                    ),
+                    const SizedBox(height: 8),
+                    const ProgressTrack(
+                      value: 31300 / 50000,
+                      height: 6,
+                      color: AppColors.emerald500,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            'ТОХИРГОО БА ҮЙЛЧИЛГЭЭ',
+            style: comfortaa(
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.slate500,
+              letterSpacing: 0.6,
+            ),
+          ),
+        ),
+        AppCard(
+          radius: 24,
+          padding: EdgeInsets.zero,
+          borderColor: AppColors.slate100,
+          child: Column(
+            children: [
+              _MenuTile(
+                icon: Icons.person_outline_rounded,
+                tone: BadgeTone.sky,
+                title: 'Хувийн мэдээлэл',
+                subtitle: 'Төрсөн огноо, сургууль, анги',
+                onTap: () => go(AppRoutes.personalInfo),
+              ),
+              const Divider(height: 1, indent: 64, color: AppColors.slate100),
+              _MenuTile(
+                icon: Icons.shield_outlined,
+                tone: BadgeTone.emerald,
+                title: 'Аюулгүй байдал & ПИН код',
+                subtitle: 'Face ID, 4 оронтой нууц код',
+                onTap: () => go(AppRoutes.security),
+              ),
+              const Divider(height: 1, indent: 64, color: AppColors.slate100),
+              _MenuTile(
+                icon: Icons.palette_outlined,
+                tone: BadgeTone.amber,
+                title: 'Өнгөний тохиргоо',
+                subtitle: 'Цэнхэр, ягаан сэдэв сонгох',
+                onTap: () => go(AppRoutes.themeSettings),
+              ),
+              const Divider(height: 1, indent: 64, color: AppColors.slate100),
+              _MenuTile(
+                icon: Icons.card_giftcard_rounded,
+                tone: BadgeTone.rose,
+                title: 'Найз урих',
+                subtitle: 'Хоёулаа ₮5,000 урамшуулал аваарай',
+                onTap: () => go(AppRoutes.inviteFriends),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 18),
+        SoftButton(
+          label: 'Системээс гарах',
+          icon: Icons.logout_rounded,
+          height: 52,
+          background: AppColors.rose50,
+          foreground: AppColors.rose600,
+          border: AppColors.rose100,
+          onPressed: () => _logout(context),
+        ),
+      ],
+    );
+
+    if (embedded) {
+      return ColoredBox(
+        color: bg,
+        child: Column(
+          children: [
+            SubPageHeader(
+              title: 'Миний профайл',
+              background: bg,
+              showBack: false,
+              trailing: CircleIconButton(
+                icon: Icons.settings_outlined,
+                label: 'Тохиргоо',
+                onPressed: () => go(AppRoutes.security),
+              ),
+            ),
+            Expanded(child: body),
+          ],
+        ),
+      );
+    }
+    return Scaffold(
+      backgroundColor: bg,
+      appBar: SubPageHeader(
+        title: 'Миний профайл',
+        background: bg,
+        trailing: CircleIconButton(
+          icon: Icons.settings_outlined,
+          label: 'Тохиргоо',
+          onPressed: () => go(AppRoutes.security),
+        ),
+      ),
+      body: body,
+    );
+  }
+}
+
+/// Round gradient-ringed avatar used on the profile screens.
+class ProfileAvatar extends StatelessWidget {
+  const ProfileAvatar({super.key, this.size = 80, this.badge});
+
+  final double size;
+  final Widget? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: size,
+          height: size,
+          padding: const EdgeInsets.all(3),
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+              colors: [AppColors.sky400, AppColors.emerald300],
+            ),
+          ),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            padding: const EdgeInsets.all(2),
+            child: ClipOval(
+              child: Image.asset(
+                Mascots.bearSitting,
+                fit: BoxFit.cover,
+                semanticLabel: 'Хүүхдийн профайл зураг',
+              ),
+            ),
+          ),
+        ),
+        if (badge != null) Positioned(right: -2, bottom: -2, child: badge!),
+      ],
+    );
+  }
+}
+
+class _LimitRow extends StatelessWidget {
+  const _LimitRow({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: comfortaa(size: 11, color: AppColors.slate500),
+          ),
+        ),
+        Text(value, style: moneyStyle(size: 12, color: color)),
+      ],
+    );
+  }
+}
+
+class _MenuTile extends StatelessWidget {
+  const _MenuTile({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final BadgeTone tone;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, fg, _) = tone.colors;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(24),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, size: 20, color: fg),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: comfortaa(size: 12, weight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: comfortaa(size: 10, color: AppColors.slate400),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: AppColors.slate300,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
