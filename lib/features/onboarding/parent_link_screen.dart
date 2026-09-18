@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 class ParentLinkScreen extends StatefulWidget {
@@ -72,13 +73,11 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               color: AppColors.slate100,
               borderRadius: BorderRadius.circular(999),
             ),
-            child: Text(
+            child: AppText(
               'Алгасах',
-              style: comfortaa(
-                size: 11,
-                weight: FontWeight.w600,
-                color: AppColors.slate600,
-              ),
+              size: 11,
+              weight: FontWeight.w600,
+              color: AppColors.slate600,
             ),
           ),
         ),
@@ -149,9 +148,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 ),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Text(
+                  child: AppText(
                     'Зөвхөн бэлэн мөнгө зарцуулах анхан шатны эрхтэй',
-                    style: comfortaa(size: 11, color: AppColors.slate500),
+                    size: 11,
+                    color: AppColors.slate500,
                   ),
                 ),
               ],
@@ -186,14 +186,12 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                   const Text('🎁', style: TextStyle(fontSize: 16)),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       'Хүүхдийн хадгаламж, койн, урамшуулал авах боломжтой болно!',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.amber800,
-                        height: 1.4,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.amber800,
+                      height: 1.4,
                     ),
                   ),
                 ],
@@ -208,9 +206,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                AppText(
                   'Холбогдох асран хамгаалагчаа сонгоно уу',
-                  style: comfortaa(size: 13, weight: FontWeight.w700),
+                  size: 13,
+                  weight: FontWeight.w700,
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -285,13 +284,11 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               size: 16,
               color: AppColors.slate500,
             ),
-            label: Text(
+            label: AppText(
               'Дараа холбох (Хязгаарлагдмал эрхээр орох)',
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w600,
-                color: AppColors.slate500,
-              ),
+              size: 12,
+              weight: FontWeight.w600,
+              color: AppColors.slate500,
             ),
           ),
         ],
@@ -373,19 +370,12 @@ class _LimitCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: comfortaa(size: 13, weight: FontWeight.w700),
-                    ),
-                    Text(
+                    AppText(title, size: 13, weight: FontWeight.w700),
+                    AppText(
                       subtitle,
-                      style: comfortaa(
-                        size: 11,
-                        weight: muted ? FontWeight.w500 : FontWeight.w700,
-                        color: muted
-                            ? AppColors.slate500
-                            : AppColors.emerald600,
-                      ),
+                      size: 11,
+                      weight: muted ? FontWeight.w500 : FontWeight.w700,
+                      color: muted ? AppColors.slate500 : AppColors.emerald600,
                     ),
                   ],
                 ),
@@ -432,13 +422,11 @@ class _StatBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AppText(
             label,
-            style: comfortaa(
-              size: 11,
-              weight: FontWeight.w500,
-              color: colors?.$2 ?? AppColors.slate500,
-            ),
+            size: 11,
+            weight: FontWeight.w500,
+            color: colors?.$2 ?? AppColors.slate500,
           ),
           const SizedBox(height: 2),
           Text(
@@ -498,14 +486,12 @@ class _RoleButton extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Flexible(
-                child: Text(
+                child: AppText(
                   label,
+                  size: 12,
+                  weight: FontWeight.w700,
+                  color: selected ? AppColors.sky700 : AppColors.slate600,
                   overflow: TextOverflow.ellipsis,
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: selected ? AppColors.sky700 : AppColors.slate600,
-                  ),
                 ),
               ),
             ],
@@ -546,20 +532,19 @@ class _SuccessSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            Text(
+            AppText(
               'Хүсэлт амжилттай илгээгдлээ! ✨',
+              size: 16,
+              weight: FontWeight.w700,
               textAlign: TextAlign.center,
-              style: comfortaa(size: 16, weight: FontWeight.w700),
             ),
             const SizedBox(height: 6),
-            Text(
+            AppText(
               'Таны сонгосон асран хамгаалагч руу мэдэгдэл илгээгдлээ. Зөвшөөрсний дараа таны эрх шууд 5 дахин нэмэгдэх болно.',
+              size: 12,
+              color: AppColors.slate500,
+              height: 1.6,
               textAlign: TextAlign.center,
-              style: comfortaa(
-                size: 12,
-                color: AppColors.slate500,
-                height: 1.6,
-              ),
             ),
             const SizedBox(height: 20),
             PrimaryButton(

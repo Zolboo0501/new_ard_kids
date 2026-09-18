@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Найз нэмэх": save a friend or family member for quick transfers.
 class AddFriendScreen extends StatefulWidget {
@@ -102,14 +103,12 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     children: [
                       const StatusBadge(label: 'ШИНЭ НАЙЗ НЭМЭХ', dot: true),
                       const SizedBox(height: 8),
-                      Text(
+                      AppText(
                         'Найз эсвэл гэр бүлийн гишүүнээ нэмээд шуурхай гүйлгээ хийгээрэй!',
-                        style: comfortaa(
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate500,
-                          height: 1.6,
-                        ),
+                        size: 12,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate500,
+                        height: 1.6,
                       ),
                     ],
                   ),
@@ -179,13 +178,11 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                Text(
+                AppText(
                   'Банк сонгох',
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate500,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate500,
                 ),
                 const SizedBox(height: 6),
                 SizedBox(
@@ -204,13 +201,11 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 const SizedBox(height: 14),
                 FieldLabel(
                   'Утасны дугаар',
-                  trailing: Text(
+                  trailing: AppText(
                     '(сонгох)',
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
-                    ),
+                    size: 10,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate400,
                   ),
                 ),
                 AppTextField(
@@ -249,14 +244,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          s.$1,
-                          style: comfortaa(size: 12, weight: FontWeight.w700),
-                        ),
-                        Text(
-                          s.$2,
-                          style: comfortaa(size: 11, color: AppColors.slate400),
-                        ),
+                        AppText(s.$1, size: 12, weight: FontWeight.w700),
+                        AppText(s.$2, size: 11, color: AppColors.slate400),
                       ],
                     ),
                   ),
@@ -351,15 +340,13 @@ class _RelationButton extends StatelessWidget {
                 child: ClipOval(child: Image.asset(asset, fit: BoxFit.cover)),
               ),
               const SizedBox(height: 4),
-              Text(
+              AppText(
                 label,
+                size: 11,
+                weight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? Colors.white : AppColors.slate600,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: comfortaa(
-                  size: 11,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? Colors.white : AppColors.slate600,
-                ),
               ),
             ],
           ),

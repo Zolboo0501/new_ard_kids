@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
+import '../../widgets/app_text.dart';
 
 /// "Койны данс - Дэлгэрэнгүй": coin balance and transactions.
 class CoinAccountScreen extends StatefulWidget {
@@ -109,13 +110,11 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AppText(
                             'Нийт койны үлдэгдэл',
-                            style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
+                            size: 12,
+                            weight: FontWeight.w500,
+                            color: AppColors.slate400,
                           ),
                           const SizedBox(height: 2),
                           FittedBox(
@@ -150,12 +149,10 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              Text(
+                              AppText(
                                 'Хөрвүүлэх ханш: 1 Койн = 1₮',
-                                style: comfortaa(
-                                  size: 11,
-                                  color: AppColors.slate500,
-                                ),
+                                size: 11,
+                                color: AppColors.slate500,
                               ),
                             ],
                           ),
@@ -227,28 +224,25 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
             ),
             child: Row(
               children: [
-                Text(
+                AppText(
                   'Энэ сар (9-р сар)',
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate700,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate700,
                 ),
                 const SizedBox(width: 6),
                 Expanded(
-                  child: Text(
+                  child: AppText(
                     '| 2026.09.01 - 09.12',
-                    style: comfortaa(size: 11, color: AppColors.slate400),
+                    size: 11,
+                    color: AppColors.slate400,
                   ),
                 ),
-                Text(
+                AppText(
                   'Өөрчлөх',
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky600,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w700,
+                  color: AppColors.sky600,
                 ),
               ],
             ),
@@ -303,13 +297,11 @@ class _MiniStat extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   label,
-                  style: comfortaa(
-                    size: 10,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate400,
-                  ),
+                  size: 10,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate400,
                 ),
                 FittedBox(
                   child: Text(value, style: moneyStyle(size: 12, color: color)),

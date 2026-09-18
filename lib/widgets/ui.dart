@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 import 'common.dart';
+import '../widgets/app_text.dart';
 
 /// Formats [amount] as Mongolian tugrik with thousands separators:
 /// `formatMnt(1280000)` → `₮1,280,000`.
@@ -235,14 +236,12 @@ class PrimaryButton extends StatelessWidget {
                 const SizedBox(width: 8),
               ],
               Flexible(
-                child: Text(
+                child: AppText(
                   label,
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: enabled ? Colors.white : AppColors.slate400,
                   overflow: TextOverflow.ellipsis,
-                  style: comfortaa(
-                    size: 14,
-                    weight: FontWeight.w700,
-                    color: enabled ? Colors.white : AppColors.slate400,
-                  ),
                 ),
               ),
               if (icon != null) ...[
@@ -305,14 +304,12 @@ class SoftButton extends StatelessWidget {
                 const SizedBox(width: 6),
               ],
               Flexible(
-                child: Text(
+                child: AppText(
                   label,
+                  size: 13,
+                  weight: FontWeight.w700,
+                  color: foreground,
                   overflow: TextOverflow.ellipsis,
-                  style: comfortaa(
-                    size: 13,
-                    weight: FontWeight.w700,
-                    color: foreground,
-                  ),
                 ),
               ),
             ],
@@ -376,24 +373,23 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       title,
+                      size: 16,
+                      weight: FontWeight.w700,
                       textAlign: TextAlign.center,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: comfortaa(size: 16, weight: FontWeight.w700),
                     ),
                     if (subtitle != null)
-                      Text(
+                      AppText(
                         subtitle!,
+                        size: 11,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate400,
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: comfortaa(
-                          size: 11,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate400,
-                        ),
                       ),
                   ],
                 ),
@@ -518,19 +514,17 @@ class SegmentedTabs extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          child: Text(
+                          child: AppText(
                             labels[i],
+                            size: 13,
+                            weight: i == index
+                                ? FontWeight.w700
+                                : FontWeight.w600,
+                            color: i == index
+                                ? AppColors.sky600
+                                : AppColors.slate500,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: comfortaa(
-                              size: 13,
-                              weight: i == index
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              color: i == index
-                                  ? AppColors.sky600
-                                  : AppColors.slate500,
-                            ),
                           ),
                         ),
                         if (dotOnActive && i == index) ...[
@@ -599,13 +593,11 @@ class FilterChipPill extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
               ],
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 11,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? Colors.white : AppColors.slate500,
-                ),
+                size: 11,
+                weight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? Colors.white : AppColors.slate500,
               ),
             ],
           ),
@@ -655,10 +647,7 @@ class StatusBadge extends StatelessWidget {
             Icon(icon, size: 12, color: fg),
             const SizedBox(width: 3),
           ],
-          Text(
-            label,
-            style: comfortaa(size: 10, weight: FontWeight.w700, color: fg),
-          ),
+          AppText(label, size: 10, weight: FontWeight.w700, color: fg),
         ],
       ),
     );
@@ -720,22 +709,15 @@ class SectionHeader extends StatelessWidget {
             Icon(icon, size: 18, color: AppColors.sky500),
             const SizedBox(width: 6),
           ],
-          Expanded(
-            child: Text(
-              title,
-              style: comfortaa(size: 14, weight: FontWeight.w700),
-            ),
-          ),
+          Expanded(child: AppText(title, size: 14, weight: FontWeight.w700)),
           if (action != null)
             GestureDetector(
               onTap: onAction,
-              child: Text(
+              child: AppText(
                 action!,
-                style: comfortaa(
-                  size: 12,
-                  weight: FontWeight.w700,
-                  color: AppColors.sky600,
-                ),
+                size: 12,
+                weight: FontWeight.w700,
+                color: AppColors.sky600,
               ),
             ),
         ],
@@ -758,13 +740,11 @@ class FieldLabel extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
+            child: AppText(
               text,
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.slate500,
-              ),
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.slate500,
             ),
           ),
           ?trailing,
@@ -861,13 +841,11 @@ class _AppTextFieldState extends State<AppTextField> {
             const SizedBox(width: 10),
           ],
           if (widget.prefixText != null) ...[
-            Text(
+            AppText(
               widget.prefixText!,
-              style: comfortaa(
-                size: 15,
-                weight: FontWeight.w700,
-                color: AppColors.slate500,
-              ),
+              size: 15,
+              weight: FontWeight.w700,
+              color: AppColors.slate500,
             ),
             const SizedBox(width: 6),
           ],
@@ -974,13 +952,11 @@ class InitialsAvatar extends StatelessWidget {
         shape: square ? BoxShape.rectangle : BoxShape.circle,
         borderRadius: square ? BorderRadius.circular(size * 0.32) : null,
       ),
-      child: Text(
+      child: AppText(
         trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase(),
-        style: comfortaa(
-          size: size * 0.4,
-          weight: FontWeight.w700,
-          color: foreground,
-        ),
+        size: size * 0.4,
+        weight: FontWeight.w700,
+        color: foreground,
       ),
     );
   }
@@ -1024,23 +1000,19 @@ class InfoNote extends StatelessWidget {
                 if (title != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 2),
-                    child: Text(
+                    child: AppText(
                       title!,
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: fg,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: fg,
                     ),
                   ),
-                Text(
+                AppText(
                   text,
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate600,
-                    height: 1.5,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate600,
+                  height: 1.5,
                 ),
               ],
             ),
@@ -1132,15 +1104,13 @@ class QuickAmountChips extends StatelessWidget {
                   ),
                 ),
                 child: FittedBox(
-                  child: Text(
+                  child: AppText(
                     additive ? '+${_short(amounts[i])}' : formatMnt(amounts[i]),
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: selected == amounts[i]
-                          ? Colors.white
-                          : AppColors.sky700,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w700,
+                    color: selected == amounts[i]
+                        ? Colors.white
+                        : AppColors.sky700,
                   ),
                 ),
               ),
@@ -1165,7 +1135,7 @@ void showAppSnack(BuildContext context, String message) {
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.slate800,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: Text(message, style: comfortaa(size: 13, color: Colors.white)),
+        content: AppText(message, size: 13, color: Colors.white),
       ),
     );
 }

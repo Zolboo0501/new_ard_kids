@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Карт захиалга": order a physical kids' card.
 class CardOrderScreen extends StatefulWidget {
@@ -137,9 +138,10 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                       ),
               ),
               const SizedBox(height: 6),
-              Text(
+              AppText(
                 'Картын нүүрэн талд энэ нэр сийлэгдэж хэвлэгдэнэ.',
-                style: comfortaa(size: 10, color: AppColors.slate400),
+                size: 10,
+                color: AppColors.slate400,
               ),
               const SizedBox(height: 14),
               const FieldLabel('Холбогдох данс'),
@@ -171,28 +173,25 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AppText(
                             'Үндсэн халаасны данс',
-                            style: comfortaa(size: 12, weight: FontWeight.w700),
+                            size: 12,
+                            weight: FontWeight.w700,
                           ),
-                          Text(
+                          AppText(
                             '${formatMnt(_balance, space: true)} (Хүрэлцээтэй)',
-                            style: comfortaa(
-                              size: 10,
-                              weight: FontWeight.w600,
-                              color: AppColors.sky600,
-                            ),
+                            size: 10,
+                            weight: FontWeight.w600,
+                            color: AppColors.sky600,
                           ),
                         ],
                       ),
                     ),
-                    Text(
+                    AppText(
                       'Сонгосон ✓',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate400,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w700,
+                      color: AppColors.slate400,
                     ),
                   ],
                 ),
@@ -202,13 +201,11 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
           const SizedBox(height: 14),
           _Section(
             title: 'Хүргэлтийн хэлбэр',
-            trailing: Text(
+            trailing: AppText(
               '2-3 хоногт',
-              style: comfortaa(
-                size: 10,
-                weight: FontWeight.w600,
-                color: AppColors.slate500,
-              ),
+              size: 10,
+              weight: FontWeight.w600,
+              color: AppColors.slate500,
             ),
             children: [
               Row(
@@ -267,9 +264,10 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       'Боломжит үлдэгдэл',
-                      style: comfortaa(size: 12, color: AppColors.slate500),
+                      size: 12,
+                      color: AppColors.slate500,
                     ),
                   ),
                   Text(
@@ -393,36 +391,31 @@ class KidsCardPreview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      AppText(
                         'ЭЗЭМШИГЧ',
-                        style: comfortaa(
-                          size: 9,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate700,
-                          letterSpacing: 2,
-                        ),
+                        size: 9,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate700,
+                        letterSpacing: 2,
                       ),
-                      Text(
+                      AppText(
                         holder,
+                        size: 14,
+                        weight: FontWeight.w800,
+                        color: AppColors.slate900,
+                        letterSpacing: 1.2,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: comfortaa(
-                          size: 14,
-                          weight: FontWeight.w800,
-                          color: AppColors.slate900,
-                          letterSpacing: 1.2,
-                        ),
                       ),
                     ],
                   ),
                 ),
-                Text(
+                AppText(
                   'VISA',
-                  style: comfortaa(
-                    size: 20,
-                    weight: FontWeight.w800,
-                    color: const Color(0xFF1A1F71),
-                  ).copyWith(fontStyle: FontStyle.italic),
+                  size: 20,
+                  weight: FontWeight.w800,
+                  color: Color(0xFF1A1F71),
+                  fontStyle: FontStyle.italic,
                 ),
               ],
             ),
@@ -480,13 +473,11 @@ class _Section extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(
+                child: AppText(
                   title,
-                  style: comfortaa(
-                    size: 14,
-                    weight: FontWeight.w700,
-                    color: AppColors.slate900,
-                  ),
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: AppColors.slate900,
                 ),
               ),
               ?trailing,
@@ -539,13 +530,11 @@ class _DeliveryOption extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       title,
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: selected ? AppColors.sky900 : AppColors.slate700,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: selected ? AppColors.sky900 : AppColors.slate700,
                     ),
                   ),
                   AnimatedContainer(
@@ -570,10 +559,7 @@ class _DeliveryOption extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: comfortaa(size: 10, color: AppColors.slate500),
-              ),
+              AppText(subtitle, size: 10, color: AppColors.slate500),
               const SizedBox(height: 4),
               Text(
                 price,
@@ -603,12 +589,7 @@ class _PriceRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: comfortaa(size: 12, color: AppColors.slate600),
-            ),
-          ),
+          Expanded(child: AppText(label, size: 12, color: AppColors.slate600)),
           Text(
             value,
             style: moneyStyle(
@@ -648,15 +629,13 @@ class _TotalBox extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   label,
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w500,
-                    color: AppColors.sky900,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w500,
+                  color: AppColors.sky900,
                 ),
-                Text(sub, style: comfortaa(size: 9, color: AppColors.sky600)),
+                AppText(sub, size: 9, color: AppColors.sky600),
               ],
             ),
           ),

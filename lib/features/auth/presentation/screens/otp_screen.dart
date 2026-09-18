@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_ard_kids/features/auth/presentation/widgets/header.dart';
 
-import '../../app/routes.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/common.dart';
-import '../../widgets/numeric_keypad.dart';
+import '../../../../app/routes.dart';
+import '../../../../theme/app_theme.dart';
+import '../../../../widgets/common.dart';
+import '../../../../widgets/entrance.dart';
+import '../../../../widgets/numeric_keypad.dart';
+import '../../../../widgets/app_text.dart';
 
 /// "OTP Баталгаажуулалт" screen: enter the 4-digit code sent by SMS.
 class OtpScreen extends StatefulWidget {
@@ -19,7 +22,8 @@ class OtpScreen extends StatefulWidget {
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenState extends State<OtpScreen>
+    with SingleTickerProviderStateMixin {
   static const _codeLength = 4;
   static const _resendSeconds = 60;
 
@@ -27,6 +31,18 @@ class _OtpScreenState extends State<OtpScreen> {
   int _secondsLeft = _resendSeconds;
   Timer? _timer;
   bool _completePulse = false;
+
+  /// Drives the one-shot entrance: each element fades and rises over its own
+  /// slice of this controller (see [Entrance]).
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 750),
+  );
+  late final EntranceStagger _stagger = EntranceStagger(_entrance);
+  late final Animation<double> _heroIn;
+  late final Animation<double> _cardIn;
+  late final Animation<double> _buttonIn;
+  late final Animation<double> _keypadIn;
 
   bool get _complete => _code.length == _codeLength;
 
@@ -45,12 +61,26 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     super.initState();
+    _heroIn = _stagger.slice(0);
+    _cardIn = _stagger.slice(0.12);
+    _buttonIn = _stagger.slice(0.2);
+    _keypadIn = _stagger.slice(0.26);
+    _entrance.forward();
     _startCountdown();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reduced motion: show the finished layout instead of animating it in.
+    if (MediaQuery.disableAnimationsOf(context)) _entrance.value = 1;
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _stagger.dispose();
+    _entrance.dispose();
     super.dispose();
   }
 
@@ -101,7 +131,7 @@ class _OtpScreenState extends State<OtpScreen> {
         // screens.
         child: Column(
           children: [
-            const _Header(step: 'Алхам 2/3'),
+            const Header(step: 'Алхам 2/4'),
             Expanded(
               // Give the scrolling child a minimum height of the viewport so
               // the content can be centred in the space left above the
@@ -122,16 +152,24 @@ class _OtpScreenState extends State<OtpScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              _buildHeroRow(),
+                              Entrance(t: _heroIn, child: _buildHeroRow()),
                               const SizedBox(height: 16),
-                              _buildCodeCard(),
+                              Entrance(
+                                t: _cardIn,
+                                offsetY: 22,
+                                child: _buildCodeCard(),
+                              ),
                               const SizedBox(height: 16),
-                              AnimatedScale(
-                                scale: _completePulse ? 1.05 : 1,
-                                duration: const Duration(milliseconds: 150),
-                                child: _VerifyButton(
-                                  enabled: _complete,
-                                  onPressed: _verify,
+                              Entrance(
+                                t: _buttonIn,
+                                offsetY: 22,
+                                child: AnimatedScale(
+                                  scale: _completePulse ? 1.05 : 1,
+                                  duration: const Duration(milliseconds: 150),
+                                  child: _VerifyButton(
+                                    enabled: _complete,
+                                    onPressed: _verify,
+                                  ),
                                 ),
                               ),
                             ],
@@ -143,7 +181,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
             ),
-            _buildKeypad(),
+            Entrance(t: _keypadIn, offsetY: 28, child: _buildKeypad()),
           ],
         ),
       ),
@@ -159,15 +197,13 @@ class _OtpScreenState extends State<OtpScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              AppText(
                 'Код баталгаажуулах',
-                style: comfortaa(
-                  size: 22,
-                  weight: FontWeight.w700,
-                  color: AppColors.dsOnSurface,
-                  height: 1.3,
-                  letterSpacing: -0.6,
-                ),
+                size: 22,
+                weight: FontWeight.w700,
+                color: AppColors.dsOnSurface,
+                height: 1.3,
+                letterSpacing: -0.6,
               ),
               const SizedBox(height: 8),
               _buildInstructions(),
@@ -335,89 +371,6 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header({required this.step});
-
-  final String step;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: CircleBackButton(),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.sky50,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: AppColors.sky100.withValues(alpha: 0.8),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const _PulsingDot(),
-                const SizedBox(width: 6),
-                Text(
-                  step,
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PulsingDot extends StatefulWidget {
-  const _PulsingDot();
-
-  @override
-  State<_PulsingDot> createState() => _PulsingDotState();
-}
-
-class _PulsingDotState extends State<_PulsingDot>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 1000),
-  )..repeat(reverse: true);
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: Tween<double>(begin: 1, end: 0.5).animate(_controller),
-      child: Container(
-        width: 8,
-        height: 8,
-        decoration: const BoxDecoration(
-          color: AppColors.sky500,
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
-}
-
 class _PandaHero extends StatelessWidget {
   const _PandaHero({this.size = 176});
 
@@ -483,18 +436,36 @@ class _OtpBox extends StatelessWidget {
           width: 2,
         ),
       ),
-      child: digit != null
-          ? Text(
-              digit!,
-              style: comfortaa(
+      // The digit springs in when the key is pressed, and the cursor it
+      // replaces fades out under it.
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 220),
+        switchInCurve: Curves.easeOutBack,
+        switchOutCurve: appEmphasizedAccelerate,
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            // easeOutBack overshoots past 1, so the digit lands with a small
+            // bounce rather than simply appearing at full size.
+            scale: Tween(begin: 0.5, end: 1.0).animate(animation),
+            child: child,
+          ),
+        ),
+        child: digit != null
+            ? AppText(
+                digit!,
                 size: 22,
                 weight: FontWeight.w700,
                 color: AppColors.dsPrimary,
-              ),
-            )
-          : active
-          ? const BlinkingCursor(color: AppColors.dsPrimary)
-          : null,
+                key: ValueKey('digit-$digit'),
+              )
+            : active
+            ? const BlinkingCursor(
+                key: ValueKey('cursor'),
+                color: AppColors.dsPrimary,
+              )
+            : const SizedBox.shrink(key: ValueKey('empty')),
+      ),
     );
   }
 }
@@ -532,14 +503,12 @@ class _VerifyButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                AppText(
                   'Баталгаажуулах',
-                  style: comfortaa(
-                    size: 14,
-                    weight: FontWeight.w700,
-                    color: Colors.white,
-                    letterSpacing: 0.14,
-                  ),
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: 0.14,
                 ),
                 const SizedBox(width: 4),
                 const Icon(

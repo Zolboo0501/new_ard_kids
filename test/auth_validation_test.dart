@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
-import 'package:new_ard_kids/features/auth/otp_screen.dart';
+import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 /// Starts the real router at [location] so navigation behaves as in the app.
@@ -65,7 +65,7 @@ void main() {
 
       // Phone is valid, so the name is the only thing standing in the way.
       await tester.enterText(_phoneField, '99112345');
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Нэвтрэх нэрээ оруулна уу.'), findsOneWidget);
@@ -80,7 +80,7 @@ void main() {
 
       await tester.enterText(_nameField, 'Т');
       await tester.enterText(_phoneField, '99112345');
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
@@ -96,7 +96,7 @@ void main() {
 
       await tester.enterText(_nameField, '1Тэмүүлэн');
       await tester.enterText(_phoneField, '99112345');
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Нэвтрэх нэр үсгээр эхлэх ёстой.'), findsOneWidget);
@@ -107,12 +107,13 @@ void main() {
       _usePhoneViewport(tester);
       await tester.pumpWidget(_wrap(AppRoutes.auth));
 
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.text('Нэвтрэх нэрээ оруулна уу.'), findsOneWidget);
 
       await tester.enterText(_nameField, 'Тэмүүлэн');
-      await tester.pump(const Duration(milliseconds: 300));
+      // The message fades out, so wait for it to finish leaving the tree.
+      await tester.pumpAndSettle();
 
       expect(find.text('Нэвтрэх нэрээ оруулна уу.'), findsNothing);
     });
@@ -135,7 +136,7 @@ void main() {
       await tester.pumpWidget(_wrap(AppRoutes.auth));
 
       await tester.enterText(_nameField, 'Тэмүүлэн');
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Гар утасны дугаараа оруулна уу.'), findsOneWidget);
@@ -150,13 +151,14 @@ void main() {
 
       await tester.enterText(_nameField, 'Тэмүүлэн');
       await tester.enterText(_phoneField, '9911');
-      await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+      await tester.tap(find.text('Үргэлжлүүлэх'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Утасны дугаар 8 оронтой байх ёстой.'), findsOneWidget);
 
       await tester.enterText(_phoneField, '99112345');
-      await tester.pump(const Duration(milliseconds: 300));
+      // The message fades out, so wait for it to finish leaving the tree.
+      await tester.pumpAndSettle();
 
       expect(find.text('Утасны дугаар 8 оронтой байх ёстой.'), findsNothing);
     });
@@ -168,7 +170,7 @@ void main() {
     _usePhoneViewport(tester);
     await tester.pumpWidget(_wrap(AppRoutes.auth));
 
-    await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
     await tester.pump(const Duration(milliseconds: 300));
 
     expect(find.text('Нэвтрэх нэрээ оруулна уу.'), findsOneWidget);
@@ -180,11 +182,11 @@ void main() {
     await tester.pumpWidget(_wrap(AppRoutes.auth));
 
     await _fillValid(tester);
-    await tester.tap(find.text('Үргэлжлүүлэх 🚀'));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
 
     // Simulated send: 900ms to "sent", then 700ms before pushing OTP.
     await tester.pump(const Duration(milliseconds: 900));
-    expect(find.text('Код илгээгдлээ! ✨'), findsOneWidget);
+    expect(find.text('Код илгээгдлээ!'), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 700));
     // OtpScreen has a blinking cursor that never settles, so pump the route

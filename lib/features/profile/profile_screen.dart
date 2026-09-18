@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Профайл": kid profile, parent link summary and settings entry points.
 ///
@@ -20,35 +21,33 @@ class ProfileScreen extends StatelessWidget {
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(
+        title: AppText(
           'Системээс гарах уу?',
-          style: comfortaa(size: 16, weight: FontWeight.w700),
+          size: 16,
+          weight: FontWeight.w700,
         ),
-        content: Text(
+        content: AppText(
           'Дахин нэвтрэхэд утасны дугаар болон код шаардлагатай.',
-          style: comfortaa(size: 13, color: AppColors.slate500),
+          size: 13,
+          color: AppColors.slate500,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
+            child: AppText(
               'Болих',
-              style: comfortaa(
-                size: 13,
-                weight: FontWeight.w700,
-                color: AppColors.slate500,
-              ),
+              size: 13,
+              weight: FontWeight.w700,
+              color: AppColors.slate500,
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(
+            child: AppText(
               'Гарах',
-              style: comfortaa(
-                size: 13,
-                weight: FontWeight.w700,
-                color: AppColors.rose600,
-              ),
+              size: 13,
+              weight: FontWeight.w700,
+              color: AppColors.rose600,
             ),
           ),
         ],
@@ -109,18 +108,21 @@ class ProfileScreen extends StatelessWidget {
                           icon: Icons.badge_outlined,
                         ),
                         const SizedBox(height: 6),
-                        Text(
+                        AppText(
                           'Бат-Ирээдүй Т.',
-                          style: comfortaa(size: 20, weight: FontWeight.w700),
+                          size: 20,
+                          weight: FontWeight.w700,
                         ),
                         const SizedBox(height: 2),
-                        Text(
+                        AppText(
                           '12 настай • @bat_ireedui',
-                          style: comfortaa(size: 12, color: AppColors.slate400),
+                          size: 12,
+                          color: AppColors.slate400,
                         ),
-                        Text(
+                        AppText(
                           'ID: 889201',
-                          style: comfortaa(size: 11, color: AppColors.slate400),
+                          size: 11,
+                          color: AppColors.slate400,
                         ),
                       ],
                     ),
@@ -130,22 +132,18 @@ class ProfileScreen extends StatelessWidget {
               const Divider(height: 28, color: AppColors.slate100),
               Row(
                 children: [
-                  Text(
+                  AppText(
                     '✨ Дараагийн түвшин',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate500,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate500,
                   ),
                   const Spacer(),
-                  Text(
+                  AppText(
                     '120 / 200 XP',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky600,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w700,
+                    color: AppColors.sky600,
                   ),
                 ],
               ),
@@ -178,14 +176,12 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       'ЭЦЭГ ЭХИЙН ХОЛБОЛТ',
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate700,
-                        letterSpacing: 0.6,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.slate700,
+                      letterSpacing: 0.6,
                     ),
                   ),
                   const StatusBadge(
@@ -207,14 +203,16 @@ class ProfileScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        AppText(
                           'Ээж (Б. Саруул)',
-                          style: comfortaa(size: 12, weight: FontWeight.w700),
+                          size: 12,
+                          weight: FontWeight.w700,
                         ),
                         const SizedBox(height: 2),
-                        Text(
+                        AppText(
                           'Голомт банк • Баталгаажсан',
-                          style: comfortaa(size: 11, color: AppColors.slate400),
+                          size: 11,
+                          color: AppColors.slate400,
                         ),
                       ],
                     ),
@@ -262,14 +260,12 @@ class ProfileScreen extends StatelessWidget {
         const SizedBox(height: 18),
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
+          child: AppText(
             'ТОХИРГОО БА ҮЙЛЧИЛГЭЭ',
-            style: comfortaa(
-              size: 12,
-              weight: FontWeight.w700,
-              color: AppColors.slate500,
-              letterSpacing: 0.6,
-            ),
+            size: 12,
+            weight: FontWeight.w700,
+            color: AppColors.slate500,
+            letterSpacing: 0.6,
           ),
         ),
         AppCard(
@@ -421,12 +417,7 @@ class _LimitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Text(
-            label,
-            style: comfortaa(size: 11, color: AppColors.slate500),
-          ),
-        ),
+        Expanded(child: AppText(label, size: 11, color: AppColors.slate500)),
         Text(value, style: moneyStyle(size: 12, color: color)),
       ],
     );
@@ -472,15 +463,9 @@ class _MenuTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: comfortaa(size: 12, weight: FontWeight.w700),
-                  ),
+                  AppText(title, size: 12, weight: FontWeight.w700),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: comfortaa(size: 10, color: AppColors.slate400),
-                  ),
+                  AppText(subtitle, size: 10, color: AppColors.slate400),
                 ],
               ),
             ),

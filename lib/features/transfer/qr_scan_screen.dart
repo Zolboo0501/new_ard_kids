@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "QR уншуулах": scanner viewfinder plus the "Миний QR" tab.
 class QrScanScreen extends StatefulWidget {
@@ -150,13 +151,11 @@ class _QrScanScreenState extends State<QrScanScreen>
               ),
               Positioned(
                 bottom: 20,
-                child: Text(
+                child: AppText(
                   'QR кодыг хүрээн дотор байрлуулна уу',
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
+                  size: 12,
+                  weight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.8),
                 ),
               ),
             ],
@@ -242,14 +241,12 @@ class _QrScanScreenState extends State<QrScanScreen>
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              'Тэмүүлэн (Таны QR)',
-              style: comfortaa(size: 20, weight: FontWeight.w700),
-            ),
+            AppText('Тэмүүлэн (Таны QR)', size: 20, weight: FontWeight.w700),
             const SizedBox(height: 2),
-            Text(
+            AppText(
               'Данс: 5041092831',
-              style: comfortaa(size: 13, color: AppColors.dsOnSurfaceVariant),
+              size: 13,
+              color: AppColors.dsOnSurfaceVariant,
             ),
             const SizedBox(height: 16),
             Container(
@@ -287,27 +284,33 @@ class _QrScanScreenState extends State<QrScanScreen>
               ),
             ),
             const SizedBox(height: 16),
+            // The two labels are wider than a narrow phone at their natural
+            // size, so they share the row and ellipsize instead of overflowing.
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SoftButton(
-                  label: 'QR Хуваалцах',
-                  icon: Icons.share_rounded,
-                  height: 40,
-                  background: AppColors.dsSurfaceContainerHigh,
-                  foreground: AppColors.dsOnSurface,
-                  border: null,
-                  onPressed: () => showAppSnack(context, 'QR хуваалцах'),
+                Expanded(
+                  child: SoftButton(
+                    label: 'QR Хуваалцах',
+                    icon: Icons.share_rounded,
+                    height: 40,
+                    background: AppColors.dsSurfaceContainerHigh,
+                    foreground: AppColors.dsOnSurface,
+                    border: null,
+                    onPressed: () => showAppSnack(context, 'QR хуваалцах'),
+                  ),
                 ),
                 const SizedBox(width: 8),
-                SoftButton(
-                  label: 'Зураг хадгалах',
-                  icon: Icons.download_rounded,
-                  height: 40,
-                  background: AppColors.dsSurfaceContainerHigh,
-                  foreground: AppColors.dsOnSurface,
-                  border: null,
-                  onPressed: () => showAppSnack(context, 'Зураг хадгалагдлаа'),
+                Expanded(
+                  child: SoftButton(
+                    label: 'Зураг хадгалах',
+                    icon: Icons.download_rounded,
+                    height: 40,
+                    background: AppColors.dsSurfaceContainerHigh,
+                    foreground: AppColors.dsOnSurface,
+                    border: null,
+                    onPressed: () =>
+                        showAppSnack(context, 'Зураг хадгалагдлаа'),
+                  ),
                 ),
               ],
             ),
@@ -359,13 +362,11 @@ class _Tabs extends StatelessWidget {
                         color: i == index ? Colors.white : AppColors.slate600,
                       ),
                       const SizedBox(width: 6),
-                      Text(
+                      AppText(
                         item.$2,
-                        style: comfortaa(
-                          size: 13,
-                          weight: FontWeight.w700,
-                          color: i == index ? Colors.white : AppColors.slate600,
-                        ),
+                        size: 13,
+                        weight: FontWeight.w700,
+                        color: i == index ? Colors.white : AppColors.slate600,
                       ),
                     ],
                   ),

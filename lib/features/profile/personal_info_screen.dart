@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import 'profile_screen.dart';
+import '../../widgets/app_text.dart';
 
 /// "Хувийн мэдээлэл": read-only student profile details.
 class PersonalInfoScreen extends StatefulWidget {
@@ -74,18 +75,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Үндсэн мэдээлэл',
-                        style: comfortaa(size: 14, weight: FontWeight.w700),
+                        size: 14,
+                        weight: FontWeight.w700,
                       ),
                     ),
-                    Text(
+                    AppText(
                       'Албан ёсны',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate400,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
                     ),
                   ],
                 ),
@@ -209,18 +209,13 @@ class StudentHeaderCard extends StatelessWidget {
                   icon: Icons.school_outlined,
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  'Бат-Ирээдүй Т.',
-                  style: comfortaa(size: 16, weight: FontWeight.w700),
-                ),
+                AppText('Бат-Ирээдүй Т.', size: 16, weight: FontWeight.w700),
                 const SizedBox(height: 2),
-                Text(
+                AppText(
                   subtitle,
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate500,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate500,
                 ),
                 const SizedBox(height: 6),
                 Wrap(
@@ -238,13 +233,11 @@ class StudentHeaderCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(color: AppColors.slate100),
                       ),
-                      child: Text(
+                      child: AppText(
                         'ID: 889201',
-                        style: comfortaa(
-                          size: 11,
-                          weight: FontWeight.w600,
-                          color: AppColors.slate500,
-                        ),
+                        size: 11,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate500,
                       ),
                     ),
                     trailing,
@@ -288,13 +281,11 @@ class _InfoRow extends StatelessWidget {
             child: Icon(icon, size: 16, color: AppColors.slate400),
           ),
           const SizedBox(width: 10),
-          Text(
+          AppText(
             label,
-            style: comfortaa(
-              size: 12,
-              weight: FontWeight.w500,
-              color: AppColors.slate500,
-            ),
+            size: 12,
+            weight: FontWeight.w500,
+            color: AppColors.slate500,
           ),
           const SizedBox(width: 12),
           Expanded(

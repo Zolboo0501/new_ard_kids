@@ -1,14 +1,14 @@
 import 'package:go_router/go_router.dart';
+import 'package:new_ard_kids/features/auth/presentation/screens/auth_screen.dart';
+import 'package:new_ard_kids/features/auth/presentation/screens/friend_code_screen.dart';
+import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
 
 import '../features/accounts/card_order_screen.dart';
 import '../features/accounts/cart_screen.dart';
 import '../features/accounts/coin_account_screen.dart';
-import '../features/accounts/rewards_account_screen.dart';
 import '../features/accounts/reward_opportunities_screen.dart';
+import '../features/accounts/rewards_account_screen.dart';
 import '../features/accounts/stocks_screen.dart';
-import '../features/auth/auth_screen.dart';
-import '../features/auth/friend_code_screen.dart';
-import '../features/auth/otp_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/home/home_shell.dart';
 import '../features/notifications/notifications_screen.dart';
@@ -142,7 +142,7 @@ abstract final class AppRoutes {
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: initialLocation,
+      initialLocation: "friend-code",
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

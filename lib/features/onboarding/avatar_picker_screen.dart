@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:new_ard_kids/features/auth/presentation/widgets/header.dart';
 
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Аватар сонгох" (onboarding step 3/3): pick a mascot companion.
 ///
@@ -86,55 +88,28 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen> {
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
                     child: Column(
                       children: [
-                        Row(
-                          children: [
-                            const CircleBackButton(),
-                            const Spacer(),
-                            if (!widget.editing) ...[
-                              const _StepPill(label: 'Алхам 3/3'),
-                              const Spacer(),
-                              GestureDetector(
-                                onTap: _next,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Text(
-                                    'Алгасах',
-                                    style: comfortaa(
-                                      size: 12,
-                                      weight: FontWeight.w600,
-                                      color: AppColors.slate400,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
+                        const Header(step: 'Алхам 3/4'),
                         const SizedBox(height: 18),
                         const StatusBadge(
                           label: '✨ Өөрийн бяцхан туслахыг сонгоорой',
                           tone: BadgeTone.amber,
                         ),
                         const SizedBox(height: 10),
-                        Text(
+                        AppText(
                           'Найзаа сонгоорой! 🐾',
-                          style: comfortaa(
-                            size: 24,
-                            weight: FontWeight.w700,
-                            letterSpacing: -0.5,
-                          ),
+                          size: 24,
+                          weight: FontWeight.w700,
+                          letterSpacing: -0.5,
                         ),
                         const SizedBox(height: 6),
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 280),
-                          child: Text(
+                          child: AppText(
                             'Энэхүү бяцхан амьтан таны хуримтлал, гүйлгээ бүрт хамт байж урам өгөх болно.',
+                            size: 12,
+                            color: AppColors.slate500,
+                            height: 1.6,
                             textAlign: TextAlign.center,
-                            style: comfortaa(
-                              size: 12,
-                              color: AppColors.slate500,
-                              height: 1.6,
-                            ),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -286,13 +261,11 @@ class _StepPill extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          Text(
+          AppText(
             label,
-            style: comfortaa(
-              size: 12,
-              weight: FontWeight.w700,
-              color: AppColors.sky600,
-            ),
+            size: 12,
+            weight: FontWeight.w700,
+            color: AppColors.sky600,
           ),
         ],
       ),
@@ -388,10 +361,7 @@ class _AvatarCard extends StatelessWidget {
                     semanticLabel: name,
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    name,
-                    style: comfortaa(size: 12, weight: FontWeight.w700),
-                  ),
+                  AppText(name, size: 12, weight: FontWeight.w700),
                   const SizedBox(height: 3),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -402,28 +372,22 @@ class _AvatarCard extends StatelessWidget {
                       color: bg,
                       borderRadius: BorderRadius.circular(999),
                     ),
-                    child: Text(
+                    child: AppText(
                       role,
-                      style: comfortaa(
-                        size: 9,
-                        weight: FontWeight.w700,
-                        color: tone == BadgeTone.slate
-                            ? AppColors.violet500
-                            : fg,
-                      ),
+                      size: 9,
+                      weight: FontWeight.w700,
+                      color: tone == BadgeTone.slate ? AppColors.violet500 : fg,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  AppText(
                     description,
+                    size: 10,
+                    color: AppColors.slate400,
+                    height: 1.3,
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: comfortaa(
-                      size: 10,
-                      color: AppColors.slate400,
-                      height: 1.3,
-                    ),
                   ),
                 ],
               ),

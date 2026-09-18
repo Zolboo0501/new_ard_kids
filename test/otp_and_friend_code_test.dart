@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
-import 'package:new_ard_kids/features/auth/friend_code_screen.dart';
+import 'package:new_ard_kids/features/auth/presentation/screens/friend_code_screen.dart';
 import 'package:new_ard_kids/features/onboarding/avatar_picker_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
@@ -58,25 +58,80 @@ void main() {
     expect(find.text('01:00'), findsOneWidget);
   });
 
-  testWidgets('Friend code: 6 digits confirm and open avatar picker', (
-    tester,
-  ) async {
-    tester.view.physicalSize = const Size(390 * 3, 906 * 3);
-    tester.view.devicePixelRatio = 3;
-    addTearDown(tester.view.reset);
-
-    await tester.pumpWidget(_wrap(AppRoutes.friendCode));
-
-    for (final d in ['7', '4', '9', '1', '2', '3']) {
-      await tester.tap(find.text(d).last);
-      await tester.pump();
+  group('Найзаа нэмэх', () {
+    void usePhoneViewport(WidgetTester tester) {
+      tester.view.physicalSize = const Size(390 * 3, 906 * 3);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
     }
-    await tester.tap(find.text('Баталгаажуулах'));
-    await tester.pump();
 
-    expect(find.text('Урилгын код: 749123'), findsOneWidget);
+    testWidgets('a username sends the request and opens the avatar picker', (
+      tester,
+    ) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.friendCode));
+      await tester.pump(const Duration(milliseconds: 800));
 
-    await tester.pumpAndSettle();
-    expect(find.byType(AvatarPickerScreen), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'temuulen_07');
+      await tester.pump();
+      await tester.tap(find.text('Хүсэлт илгээх'));
+      await tester.pump();
+
+      expect(
+        find.text('temuulen_07 рүү найзын хүсэлт илгээлээ'),
+        findsOneWidget,
+      );
+
+      // AvatarPickerScreen's header has a dot that pulses forever, so pump
+      // the route transition by hand instead of using pumpAndSettle.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byType(AvatarPickerScreen), findsOneWidget);
+    });
+
+    testWidgets('the field keeps only username characters, capped at 20', (
+      tester,
+    ) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.friendCode));
+      await tester.pump(const Duration(milliseconds: 800));
+
+      await tester.enterText(find.byType(TextField), 'Тэмүүлэн 07! @#\$ ok_1');
+      await tester.pump();
+
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.controller!.text, 'Тэмүүлэн07ok_1');
+
+      await tester.enterText(find.byType(TextField), 'a' * 40);
+      await tester.pump();
+      expect(field.controller!.text.length, 20);
+    });
+
+    testWidgets('an empty username blocks the send and shows a message', (
+      tester,
+    ) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.friendCode));
+      await tester.pump(const Duration(milliseconds: 800));
+
+      await tester.tap(find.text('Хүсэлт илгээх'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Найзынхаа нэвтрэх нэрийг оруулна уу.'), findsOneWidget);
+      expect(find.byType(AvatarPickerScreen), findsNothing);
+    });
+
+    testWidgets('a username starting with a digit is rejected', (tester) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.friendCode));
+      await tester.pump(const Duration(milliseconds: 800));
+
+      await tester.enterText(find.byType(TextField), '7temuulen');
+      await tester.tap(find.text('Хүсэлт илгээх'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.text('Нэвтрэх нэр үсгээр эхлэх ёстой.'), findsOneWidget);
+      expect(find.byType(AvatarPickerScreen), findsNothing);
+    });
   });
 }

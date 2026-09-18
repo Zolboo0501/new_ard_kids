@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 class _CartItem {
   _CartItem({
@@ -128,13 +129,15 @@ class _CartScreenState extends State<CartScreen> {
                         icon: Icons.verified_user_outlined,
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      AppText(
                         'Захиалгаа шалгаарай',
-                        style: comfortaa(size: 12, weight: FontWeight.w700),
+                        size: 12,
+                        weight: FontWeight.w700,
                       ),
-                      Text(
+                      AppText(
                         'Сагсанд буй барааг шалгаад баталгаажуулаарай!',
-                        style: comfortaa(size: 10, color: AppColors.slate600),
+                        size: 10,
+                        color: AppColors.slate600,
                       ),
                     ],
                   ),
@@ -148,14 +151,12 @@ class _CartScreenState extends State<CartScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
+                  child: AppText(
                     'СОНГОСОН БҮТЭЭГДЭХҮҮНҮҮД',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.slate600,
-                      letterSpacing: 0.6,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w700,
+                    color: AppColors.slate600,
+                    letterSpacing: 0.6,
                   ),
                 ),
                 if (_items.isNotEmpty) const StatusBadge(label: 'Бүгд бэлэн'),
@@ -174,9 +175,10 @@ class _CartScreenState extends State<CartScreen> {
                     background: bg,
                     semanticLabel: '',
                   ),
-                  Text(
+                  AppText(
                     'Сагс хоосон байна',
-                    style: comfortaa(size: 14, weight: FontWeight.w700),
+                    size: 14,
+                    weight: FontWeight.w700,
                   ),
                 ],
               ),
@@ -199,13 +201,11 @@ class _CartScreenState extends State<CartScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Төлбөрийн задаргаа',
-                        style: comfortaa(
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
-                        ),
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate900,
                       ),
                     ),
                     const StatusBadge(
@@ -228,21 +228,18 @@ class _CartScreenState extends State<CartScreen> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
+                      AppText(
                         formatMnt(_deliveryFee, space: true),
-                        style: comfortaa(
-                          size: 10,
-                          color: AppColors.slate400,
-                        ).copyWith(decoration: TextDecoration.lineThrough),
+                        size: 10,
+                        color: AppColors.slate400,
+                        decoration: TextDecoration.lineThrough,
                       ),
                       const SizedBox(width: 4),
-                      Text(
+                      AppText(
                         'ҮНЭГҮЙ',
-                        style: comfortaa(
-                          size: 11,
-                          weight: FontWeight.w700,
-                          color: AppColors.emerald600,
-                        ),
+                        size: 11,
+                        weight: FontWeight.w700,
+                        color: AppColors.emerald600,
                       ),
                     ],
                   ),
@@ -282,20 +279,16 @@ class _CartScreenState extends State<CartScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            AppText(
                               'Нийт төлөх дүн',
-                              style: comfortaa(
-                                size: 10,
-                                weight: FontWeight.w500,
-                                color: AppColors.sky900,
-                              ),
+                              size: 10,
+                              weight: FontWeight.w500,
+                              color: AppColors.sky900,
                             ),
-                            Text(
+                            AppText(
                               'НӨАТ орсон дүн',
-                              style: comfortaa(
-                                size: 9,
-                                color: AppColors.sky600,
-                              ),
+                              size: 9,
+                              color: AppColors.sky600,
                             ),
                           ],
                         ),
@@ -336,12 +329,7 @@ class _CartScreenState extends State<CartScreen> {
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: comfortaa(size: 11, color: AppColors.slate600),
-            ),
-          ),
+          Expanded(child: AppText(label, size: 11, color: AppColors.slate600)),
           value,
         ],
       ),
@@ -382,11 +370,12 @@ class _CartTile extends StatelessWidget {
               children: [
                 StatusBadge(label: item.store, tone: BadgeTone.slate),
                 const SizedBox(height: 3),
-                Text(
+                AppText(
                   item.title,
+                  size: 12,
+                  weight: FontWeight.w700,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: comfortaa(size: 12, weight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -436,10 +425,11 @@ class _CartTile extends StatelessWidget {
                     ),
                     SizedBox(
                       width: 22,
-                      child: Text(
+                      child: AppText(
                         '${item.quantity}',
+                        size: 12,
+                        weight: FontWeight.w700,
                         textAlign: TextAlign.center,
-                        style: comfortaa(size: 12, weight: FontWeight.w700),
                       ),
                     ),
                     _QtyButton(

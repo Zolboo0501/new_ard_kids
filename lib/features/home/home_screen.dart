@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "PocketPal Kid Home" from Stitch. With [parentLinked] false it renders the
 /// "Эцэг эх холбогдоогүй" variant: limited balance, locked accounts and a
@@ -177,21 +178,17 @@ class _Header extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       'Сайн уу 👋',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate500,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate500,
                     ),
-                    Text(
+                    AppText(
                       'Тэмүүлэн!',
-                      style: comfortaa(
-                        size: 17,
-                        weight: FontWeight.w700,
-                        letterSpacing: -0.3,
-                      ),
+                      size: 17,
+                      weight: FontWeight.w700,
+                      letterSpacing: -0.3,
                     ),
                     if (!linked)
                       const Padding(
@@ -370,13 +367,11 @@ class _BalanceCard extends StatelessWidget {
                       ),
               ),
               if (limited)
-                Text(
+                AppText(
                   'Хязгаарлагдмал горимын үлдэгдэл',
-                  style: comfortaa(
-                    size: 10,
-                    weight: FontWeight.w600,
-                    color: AppColors.amber500,
-                  ),
+                  size: 10,
+                  weight: FontWeight.w600,
+                  color: AppColors.amber500,
                 ),
               const Spacer(),
               Row(
@@ -495,13 +490,11 @@ class _CardAction extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 13,
-                  weight: FontWeight.w700,
-                  color: primary ? Colors.white : AppColors.slate700,
-                ),
+                size: 13,
+                weight: FontWeight.w700,
+                color: primary ? Colors.white : AppColors.slate700,
               ),
             ],
           ),
@@ -558,27 +551,21 @@ class _AccountRow extends StatelessWidget {
                     spacing: 6,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Text(
+                      AppText(
                         title,
-                        style: comfortaa(
-                          size: 13,
-                          weight: FontWeight.w700,
-                          color: locked
-                              ? AppColors.slate600
-                              : AppColors.slate800,
-                        ),
+                        size: 13,
+                        weight: FontWeight.w700,
+                        color: locked ? AppColors.slate600 : AppColors.slate800,
                       ),
                       ?badge,
                     ],
                   ),
                   const SizedBox(height: 3),
-                  Text(
+                  AppText(
                     subtitle,
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate400,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate400,
                   ),
                 ],
               ),
@@ -647,13 +634,11 @@ class _AccountsPane extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               border: Border.all(color: AppColors.amber200),
             ),
-            child: Text(
+            child: AppText(
               '1 Койн = 1₮',
-              style: comfortaa(
-                size: 9,
-                weight: FontWeight.w700,
-                color: AppColors.amber600,
-              ),
+              size: 9,
+              weight: FontWeight.w700,
+              color: AppColors.amber600,
             ),
           ),
           onTap: () => onOpen(AppRoutes.coinAccount),
@@ -679,13 +664,11 @@ class _LockedAccountsPane extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.sky200.withValues(alpha: 0.6)),
         ),
-        child: Text(
+        child: AppText(
           'Эцэг эх холбох',
-          style: comfortaa(
-            size: 10,
-            weight: FontWeight.w700,
-            color: AppColors.sky600,
-          ),
+          size: 10,
+          weight: FontWeight.w700,
+          color: AppColors.sky600,
         ),
       ),
     );
@@ -696,10 +679,7 @@ class _LockedAccountsPane extends StatelessWidget {
           children: [
             Text(amount, style: moneyStyle(size: 13, color: amountColor)),
             const SizedBox(height: 2),
-            Text(
-              label,
-              style: comfortaa(size: 9, weight: FontWeight.w700, color: c),
-            ),
+            AppText(label, size: 9, weight: FontWeight.w700, color: c),
           ],
         );
 
@@ -788,22 +768,18 @@ class _LinkParentBanner extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      AppText(
                         'Эцэг эхтэйгээ холбогдох',
-                        style: comfortaa(
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.amber800,
-                        ),
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.amber800,
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      AppText(
                         'Эрхээ 5 дахин нэмэгдүүлж, хадгаламж болон урамшууллын дансаа идэвхжүүлээрэй!',
-                        style: comfortaa(
-                          size: 11,
-                          color: AppColors.slate600,
-                          height: 1.4,
-                        ),
+                        size: 11,
+                        color: AppColors.slate600,
+                        height: 1.4,
                       ),
                     ],
                   ),
@@ -960,10 +936,7 @@ class _InvoicesPane extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            inv.$1,
-                            style: comfortaa(size: 13, weight: FontWeight.w700),
-                          ),
+                          AppText(inv.$1, size: 13, weight: FontWeight.w700),
                           const SizedBox(height: 3),
                           Row(
                             children: [
@@ -977,15 +950,13 @@ class _InvoicesPane extends StatelessWidget {
                               ),
                               const SizedBox(width: 5),
                               Flexible(
-                                child: Text(
+                                child: AppText(
                                   inv.$3,
-                                  style: comfortaa(
-                                    size: 11,
-                                    weight: FontWeight.w600,
-                                    color: inv.$7 == 0
-                                        ? AppColors.slate500
-                                        : inv.$4,
-                                  ),
+                                  size: 11,
+                                  weight: FontWeight.w600,
+                                  color: inv.$7 == 0
+                                      ? AppColors.slate500
+                                      : inv.$4,
                                 ),
                               ),
                             ],
@@ -997,14 +968,12 @@ class _InvoicesPane extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(inv.$5, style: moneyStyle(size: 14)),
-                        Text(
+                        AppText(
                           inv.$6,
-                          style: comfortaa(
-                            size: 11,
-                            color: inv.$7 == 2
-                                ? AppColors.emerald600
-                                : AppColors.slate400,
-                          ),
+                          size: 11,
+                          color: inv.$7 == 2
+                              ? AppColors.emerald600
+                              : AppColors.slate400,
                         ),
                       ],
                     ),
@@ -1015,11 +984,12 @@ class _InvoicesPane extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
+                        child: AppText(
                           inv.$7 == 0
                               ? 'Ээжид мэдэгдэл илгээх'
                               : 'Дэлгүүрийн нэхэмжлэх',
-                          style: comfortaa(size: 11, color: AppColors.slate400),
+                          size: 11,
+                          color: AppColors.slate400,
                         ),
                       ),
                       inv.$7 == 0
@@ -1128,18 +1098,17 @@ class _CardsPane extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       'Эцэг эхийн зөвшөөрөл хүлээж байна',
-                      style: comfortaa(size: 11, color: AppColors.slate400),
+                      size: 11,
+                      color: AppColors.slate400,
                     ),
                   ),
-                  Text(
+                  AppText(
                     'Дэлгэрэнгүй',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky600,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w700,
+                    color: AppColors.sky600,
                   ),
                 ],
               ),
@@ -1193,9 +1162,9 @@ class _TwoLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: comfortaa(size: 13, weight: FontWeight.w700)),
+        AppText(title, size: 13, weight: FontWeight.w700),
         const SizedBox(height: 2),
-        Text(subtitle, style: comfortaa(size: 11, color: AppColors.slate400)),
+        AppText(subtitle, size: 11, color: AppColors.slate400),
       ],
     );
   }
@@ -1226,13 +1195,11 @@ class _DashedAction extends StatelessWidget {
           Icon(icon, size: 18, color: AppColors.sky600),
           const SizedBox(width: 6),
           Flexible(
-            child: Text(
+            child: AppText(
               label,
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.sky600,
-              ),
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.sky600,
             ),
           ),
         ],

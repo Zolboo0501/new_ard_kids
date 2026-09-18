@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
+import '../../widgets/app_text.dart';
 
 /// "Хувьцаа & Хөрөнгө оруулалт": kid's investment portfolio.
 class StocksScreen extends StatefulWidget {
@@ -91,13 +92,11 @@ class _StocksScreenState extends State<StocksScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AppText(
                             'Хүүхдийн хөрөнгө оруулалтын данс',
-                            style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
+                            size: 12,
+                            weight: FontWeight.w500,
+                            color: AppColors.slate400,
                           ),
                           const SizedBox(height: 4),
                           const CopyAccountNumber(
@@ -115,13 +114,11 @@ class _StocksScreenState extends State<StocksScreen> {
                     ),
                   ],
                 ),
-                Text(
+                AppText(
                   'Нийт багцын үнэлгээ',
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate400,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate400,
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -178,13 +175,11 @@ class _StocksScreenState extends State<StocksScreen> {
                     ),
                     child: h.$6 != null
                         ? Icon(h.$6, size: 22, color: h.$8)
-                        : Text(
+                        : AppText(
                             'АПУ',
-                            style: comfortaa(
-                              size: 11,
-                              weight: FontWeight.w800,
-                              color: h.$8,
-                            ),
+                            size: 11,
+                            weight: FontWeight.w800,
+                            color: h.$8,
                           ),
                   ),
                   const SizedBox(width: 12),
@@ -196,21 +191,12 @@ class _StocksScreenState extends State<StocksScreen> {
                           spacing: 6,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Text(
-                              h.$1,
-                              style: comfortaa(
-                                size: 14,
-                                weight: FontWeight.w700,
-                              ),
-                            ),
+                            AppText(h.$1, size: 14, weight: FontWeight.w700),
                             StatusBadge(label: h.$2, tone: BadgeTone.slate),
                           ],
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          h.$3,
-                          style: comfortaa(size: 12, color: AppColors.slate400),
-                        ),
+                        AppText(h.$3, size: 12, color: AppColors.slate400),
                       ],
                     ),
                   ),
@@ -235,15 +221,13 @@ class _StocksScreenState extends State<StocksScreen> {
                                 : AppColors.rose500,
                           ),
                           const SizedBox(width: 2),
-                          Text(
+                          AppText(
                             '${h.$5 >= 0 ? '+' : ''}${h.$5}%',
-                            style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w700,
-                              color: h.$5 >= 0
-                                  ? AppColors.emerald600
-                                  : AppColors.rose500,
-                            ),
+                            size: 12,
+                            weight: FontWeight.w700,
+                            color: h.$5 >= 0
+                                ? AppColors.emerald600
+                                : AppColors.rose500,
                           ),
                         ],
                       ),
@@ -269,7 +253,7 @@ class _StocksScreenState extends State<StocksScreen> {
     return Expanded(
       child: Column(
         children: [
-          Text(label, style: comfortaa(size: 11, color: AppColors.slate400)),
+          AppText(label, size: 11, color: AppColors.slate400),
           const SizedBox(height: 2),
           Text(value, style: moneyStyle(size: 12, color: color)),
         ],

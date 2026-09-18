@@ -95,7 +95,10 @@ void main() {
   ) async {
     final router = await _pumpApp(tester, AppRoutes.profile);
     await tester.tap(_semantic('Аватар солих'));
-    await tester.pumpAndSettle();
+    // AvatarPickerScreen's header has a dot that pulses forever, so pump the
+    // route transition by hand instead of using pumpAndSettle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     final picker = tester.widget<AvatarPickerScreen>(
       find.byType(AvatarPickerScreen),

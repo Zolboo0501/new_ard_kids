@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Шинэ зорилго үүсгэх": create a savings goal.
 class NewGoalScreen extends StatefulWidget {
@@ -100,14 +101,12 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                         tone: BadgeTone.amber,
                       ),
                       const SizedBox(height: 6),
-                      Text(
+                      AppText(
                         'Зорилгоо тодорхойлж, бага багаар хуримтлуулаад мөрөөдөлдөө хүрээрэй!',
-                        style: comfortaa(
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate600,
-                          height: 1.5,
-                        ),
+                        size: 12,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate600,
+                        height: 1.5,
                       ),
                     ],
                   ),
@@ -139,13 +138,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                       ),
               ),
               const SizedBox(height: 10),
-              Text(
+              AppText(
                 'Шуурхай сэдвүүд:',
-                style: comfortaa(
-                  size: 11,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate400,
-                ),
+                size: 11,
+                weight: FontWeight.w600,
+                color: AppColors.slate400,
               ),
               const SizedBox(height: 8),
               SizedBox(
@@ -178,13 +175,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                 ),
                 child: Row(
                   children: [
-                    Text(
+                    AppText(
                       '₮',
-                      style: comfortaa(
-                        size: 20,
-                        weight: FontWeight.w700,
-                        color: AppColors.sky500,
-                      ),
+                      size: 20,
+                      weight: FontWeight.w700,
+                      color: AppColors.sky500,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -259,13 +254,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     for (final l in ['₮5,000', '₮50,000', '₮100,000'])
-                      Text(
+                      AppText(
                         l,
-                        style: comfortaa(
-                          size: 10,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate400,
-                        ),
+                        size: 10,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate400,
                       ),
                   ],
                 ),
@@ -399,26 +392,22 @@ class _Section extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Expanded(
-                child: Text(
+                child: AppText(
                   title.toUpperCase(),
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: AppColors.slate700,
-                    letterSpacing: 0.4,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w700,
+                  color: AppColors.slate700,
+                  letterSpacing: 0.4,
                 ),
               ),
               if (trailingWidget != null)
                 trailingWidget!
               else if (trailing != null)
-                Text(
+                AppText(
                   trailing!,
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate400,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate400,
                 ),
             ],
           ),
@@ -482,15 +471,13 @@ class _IconChoice extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  AppText(
                     label,
+                    size: 10,
+                    weight: FontWeight.w700,
+                    color: selected ? AppColors.sky600 : AppColors.slate600,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w700,
-                      color: selected ? AppColors.sky600 : AppColors.slate600,
-                    ),
                   ),
                 ],
               ),

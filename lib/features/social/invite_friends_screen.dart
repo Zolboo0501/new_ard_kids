@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Найз урих - Урамшуулал": share an invite code and track invitees.
 class InviteFriendsScreen extends StatelessWidget {
@@ -115,13 +116,11 @@ class InviteFriendsScreen extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Таны урилгын код',
-                        style: comfortaa(
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate700,
-                        ),
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate700,
                       ),
                     ),
                     const StatusBadge(
@@ -144,13 +143,11 @@ class InviteFriendsScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            AppText(
                               'УРИЛГЫН КОД',
-                              style: comfortaa(
-                                size: 10,
-                                weight: FontWeight.w600,
-                                color: AppColors.slate400,
-                              ),
+                              size: 10,
+                              weight: FontWeight.w600,
+                              color: AppColors.slate400,
                             ),
                             const SizedBox(height: 2),
                             FittedBox(
@@ -220,9 +217,10 @@ class InviteFriendsScreen extends StatelessWidget {
                       color: AppColors.amber500,
                     ),
                     const SizedBox(width: 6),
-                    Text(
+                    AppText(
                       'Яаж ажилладаг вэ? (Алхам алхмаар)',
-                      style: comfortaa(size: 13, weight: FontWeight.w700),
+                      size: 13,
+                      weight: FontWeight.w700,
                     ),
                   ],
                 ),
@@ -256,15 +254,13 @@ class InviteFriendsScreen extends StatelessWidget {
                                 ? AppColors.emerald100
                                 : AppColors.sky100,
                           ),
-                          child: Text(
+                          child: AppText(
                             '${i + 1}',
-                            style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w700,
-                              color: i == 2
-                                  ? AppColors.emerald600
-                                  : AppColors.sky600,
-                            ),
+                            size: 12,
+                            weight: FontWeight.w700,
+                            color: i == 2
+                                ? AppColors.emerald600
+                                : AppColors.sky600,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -272,20 +268,16 @@ class InviteFriendsScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              AppText(
                                 step.$1,
-                                style: comfortaa(
-                                  size: 12,
-                                  weight: FontWeight.w700,
-                                ),
+                                size: 12,
+                                weight: FontWeight.w700,
                               ),
                               const SizedBox(height: 2),
-                              Text(
+                              AppText(
                                 step.$2,
-                                style: comfortaa(
-                                  size: 11,
-                                  color: AppColors.slate400,
-                                ),
+                                size: 11,
+                                color: AppColors.slate400,
                               ),
                             ],
                           ),
@@ -318,13 +310,11 @@ class InviteFriendsScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: AppColors.sky100),
                     ),
-                    child: Text(
+                    child: AppText(
                       f.$1.split(' ').map((w) => w[0]).join(),
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate600,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.slate600,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -332,14 +322,8 @@ class InviteFriendsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          f.$1,
-                          style: comfortaa(size: 13, weight: FontWeight.w700),
-                        ),
-                        Text(
-                          f.$2,
-                          style: comfortaa(size: 11, color: AppColors.slate400),
-                        ),
+                        AppText(f.$1, size: 13, weight: FontWeight.w700),
+                        AppText(f.$2, size: 11, color: AppColors.slate400),
                       ],
                     ),
                   ),
@@ -417,13 +401,11 @@ class _ShareButton extends StatelessWidget {
                 child: Icon(icon, size: 18, color: AppColors.sky600),
               ),
               const SizedBox(height: 4),
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 10,
-                  weight: FontWeight.w700,
-                  color: AppColors.slate700,
-                ),
+                size: 10,
+                weight: FontWeight.w700,
+                color: AppColors.slate700,
               ),
             ],
           ),

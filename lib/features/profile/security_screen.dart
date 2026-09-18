@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/numeric_keypad.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Аюулгүй байдал & ПИН код": PIN, biometrics and device settings.
 class SecurityScreen extends StatefulWidget {
@@ -74,13 +75,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    AppText(
                       '••••',
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate300,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.slate300,
                     ),
                     const Icon(
                       Icons.chevron_right_rounded,
@@ -194,24 +193,20 @@ class _GroupLabel extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
+            child: AppText(
               text,
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.slate400,
-                letterSpacing: 0.6,
-              ),
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.slate400,
+              letterSpacing: 0.6,
             ),
           ),
           if (trailing != null)
-            Text(
+            AppText(
               trailing!,
-              style: comfortaa(
-                size: 11,
-                weight: FontWeight.w500,
-                color: AppColors.sky600,
-              ),
+              size: 11,
+              weight: FontWeight.w500,
+              color: AppColors.sky600,
             ),
         ],
       ),
@@ -286,15 +281,9 @@ class _SettingTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: comfortaa(size: 13, weight: FontWeight.w700),
-                ),
+                AppText(title, size: 13, weight: FontWeight.w700),
                 const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: comfortaa(size: 11, color: AppColors.slate400),
-                ),
+                AppText(subtitle, size: 11, color: AppColors.slate400),
               ],
             ),
           ),
@@ -361,19 +350,18 @@ class _PinSheetState extends State<_PinSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            Text(
+            AppText(
               _confirming ? 'ПИН кодоо давтана уу' : 'Шинэ ПИН код оруулна уу',
-              style: comfortaa(size: 16, weight: FontWeight.w700),
+              size: 16,
+              weight: FontWeight.w700,
             ),
             const SizedBox(height: 6),
-            Text(
+            AppText(
               _mismatch
                   ? 'Код таарахгүй байна. Дахин оролдоно уу.'
                   : '4 оронтой нууц код',
-              style: comfortaa(
-                size: 12,
-                color: _mismatch ? AppColors.rose500 : AppColors.slate400,
-              ),
+              size: 12,
+              color: _mismatch ? AppColors.rose500 : AppColors.slate400,
             ),
             const SizedBox(height: 18),
             Row(

@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 enum _Status { pending, approved, declined }
 
@@ -123,17 +124,16 @@ class _RequestListScreenState extends State<RequestListScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AppText(
                             'Хүсэлтийн нэгдсэн тойм',
-                            style: comfortaa(size: 14, weight: FontWeight.w700),
+                            size: 14,
+                            weight: FontWeight.w700,
                           ),
                           const SizedBox(height: 2),
-                          Text(
+                          AppText(
                             'Нийт шийдвэрлэгдсэн болон хүлээгдэж буй',
-                            style: comfortaa(
-                              size: 11,
-                              color: AppColors.dsOnSurfaceVariant,
-                            ),
+                            size: 11,
+                            color: AppColors.dsOnSurfaceVariant,
                           ),
                         ],
                       ),
@@ -205,10 +205,11 @@ class _RequestListScreenState extends State<RequestListScreen> {
           if (_visible.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 32),
-              child: Text(
+              child: AppText(
                 'Хүсэлт алга байна',
+                size: 13,
+                color: AppColors.slate400,
                 textAlign: TextAlign.center,
-                style: comfortaa(size: 13, color: AppColors.slate400),
               ),
             ),
           for (final r in _visible) ...[
@@ -273,14 +274,12 @@ class _Summary extends StatelessWidget {
                   const SizedBox(width: 4),
                 ],
                 Flexible(
-                  child: Text(
+                  child: AppText(
                     label,
+                    size: 10,
+                    weight: FontWeight.w600,
+                    color: AppColors.dsOnSurfaceVariant,
                     overflow: TextOverflow.ellipsis,
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w600,
-                      color: AppColors.dsOnSurfaceVariant,
-                    ),
                   ),
                 ),
               ],
@@ -341,13 +340,11 @@ class _FilterTab extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
               ],
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 12,
-                  weight: FontWeight.w700,
-                  color: selected ? Colors.white : AppColors.slate700,
-                ),
+                size: 12,
+                weight: FontWeight.w700,
+                color: selected ? Colors.white : AppColors.slate700,
               ),
               if (count != null) ...[
                 const SizedBox(width: 6),
@@ -362,13 +359,11 @@ class _FilterTab extends StatelessWidget {
                         : colors!.$1,
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Text(
+                  child: AppText(
                     '$count',
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w700,
-                      color: selected ? Colors.white : colors!.$2,
-                    ),
+                    size: 10,
+                    weight: FontWeight.w700,
+                    color: selected ? Colors.white : colors!.$2,
                   ),
                 ),
               ],
@@ -441,15 +436,13 @@ class _RequestCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    AppText(
                       r.title,
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: AppColors.dsOnSurface,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.dsOnSurface,
-                      ),
                     ),
                     if (r.tag != null) ...[
                       const SizedBox(height: 4),
@@ -490,9 +483,10 @@ class _RequestCard extends StatelessWidget {
                       dot: true,
                     ),
                     const Spacer(),
-                    Text(
+                    AppText(
                       '${r.fromGenitive} зөвшөөрөл хүлээж байна',
-                      style: comfortaa(size: 10, color: AppColors.amber700),
+                      size: 10,
+                      color: AppColors.amber700,
                     ),
                   ],
                 ),
@@ -555,15 +549,13 @@ class _RequestCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
+                          child: AppText(
                             r.reply!,
+                            size: 11,
+                            weight: FontWeight.w500,
+                            color: AppColors.dsOnSurface,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: comfortaa(
-                              size: 11,
-                              weight: FontWeight.w500,
-                              color: AppColors.dsOnSurface,
-                            ),
                           ),
                         ),
                       ],
@@ -576,10 +568,7 @@ class _RequestCard extends StatelessWidget {
               children: [
                 const StatusBadge(label: '✕ Татгалзсан', tone: BadgeTone.rose),
                 const Spacer(),
-                Text(
-                  r.reason ?? '',
-                  style: comfortaa(size: 10, color: AppColors.rose600),
-                ),
+                AppText(r.reason ?? '', size: 10, color: AppColors.rose600),
               ],
             ),
           },

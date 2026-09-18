@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Урамшуулал авах боломжууд": ways to earn reward points.
 class RewardOpportunitiesScreen extends StatefulWidget {
@@ -92,13 +93,11 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Даалгавар биелүүлж урамшуулал ав!',
-                        style: comfortaa(
-                          size: 18,
-                          weight: FontWeight.w700,
-                          height: 1.35,
-                        ),
+                        size: 18,
+                        weight: FontWeight.w700,
+                        height: 1.35,
                       ),
                     ),
                     const MascotImage(
@@ -192,20 +191,19 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
+                    AppText(
                       'Оноогоо хэрхэн зарцуулах вэ?',
-                      style: comfortaa(size: 13, weight: FontWeight.w700),
+                      size: 13,
+                      weight: FontWeight.w700,
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Text(
+                AppText(
                   'Цуглуулсан оноогоороо халаасны мөнгө болгон хэтэвч рүүгээ шилжүүлэх эсвэл Roblox, Интерном, Кино тасалбар зэрэг бэлгийн эрхүүдээс сонгон авах боломжтой.',
-                  style: comfortaa(
-                    size: 12,
-                    color: AppColors.slate500,
-                    height: 1.6,
-                  ),
+                  size: 12,
+                  color: AppColors.slate500,
+                  height: 1.6,
                 ),
                 const SizedBox(height: 10),
                 const Wrap(
@@ -270,13 +268,11 @@ class _Stat extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   label,
-                  style: comfortaa(
-                    size: 10,
-                    weight: FontWeight.w600,
-                    color: tone == BadgeTone.amber ? fg : AppColors.slate400,
-                  ),
+                  size: 10,
+                  weight: FontWeight.w600,
+                  color: tone == BadgeTone.amber ? fg : AppColors.slate400,
                 ),
                 FittedBox(
                   child: Text(
@@ -341,10 +337,7 @@ class _TaskTile extends StatelessWidget {
                   spacing: 6,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
-                      title,
-                      style: comfortaa(size: 13, weight: FontWeight.w700),
-                    ),
+                    AppText(title, size: 13, weight: FontWeight.w700),
                     if (badge != null)
                       StatusBadge(label: badge!.$1, tone: badge!.$2),
                   ],

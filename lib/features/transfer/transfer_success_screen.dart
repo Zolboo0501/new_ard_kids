@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// Result of a completed transfer shown on the receipt screen.
 class TransferReceipt {
@@ -98,9 +99,10 @@ class TransferSuccessScreen extends StatelessWidget {
                   dot: true,
                 ),
                 const SizedBox(height: 10),
-                Text(
+                AppText(
                   'Гүйлгээ амжилттай!',
-                  style: comfortaa(size: 18, weight: FontWeight.w700),
+                  size: 18,
+                  weight: FontWeight.w700,
                 ),
                 const SizedBox(height: 4),
                 Text.rich(
@@ -122,10 +124,7 @@ class TransferSuccessScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  _date(r.time),
-                  style: comfortaa(size: 12, color: AppColors.slate400),
-                ),
+                AppText(_date(r.time), size: 12, color: AppColors.slate400),
               ],
             ),
           ),
@@ -144,9 +143,10 @@ class TransferSuccessScreen extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
+                          AppText(
                             r.recipient,
-                            style: comfortaa(size: 13, weight: FontWeight.w700),
+                            size: 13,
+                            weight: FontWeight.w700,
                           ),
                           const SizedBox(width: 6),
                           Container(
@@ -165,9 +165,10 @@ class TransferSuccessScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
+                      AppText(
                         '${r.bank} • 5049****',
-                        style: comfortaa(size: 11, color: AppColors.slate400),
+                        size: 11,
+                        color: AppColors.slate400,
                       ),
                     ],
                   ),
@@ -175,23 +176,18 @@ class TransferSuccessScreen extends StatelessWidget {
                 _Row(
                   label: 'Шилжүүлсэн',
                   divider: true,
-                  child: Text(
+                  child: AppText(
                     r.destination,
+                    size: 12,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate700,
                     textAlign: TextAlign.right,
-                    style: comfortaa(
-                      size: 12,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate700,
-                    ),
                   ),
                 ),
                 _Row(
                   label: 'Гүйлгээний утга',
                   divider: true,
-                  child: Text(
-                    r.note,
-                    style: comfortaa(size: 13, weight: FontWeight.w600),
-                  ),
+                  child: AppText(r.note, size: 13, weight: FontWeight.w600),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -217,13 +213,11 @@ class TransferSuccessScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text(
+                        child: AppText(
                           'Боломжит үлдэгдэл',
-                          style: comfortaa(
-                            size: 12,
-                            weight: FontWeight.w600,
-                            color: AppColors.slate600,
-                          ),
+                          size: 12,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate600,
                         ),
                       ),
                       Text(
@@ -283,13 +277,11 @@ class _Row extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          AppText(
             label,
-            style: comfortaa(
-              size: 13,
-              weight: FontWeight.w500,
-              color: AppColors.slate400,
-            ),
+            size: 13,
+            weight: FontWeight.w500,
+            color: AppColors.slate400,
           ),
           const SizedBox(width: 12),
           Expanded(

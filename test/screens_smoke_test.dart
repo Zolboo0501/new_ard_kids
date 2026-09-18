@@ -43,6 +43,19 @@ void main() {
     });
   }
 
+  // The loop above only ever sees each screen's default tab. Screens whose
+  // other tabs build different content need their own pass, or a layout
+  // overflow there ships unnoticed.
+  testWidgets('renders /qr "Миний QR" tab without errors', (tester) async {
+    await _pumpRoute(tester, AppRoutes.qrScan);
+
+    await tester.tap(find.text('Миний QR'));
+    // The scanner animates forever, so pump a fixed duration.
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('QR Хуваалцах'), findsOneWidget);
+  });
+
   test('formatMnt groups thousands', () {
     expect(formatMnt(1280000), '₮1,280,000');
     expect(formatMnt(-15000, space: true), '-₮ 15,000');

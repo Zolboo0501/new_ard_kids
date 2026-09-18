@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 enum NotificationKind { transaction, request, goal }
 
@@ -216,10 +217,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           if (today.isEmpty && earlier.isEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
-              child: Text(
+              child: AppText(
                 'Мэдэгдэл алга',
+                size: 13,
+                color: AppColors.slate400,
                 textAlign: TextAlign.center,
-                style: comfortaa(size: 13, color: AppColors.slate400),
               ),
             ),
         ],
@@ -256,22 +258,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  AppText(
                     n.time,
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate400,
-                    ),
+                    size: 10,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate400,
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  AppText(
                     n.title,
-                    style: comfortaa(
-                      size: 12,
-                      weight: FontWeight.w700,
-                      height: 1.4,
-                    ),
+                    size: 12,
+                    weight: FontWeight.w700,
+                    height: 1.4,
                   ),
                   const SizedBox(height: 4),
                   Text.rich(
@@ -328,14 +326,12 @@ class _GroupHeader extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
+            child: AppText(
               label,
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.slate400,
-                letterSpacing: 0.8,
-              ),
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.slate400,
+              letterSpacing: 0.8,
             ),
           ),
           if (badge != null) StatusBadge(label: badge!),

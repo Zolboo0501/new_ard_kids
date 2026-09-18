@@ -10,12 +10,12 @@ void main() {
     await tester.pumpWidget(const ArdKidsApp());
 
     expect(find.text('Ard KIDS'), findsOneWidget);
-    expect(find.text('Үргэлжлүүлэх 🚀'), findsOneWidget);
+    expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
 
     await tester.tap(find.text('Бүртгүүлэх'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Код авах ✨'), findsOneWidget);
+    expect(find.text('Код авах'), findsOneWidget);
   });
 
   testWidgets('Phone field accepts digits only, max 8', (

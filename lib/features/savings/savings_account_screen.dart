@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// Savings goal shown on the savings screens.
 class SavingsGoal {
@@ -87,13 +88,11 @@ class SavingsAccountScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
+                          AppText(
                             'Нийт хуримтлал',
-                            style: comfortaa(
-                              size: 11,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
+                            size: 11,
+                            weight: FontWeight.w500,
+                            color: AppColors.slate400,
                           ),
                           const SizedBox(height: 2),
                           const _BigMoney(amount: 1280000),
@@ -152,13 +151,11 @@ class SavingsAccountScreen extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Миний зорилтууд',
-                        style: comfortaa(
-                          size: 14,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
-                        ),
+                        size: 14,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate900,
                       ),
                     ),
                     SoftButton(
@@ -236,13 +233,11 @@ class _StatStrip extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    Text(
+                    AppText(
                       it.$1,
-                      style: comfortaa(
-                        size: 10,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate400,
-                      ),
+                      size: 10,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate400,
                     ),
                     const SizedBox(height: 2),
                     Text(it.$2, style: moneyStyle(size: 12, color: it.$3)),
@@ -285,7 +280,7 @@ class _Shortcut extends StatelessWidget {
               semanticLabel: label,
             ),
             const SizedBox(height: 4),
-            Text(label, style: comfortaa(size: 12, weight: FontWeight.w700)),
+            AppText(label, size: 12, weight: FontWeight.w700),
           ],
         ),
       ),
@@ -325,11 +320,12 @@ class GoalTile extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         goal.title,
+                        size: 12,
+                        weight: FontWeight.w700,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: comfortaa(size: 12, weight: FontWeight.w700),
                       ),
                     ),
                     StatusBadge(
@@ -341,13 +337,11 @@ class GoalTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Text(
+                    AppText(
                       goal.category,
-                      style: comfortaa(
-                        size: 9,
-                        weight: FontWeight.w600,
-                        color: fg,
-                      ),
+                      size: 9,
+                      weight: FontWeight.w600,
+                      color: fg,
                     ),
                     const Spacer(),
                     Text(

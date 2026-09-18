@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// One row in an account's transaction list.
 class TxItem {
@@ -69,10 +70,7 @@ class TransactionTile extends StatelessWidget {
                   runSpacing: 2,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
-                      item.title,
-                      style: comfortaa(size: 12, weight: FontWeight.w700),
-                    ),
+                    AppText(item.title, size: 12, weight: FontWeight.w700),
                     if (item.badge != null && !whenBelow)
                       StatusBadge(label: item.badge!, tone: item.badgeTone),
                   ],
@@ -82,11 +80,12 @@ class TransactionTile extends StatelessWidget {
                   spacing: 6,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       whenBelow
                           ? item.subtitle
                           : '${item.subtitle}  •  ${item.when}',
-                      style: comfortaa(size: 10, color: AppColors.slate400),
+                      size: 10,
+                      color: AppColors.slate400,
                     ),
                     if (item.badge != null && whenBelow)
                       StatusBadge(label: item.badge!, tone: item.badgeTone),
@@ -108,10 +107,7 @@ class TransactionTile extends StatelessWidget {
                 ),
               ),
               if (whenBelow)
-                Text(
-                  item.when,
-                  style: comfortaa(size: 9, color: AppColors.slate400),
-                ),
+                AppText(item.when, size: 9, color: AppColors.slate400),
             ],
           ),
         ],

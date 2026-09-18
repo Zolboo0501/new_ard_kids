@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/numeric_keypad.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Хадгаламжид орлого хийх - Keypad UI": deposit into savings.
 class SavingsDepositScreen extends StatefulWidget {
@@ -95,14 +96,12 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                       borderColor: AppColors.slate100,
                       child: Column(
                         children: [
-                          Text(
+                          AppText(
                             'ЦЭНЭГЛЭХ ДҮН',
-                            style: comfortaa(
-                              size: 11,
-                              weight: FontWeight.w600,
-                              color: AppColors.slate400,
-                              letterSpacing: 0.8,
-                            ),
+                            size: 11,
+                            weight: FontWeight.w600,
+                            color: AppColors.slate400,
+                            letterSpacing: 0.8,
                           ),
                           const SizedBox(height: 4),
                           FittedBox(
@@ -173,13 +172,11 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                         background: AppColors.slate50,
                         semanticLabel: 'Цэвэрлэх',
                         onTap: () => setState(() => _amount = 0),
-                        child: Text(
+                        child: AppText(
                           'C',
-                          style: comfortaa(
-                            size: 18,
-                            weight: FontWeight.w700,
-                            color: AppColors.slate500,
-                          ),
+                          size: 18,
+                          weight: FontWeight.w700,
+                          color: AppColors.slate500,
                         ),
                       ),
                     ),
@@ -227,13 +224,11 @@ class _QuickButton extends StatelessWidget {
                 : AppColors.slate200.withValues(alpha: 0.8),
           ),
         ),
-        child: Text(
+        child: AppText(
           label,
-          style: comfortaa(
-            size: 12,
-            weight: FontWeight.w700,
-            color: selected ? AppColors.sky700 : AppColors.slate600,
-          ),
+          size: 12,
+          weight: FontWeight.w700,
+          color: selected ? AppColors.sky700 : AppColors.slate600,
         ),
       ),
     );

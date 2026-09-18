@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Өнгөний тохиргоо": choose the app color theme.
 class ThemeSettingsScreen extends StatefulWidget {
@@ -93,14 +94,12 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                         icon: Icons.auto_awesome_rounded,
                       ),
                       const SizedBox(height: 6),
-                      Text(
+                      AppText(
                         'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай! ✨',
-                        style: comfortaa(
-                          size: 13,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate600,
-                          height: 1.5,
-                        ),
+                        size: 13,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate600,
+                        height: 1.5,
                       ),
                     ],
                   ),
@@ -111,14 +110,12 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 12),
-            child: Text(
+            child: AppText(
               'ҮНДСЭН СЭДВҮҮД',
-              style: comfortaa(
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.slate400,
-                letterSpacing: 0.6,
-              ),
+              size: 12,
+              weight: FontWeight.w700,
+              color: AppColors.slate400,
+              letterSpacing: 0.6,
             ),
           ),
           for (final (i, t) in _themes.indexed) ...[
@@ -224,12 +221,10 @@ class _ThemeCard extends StatelessWidget {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(
+                              child: AppText(
                                 title,
-                                style: comfortaa(
-                                  size: 13,
-                                  weight: FontWeight.w700,
-                                ),
+                                size: 13,
+                                weight: FontWeight.w700,
                               ),
                             ),
                             AnimatedContainer(
@@ -256,9 +251,10 @@ class _ThemeCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 2),
-                        Text(
+                        AppText(
                           description,
-                          style: comfortaa(size: 12, color: AppColors.slate400),
+                          size: 12,
+                          color: AppColors.slate400,
                         ),
                         const Divider(height: 22, color: AppColors.slate100),
                         Row(
@@ -286,14 +282,12 @@ class _ThemeCard extends StatelessWidget {
                             const Spacer(),
                             Flexible(
                               flex: 4,
-                              child: Text(
+                              child: AppText(
                                 tag,
+                                size: 11,
+                                weight: FontWeight.w600,
+                                color: accent,
                                 textAlign: TextAlign.right,
-                                style: comfortaa(
-                                  size: 11,
-                                  weight: FontWeight.w600,
-                                  color: accent,
-                                ),
                               ),
                             ),
                           ],
@@ -317,13 +311,11 @@ class _ThemeCard extends StatelessWidget {
                     color: accent,
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Text(
+                  child: AppText(
                     'Идэвхтэй',
-                    style: comfortaa(
-                      size: 10,
-                      weight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                    size: 10,
+                    weight: FontWeight.w700,
+                    color: Colors.white,
                   ),
                 ),
               ),

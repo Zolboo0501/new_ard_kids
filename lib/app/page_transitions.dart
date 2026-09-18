@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../theme/app_theme.dart';
+
 /// How a route animates in (and back out when popped).
 enum AppTransition {
   /// Slides in from the right while the page below drifts left and dims.
@@ -25,7 +27,7 @@ Page<void> buildTransitionPage({
   AppTransition transition = AppTransition.slide,
 }) {
   final (inDuration, outDuration) = switch (transition) {
-    AppTransition.slide => (320, 260),
+    AppTransition.slide => (340, 280),
     AppTransition.rise => (380, 280),
     AppTransition.fade => (280, 220),
   };
@@ -54,13 +56,13 @@ Widget _slide(
 ) {
   final incoming = CurvedAnimation(
     parent: animation,
-    curve: Curves.easeOutCubic,
-    reverseCurve: Curves.easeInCubic,
+    curve: appEmphasizedDecelerate,
+    reverseCurve: appEmphasizedAccelerate,
   );
   final outgoing = CurvedAnimation(
     parent: secondaryAnimation,
-    curve: Curves.easeOutCubic,
-    reverseCurve: Curves.easeInCubic,
+    curve: appEmphasizedDecelerate,
+    reverseCurve: appEmphasizedAccelerate,
   );
 
   // Page underneath: small parallax shift left and a light dim.
@@ -72,37 +74,56 @@ Widget _slide(
     child: child,
   );
 
+  final layers = Stack(
+    fit: StackFit.passthrough,
+    children: [
+      covered,
+      // A translucent overlay is cheaper than a color filter layer. Skipped
+      // entirely while this page is on top so it costs nothing at rest.
+      if (!secondaryAnimation.isDismissed)
+        Positioned.fill(
+          child: IgnorePointer(
+            child: FadeTransition(
+              opacity: outgoing,
+              child: const ColoredBox(color: Color(0x140F172A)),
+            ),
+          ),
+        ),
+    ],
+  );
+
+  // The edge shadow only reads during the slide, and painting it at rest costs
+  // a blur on every frame of the screen underneath.
+  final body = animation.isCompleted && secondaryAnimation.isDismissed
+      ? layers
+      : DecoratedBox(
+          decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x1A0F172A),
+                blurRadius: 24,
+                offset: Offset(-4, 0),
+              ),
+            ],
+          ),
+          child: layers,
+        );
+
   return SlideTransition(
     position: Tween(
       begin: const Offset(1, 0),
       end: Offset.zero,
     ).animate(incoming),
-    child: DecoratedBox(
-      // Soft edge shadow so the incoming page reads as a layer on top.
-      decoration: const BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x1A0F172A),
-            blurRadius: 24,
-            offset: Offset(-4, 0),
-          ),
-        ],
+    // A short fade over the first part of the slide softens the entry; the
+    // page is already opaque by the time it reaches its resting position.
+    child: FadeTransition(
+      opacity: Tween(begin: 0.4, end: 1.0).animate(
+        CurvedAnimation(
+          parent: animation,
+          curve: const Interval(0, 0.45, curve: Curves.easeOut),
+        ),
       ),
-      child: Stack(
-        fit: StackFit.passthrough,
-        children: [
-          covered,
-          // A translucent overlay is cheaper than a color filter layer.
-          Positioned.fill(
-            child: IgnorePointer(
-              child: FadeTransition(
-                opacity: outgoing,
-                child: const ColoredBox(color: Color(0x140F172A)),
-              ),
-            ),
-          ),
-        ],
-      ),
+      child: body,
     ),
   );
 }
@@ -110,8 +131,8 @@ Widget _slide(
 Widget _rise(Animation<double> animation, Widget child) {
   final curved = CurvedAnimation(
     parent: animation,
-    curve: Curves.easeOutQuart,
-    reverseCurve: Curves.easeInCubic,
+    curve: appEmphasizedDecelerate,
+    reverseCurve: appEmphasizedAccelerate,
   );
   return FadeTransition(
     opacity: CurvedAnimation(
@@ -129,7 +150,11 @@ Widget _rise(Animation<double> animation, Widget child) {
 }
 
 Widget _fade(Animation<double> animation, Widget child) {
-  final curved = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+  final curved = CurvedAnimation(
+    parent: animation,
+    curve: appEmphasizedDecelerate,
+    reverseCurve: appEmphasizedAccelerate,
+  );
   return FadeTransition(
     opacity: curved,
     child: ScaleTransition(

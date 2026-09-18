@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Хадгаламжийн данс - Гүйлгээний түүх": savings activity grouped by month.
 class SavingsHistoryScreen extends StatefulWidget {
@@ -126,13 +127,11 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          Text(
+                          AppText(
                             'Данс: •••• 3384 | Хаан банк',
-                            style: comfortaa(
-                              size: 10,
-                              weight: FontWeight.w600,
-                              color: AppColors.slate400,
-                            ),
+                            size: 10,
+                            weight: FontWeight.w600,
+                            color: AppColors.slate400,
                           ),
                         ],
                       ),
@@ -178,14 +177,12 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: AppText(
                       label,
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate400,
-                        letterSpacing: 0.8,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w700,
+                      color: AppColors.slate400,
+                      letterSpacing: 0.8,
                     ),
                   ),
                   StatusBadge(
@@ -216,18 +213,9 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            it.$1,
-                            style: comfortaa(size: 12, weight: FontWeight.w700),
-                          ),
+                          AppText(it.$1, size: 12, weight: FontWeight.w700),
                           const SizedBox(height: 2),
-                          Text(
-                            it.$2,
-                            style: comfortaa(
-                              size: 10,
-                              color: AppColors.slate400,
-                            ),
-                          ),
+                          AppText(it.$2, size: 10, color: AppColors.slate400),
                         ],
                       ),
                     ),
@@ -252,13 +240,11 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
       child: Column(
         crossAxisAlignment: a,
         children: [
-          Text(
+          AppText(
             label,
-            style: comfortaa(
-              size: 9.5,
-              weight: FontWeight.w500,
-              color: AppColors.slate400,
-            ),
+            size: 9.5,
+            weight: FontWeight.w500,
+            color: AppColors.slate400,
           ),
           const SizedBox(height: 2),
           Text(value, style: moneyStyle(size: 12, color: color)),
@@ -282,10 +268,11 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
+              AppText(
                 'Хугацаагаар шүүх',
+                size: 16,
+                weight: FontWeight.w700,
                 textAlign: TextAlign.center,
-                style: comfortaa(size: 16, weight: FontWeight.w700),
               ),
               const SizedBox(height: 12),
               for (final (i, r) in ranges.indexed)
@@ -293,10 +280,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  title: Text(
-                    r,
-                    style: comfortaa(size: 14, weight: FontWeight.w600),
-                  ),
+                  title: AppText(r, size: 14, weight: FontWeight.w600),
                   trailing: i == _range
                       ? const Icon(Icons.check_rounded, color: AppColors.sky500)
                       : null,

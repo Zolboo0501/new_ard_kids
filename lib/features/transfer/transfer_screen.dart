@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'transfer_success_screen.dart';
+import '../../widgets/app_text.dart';
 
 enum TransferMode { friends, account, phone }
 
@@ -180,13 +181,11 @@ class _TransferScreenState extends State<TransferScreen> {
                 if (_amountValue > _balance)
                   Padding(
                     padding: const EdgeInsets.only(top: 6, left: 4),
-                    child: Text(
+                    child: AppText(
                       'Үлдэгдэл хүрэлцэхгүй байна',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.rose500,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.rose500,
                     ),
                   ),
                 if (_mode != TransferMode.phone) ...[
@@ -212,13 +211,11 @@ class _TransferScreenState extends State<TransferScreen> {
                   runSpacing: 6,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       'Сонгох:',
-                      style: comfortaa(
-                        size: 10,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate400,
-                      ),
+                      size: 10,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
                     ),
                     for (final (i, p) in _purposes.indexed)
                       _SmallChip(
@@ -393,19 +390,18 @@ class _SourceCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   'ШИЛЖҮҮЛЭХ ДАНС',
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate400,
-                    letterSpacing: 0.6,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate400,
+                  letterSpacing: 0.6,
                 ),
                 const SizedBox(height: 4),
-                Text(
+                AppText(
                   'Боломжит үлдэгдэл',
-                  style: comfortaa(size: 11, color: AppColors.slate500),
+                  size: 11,
+                  color: AppColors.slate500,
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -414,13 +410,11 @@ class _SourceCard extends StatelessWidget {
                 ),
                 if (showAccount) ...[
                   const SizedBox(height: 4),
-                  Text(
+                  AppText(
                     '•••• 3384  |  Хаан банк',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate400,
                   ),
                 ],
               ],
@@ -485,13 +479,11 @@ class _ModeTabs extends StatelessWidget {
                             ]
                           : null,
                     ),
-                    child: Text(
+                    child: AppText(
                       labels[m.index],
-                      style: comfortaa(
-                        size: 12,
-                        weight: m == mode ? FontWeight.w700 : FontWeight.w600,
-                        color: m == mode ? Colors.white : AppColors.slate500,
-                      ),
+                      size: 12,
+                      weight: m == mode ? FontWeight.w700 : FontWeight.w600,
+                      color: m == mode ? Colors.white : AppColors.slate500,
                     ),
                   ),
                 ),
@@ -593,13 +585,11 @@ class _FriendAvatar extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 5),
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 11,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? AppColors.sky800 : AppColors.slate600,
-                ),
+                size: 11,
+                weight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? AppColors.sky800 : AppColors.slate600,
               ),
             ],
           ),
@@ -640,13 +630,11 @@ class _Label extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 2),
-      child: Text(
+      child: AppText(
         text,
-        style: comfortaa(
-          size: 12,
-          weight: FontWeight.w700,
-          color: AppColors.slate700,
-        ),
+        size: 12,
+        weight: FontWeight.w700,
+        color: AppColors.slate700,
       ),
     );
   }
@@ -707,13 +695,11 @@ class _SmallChip extends StatelessWidget {
                 ClipOval(child: Image.asset(asset!, width: 24, height: 24)),
                 const SizedBox(width: 6),
               ],
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 11,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? AppColors.sky700 : AppColors.slate600,
-                ),
+                size: 11,
+                weight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? AppColors.sky700 : AppColors.slate600,
               ),
             ],
           ),
@@ -736,15 +722,13 @@ class _VerifiedName extends StatelessWidget {
       child: Wrap(
         spacing: 6,
         children: [
-          Text(
+          AppText(
             name,
-            style: comfortaa(
-              size: 11,
-              weight: FontWeight.w700,
-              color: AppColors.emerald600,
-            ),
+            size: 11,
+            weight: FontWeight.w700,
+            color: AppColors.emerald600,
           ),
-          Text(detail, style: comfortaa(size: 10, color: AppColors.slate400)),
+          AppText(detail, size: 10, color: AppColors.slate400),
         ],
       ),
     );

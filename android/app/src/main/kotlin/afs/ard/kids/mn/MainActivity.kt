@@ -1,4 +1,4 @@
-package afs.ard.kids.mn
+package mn.afs.ard.kids
 
 import io.flutter.embedding.android.FlutterActivity
 

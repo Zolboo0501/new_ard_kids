@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
+import '../widgets/app_text.dart';
 
 /// Visual style of a [NumericKeypad] key; the Stitch screens each use a
 /// slightly different key shape.
@@ -48,13 +49,11 @@ class NumericKeypad extends StatelessWidget {
       style: style,
       onTap: () => onDigit(d),
       semanticLabel: d,
-      child: Text(
+      child: AppText(
         d,
-        style: comfortaa(
-          size: style.fontSize,
-          weight: FontWeight.w700,
-          color: style.textColor,
-        ),
+        size: style.fontSize,
+        weight: FontWeight.w700,
+        color: style.textColor,
       ),
     );
 

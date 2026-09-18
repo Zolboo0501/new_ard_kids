@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
+import '../../widgets/app_text.dart';
 
 /// "Урамшууллын данс - Минимал": rewards balance and history.
 class RewardsAccountScreen extends StatelessWidget {
@@ -103,13 +104,11 @@ class RewardsAccountScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    AppText(
                       'Нийт үлдэгдэл',
-                      style: comfortaa(
-                        size: 12,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate500,
-                      ),
+                      size: 12,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
                     Text.rich(
                       TextSpan(
@@ -208,17 +207,12 @@ class _Shortcut extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: comfortaa(size: 12, weight: FontWeight.w700),
-                ),
-                Text(
+                AppText(title, size: 12, weight: FontWeight.w700),
+                AppText(
                   subtitle,
-                  style: comfortaa(
-                    size: 10,
-                    weight: FontWeight.w700,
-                    color: subtitleColor,
-                  ),
+                  size: 10,
+                  weight: FontWeight.w700,
+                  color: subtitleColor,
                 ),
               ],
             ),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import 'personal_info_screen.dart';
+import '../../widgets/app_text.dart';
 
 /// "Хувийн мэдээлэл засах": edit profile fields (sent for parent approval).
 class EditPersonalInfoScreen extends StatefulWidget {
@@ -111,13 +112,11 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                   color: AppColors.sky500,
                 ),
                 const SizedBox(width: 2),
-                Text(
+                AppText(
                   'Засварлах',
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky500,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w700,
+                  color: AppColors.sky500,
                 ),
               ],
             ),
@@ -147,18 +146,17 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: Text(
+                      child: AppText(
                         'Үндсэн мэдээлэл',
-                        style: comfortaa(size: 14, weight: FontWeight.w700),
+                        size: 14,
+                        weight: FontWeight.w700,
                       ),
                     ),
-                    Text(
+                    AppText(
                       'Засвар',
-                      style: comfortaa(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.sky600,
-                      ),
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.sky600,
                     ),
                   ],
                 ),
@@ -189,9 +187,10 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                         ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Text(
+                          child: AppText(
                             _birthText,
-                            style: comfortaa(size: 14, weight: FontWeight.w700),
+                            size: 14,
+                            weight: FontWeight.w700,
                           ),
                         ),
                         const Icon(
@@ -248,13 +247,11 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                         color: AppColors.amber600,
                       ),
                       const SizedBox(width: 2),
-                      Text(
+                      AppText(
                         'Түгжигдсэн',
-                        style: comfortaa(
-                          size: 10,
-                          weight: FontWeight.w600,
-                          color: AppColors.amber600,
-                        ),
+                        size: 10,
+                        weight: FontWeight.w600,
+                        color: AppColors.amber600,
                       ),
                     ],
                   ),
@@ -277,9 +274,10 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                 const SizedBox(height: 6),
                 Padding(
                   padding: const EdgeInsets.only(left: 4),
-                  child: Text(
+                  child: AppText(
                     'Регистрийн дугаарыг зөвхөн захиргааны эрхээр өөрчлөх боломжтой.',
-                    style: comfortaa(size: 10, color: AppColors.slate400),
+                    size: 10,
+                    color: AppColors.slate400,
                   ),
                 ),
               ],
@@ -350,13 +348,11 @@ class _GenderButton extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 13,
-                  weight: selected ? FontWeight.w700 : FontWeight.w600,
-                  color: selected ? AppColors.sky700 : AppColors.slate600,
-                ),
+                size: 13,
+                weight: selected ? FontWeight.w700 : FontWeight.w600,
+                color: selected ? AppColors.sky700 : AppColors.slate600,
               ),
             ],
           ),

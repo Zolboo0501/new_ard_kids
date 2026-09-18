@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
 
-import '../../app/routes.dart';
-import '../../theme/app_theme.dart';
+import '../../../../app/routes.dart';
+import '../../../../theme/app_theme.dart';
+import '../../../../widgets/entrance.dart';
+import '../../../../widgets/app_text.dart';
 
 enum AuthMode { login, register }
 
@@ -19,7 +22,8 @@ class AuthScreen extends StatefulWidget {
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthScreenState extends State<AuthScreen>
+    with SingleTickerProviderStateMixin {
   static const _phoneLength = 8;
   static const _nameMinLength = 2;
   static const _nameMaxLength = 20;
@@ -33,6 +37,20 @@ class _AuthScreenState extends State<AuthScreen> {
   final _phoneController = TextEditingController();
   final _nameFocus = FocusNode();
   final _phoneFocus = FocusNode();
+
+  /// Drives the one-shot entrance: each element fades and rises over its own
+  /// slice of this controller (see [Entrance]).
+  late final AnimationController _entrance = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 750),
+  );
+
+  /// One curved slice per element, built once in [initState].
+  late final EntranceStagger _stagger = EntranceStagger(_entrance);
+  late final Animation<double> _mascotIn;
+  late final Animation<double> _titleIn;
+  late final Animation<double> _subtitleIn;
+  late final Animation<double> _cardIn;
 
   AuthMode _mode = AuthMode.login;
   _SubmitState _submitState = _SubmitState.idle;
@@ -72,6 +90,18 @@ class _AuthScreenState extends State<AuthScreen> {
         if (_phoneValid) _phoneError = null;
       });
     });
+    _mascotIn = _stagger.slice(0);
+    _titleIn = _stagger.slice(0.1);
+    _subtitleIn = _stagger.slice(0.16);
+    _cardIn = _stagger.slice(0.24);
+    _entrance.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reduced motion: show the finished layout instead of animating it in.
+    if (MediaQuery.disableAnimationsOf(context)) _entrance.value = 1;
   }
 
   @override
@@ -79,6 +109,8 @@ class _AuthScreenState extends State<AuthScreen> {
     for (final t in _timers) {
       t.cancel();
     }
+    _stagger.dispose();
+    _entrance.dispose();
     _nameController.dispose();
     _phoneController.dispose();
     _nameFocus.dispose();
@@ -151,34 +183,48 @@ class _AuthScreenState extends State<AuthScreen> {
                       constraints: const BoxConstraints(maxWidth: 448),
                       child: Column(
                         children: [
-                          const _Mascot(),
+                          Entrance(
+                            t: _mascotIn,
+                            // The mascot leads, and grows in slightly rather
+                            // than just sliding.
+                            scaleFrom: 0.94,
+                            child: const _Mascot(),
+                          ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Ard KIDS',
-                            textAlign: TextAlign.center,
-                            style: comfortaa(
+                          Entrance(
+                            t: _titleIn,
+                            child: AppText(
+                              'Ard KIDS',
                               size: 20,
                               weight: FontWeight.w700,
                               height: 1.25,
                               letterSpacing: -0.4,
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 290),
-                            child: Text(
-                              'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
-                              textAlign: TextAlign.center,
-                              style: comfortaa(
+                          Entrance(
+                            t: _subtitleIn,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 290),
+                              child: AppText(
+                                'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
                                 size: 12,
                                 weight: FontWeight.w500,
                                 color: AppColors.slate500,
                                 height: 1.6,
+                                textAlign: TextAlign.center,
                               ),
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _buildFormCard(isLogin),
+                          Entrance(
+                            t: _cardIn,
+                            // Travels a little further, so the card reads as
+                            // settling into place under the heading.
+                            offsetY: 24,
+                            child: _buildFormCard(isLogin),
+                          ),
                           const SizedBox(height: 16),
                         ],
                       ),
@@ -196,7 +242,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildFormCard(bool isLogin) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
@@ -270,13 +316,11 @@ class _AuthScreenState extends State<AuthScreen> {
               children: [
                 const Text('🇲🇳', style: TextStyle(fontSize: 14, height: 1)),
                 const SizedBox(width: 6),
-                Text(
+                AppText(
                   '+976',
-                  style: comfortaa(
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky700,
-                  ),
+                  size: 12,
+                  weight: FontWeight.w700,
+                  color: AppColors.sky700,
                 ),
               ],
             ),
@@ -317,7 +361,7 @@ class _AuthScreenState extends State<AuthScreen> {
           const SizedBox(height: 18),
           _SubmitButton(
             state: _submitState,
-            label: isLogin ? 'Үргэлжлүүлэх 🚀' : 'Код авах ✨',
+            label: isLogin ? 'Үргэлжлүүлэх' : 'Код авах',
             onPressed: _submit,
           ),
         ],
@@ -392,6 +436,8 @@ class _ModeSwitcher extends StatelessWidget {
   final AuthMode mode;
   final ValueChanged<AuthMode> onChanged;
 
+  static const _duration = Duration(milliseconds: 280);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -401,10 +447,44 @@ class _ModeSwitcher extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: AppColors.slate200.withValues(alpha: 0.5)),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          _tab('Нэвтрэх', AuthMode.login),
-          _tab('Бүртгүүлэх', AuthMode.register),
+          // One pill that travels between the two halves, rather than two
+          // pills fading in and out in place.
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: _duration,
+              curve: appEmphasizedDecelerate,
+              alignment: mode == AuthMode.login
+                  ? Alignment.centerLeft
+                  : Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.5,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    gradient: const LinearGradient(
+                      colors: [AppColors.sky500, AppColors.sky400],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.sky500.withValues(alpha: 0.3),
+                        offset: const Offset(0, 2),
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              _tab('Нэвтрэх', AuthMode.login),
+              _tab('Бүртгүүлэх', AuthMode.register),
+            ],
+          ),
         ],
       ),
     );
@@ -416,35 +496,18 @@ class _ModeSwitcher extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => onChanged(value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
+        child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 9),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            gradient: selected
-                ? const LinearGradient(
-                    colors: [AppColors.sky500, AppColors.sky400],
-                  )
-                : null,
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: AppColors.sky500.withValues(alpha: 0.3),
-                      offset: const Offset(0, 2),
-                      blurRadius: 8,
-                    ),
-                  ]
-                : null,
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
+          // The label colour crosses over while the pill slides under it.
+          child: AnimatedDefaultTextStyle(
+            duration: _duration,
+            curve: appEmphasizedDecelerate,
             style: comfortaa(
               size: 12,
               weight: FontWeight.w700,
               color: selected ? Colors.white : AppColors.slate500,
             ),
+            child: Text(label, textAlign: TextAlign.center),
           ),
         ),
       ),
@@ -461,13 +524,11 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
+      child: AppText(
         text,
-        style: comfortaa(
-          size: 12,
-          weight: FontWeight.w700,
-          color: AppColors.slate600,
-        ),
+        size: 12,
+        weight: FontWeight.w700,
+        color: AppColors.slate600,
       ),
     );
   }
@@ -494,11 +555,50 @@ class _InputShell extends StatefulWidget {
   State<_InputShell> createState() => _InputShellState();
 }
 
-class _InputShellState extends State<_InputShell> {
+class _InputShellState extends State<_InputShell>
+    with SingleTickerProviderStateMixin {
   bool _focused = false;
+
+  /// Plays once each time this field newly becomes invalid.
+  late final AnimationController _shake = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 420),
+  );
+
+  @override
+  void didUpdateWidget(_InputShell old) {
+    super.didUpdateWidget(old);
+    // Only on the transition into an error, so re-submitting with the same
+    // mistake still nudges but typing does not.
+    if (!old.hasError &&
+        widget.hasError &&
+        !MediaQuery.disableAnimationsOf(context)) {
+      _shake.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _shake.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _shake,
+      child: _buildShell(),
+      builder: (context, child) {
+        if (_shake.isDismissed) return child!;
+        // Three decaying swings either side of centre.
+        final decay = 1 - _shake.value;
+        final dx = math.sin(_shake.value * math.pi * 6) * 6 * decay;
+        return Transform.translate(offset: Offset(dx, 0), child: child);
+      },
+    );
+  }
+
+  Widget _buildShell() {
     return Focus(
       canRequestFocus: false,
       skipTraversal: true,
@@ -562,39 +662,57 @@ class _FieldError extends StatelessWidget {
 
   final String? message;
 
+  static const _duration = Duration(milliseconds: 240);
+
   @override
   Widget build(BuildContext context) {
+    // AnimatedSize opens the gap; AnimatedSwitcher fades and drops the message
+    // into it, so the text arrives with the space instead of popping in.
     return AnimatedSize(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
+      duration: _duration,
+      curve: appEmphasizedDecelerate,
       alignment: Alignment.topCenter,
-      child: message == null
-          ? const SizedBox(width: double.infinity)
-          : Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.error_outline_rounded,
-                    size: 15,
-                    color: AppColors.rose500,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      message!,
-                      style: comfortaa(
+      child: AnimatedSwitcher(
+        duration: _duration,
+        switchInCurve: appEmphasizedDecelerate,
+        switchOutCurve: appEmphasizedAccelerate,
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween(
+              begin: const Offset(0, -0.35),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        ),
+        child: message == null
+            ? const SizedBox(key: ValueKey('none'), width: double.infinity)
+            : Padding(
+                key: ValueKey(message),
+                padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      size: 15,
+                      color: AppColors.rose500,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: AppText(
+                        message!,
                         size: 11,
                         weight: FontWeight.w600,
                         color: AppColors.rose600,
                         height: 1.35,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -622,13 +740,24 @@ class _HelperNote extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              text,
-              style: comfortaa(
-                size: 11,
-                weight: FontWeight.w500,
-                color: AppColors.sky800,
-                height: 1.25,
+            // The copy changes with the mode, so cross-fade it instead of
+            // snapping to the new sentence.
+            child: AnimatedSize(
+              duration: const Duration(milliseconds: 240),
+              curve: appEmphasizedDecelerate,
+              alignment: Alignment.topCenter,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 240),
+                switchInCurve: appEmphasizedDecelerate,
+                switchOutCurve: appEmphasizedAccelerate,
+                child: AppText(
+                  text,
+                  size: 11,
+                  weight: FontWeight.w500,
+                  color: AppColors.sky800,
+                  height: 1.25,
+                  key: ValueKey(text),
+                ),
               ),
             ),
           ),
@@ -667,7 +796,9 @@ class _SubmitButtonState extends State<_SubmitButton> {
 
     final Widget content = switch (widget.state) {
       _SubmitState.idle => Row(
-        key: const ValueKey('idle'),
+        // Keyed by the label too, so switching mode cross-fades the caption
+        // rather than swapping it in place.
+        key: ValueKey('idle-${widget.label}'),
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(widget.label, style: textStyle),
@@ -701,7 +832,7 @@ class _SubmitButtonState extends State<_SubmitButton> {
         children: [
           const Icon(Icons.check_rounded, size: 20, color: Colors.white),
           const SizedBox(width: 8),
-          Text('Код илгээгдлээ! ✨', style: textStyle),
+          Text('Код илгээгдлээ!', style: textStyle),
         ],
       ),
     };
@@ -776,14 +907,12 @@ class _ParentNote extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
+            child: AppText(
               'Эцэг эхийн зөвшөөрөлтэй, хүүхдэд зориулсан 100% найдвартай аюулгүй санхүүгийн платформ.',
-              style: comfortaa(
-                size: 11,
-                weight: FontWeight.w500,
-                color: AppColors.emerald800,
-                height: 1.6,
-              ),
+              size: 11,
+              weight: FontWeight.w500,
+              color: AppColors.emerald800,
+              height: 1.6,
             ),
           ),
         ],

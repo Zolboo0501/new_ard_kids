@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_text.dart';
 
 /// Signed-in root built by go_router's `StatefulShellRoute`: the Home and
 /// Profile tabs are branches of [navigationShell] (each keeps its own state
@@ -128,13 +129,11 @@ class FloatingNavBar extends StatelessWidget {
                           ),
                           Positioned(
                             bottom: 6,
-                            child: Text(
+                            child: AppText(
                               'QR',
-                              style: comfortaa(
-                                size: 11,
-                                weight: FontWeight.w700,
-                                color: AppColors.slate600,
-                              ),
+                              size: 11,
+                              weight: FontWeight.w700,
+                              color: AppColors.slate600,
                             ),
                           ),
                         ],
@@ -188,13 +187,11 @@ class _NavItem extends StatelessWidget {
             children: [
               Icon(selected ? icon : outlinedIcon, size: 24, color: color),
               const SizedBox(height: 2),
-              Text(
+              AppText(
                 label,
-                style: comfortaa(
-                  size: 11,
-                  weight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: color,
-                ),
+                size: 11,
+                weight: selected ? FontWeight.w700 : FontWeight.w500,
+                color: color,
               ),
             ],
           ),

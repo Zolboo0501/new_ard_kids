@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// Projected savings with monthly compounding at [annualRate].
 ({int total, int deposited, int interest}) projectSavings({
@@ -110,14 +111,16 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     children: [
                       const StatusBadge(label: 'Ухаалаг тооцоолол'),
                       const SizedBox(height: 4),
-                      Text(
+                      AppText(
                         'Мөнгөө хүүгээр өсгөж зорилгодоо илүү хурдан хүрээрэй!',
-                        style: comfortaa(size: 12, weight: FontWeight.w700),
+                        size: 12,
+                        weight: FontWeight.w700,
                       ),
                       const SizedBox(height: 2),
-                      Text(
+                      AppText(
                         'Хадгаламжийн хүү өдөр бүр танд ажиллана',
-                        style: comfortaa(size: 10, color: AppColors.slate400),
+                        size: 10,
+                        color: AppColors.slate400,
                       ),
                     ],
                   ),
@@ -135,13 +138,11 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
               children: [
                 FieldLabel(
                   'Эхний хадгаламжийн дүн',
-                  trailing: Text(
+                  trailing: AppText(
                     'Хуримтлал',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.sky600,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.sky600,
                   ),
                 ),
                 AppTextField(
@@ -199,13 +200,11 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                   ),
                   child: Row(
                     children: [
-                      Text(
+                      AppText(
                         '₮',
-                        style: comfortaa(
-                          size: 18,
-                          weight: FontWeight.w700,
-                          color: AppColors.emerald600,
-                        ),
+                        size: 18,
+                        weight: FontWeight.w700,
+                        color: AppColors.emerald600,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -214,10 +213,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                           style: moneyStyle(size: 16),
                         ),
                       ),
-                      Text(
-                        '/ сар',
-                        style: comfortaa(size: 12, color: AppColors.slate400),
-                      ),
+                      AppText('/ сар', size: 12, color: AppColors.slate400),
                     ],
                   ),
                 ),
@@ -232,13 +228,11 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                 const Divider(height: 28, color: AppColors.slate100),
                 FieldLabel(
                   'Хадгаламжийн хугацаа',
-                  trailing: Text(
+                  trailing: AppText(
                     'Жилийн хүү: 13.5%',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky600,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w700,
+                    color: AppColors.sky600,
                   ),
                 ),
                 Row(
@@ -265,20 +259,15 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                AppText(
                   'ТООЦООЛЛЫН ҮР ДҮН ($_term САР)',
-                  style: comfortaa(
-                    size: 11,
-                    weight: FontWeight.w700,
-                    color: AppColors.slate500,
-                    letterSpacing: 0.6,
-                  ),
+                  size: 11,
+                  weight: FontWeight.w700,
+                  color: AppColors.slate500,
+                  letterSpacing: 0.6,
                 ),
                 const SizedBox(height: 10),
-                Text(
-                  'Нийт авах дүн:',
-                  style: comfortaa(size: 12, color: AppColors.slate400),
-                ),
+                AppText('Нийт авах дүн:', size: 12, color: AppColors.slate400),
                 const SizedBox(height: 2),
                 Text(
                   formatMnt(result.total, space: true),
@@ -321,9 +310,10 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
+                AppText(
                   'Энэ өсөлтөөр биелэх зорилго:',
-                  style: comfortaa(size: 12, weight: FontWeight.w700),
+                  size: 12,
+                  weight: FontWeight.w700,
                 ),
                 const SizedBox(height: 10),
                 Container(
@@ -349,35 +339,29 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                             Row(
                               children: [
                                 Expanded(
-                                  child: Text(
+                                  child: AppText(
                                     'PlayStation 5 тоглоом',
-                                    style: comfortaa(
-                                      size: 12,
-                                      weight: FontWeight.w700,
-                                    ),
+                                    size: 12,
+                                    weight: FontWeight.w700,
                                   ),
                                 ),
-                                Text(
+                                AppText(
                                   goalProgress >= 1
                                       ? '100% Бэлэн!'
                                       : '${(goalProgress * 100).round()}%',
-                                  style: comfortaa(
-                                    size: 10,
-                                    weight: FontWeight.w700,
-                                    color: goalProgress >= 1
-                                        ? AppColors.emerald600
-                                        : AppColors.sky600,
-                                  ),
+                                  size: 10,
+                                  weight: FontWeight.w700,
+                                  color: goalProgress >= 1
+                                      ? AppColors.emerald600
+                                      : AppColors.sky600,
                                 ),
                               ],
                             ),
                             const SizedBox(height: 2),
-                            Text(
+                            AppText(
                               'Шаардлагатай: ${formatMnt(_goalTarget, space: true)}',
-                              style: comfortaa(
-                                size: 11,
-                                color: AppColors.slate500,
-                              ),
+                              size: 11,
+                              color: AppColors.slate500,
                             ),
                             const SizedBox(height: 6),
                             ProgressTrack(
@@ -460,13 +444,11 @@ class _SliderScale extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           for (final l in labels)
-            Text(
+            AppText(
               l,
-              style: comfortaa(
-                size: 10,
-                weight: FontWeight.w600,
-                color: AppColors.slate400,
-              ),
+              size: 10,
+              weight: FontWeight.w600,
+              color: AppColors.slate400,
             ),
         ],
       ),
@@ -504,13 +486,11 @@ class _TermButton extends StatelessWidget {
               width: selected ? 2 : 1,
             ),
           ),
-          child: Text(
+          child: AppText(
             label,
-            style: comfortaa(
-              size: 12,
-              weight: selected ? FontWeight.w700 : FontWeight.w600,
-              color: selected ? AppColors.sky700 : AppColors.slate600,
-            ),
+            size: 12,
+            weight: selected ? FontWeight.w700 : FontWeight.w600,
+            color: selected ? AppColors.sky700 : AppColors.slate600,
           ),
         ),
       ),
@@ -547,14 +527,7 @@ class _ResultBox extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: comfortaa(
-              size: 10,
-              weight: FontWeight.w600,
-              color: labelColor,
-            ),
-          ),
+          AppText(label, size: 10, weight: FontWeight.w600, color: labelColor),
           const SizedBox(height: 2),
           FittedBox(
             child: Text(value, style: moneyStyle(size: 14, color: valueColor)),

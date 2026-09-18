@@ -6,6 +6,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/app_text.dart';
 
 /// "Мөнгө хүсэх": ask a parent to top up the account.
 class RequestMoneyScreen extends StatefulWidget {
@@ -93,14 +94,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     children: [
                       const StatusBadge(label: 'ЭЦЭГ ЭХЭЭС МӨНГӨ ХҮСЭХ'),
                       const SizedBox(height: 8),
-                      Text(
+                      AppText(
                         'Аав, ээждээ хүсэлт илгээж дансаа цэнэглүүлээрэй!',
-                        style: comfortaa(
-                          size: 14,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
-                          height: 1.4,
-                        ),
+                        size: 14,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate900,
+                        height: 1.4,
                       ),
                     ],
                   ),
@@ -146,13 +145,11 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               children: [
                 FieldLabel(
                   'Хүсэх дүн',
-                  trailing: Text(
+                  trailing: AppText(
                     'Данс руу орох',
-                    style: comfortaa(
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.sky600,
-                    ),
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.sky600,
                   ),
                 ),
                 AppTextField(
@@ -201,13 +198,11 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   runSpacing: 6,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text(
+                    AppText(
                       'Төрөл:',
-                      style: comfortaa(
-                        size: 10,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate400,
-                      ),
+                      size: 10,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
                     ),
                     for (final (i, t) in _types.indexed)
                       FilterChipPill(
@@ -285,15 +280,13 @@ class _ParentCard extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
+                          child: AppText(
                             name,
-                            style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w700,
-                              color: selected
-                                  ? AppColors.sky900
-                                  : AppColors.slate700,
-                            ),
+                            size: 12,
+                            weight: FontWeight.w700,
+                            color: selected
+                                ? AppColors.sky900
+                                : AppColors.slate700,
                           ),
                         ),
                         if (selected)
@@ -308,11 +301,12 @@ class _ParentCard extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 2),
-                    Text(
+                    AppText(
                       account,
+                      size: 10,
+                      color: AppColors.slate500,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: comfortaa(size: 10, color: AppColors.slate500),
                     ),
                   ],
                 ),

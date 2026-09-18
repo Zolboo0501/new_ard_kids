@@ -78,6 +78,13 @@ abstract final class AppColors {
   static const emerald700 = Color(0xFF047857);
 }
 
+/// Motion tokens. Material 3 "emphasized" easing starts slowly and settles
+/// over a long tail, which reads as smoother than [Curves.easeOutCubic] for
+/// anything moving a meaningful distance; the accelerate pair is its
+/// counterpart for exits.
+const appEmphasizedDecelerate = Cubic(0.05, 0.7, 0.1, 1);
+const appEmphasizedAccelerate = Cubic(0.3, 0, 0.8, 0.15);
+
 /// Comfortaa ships as a variable font, so weight is applied through the
 /// `wght` axis as well as [FontWeight] to render correctly on every platform.
 TextStyle comfortaa({
