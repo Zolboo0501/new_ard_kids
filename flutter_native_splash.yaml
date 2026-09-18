@@ -1,0 +1,34 @@
+# Native splash screen for Ard KIDS.
+#
+# Regenerate after changing this file:
+#   dart run flutter_native_splash:create
+#
+# To undo the generated native changes:
+#   dart run flutter_native_splash:remove
+flutter_native_splash:
+  # logo.jpeg is a JPEG, so it has no transparency and its corners are pure
+  # white. The background must match that white or the logo shows as a square
+  # patch; that is why this is #FFFFFF and not AppColors.surface (#F8FAFF).
+  color: "#FFFFFF"
+  image: assets/images/logo.jpeg
+
+  # The app is light-only (AppColors are compile-time constants), so the dark
+  # splash uses the same colors rather than a dark variant that the UI would
+  # not match.
+  color_dark: "#FFFFFF"
+  image_dark: assets/images/logo.jpeg
+
+  android: true
+  ios: true
+  web: false
+
+  android_gravity: center
+  ios_content_mode: center
+
+  # Android 12+ draws its own splash: a centered icon on a solid background,
+  # masked to a circle. It ignores the settings above.
+  android_12:
+    image: assets/images/logo.jpeg
+    icon_background_color: "#FFFFFF"
+    image_dark: assets/images/logo.jpeg
+    icon_background_color_dark: "#FFFFFF"
