@@ -133,7 +133,7 @@ class ProfileScreen extends StatelessWidget {
               Row(
                 children: [
                   AppText(
-                    '✨ Дараагийн түвшин',
+                    'Дараагийн түвшин',
                     size: 11,
                     weight: FontWeight.w600,
                     color: AppColors.slate500,

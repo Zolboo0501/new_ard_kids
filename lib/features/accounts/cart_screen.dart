@@ -72,7 +72,7 @@ class _CartScreenState extends State<CartScreen> {
 
   void _submit() {
     // TODO: send the order for parent approval.
-    showAppSnack(context, 'Захиалга аав ээж рүү илгээгдлээ ✨');
+    showAppSnack(context, 'Захиалга аав ээж рүү илгээгдлээ');
     context.pop();
   }
 
@@ -316,7 +316,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           const SizedBox(height: 18),
           PrimaryButton(
-            label: 'Захиалга илгээх ✨',
+            label: 'Захиалга илгээх',
             onPressed: _items.isEmpty || _subtotal > _balance ? null : _submit,
           ),
         ],

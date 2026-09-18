@@ -54,7 +54,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
 
   void _submit() {
     // TODO: submit the card order for parent approval.
-    showAppSnack(context, 'Карт захиалга эцэг эхийн зөвшөөрөлд илгээгдлээ ✨');
+    showAppSnack(context, 'Карт захиалга эцэг эхийн зөвшөөрөлд илгээгдлээ');
     context.pop();
   }
 
@@ -288,7 +288,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
           ),
           const SizedBox(height: 20),
           PrimaryButton(
-            label: 'Карт захиалах ✨',
+            label: 'Карт захиалах',
             height: 54,
             onPressed: _valid ? _submit : null,
           ),

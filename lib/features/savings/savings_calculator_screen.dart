@@ -289,7 +289,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _ResultBox(
-                        label: '✨ Цэвэр хүүгийн өсөлт:',
+                        label: 'Цэвэр хүүгийн өсөлт:',
                         value: '+${formatMnt(result.interest, space: true)}',
                         background: AppColors.sky50.withValues(alpha: 0.6),
                         border: AppColors.sky100,
@@ -383,7 +383,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
           ),
           const SizedBox(height: 18),
           PrimaryButton(
-            label: '✨ Энэ дүнгээр хадгаламж нээх',
+            label: 'Энэ дүнгээр хадгаламж нээх',
             onPressed: () => context.pushReplacement(AppRoutes.savingsDeposit),
           ),
         ],

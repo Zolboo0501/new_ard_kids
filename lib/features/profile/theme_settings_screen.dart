@@ -42,7 +42,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
   void _save() {
     // TODO: persist and apply the theme app-wide.
     setState(() => _saved = _selected);
-    showAppSnack(context, '"${_themes[_selected].$3}" өнгө хадгалагдлаа ✨');
+    showAppSnack(context, '"${_themes[_selected].$3}" өнгө хадгалагдлаа');
   }
 
   @override
@@ -95,7 +95,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                       ),
                       const SizedBox(height: 6),
                       AppText(
-                        'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай! ✨',
+                        'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай!',
                         size: 13,
                         weight: FontWeight.w500,
                         color: AppColors.slate600,

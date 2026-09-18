@@ -842,7 +842,7 @@ class _LinkParentBanner extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             PrimaryButton(
-              label: 'Эцэг эхээ холбох 🚀',
+              label: 'Эцэг эхээ холбох ',
               height: 40,
               onPressed: onLink,
             ),
@@ -1118,7 +1118,7 @@ class _CardsPane extends StatelessWidget {
         const SizedBox(height: 10),
         _DashedAction(
           icon: Icons.add_card_rounded,
-          label: 'Шинэ загварын хүүхдийн карт захиалах ✨',
+          label: 'Шинэ загварын хүүхдийн карт захиалах',
           onTap: () => onOpen(AppRoutes.cardOrder),
         ),
       ],

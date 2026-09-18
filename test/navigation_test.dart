@@ -106,7 +106,7 @@ void main() {
     expect(picker.editing, isTrue);
     expect(find.text('Алхам 3/3'), findsNothing);
 
-    final save = find.text('Аватараа хадгалах ✨');
+    final save = find.text('Аватараа хадгалах');
     await tester.ensureVisible(save);
     await tester.tap(save);
     await tester.pumpAndSettle();

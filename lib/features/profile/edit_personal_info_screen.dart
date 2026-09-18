@@ -50,7 +50,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
 
   void _save() {
     // TODO: send the profile update for parent approval.
-    showAppSnack(context, 'Өөрчлөлт эцэг эхийн зөвшөөрөлд илгээгдлээ ✨');
+    showAppSnack(context, 'Өөрчлөлт эцэг эхийн зөвшөөрөлд илгээгдлээ');
     context.pop();
   }
 
@@ -285,7 +285,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
           ),
           const SizedBox(height: 18),
           PrimaryButton(
-            label: 'Хадгалах & Хүсэлт илгээх ✨',
+            label: 'Хадгалах & Хүсэлт илгээх',
             height: 56,
             onPressed: _name.text.trim().isEmpty ? null : _save,
           ),

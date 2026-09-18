@@ -54,7 +54,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
   void _submit() {
     // TODO: persist the goal.
-    showAppSnack(context, '"${_name.text.trim()}" зорилго үүслээ 🚀');
+    showAppSnack(context, '"${_name.text.trim()}" зорилго үүслээ');
     context.pop();
   }
 
@@ -97,7 +97,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const StatusBadge(
-                        label: '✨ Мөрөөдлөө биелүүлцгээе!',
+                        label: 'Мөрөөдлөө биелүүлцгээе!',
                         tone: BadgeTone.amber,
                       ),
                       const SizedBox(height: 6),
@@ -349,7 +349,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
           ),
           const SizedBox(height: 20),
           PrimaryButton(
-            label: '✨ Зорилго үүсгэх 🚀',
+            label: 'Зорилго үүсгэх',
             height: 56,
             onPressed: _valid ? _submit : null,
           ),

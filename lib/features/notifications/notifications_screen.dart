@@ -79,7 +79,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       route: AppRoutes.savingsAccount,
       kind: NotificationKind.goal,
       time: '4 цагийн өмнө',
-      title: 'PlayStation 5 Pro зорилго 50%-д хүрлээ! 🎮✨',
+      title: 'PlayStation 5 Pro зорилго 50%-д хүрлээ!',
       body: const TextSpan(
         text: 'Та зорилгынхоо талыг хуримтлуулж чадлаа, мундаг байна!',
       ),

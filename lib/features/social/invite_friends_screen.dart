@@ -62,7 +62,7 @@ class InviteFriendsScreen extends StatelessWidget {
                           color: AppColors.sky600,
                         ),
                       ),
-                      const TextSpan(text: ' урамшуулал аваарай! ✨'),
+                      const TextSpan(text: ' урамшуулал аваарай!'),
                     ],
                   ),
                   textAlign: TextAlign.center,
@@ -354,7 +354,7 @@ class InviteFriendsScreen extends StatelessWidget {
           ],
           const SizedBox(height: 10),
           PrimaryButton(
-            label: 'Найзуудтайгаа хуваалцах 🚀',
+            label: 'Найзуудтайгаа хуваалцах',
             leadingIcon: Icons.rocket_launch_outlined,
             onPressed: () => _copy(context),
           ),

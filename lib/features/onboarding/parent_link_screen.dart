@@ -118,7 +118,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                         decorationThickness: 2,
                       ),
                 ),
-                const TextSpan(text: ' нэмэгдүүлээрэй! ✨'),
+                const TextSpan(text: ' нэмэгдүүлээрэй!'),
               ],
             ),
             textAlign: TextAlign.center,
@@ -272,7 +272,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
           ),
           const SizedBox(height: 20),
           PrimaryButton(
-            label: 'Эцэг эх рүү хүсэлт илгээх 🚀',
+            label: 'Эцэг эх рүү хүсэлт илгээх',
             height: 56,
             onPressed: _valid ? _submit : null,
           ),
@@ -533,7 +533,7 @@ class _SuccessSheet extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             AppText(
-              'Хүсэлт амжилттай илгээгдлээ! ✨',
+              'Хүсэлт амжилттай илгээгдлээ!',
               size: 16,
               weight: FontWeight.w700,
               textAlign: TextAlign.center,

@@ -56,7 +56,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     // TODO: send the request to the parent's app.
     showAppSnack(
       context,
-      '${_parents[_parent].$1} руу ${formatMnt(_value)} хүсэлт илгээлээ ✨',
+      '${_parents[_parent].$1} руу ${formatMnt(_value)} хүсэлт илгээлээ',
     );
     context.pushReplacement(AppRoutes.requestList);
   }
@@ -224,7 +224,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
           ),
           const SizedBox(height: 18),
           PrimaryButton(
-            label: 'Хүсэлт илгээх ✨',
+            label: 'Хүсэлт илгээх',
             leadingIcon: Icons.send_rounded,
             onPressed: _value > 0 ? _submit : null,
           ),
