@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 
@@ -54,7 +55,14 @@ class _QrScanScreenState extends State<QrScanScreen>
           24 + MediaQuery.paddingOf(context).bottom,
         ),
         children: [
-          _Tabs(index: _tab, onChanged: (i) => setState(() => _tab = i)),
+          AppTabs(
+            tabs: const [
+              AppTab('QR унших', icon: Icons.qr_code_scanner_rounded),
+              AppTab('Миний QR', icon: Icons.qr_code_2_rounded),
+            ],
+            index: _tab,
+            onChanged: (i) => setState(() => _tab = i),
+          ),
           const SizedBox(height: 16),
           if (_tab == 0) ..._buildScan() else ..._buildMyQr(),
         ],
@@ -318,64 +326,6 @@ class _QrScanScreenState extends State<QrScanScreen>
         ),
       ),
     ];
-  }
-}
-
-class _Tabs extends StatelessWidget {
-  const _Tabs({required this.index, required this.onChanged});
-
-  final int index;
-  final ValueChanged<int> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    const items = [
-      (Icons.qr_code_scanner_rounded, 'QR унших'),
-      (Icons.qr_code_2_rounded, 'Миний QR'),
-    ];
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.slate200.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          for (final (i, item) in items.indexed)
-            Expanded(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => onChanged(i),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    color: i == index ? AppColors.sky500 : Colors.transparent,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        item.$1,
-                        size: 17,
-                        color: i == index ? Colors.white : AppColors.slate600,
-                      ),
-                      const SizedBox(width: 6),
-                      AppText(
-                        item.$2,
-                        size: 13,
-                        weight: FontWeight.w700,
-                        color: i == index ? Colors.white : AppColors.slate600,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
   }
 }
 

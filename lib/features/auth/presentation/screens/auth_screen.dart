@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +6,10 @@ import 'package:flutter/services.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
-import '../../../../widgets/entrance.dart';
+import '../../../../widgets/app_input.dart';
+import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/entrance.dart';
 
 enum AuthMode { login, register }
 
@@ -265,33 +266,22 @@ class _AuthScreenState extends State<AuthScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _ModeSwitcher(
-            mode: _mode,
-            onChanged: (mode) => setState(() => _mode = mode),
+          AppTabs(
+            tabs: const [AppTab('Нэвтрэх'), AppTab('Бүртгүүлэх')],
+            index: _mode.index,
+            onChanged: (i) => setState(() => _mode = AuthMode.values[i]),
           ),
           const SizedBox(height: 16),
-          const _FieldLabel('Нэвтрэх нэр'),
+          const AppFieldLabel('Нэвтрэх нэр'),
           const SizedBox(height: 6),
-          _InputShell(
+          AppInputShell(
             hasError: _nameError != null,
             leading: const Icon(
               Icons.person_outline_rounded,
               size: 18,
               color: AppColors.sky500,
             ),
-            trailing: AnimatedOpacity(
-              opacity: _nameValid ? 1 : 0,
-              duration: const Duration(milliseconds: 150),
-              child: const SizedBox(
-                width: 32,
-                height: 32,
-                child: Icon(
-                  Icons.check_circle_rounded,
-                  size: 20,
-                  color: AppColors.emerald500,
-                ),
-              ),
-            ),
+            trailing: AppFieldTick(visible: _nameValid),
             child: TextField(
               controller: _nameController,
               focusNode: _nameFocus,
@@ -301,21 +291,19 @@ class _AuthScreenState extends State<AuthScreen>
                 FilteringTextInputFormatter.allow(_nameAllowed),
                 LengthLimitingTextInputFormatter(_nameMaxLength),
               ],
-              style: _inputStyle,
-              decoration: _inputDecoration('Тэмүүлэн, Мишээл...'),
+              style: appInputStyle(),
+              decoration: appInputDecoration('Тэмүүлэн, Мишээл...'),
             ),
           ),
-          _FieldError(message: _nameError),
+          AppFieldError(message: _nameError),
           const SizedBox(height: 14),
-          const _FieldLabel('Гар утасны дугаар'),
+          const AppFieldLabel('Гар утасны дугаар'),
           const SizedBox(height: 6),
-          _InputShell(
+          AppInputShell(
             hasError: _phoneError != null,
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('🇲🇳', style: TextStyle(fontSize: 14, height: 1)),
-                const SizedBox(width: 6),
                 AppText(
                   '+976',
                   size: 12,
@@ -324,19 +312,7 @@ class _AuthScreenState extends State<AuthScreen>
                 ),
               ],
             ),
-            trailing: AnimatedOpacity(
-              opacity: _phoneValid ? 1 : 0,
-              duration: const Duration(milliseconds: 150),
-              child: const SizedBox(
-                width: 32,
-                height: 32,
-                child: Icon(
-                  Icons.check_circle_rounded,
-                  size: 20,
-                  color: AppColors.emerald500,
-                ),
-              ),
-            ),
+            trailing: AppFieldTick(visible: _phoneValid),
             child: TextField(
               controller: _phoneController,
               focusNode: _phoneFocus,
@@ -347,11 +323,11 @@ class _AuthScreenState extends State<AuthScreen>
                 FilteringTextInputFormatter.digitsOnly,
                 LengthLimitingTextInputFormatter(_phoneLength),
               ],
-              style: _inputStyle.copyWith(letterSpacing: 0.8),
-              decoration: _inputDecoration('9911 2345'),
+              style: appInputStyle(letterSpacing: 0.8),
+              decoration: appInputDecoration('9911 2345'),
             ),
           ),
-          _FieldError(message: _phoneError),
+          AppFieldError(message: _phoneError),
           const SizedBox(height: 14),
           _HelperNote(
             text: isLogin
@@ -366,18 +342,6 @@ class _AuthScreenState extends State<AuthScreen>
           ),
         ],
       ),
-    );
-  }
-
-  TextStyle get _inputStyle => comfortaa(size: 14, weight: FontWeight.w700);
-
-  InputDecoration _inputDecoration(String hint) {
-    return InputDecoration(
-      isDense: true,
-      border: InputBorder.none,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      hintText: hint,
-      hintStyle: comfortaa(size: 14, color: AppColors.slate300),
     );
   }
 }
@@ -425,293 +389,6 @@ class _Mascot extends StatelessWidget {
         color: AppColors.surface,
         colorBlendMode: BlendMode.multiply,
         semanticLabel: 'Ard KIDS улаан панда',
-      ),
-    );
-  }
-}
-
-class _ModeSwitcher extends StatelessWidget {
-  const _ModeSwitcher({required this.mode, required this.onChanged});
-
-  final AuthMode mode;
-  final ValueChanged<AuthMode> onChanged;
-
-  static const _duration = Duration(milliseconds: 280);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.slate100.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.slate200.withValues(alpha: 0.5)),
-      ),
-      child: Stack(
-        children: [
-          // One pill that travels between the two halves, rather than two
-          // pills fading in and out in place.
-          Positioned.fill(
-            child: AnimatedAlign(
-              duration: _duration,
-              curve: appEmphasizedDecelerate,
-              alignment: mode == AuthMode.login
-                  ? Alignment.centerLeft
-                  : Alignment.centerRight,
-              child: FractionallySizedBox(
-                widthFactor: 0.5,
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(999),
-                    gradient: const LinearGradient(
-                      colors: [AppColors.sky500, AppColors.sky400],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.sky500.withValues(alpha: 0.3),
-                        offset: const Offset(0, 2),
-                        blurRadius: 8,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              _tab('Нэвтрэх', AuthMode.login),
-              _tab('Бүртгүүлэх', AuthMode.register),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _tab(String label, AuthMode value) {
-    final selected = mode == value;
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => onChanged(value),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 9),
-          // The label colour crosses over while the pill slides under it.
-          child: AnimatedDefaultTextStyle(
-            duration: _duration,
-            curve: appEmphasizedDecelerate,
-            style: comfortaa(
-              size: 12,
-              weight: FontWeight.w700,
-              color: selected ? Colors.white : AppColors.slate500,
-            ),
-            child: Text(label, textAlign: TextAlign.center),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: AppText(
-        text,
-        size: 12,
-        weight: FontWeight.w700,
-        color: AppColors.slate600,
-      ),
-    );
-  }
-}
-
-/// Rounded input container with a white badge on the left; highlights with a
-/// sky border and halo while the inner field has focus.
-class _InputShell extends StatefulWidget {
-  const _InputShell({
-    required this.leading,
-    required this.child,
-    this.trailing,
-    this.hasError = false,
-  });
-
-  final Widget leading;
-  final Widget child;
-  final Widget? trailing;
-
-  /// Paints the border and halo red instead of sky.
-  final bool hasError;
-
-  @override
-  State<_InputShell> createState() => _InputShellState();
-}
-
-class _InputShellState extends State<_InputShell>
-    with SingleTickerProviderStateMixin {
-  bool _focused = false;
-
-  /// Plays once each time this field newly becomes invalid.
-  late final AnimationController _shake = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 420),
-  );
-
-  @override
-  void didUpdateWidget(_InputShell old) {
-    super.didUpdateWidget(old);
-    // Only on the transition into an error, so re-submitting with the same
-    // mistake still nudges but typing does not.
-    if (!old.hasError &&
-        widget.hasError &&
-        !MediaQuery.disableAnimationsOf(context)) {
-      _shake.forward(from: 0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _shake.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _shake,
-      child: _buildShell(),
-      builder: (context, child) {
-        if (_shake.isDismissed) return child!;
-        // Three decaying swings either side of centre.
-        final decay = 1 - _shake.value;
-        final dx = math.sin(_shake.value * math.pi * 6) * 6 * decay;
-        return Transform.translate(offset: Offset(dx, 0), child: child);
-      },
-    );
-  }
-
-  Widget _buildShell() {
-    return Focus(
-      canRequestFocus: false,
-      skipTraversal: true,
-      onFocusChange: (f) => setState(() => _focused = f),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: _focused ? Colors.white : AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: widget.hasError
-                ? AppColors.rose400
-                : _focused
-                ? AppColors.sky400
-                : AppColors.slate200,
-          ),
-          boxShadow: widget.hasError || _focused
-              ? [
-                  BoxShadow(
-                    color:
-                        (widget.hasError ? AppColors.rose400 : AppColors.sky400)
-                            .withValues(alpha: 0.4),
-                    spreadRadius: 2,
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.slate100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    offset: const Offset(0, 1),
-                    blurRadius: 2,
-                  ),
-                ],
-              ),
-              child: widget.leading,
-            ),
-            const SizedBox(width: 8),
-            Expanded(child: widget.child),
-            ?widget.trailing,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Validation message under a field. Collapses to nothing when [message] is
-/// null so the card doesn't reserve empty space.
-class _FieldError extends StatelessWidget {
-  const _FieldError({required this.message});
-
-  final String? message;
-
-  static const _duration = Duration(milliseconds: 240);
-
-  @override
-  Widget build(BuildContext context) {
-    // AnimatedSize opens the gap; AnimatedSwitcher fades and drops the message
-    // into it, so the text arrives with the space instead of popping in.
-    return AnimatedSize(
-      duration: _duration,
-      curve: appEmphasizedDecelerate,
-      alignment: Alignment.topCenter,
-      child: AnimatedSwitcher(
-        duration: _duration,
-        switchInCurve: appEmphasizedDecelerate,
-        switchOutCurve: appEmphasizedAccelerate,
-        transitionBuilder: (child, animation) => FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween(
-              begin: const Offset(0, -0.35),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        ),
-        child: message == null
-            ? const SizedBox(key: ValueKey('none'), width: double.infinity)
-            : Padding(
-                key: ValueKey(message),
-                padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Icon(
-                      Icons.error_outline_rounded,
-                      size: 15,
-                      color: AppColors.rose500,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: AppText(
-                        message!,
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.rose600,
-                        height: 1.35,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
       ),
     );
   }

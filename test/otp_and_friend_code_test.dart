@@ -121,6 +121,38 @@ void main() {
       expect(find.byType(AvatarPickerScreen), findsNothing);
     });
 
+    testWidgets('the field takes focus once the entrance has settled', (
+      tester,
+    ) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.friendCode));
+
+      // Mid-entrance the keyboard must not have been raised yet.
+      await tester.pump(const Duration(milliseconds: 200));
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.focusNode!.hasFocus, isFalse);
+
+      // The entrance is 750ms.
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(field.focusNode!.hasFocus, isTrue);
+    });
+
+    testWidgets('reduced motion focuses the field straight away', (
+      tester,
+    ) async {
+      usePhoneViewport(tester);
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: _wrap(AppRoutes.friendCode),
+        ),
+      );
+      await tester.pump();
+
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.focusNode!.hasFocus, isTrue);
+    });
+
     testWidgets('a username starting with a digit is rejected', (tester) async {
       usePhoneViewport(tester);
       await tester.pumpWidget(_wrap(AppRoutes.friendCode));

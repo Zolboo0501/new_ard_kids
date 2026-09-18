@@ -62,6 +62,10 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
   late final Animation<double> _bannerIn;
   late final Animation<double> _buttonIn;
 
+  /// Guards against re-focusing if the entrance reports completion more than
+  /// once, or if the user has already moved focus elsewhere.
+  bool _autofocused = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +74,10 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
     _cardIn = _stagger.slice(0.14);
     _bannerIn = _stagger.slice(0.2);
     _buttonIn = _stagger.slice(0.26);
+    // Focus the field once the card has finished animating in, rather than
+    // `autofocus: true`, which would raise the keyboard over a screen that is
+    // still drawing itself.
+    _entrance.addStatusListener(_autofocusWhenSettled);
     _entrance.forward();
     _username.addListener(() {
       setState(() {
@@ -82,11 +90,19 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Reduced motion: show the finished layout instead of animating it in.
+    // Setting the value reports `completed`, so the field still gets focus.
     if (MediaQuery.disableAnimationsOf(context)) _entrance.value = 1;
+  }
+
+  void _autofocusWhenSettled(AnimationStatus status) {
+    if (status != AnimationStatus.completed || _autofocused || !mounted) return;
+    _autofocused = true;
+    _usernameFocus.requestFocus();
   }
 
   @override
   void dispose() {
+    _entrance.removeStatusListener(_autofocusWhenSettled);
     _stagger.dispose();
     _entrance.dispose();
     _username.dispose();

@@ -37,7 +37,11 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
   - The `auth` screens simulate network calls with `Timer`s and cancel them in `dispose`.
   - Colors are compile-time `AppColors` constants, so `ThemeSettingsScreen` only saves the choice locally. Theme switching would need real theme plumbing.
 - `lib/widgets/`: widgets shared across screens.
-  - `ui.dart`: the shared kit: `AppCard`, `PrimaryButton`/`SoftButton`, `SubPageHeader`, `SegmentedTabs`, `StatusBadge`/`BadgeTone`, `AppTextField`, `MascotTile`, `ProgressTrack`, `formatMnt` (₮ formatting), `moneyStyle`, and `Mascots` (asset paths). Use these instead of re-styling.
+  - `ui.dart`: the shared kit: `AppCard`, `PrimaryButton`/`SoftButton`, `SubPageHeader`, `StatusBadge`/`BadgeTone`, `AppTextField`, `MascotTile`, `ProgressTrack`, `formatMnt` (₮ formatting), `moneyStyle`, and `Mascots` (asset paths). Use these instead of re-styling.
+  - `app_text.dart`: `AppText`, a `Text` that is always Comfortaa. Use it instead of `Text(..., style: comfortaa(...))`; reach for `comfortaa()` directly only where a `TextStyle` is needed (inside a `TextSpan`, a `hintStyle`, a `TextField.style`).
+  - `app_tabs.dart`: `AppTabs`/`AppTab`, the segmented control with a pill that slides between tabs. Used by the sign-in, home and QR screens. The scrollable filter chips in the request/notification lists are a different affordance and are not this.
+  - `app_input.dart`: `AppInputShell`, `AppFieldLabel`, `AppFieldError`, `AppFieldTick`, plus `appInputStyle()`/`appInputDecoration()` — the form-field look, including the shake when a field newly becomes invalid.
+  - `entrance.dart`: `Entrance`/`EntranceStagger`, the staggered fade-and-rise a screen plays once on open. Slices are built once in `initState` and disposed with the controller.
   - `NumericKeypad` / `KeypadKey`: an on-screen digit pad used instead of the system keyboard. Each screen passes its own `KeypadStyle`.
   - `common.dart`: `CircleBackButton`, `BlinkingCursor` and `MascotImage`. `MascotImage` multiply-blends white-background mascot images into the surface color.
 - `lib/theme/app_theme.dart`: the design tokens.

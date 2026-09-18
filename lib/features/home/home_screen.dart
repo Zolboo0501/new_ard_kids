@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
+import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 
@@ -95,8 +96,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                SegmentedTabs(
-                  labels: const ['Данс', 'Нэхэмжлэх', 'Карт'],
+                AppTabs(
+                  tabs: const [
+                    AppTab('Данс'),
+                    AppTab('Нэхэмжлэх'),
+                    AppTab('Карт'),
+                  ],
                   index: _tab,
                   dotOnActive: true,
                   onChanged: (i) => setState(() => _tab = i),

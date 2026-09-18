@@ -4,9 +4,13 @@ import 'package:new_ard_kids/widgets/common.dart';
 import '../../../../widgets/app_text.dart';
 
 class Header extends StatelessWidget {
-  const Header({super.key, required this.step});
+  const Header({super.key, required this.step, this.trailing});
 
   final String step;
+
+  /// Optional action pinned to the right of the step pill, for screens that
+  /// offer something alongside going back (a skip, for instance).
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +48,8 @@ class Header extends StatelessWidget {
               ],
             ),
           ),
+          if (trailing != null)
+            Align(alignment: Alignment.centerRight, child: trailing),
         ],
       ),
     );
