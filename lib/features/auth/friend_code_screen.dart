@@ -103,6 +103,53 @@ class _FriendCodeScreenState extends State<FriendCodeScreen> {
           ),
         ),
         const SizedBox(height: 4),
+        _buildHeroRow(),
+        const SizedBox(height: 12),
+        _buildCodeCard(),
+        const SizedBox(height: 10),
+        const _RewardBanner(),
+        const SizedBox(height: 12),
+        _ConfirmButton(
+          enabled: _complete,
+          onPressed: () => _finish(skipped: false),
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  /// Title and description on the left, mascot on the right.
+  Widget _buildHeroRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Найзын урилгын код',
+                style: comfortaa(
+                  size: 22,
+                  weight: FontWeight.w700,
+                  height: 1.3,
+                  letterSpacing: -0.6,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Найзаасаа авсан 6 оронтой урилгын кодыг оруулж, хоёулаа урамшуулал аваарай!',
+                style: comfortaa(
+                  size: 13,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate500,
+                  height: 1.625,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
         const SizedBox(
           width: 128,
           height: 128,
@@ -115,40 +162,6 @@ class _FriendCodeScreenState extends State<FriendCodeScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        Text(
-          'Найзын урилгын код',
-          textAlign: TextAlign.center,
-          style: comfortaa(
-            size: 24,
-            weight: FontWeight.w700,
-            letterSpacing: -0.6,
-          ),
-        ),
-        const SizedBox(height: 6),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 280),
-          child: Text(
-            'Найзаасаа авсан 6 оронтой урилгын кодыг оруулж, хоёулаа урамшуулал аваарай!',
-            textAlign: TextAlign.center,
-            style: comfortaa(
-              size: 13,
-              weight: FontWeight.w500,
-              color: AppColors.slate500,
-              height: 1.625,
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        _buildCodeCard(),
-        const SizedBox(height: 10),
-        const _RewardBanner(),
-        const SizedBox(height: 12),
-        _ConfirmButton(
-          enabled: _complete,
-          onPressed: () => _finish(skipped: false),
-        ),
-        const SizedBox(height: 12),
       ],
     );
   }

@@ -6,6 +6,7 @@ import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/home/home_shell.dart';
 import 'package:new_ard_kids/features/onboarding/avatar_picker_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/common.dart';
 
 Future<GoRouter> _pumpApp(WidgetTester tester, String location) async {
   tester.view.physicalSize = const Size(390 * 3, 844 * 3);
@@ -21,8 +22,13 @@ Future<GoRouter> _pumpApp(WidgetTester tester, String location) async {
   return router;
 }
 
-String _location(GoRouter router) =>
-    router.routerDelegate.currentConfiguration.uri.toString();
+/// Finds the [Semantics] widget declaring [label] (no semantics tree needed).
+Finder _semantic(String label) => find.byWidgetPredicate(
+  (w) => w is Semantics && w.properties.label == label,
+);
+
+/// Location of the top-most screen, including ones opened with `push`.
+String _location(GoRouter router) => router.state.uri.toString();
 
 void main() {
   testWidgets('bottom nav switches branches and keeps tab state', (
@@ -57,7 +63,7 @@ void main() {
     expect(_location(router), AppRoutes.transfer);
     expect(find.byType(FloatingNavBar), findsNothing);
 
-    await tester.tap(find.bySemanticsLabel('Буцах').first);
+    await tester.tap(find.byType(CircleBackButton).first);
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.home);
     expect(find.byType(FloatingNavBar), findsOneWidget);
@@ -65,8 +71,9 @@ void main() {
 
   testWidgets('QR button opens the scanner above the shell', (tester) async {
     final router = await _pumpApp(tester, AppRoutes.home);
-    await tester.tap(find.bySemanticsLabel('QR уншуулах'));
-    await tester.pumpAndSettle();
+    await tester.tap(_semantic('QR уншуулах'));
+    // The scanner line animates forever, so pump past the transition.
+    await tester.pump(const Duration(milliseconds: 600));
     expect(_location(router), AppRoutes.qrScan);
   });
 
@@ -87,7 +94,7 @@ void main() {
     tester,
   ) async {
     final router = await _pumpApp(tester, AppRoutes.profile);
-    await tester.tap(find.bySemanticsLabel('Аватар солих'));
+    await tester.tap(_semantic('Аватар солих'));
     await tester.pumpAndSettle();
 
     final picker = tester.widget<AvatarPickerScreen>(

@@ -21,15 +21,18 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 ## Architecture
 
 - `lib/main.dart`: `ArdKidsApp` builds `MaterialApp.router` with the router from `AppRoutes.createRouter()`.
-- `lib/app/routes.dart`: `AppRoutes` holds every path (flat, top-level `GoRoute`s, auth at `/`) and `createRouter({initialLocation, extra})`.
+- `lib/app/routes.dart`: `AppRoutes` holds every path and `createRouter({initialLocation, extra})`.
+  - The signed-in bottom nav is a `StatefulShellRoute.indexedStack` with two branches, `/home` and `/profile`, rendered by `HomeShell`. Each tab keeps its own state. Switch tabs with `navigationShell.goBranch` or `context.go`.
+  - Every other screen is a flat top-level `GoRoute` (sign-in at `/`). Pushing one covers the nav bar.
+  - Some screen variants are query parameters: `AppRoutes.homeUnlinked` (`/home?linked=false`) and `avatarPickerEdit` (`?edit=true`, opened from Profile; it pops on save instead of continuing onboarding).
   - Navigate with `context.push` to stack a screen, `context.pushReplacement` to swap it, and `context.go` to reset the stack (after sign-in, logout, skipping the parent link).
   - Pass data through `extra`: the phone number for `/otp`, a `TransferReceipt` for `/transfer/success`.
   - Only dialogs and bottom sheets still use `Navigator.pop` to return their result.
   - Transitions: every route is a `CustomTransitionPage` built by `lib/app/page_transitions.dart`. The default is `AppTransition.slide`; set `fade` (stack resets) or `rise` (task screens such as QR and the receipt) in `AppRoutes._transitions`. Reduced motion skips the animation.
-  - When you add a screen, register it in `_builders`. `test/screens_smoke_test.dart` renders every path in `AppRoutes.paths`.
+  - When you add a screen, register it in `_builders`. `test/screens_smoke_test.dart` renders every path in `AppRoutes.paths`, and `test/navigation_test.dart` covers tab switching and the pushes that cross the shell.
 - `lib/features/<feature>/`: one file per screen, ported from the Stitch project "Kids Finance & Allowance App" (`projects/13411384382310318082`). Screens are `StatefulWidget`s with local state, and each file keeps its small subwidgets private.
   - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `ParentLinkScreen` → `HomeShell` (`/home`, or `/home/unlinked` when the parent link is skipped).
-  - `home/home_shell.dart`: home and profile tabs with `FloatingNavBar`; the center QR button pushes `/qr`. Pushed sub-pages have no bottom nav.
+  - `home/home_shell.dart`: the `FloatingNavBar` for the shell. The center QR button pushes `/qr`.
   - Other folders: `transfer` (transfer, receipt, QR, money requests), `savings`, `accounts` (coin, rewards, stocks, card order, cart), `social`, `notifications`, `profile`, `onboarding`.
   - The `auth` screens simulate network calls with `Timer`s and cancel them in `dispose`.
   - Colors are compile-time `AppColors` constants, so `ThemeSettingsScreen` only saves the choice locally. Theme switching would need real theme plumbing.
@@ -49,6 +52,8 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 
 - Widget tests pump `MaterialApp.router(theme: buildAppTheme(), routerConfig: AppRoutes.createRouter(initialLocation: ..., extra: ...))`, one fresh router per test, so navigation works as in the app.
 - `test/screens_smoke_test.dart` pumps every route at 390×844 and scrolls it. Any `RenderFlex` overflow or build error fails the test, so run it after layout changes.
+- To check the current location in a test, read `router.state.uri`. `routerDelegate.currentConfiguration` ignores screens opened with `push`.
+- The QR scanner animates forever, so use `pump(Duration)` there instead of `pumpAndSettle`.
 - `test/flutter_test_config.dart` loads the real Comfortaa font for all tests. The default test font renders glyphs as wide squares and causes false overflow errors.
 - Screens with a keypad set a phone-sized viewport (`tester.view.physicalSize` / `devicePixelRatio`, reset with `addTearDown`) so all keys fit on screen.
 - Keypad digits can match other text, so tests tap `find.text(d).last`.

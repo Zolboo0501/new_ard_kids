@@ -96,72 +96,116 @@ class _OtpScreenState extends State<OtpScreen> {
     return Scaffold(
       backgroundColor: AppColors.dsSurface,
       body: SafeArea(
+        // The keypad is pinned to the bottom and never scrolls; only the
+        // content above it scrolls, so the keys stay reachable on short
+        // screens.
         child: Column(
           children: [
             const _Header(step: 'Алхам 2/3'),
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 448),
-                    child: Column(
-                      children: [
-                        const _PandaHero(),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Код баталгаажуулах',
-                          textAlign: TextAlign.center,
-                          style: comfortaa(
-                            size: 24,
-                            weight: FontWeight.w700,
-                            color: AppColors.dsOnSurface,
-                            height: 1.375,
-                            letterSpacing: -0.6,
+              // Give the scrolling child a minimum height of the viewport so
+              // the content can be centred in the space left above the
+              // keypad; it still scrolls when it grows past that.
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  const padding = EdgeInsets.fromLTRB(16, 8, 16, 16);
+                  return SingleChildScrollView(
+                    padding: padding,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: (constraints.maxHeight - padding.vertical)
+                            .clamp(0.0, double.infinity),
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 448),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildHeroRow(),
+                              const SizedBox(height: 16),
+                              _buildCodeCard(),
+                              const SizedBox(height: 16),
+                              AnimatedScale(
+                                scale: _completePulse ? 1.05 : 1,
+                                duration: const Duration(milliseconds: 150),
+                                child: _VerifyButton(
+                                  enabled: _complete,
+                                  onPressed: _verify,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        _buildInstructions(),
-                        const SizedBox(height: 16),
-                        _buildCodeCard(),
-                        const SizedBox(height: 16),
-                        AnimatedScale(
-                          scale: _completePulse ? 1.05 : 1,
-                          duration: const Duration(milliseconds: 150),
-                          child: _VerifyButton(
-                            enabled: _complete,
-                            onPressed: _verify,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.dsSurfaceContainerLow.withValues(
-                              alpha: 0.7,
-                            ),
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: NumericKeypad(
-                            style: const KeypadStyle(
-                              keyHeight: 56,
-                              radius: 32,
-                              gap: 4,
-                              fontSize: 18,
-                              textColor: AppColors.dsOnSurface,
-                              pressedColor: AppColors.dsSurfaceContainerHigh,
-                            ),
-                            onDigit: _onDigit,
-                            onBackspace: _onBackspace,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
+            _buildKeypad(),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Title and instructions on the left, mascot on the right.
+  Widget _buildHeroRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Код баталгаажуулах',
+                style: comfortaa(
+                  size: 22,
+                  weight: FontWeight.w700,
+                  color: AppColors.dsOnSurface,
+                  height: 1.3,
+                  letterSpacing: -0.6,
+                ),
+              ),
+              const SizedBox(height: 8),
+              _buildInstructions(),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        const _PandaHero(size: 128),
+      ],
+    );
+  }
+
+  /// The digit pad, pinned below the scrolling content.
+  Widget _buildKeypad() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 448),
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.dsSurfaceContainerLow.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(40),
+            ),
+            child: NumericKeypad(
+              style: const KeypadStyle(
+                keyHeight: 56,
+                radius: 32,
+                gap: 4,
+                fontSize: 18,
+                textColor: AppColors.dsOnSurface,
+                pressedColor: AppColors.dsSurfaceContainerHigh,
+              ),
+              onDigit: _onDigit,
+              onBackspace: _onBackspace,
+            ),
+          ),
         ),
       ),
     );
@@ -174,42 +218,39 @@ class _OtpScreenState extends State<OtpScreen> {
       color: AppColors.dsOnSurfaceVariant,
       height: 1.625,
     );
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 310),
-      child: Text.rich(
-        TextSpan(
-          style: base,
-          children: [
-            TextSpan(
-              text: _formattedPhone,
-              style: base.copyWith(
-                fontWeight: FontWeight.w700,
-                fontVariations: const [FontVariation.weight(700)],
-                color: AppColors.dsOnSurface,
-              ),
+    return Text.rich(
+      TextSpan(
+        style: base,
+        children: [
+          TextSpan(
+            text: _formattedPhone,
+            style: base.copyWith(
+              fontWeight: FontWeight.w700,
+              fontVariations: const [FontVariation.weight(700)],
+              color: AppColors.dsOnSurface,
             ),
-            const TextSpan(
-              text: ' дугаарт ирсэн 4 оронтой нууц кодыг оруулна уу. ',
-            ),
-            WidgetSpan(
-              alignment: PlaceholderAlignment.baseline,
-              baseline: TextBaseline.alphabetic,
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).maybePop(),
-                child: Text(
-                  'Өөрчлөх',
-                  style: base.copyWith(
-                    fontWeight: FontWeight.w700,
-                    fontVariations: const [FontVariation.weight(700)],
-                    color: AppColors.dsPrimary,
-                  ),
+          ),
+          const TextSpan(
+            text: ' дугаарт ирсэн 4 оронтой нууц кодыг оруулна уу. ',
+          ),
+          WidgetSpan(
+            alignment: PlaceholderAlignment.baseline,
+            baseline: TextBaseline.alphabetic,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).maybePop(),
+              child: Text(
+                'Өөрчлөх',
+                style: base.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontVariations: const [FontVariation.weight(700)],
+                  color: AppColors.dsPrimary,
                 ),
               ),
             ),
-          ],
-        ),
-        textAlign: TextAlign.center,
+          ),
+        ],
       ),
+      textAlign: TextAlign.start,
     );
   }
 
@@ -378,20 +419,24 @@ class _PulsingDotState extends State<_PulsingDot>
 }
 
 class _PandaHero extends StatelessWidget {
-  const _PandaHero();
+  const _PandaHero({this.size = 176});
+
+  /// Side of the square the mascot is laid out in. The glow and the image
+  /// keep the proportions of the original 176px hero.
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 176,
-      height: 176,
+      width: size,
+      height: size,
       child: Stack(
         alignment: Alignment.center,
         children: [
           // Soft sky glow standing in for the CSS drop-shadow filter.
           Container(
-            width: 120,
-            height: 120,
+            width: size * 0.682,
+            height: size * 0.682,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               boxShadow: [
@@ -403,9 +448,9 @@ class _PandaHero extends StatelessWidget {
               ],
             ),
           ),
-          const MascotImage(
+          MascotImage(
             asset: 'assets/images/mascot_panda_key.png',
-            size: 160,
+            size: size * 0.909,
             background: AppColors.dsSurface,
             semanticLabel: 'Алтан түлхүүр барьсан панда',
           ),

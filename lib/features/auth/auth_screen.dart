@@ -21,21 +21,57 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   static const _phoneLength = 8;
+  static const _nameMinLength = 2;
+  static const _nameMaxLength = 20;
+
+  /// Cyrillic (incl. Өө/Үү/Ёё) and Latin letters, digits and `_`. Keeps out
+  /// spaces, punctuation and emoji, so the name stays a usable login handle.
+  static final _nameAllowed = RegExp(r'[A-Za-zА-Яа-яЁёӨөҮү0-9_]');
+  static final _nameStartsWithLetter = RegExp(r'^[A-Za-zА-Яа-яЁёӨөҮү]');
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _nameFocus = FocusNode();
   final _phoneFocus = FocusNode();
 
   AuthMode _mode = AuthMode.login;
   _SubmitState _submitState = _SubmitState.idle;
   final List<Timer> _timers = [];
 
+  /// Shown under their field after a failed submit; cleared as soon as the
+  /// value becomes valid again.
+  String? _nameError;
+  String? _phoneError;
+
   bool get _phoneValid => _phoneController.text.length == _phoneLength;
+  bool get _nameValid => _validateName() == null;
+
+  /// The reason [_nameController]'s text is invalid, or null when it is fine.
+  String? _validateName() {
+    final name = _nameController.text;
+    if (name.isEmpty) return 'Нэвтрэх нэрээ оруулна уу.';
+    if (name.length < _nameMinLength) {
+      return 'Нэвтрэх нэр дор хаяж $_nameMinLength тэмдэгт байх ёстой.';
+    }
+    if (!_nameStartsWithLetter.hasMatch(name)) {
+      return 'Нэвтрэх нэр үсгээр эхлэх ёстой.';
+    }
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
-    _phoneController.addListener(() => setState(() {}));
+    _nameController.addListener(() {
+      setState(() {
+        if (_nameValid) _nameError = null;
+      });
+    });
+    _phoneController.addListener(() {
+      setState(() {
+        if (_phoneValid) _phoneError = null;
+      });
+    });
   }
 
   @override
@@ -45,16 +81,37 @@ class _AuthScreenState extends State<AuthScreen> {
     }
     _nameController.dispose();
     _phoneController.dispose();
+    _nameFocus.dispose();
     _phoneFocus.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_submitState != _SubmitState.idle) return;
-    if (!_phoneValid) {
+
+    // Validate both fields so every problem is shown at once, then focus the
+    // topmost offender.
+    final nameError = _validateName();
+    final phoneError = _phoneValid
+        ? null
+        : _phoneController.text.isEmpty
+        ? 'Гар утасны дугаараа оруулна уу.'
+        : 'Утасны дугаар $_phoneLength оронтой байх ёстой.';
+
+    setState(() {
+      _nameError = nameError;
+      _phoneError = phoneError;
+    });
+
+    if (nameError != null) {
+      _nameFocus.requestFocus();
+      return;
+    }
+    if (phoneError != null) {
       _phoneFocus.requestFocus();
       return;
     }
+
     FocusScope.of(context).unfocus();
     setState(() => _submitState = _SubmitState.sending);
     // TODO: replace the simulated delays with the real OTP request.
@@ -79,56 +136,58 @@ class _AuthScreenState extends State<AuthScreen> {
       backgroundColor: AppColors.surface,
       body: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            const _TopBar(),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 448),
-                    child: Column(
-                      children: [
-                        const _Mascot(),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Ard KIDS-д тавтай морил!',
-                          textAlign: TextAlign.center,
-                          style: comfortaa(
-                            size: 20,
-                            weight: FontWeight.w700,
-                            height: 1.25,
-                            letterSpacing: -0.4,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 290),
-                          child: Text(
-                            'Хүүхдийн ухаалаг санхүүгийн аялал эндээс эхэлнэ.',
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: [
+              const _TopBar(),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 448),
+                      child: Column(
+                        children: [
+                          const _Mascot(),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Ard KIDS',
                             textAlign: TextAlign.center,
                             style: comfortaa(
-                              size: 12,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate500,
-                              height: 1.6,
+                              size: 20,
+                              weight: FontWeight.w700,
+                              height: 1.25,
+                              letterSpacing: -0.4,
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        _buildFormCard(isLogin),
-                        const SizedBox(height: 16),
-                        const _ParentNote(),
-                      ],
+                          const SizedBox(height: 6),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 290),
+                            child: Text(
+                              'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
+                              textAlign: TextAlign.center,
+                              style: comfortaa(
+                                size: 12,
+                                weight: FontWeight.w500,
+                                color: AppColors.slate500,
+                                height: 1.6,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          _buildFormCard(isLogin),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -168,23 +227,44 @@ class _AuthScreenState extends State<AuthScreen> {
           const _FieldLabel('Нэвтрэх нэр'),
           const SizedBox(height: 6),
           _InputShell(
+            hasError: _nameError != null,
             leading: const Icon(
               Icons.person_outline_rounded,
               size: 18,
               color: AppColors.sky500,
             ),
+            trailing: AnimatedOpacity(
+              opacity: _nameValid ? 1 : 0,
+              duration: const Duration(milliseconds: 150),
+              child: const SizedBox(
+                width: 32,
+                height: 32,
+                child: Icon(
+                  Icons.check_circle_rounded,
+                  size: 20,
+                  color: AppColors.emerald500,
+                ),
+              ),
+            ),
             child: TextField(
               controller: _nameController,
+              focusNode: _nameFocus,
               textInputAction: TextInputAction.next,
               onSubmitted: (_) => _phoneFocus.requestFocus(),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(_nameAllowed),
+                LengthLimitingTextInputFormatter(_nameMaxLength),
+              ],
               style: _inputStyle,
-              decoration: _inputDecoration('Жишээ: Тэмүүлэн, Мишээл...'),
+              decoration: _inputDecoration('Тэмүүлэн, Мишээл...'),
             ),
           ),
+          _FieldError(message: _nameError),
           const SizedBox(height: 14),
           const _FieldLabel('Гар утасны дугаар'),
           const SizedBox(height: 6),
           _InputShell(
+            hasError: _phoneError != null,
             leading: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -227,6 +307,7 @@ class _AuthScreenState extends State<AuthScreen> {
               decoration: _inputDecoration('9911 2345'),
             ),
           ),
+          _FieldError(message: _phoneError),
           const SizedBox(height: 14),
           _HelperNote(
             text: isLogin
@@ -399,11 +480,15 @@ class _InputShell extends StatefulWidget {
     required this.leading,
     required this.child,
     this.trailing,
+    this.hasError = false,
   });
 
   final Widget leading;
   final Widget child;
   final Widget? trailing;
+
+  /// Paints the border and halo red instead of sky.
+  final bool hasError;
 
   @override
   State<_InputShell> createState() => _InputShellState();
@@ -425,12 +510,18 @@ class _InputShellState extends State<_InputShell> {
           color: _focused ? Colors.white : AppColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: _focused ? AppColors.sky400 : AppColors.slate200,
+            color: widget.hasError
+                ? AppColors.rose400
+                : _focused
+                ? AppColors.sky400
+                : AppColors.slate200,
           ),
-          boxShadow: _focused
+          boxShadow: widget.hasError || _focused
               ? [
                   BoxShadow(
-                    color: AppColors.sky400.withValues(alpha: 0.4),
+                    color:
+                        (widget.hasError ? AppColors.rose400 : AppColors.sky400)
+                            .withValues(alpha: 0.4),
                     spreadRadius: 2,
                   ),
                 ]
@@ -460,6 +551,50 @@ class _InputShellState extends State<_InputShell> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Validation message under a field. Collapses to nothing when [message] is
+/// null so the card doesn't reserve empty space.
+class _FieldError extends StatelessWidget {
+  const _FieldError({required this.message});
+
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      alignment: Alignment.topCenter,
+      child: message == null
+          ? const SizedBox(width: double.infinity)
+          : Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.error_outline_rounded,
+                    size: 15,
+                    color: AppColors.rose500,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      message!,
+                      style: comfortaa(
+                        size: 11,
+                        weight: FontWeight.w600,
+                        color: AppColors.rose600,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }

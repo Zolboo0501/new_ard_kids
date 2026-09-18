@@ -49,6 +49,10 @@ void main() {
     await tester.pump(const Duration(seconds: 61));
     expect(find.text('Дахин илгээх'), findsOneWidget);
 
+    // The keypad is pinned to the bottom, so the code card above it may need
+    // scrolling into view before the link can be tapped.
+    await tester.ensureVisible(find.text('Дахин илгээх'));
+    await tester.pump();
     await tester.tap(find.text('Дахин илгээх'));
     await tester.pump();
     expect(find.text('01:00'), findsOneWidget);
