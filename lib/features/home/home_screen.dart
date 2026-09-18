@@ -104,26 +104,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                   index: _tab,
                   dotOnActive: true,
+                  style: AppTabsStyle.card,
                   onChanged: (i) => setState(() => _tab = i),
                 ),
                 const SizedBox(height: 14),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
+                AppTabView(
+                  index: _tab,
                   child: switch (_tab) {
                     0 =>
                       linked
-                          ? _AccountsPane(key: const ValueKey(0), onOpen: _go)
+                          ? _AccountsPane(onOpen: _go)
                           : _LockedAccountsPane(
-                              key: const ValueKey(3),
                               onLink: () => _go(AppRoutes.parentLink),
                             ),
                     1 => _InvoicesPane(
-                      key: const ValueKey(1),
                       filter: _invoiceFilter,
                       onFilter: (i) => setState(() => _invoiceFilter = i),
                       onOpen: _go,
                     ),
-                    _ => _CardsPane(key: const ValueKey(2), onOpen: _go),
+                    _ => _CardsPane(onOpen: _go),
                   },
                 ),
               ],
@@ -594,7 +593,7 @@ class _AccountRow extends StatelessWidget {
 }
 
 class _AccountsPane extends StatelessWidget {
-  const _AccountsPane({super.key, required this.onOpen});
+  const _AccountsPane({required this.onOpen});
 
   final ValueChanged<String> onOpen;
 
@@ -654,7 +653,7 @@ class _AccountsPane extends StatelessWidget {
 }
 
 class _LockedAccountsPane extends StatelessWidget {
-  const _LockedAccountsPane({super.key, required this.onLink});
+  const _LockedAccountsPane({required this.onLink});
 
   final VoidCallback onLink;
 
@@ -860,7 +859,6 @@ class _LinkParentBanner extends StatelessWidget {
 
 class _InvoicesPane extends StatelessWidget {
   const _InvoicesPane({
-    super.key,
     required this.filter,
     required this.onFilter,
     required this.onOpen,
@@ -1035,7 +1033,7 @@ class _InvoicesPane extends StatelessWidget {
 }
 
 class _CardsPane extends StatelessWidget {
-  const _CardsPane({super.key, required this.onOpen});
+  const _CardsPane({required this.onOpen});
 
   final ValueChanged<String> onOpen;
 

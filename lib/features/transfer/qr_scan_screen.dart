@@ -61,10 +61,17 @@ class _QrScanScreenState extends State<QrScanScreen>
               AppTab('Миний QR', icon: Icons.qr_code_2_rounded),
             ],
             index: _tab,
+            style: AppTabsStyle.solid,
             onChanged: (i) => setState(() => _tab = i),
           ),
           const SizedBox(height: 16),
-          if (_tab == 0) ..._buildScan() else ..._buildMyQr(),
+          AppTabView(
+            index: _tab,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: _tab == 0 ? _buildScan() : _buildMyQr(),
+            ),
+          ),
         ],
       ),
     );
