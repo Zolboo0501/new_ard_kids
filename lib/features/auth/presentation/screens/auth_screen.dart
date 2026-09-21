@@ -10,6 +10,7 @@ import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
+import '../../../../widgets/ui.dart';
 
 enum AuthMode { login, register }
 
@@ -284,6 +285,7 @@ class _AuthScreenState extends State<AuthScreen>
             trailing: AppFieldTick(visible: _nameValid),
             child: TextField(
               controller: _nameController,
+              onTapOutside: dismissKeyboard,
               focusNode: _nameFocus,
               textInputAction: TextInputAction.next,
               onSubmitted: (_) => _phoneFocus.requestFocus(),
@@ -315,6 +317,7 @@ class _AuthScreenState extends State<AuthScreen>
             trailing: AppFieldTick(visible: _phoneValid),
             child: TextField(
               controller: _phoneController,
+              onTapOutside: dismissKeyboard,
               focusNode: _phoneFocus,
               keyboardType: TextInputType.phone,
               textInputAction: TextInputAction.done,
@@ -518,7 +521,7 @@ class _SubmitButtonState extends State<_SubmitButton> {
       onTapDown: busy ? null : (_) => setState(() => _pressed = true),
       onTapCancel: () => setState(() => _pressed = false),
       onTapUp: busy ? null : (_) => setState(() => _pressed = false),
-      onTap: busy ? null : widget.onPressed,
+      onTap: withHaptic(busy ? null : widget.onPressed),
       child: AnimatedScale(
         scale: _pressed ? 0.98 : 1,
         duration: const Duration(milliseconds: 120),

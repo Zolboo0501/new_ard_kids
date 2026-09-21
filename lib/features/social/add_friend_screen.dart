@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Найз нэмэх": save a friend or family member for quick transfers.
 class AddFriendScreen extends StatefulWidget {
@@ -66,7 +67,11 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
 
   void _save() {
     // TODO: persist the saved friend.
-    showAppSnack(context, '${_nickname.text.trim()} найзаар нэмэгдлээ 🎉');
+    showAppSnack(
+      context,
+      '${_nickname.text.trim()} найзаар нэмэгдлээ',
+      mascot: Mascots.bearConfetti,
+    );
     context.pop();
   }
 
@@ -83,204 +88,210 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
           onPressed: () => context.push(AppRoutes.qrScan),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          12,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppCard(
-            radius: 28,
-            padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const StatusBadge(label: 'ШИНЭ НАЙЗ НЭМЭХ', dot: true),
-                      const SizedBox(height: 8),
-                      AppText(
-                        'Найз эсвэл гэр бүлийн гишүүнээ нэмээд шуурхай гүйлгээ хийгээрэй!',
-                        size: 12,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate500,
-                        height: 1.6,
-                      ),
-                    ],
-                  ),
-                ),
-                const MascotImage(
-                  asset: Mascots.fox,
-                  size: 96,
-                  background: Colors.white,
-                  semanticLabel: 'Cute fox mascot',
-                ),
-              ],
-            ),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
           ),
-          const SizedBox(height: 16),
-          const SectionHeader(
-            title: 'Харилцаа сонгох',
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
-          ),
-          Row(
-            children: [
-              for (final (i, r) in _relations.indexed) ...[
-                if (i > 0) const SizedBox(width: 8),
-                Expanded(
-                  child: _RelationButton(
-                    label: r.$1,
-                    asset: r.$2,
-                    tint: r.$3,
-                    selected: _relation == i,
-                    onTap: () => setState(() => _relation = i),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 16),
-          AppCard(
-            radius: 28,
-            padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const FieldLabel('Найзын нэр'),
-                AppTextField(
-                  controller: _nickname,
-                  hint: 'Жишээ: Анар, Батаа...',
-                  suffix: const Icon(
-                    Icons.badge_outlined,
-                    size: 20,
-                    color: AppColors.sky600,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                const FieldLabel('Дансны дугаар'),
-                AppTextField(
-                  controller: _account,
-                  hint: 'Дансны 10 оронтой дугаар',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(10),
-                  ],
-                  suffix: const Icon(
-                    Icons.account_balance_outlined,
-                    size: 20,
-                    color: AppColors.sky600,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                AppText(
-                  'Банк сонгох',
-                  size: 11,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate500,
-                ),
-                const SizedBox(height: 6),
-                SizedBox(
-                  height: 32,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _banks.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
-                    itemBuilder: (_, i) => FilterChipPill(
-                      label: _banks[i],
-                      selected: _bank == i,
-                      onTap: () => setState(() => _bank = i),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                FieldLabel(
-                  'Утасны дугаар',
-                  trailing: AppText(
-                    '(сонгох)',
-                    size: 10,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate400,
-                  ),
-                ),
-                AppTextField(
-                  controller: _phone,
-                  hint: '88******, 99******',
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(8),
-                  ],
-                  suffix: const Icon(
-                    Icons.phone_iphone_rounded,
-                    size: 20,
-                    color: AppColors.sky600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          const SectionHeader(
-            title: 'Утасны жагсаалтаас санал болгох',
-            action: 'Бүгд',
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
-          ),
-          for (final s in _suggested) ...[
+          children: EntranceItem.list([
             AppCard(
-              radius: 18,
-              padding: const EdgeInsets.all(12),
+              radius: 28,
+              padding: const EdgeInsets.all(20),
               borderColor: AppColors.slate100,
               child: Row(
                 children: [
-                  MascotTile(asset: s.$3, background: s.$4, label: s.$1),
-                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        AppText(s.$1, size: 12, weight: FontWeight.w700),
-                        AppText(s.$2, size: 11, color: AppColors.slate400),
+                        const StatusBadge(label: 'ШИНЭ НАЙЗ НЭМЭХ', dot: true),
+                        const SizedBox(height: 8),
+                        AppText(
+                          'Найз эсвэл гэр бүлийн гишүүнээ нэмээд шуурхай гүйлгээ хийгээрэй!',
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate500,
+                          height: 1.6,
+                        ),
                       ],
                     ),
                   ),
-                  SoftButton(
-                    label: _added.contains(s.$1) ? 'Нэмсэн ✓' : 'Нэмэх',
-                    height: 32,
-                    background: _added.contains(s.$1)
-                        ? AppColors.emerald50
-                        : AppColors.sky50,
-                    foreground: _added.contains(s.$1)
-                        ? AppColors.emerald600
-                        : AppColors.sky600,
-                    onPressed: () => setState(() => _added.add(s.$1)),
+                  const MascotImage(
+                    asset: Mascots.fox,
+                    size: 96,
+                    background: Colors.white,
+                    semanticLabel: 'Cute fox mascot',
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+            const SectionHeader(
+              title: 'Харилцаа сонгох',
+              padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
+            ),
+            Row(
+              children: [
+                for (final (i, r) in _relations.indexed) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: _RelationButton(
+                      label: r.$1,
+                      asset: r.$2,
+                      tint: r.$3,
+                      selected: _relation == i,
+                      onTap: () => setState(() => _relation = i),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 16),
+            AppCard(
+              radius: 28,
+              padding: const EdgeInsets.all(20),
+              borderColor: AppColors.slate100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const FieldLabel('Найзын нэр'),
+                  AppTextField(
+                    controller: _nickname,
+                    hint: 'Жишээ: Анар, Батаа...',
+                    suffix: const Icon(
+                      Icons.badge_outlined,
+                      size: 20,
+                      color: AppColors.sky600,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const FieldLabel('Дансны дугаар'),
+                  AppTextField(
+                    controller: _account,
+                    hint: 'Дансны 10 оронтой дугаар',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ],
+                    suffix: const Icon(
+                      Icons.account_balance_outlined,
+                      size: 20,
+                      color: AppColors.sky600,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  AppText(
+                    'Банк сонгох',
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate500,
+                  ),
+                  const SizedBox(height: 6),
+                  SizedBox(
+                    height: 32,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _banks.length,
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      itemBuilder: (_, i) => FilterChipPill(
+                        label: _banks[i],
+                        selected: _bank == i,
+                        onTap: () => setState(() => _bank = i),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  FieldLabel(
+                    'Утасны дугаар',
+                    trailing: AppText(
+                      '(сонгох)',
+                      size: 10,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
+                    ),
+                  ),
+                  AppTextField(
+                    controller: _phone,
+                    hint: '88******, 99******',
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(8),
+                    ],
+                    suffix: const Icon(
+                      Icons.phone_iphone_rounded,
+                      size: 20,
+                      color: AppColors.sky600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const SectionHeader(
+              title: 'Утасны жагсаалтаас санал болгох',
+              action: 'Бүгд',
+              padding: EdgeInsets.fromLTRB(4, 0, 4, 8),
+            ),
+            for (final (i, s) in _suggested.indexed) ...[
+              ListItemEntrance(
+                id: s,
+                index: i,
+                child: AppCard(
+                  radius: 18,
+                  padding: const EdgeInsets.all(12),
+                  borderColor: AppColors.slate100,
+                  child: Row(
+                    children: [
+                      MascotTile(asset: s.$3, background: s.$4, label: s.$1),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(s.$1, size: 12, weight: FontWeight.w700),
+                            AppText(s.$2, size: 11, color: AppColors.slate400),
+                          ],
+                        ),
+                      ),
+                      SoftButton(
+                        label: _added.contains(s.$1) ? 'Нэмсэн ✓' : 'Нэмэх',
+                        height: 32,
+                        background: _added.contains(s.$1)
+                            ? AppColors.emerald50
+                            : AppColors.sky50,
+                        foreground: _added.contains(s.$1)
+                            ? AppColors.emerald600
+                            : AppColors.sky600,
+                        onPressed: () => setState(() => _added.add(s.$1)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             const SizedBox(height: 8),
-          ],
-          const SizedBox(height: 8),
-          const InfoNote(
-            tone: BadgeTone.amber,
-            icon: Icons.shield_outlined,
-            title: 'Эцэг эхийн хяналттай',
-            text:
-                'Таны нэмсэн шинэ найзын мэдээлэл эцэг эхийн апп дээр автоматаар харагдаж хамгаалагдана.',
-          ),
-          const SizedBox(height: 18),
-          PrimaryButton(
-            label: 'Найз хадгалах',
-            leadingIcon: Icons.person_add_alt_1_rounded,
-            height: 56,
-            onPressed: _valid ? _save : null,
-          ),
-        ],
+            const InfoNote(
+              tone: BadgeTone.amber,
+              icon: Icons.shield_outlined,
+              title: 'Эцэг эхийн хяналттай',
+              text:
+                  'Таны нэмсэн шинэ найзын мэдээлэл эцэг эхийн апп дээр автоматаар харагдаж хамгаалагдана.',
+            ),
+            const SizedBox(height: 18),
+            PrimaryButton(
+              label: 'Найз хадгалах',
+              leadingIcon: Icons.person_add_alt_1_rounded,
+              height: 56,
+              onPressed: _valid ? _save : null,
+            ),
+          ]),
+        ),
       ),
     );
   }

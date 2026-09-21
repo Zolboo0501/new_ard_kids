@@ -5,6 +5,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Хувьцаа & Хөрөнгө оруулалт": kid's investment portfolio.
 class StocksScreen extends StatefulWidget {
@@ -67,195 +68,205 @@ class _StocksScreenState extends State<StocksScreen> {
       backgroundColor: AppColors.slate50,
       appBar: const SubPageHeader(
         title: 'Миний өв',
-        subtitle: 'Хувьцаа & Хөрөнгө оруулалт',
         background: AppColors.slate50,
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(22),
-            borderColor: AppColors.slate100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            'Хүүхдийн хөрөнгө оруулалтын данс',
-                            size: 12,
-                            weight: FontWeight.w500,
-                            color: AppColors.slate400,
-                          ),
-                          const SizedBox(height: 4),
-                          const CopyAccountNumber(
-                            number: '•••• 9924',
-                            prefix: 'Брокер: ',
-                          ),
-                        ],
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            AppCard(
+              radius: 24,
+              padding: const EdgeInsets.all(22),
+              borderColor: AppColors.slate100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              'Хүүхдийн хөрөнгө оруулалтын данс',
+                              size: 12,
+                              weight: FontWeight.w500,
+                              color: AppColors.slate400,
+                            ),
+                            const SizedBox(height: 4),
+                            const CopyAccountNumber(
+                              number: '•••• 9924',
+                              prefix: 'Брокер: ',
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const MascotImage(
-                      asset: Mascots.otterInvest,
-                      size: 80,
-                      background: Colors.white,
-                      semanticLabel: 'Mascot',
-                    ),
-                  ],
-                ),
-                AppText(
-                  'Нийт багцын үнэлгээ',
-                  size: 12,
-                  weight: FontWeight.w500,
-                  color: AppColors.slate400,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  formatMnt(340000, space: true),
-                  style: moneyStyle(
+                      const MascotImage(
+                        asset: Mascots.otterInvest,
+                        size: 80,
+                        background: Colors.white,
+                        semanticLabel: 'Mascot',
+                      ),
+                    ],
+                  ),
+                  AppText(
+                    'Нийт багцын үнэлгээ',
+                    size: 12,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate400,
+                  ),
+                  const SizedBox(height: 2),
+                  const BalanceText(
+                    340000,
+                    space: false,
                     size: 30,
+                    currencySize: 24,
                     weight: FontWeight.w600,
                     color: AppColors.slate900,
                   ),
-                ),
-                const Divider(height: 28, color: AppColors.slate100),
-                IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      _stat('Оруулсан', '₮ 301,600', AppColors.slate700),
-                      const VerticalDivider(
-                        width: 1,
-                        color: AppColors.slate100,
-                      ),
-                      _stat('Ашиг', '+₮ 38,400', AppColors.emerald600),
-                      const VerticalDivider(
-                        width: 1,
-                        color: AppColors.slate100,
-                      ),
-                      _stat('Ногдол ашиг', '₮ 5,200', AppColors.amber600),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 18),
-          SectionHeader(
-            title: 'Миний хувьцаанууд (${_holdings.length})',
-            action: _showAll ? 'Хураах' : 'Бүгдийг харах',
-            onAction: () => setState(() => _showAll = !_showAll),
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-          ),
-          for (final h in visible) ...[
-            AppCard(
-              radius: 18,
-              padding: const EdgeInsets.all(14),
-              borderColor: AppColors.slate100,
-              onTap: () => showAppSnack(context, '${h.$1} (${h.$2})'),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: h.$7,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: h.$6 != null
-                        ? Icon(h.$6, size: 22, color: h.$8)
-                        : AppText(
-                            'АПУ',
-                            size: 11,
-                            weight: FontWeight.w800,
-                            color: h.$8,
-                          ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  const Divider(height: 28, color: AppColors.slate100),
+                  IntrinsicHeight(
+                    child: Row(
                       children: [
-                        Wrap(
-                          spacing: 6,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            AppText(h.$1, size: 14, weight: FontWeight.w700),
-                            StatusBadge(label: h.$2, tone: BadgeTone.slate),
-                          ],
+                        _stat('Оруулсан', 301600, AppColors.slate700),
+                        const VerticalDivider(
+                          width: 1,
+                          color: AppColors.slate100,
                         ),
-                        const SizedBox(height: 2),
-                        AppText(h.$3, size: 12, color: AppColors.slate400),
+                        _stat('Ашиг', 38400, AppColors.emerald600, sign: true),
+                        const VerticalDivider(
+                          width: 1,
+                          color: AppColors.slate100,
+                        ),
+                        _stat('Ногдол ашиг', 5200, AppColors.amber600),
                       ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        formatMnt(h.$4, space: true),
-                        style: moneyStyle(size: 14),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            h.$5 >= 0
-                                ? Icons.trending_up_rounded
-                                : Icons.trending_down_rounded,
-                            size: 14,
-                            color: h.$5 >= 0
-                                ? AppColors.emerald600
-                                : AppColors.rose500,
-                          ),
-                          const SizedBox(width: 2),
-                          AppText(
-                            '${h.$5 >= 0 ? '+' : ''}${h.$5}%',
-                            size: 12,
-                            weight: FontWeight.w700,
-                            color: h.$5 >= 0
-                                ? AppColors.emerald600
-                                : AppColors.rose500,
-                          ),
-                        ],
-                      ),
-                    ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 10),
-          ],
-          const SizedBox(height: 6),
-          const InfoNote(
-            icon: Icons.family_restroom_rounded,
-            text:
-                'Хувьцаа худалдан авах, зарах бүх гүйлгээ аав ээжийн зөвшөөрлөөр хийгдэнэ.',
-          ),
-        ],
+            const SizedBox(height: 18),
+            SectionHeader(
+              title: 'Миний хувьцаанууд (${_holdings.length})',
+              action: _showAll ? 'Хураах' : 'Бүгдийг харах',
+              onAction: () => setState(() => _showAll = !_showAll),
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+            ),
+            for (final (i, h) in visible.indexed) ...[
+              ListItemEntrance(
+                id: h,
+                index: i,
+                child: AppCard(
+                  radius: 18,
+                  padding: const EdgeInsets.all(14),
+                  borderColor: AppColors.slate100,
+                  onTap: () => showAppSnack(context, '${h.$1} (${h.$2})'),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: h.$7,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: h.$6 != null
+                            ? Icon(h.$6, size: 22, color: h.$8)
+                            : AppText(
+                                'АПУ',
+                                size: 11,
+                                weight: FontWeight.w800,
+                                color: h.$8,
+                              ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wrap(
+                              spacing: 6,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                AppText(
+                                  h.$1,
+                                  size: 14,
+                                  weight: FontWeight.w700,
+                                ),
+                                StatusBadge(label: h.$2, tone: BadgeTone.slate),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            AppText(h.$3, size: 12, color: AppColors.slate400),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          BalanceText(h.$4, space: false, size: 14),
+                          const SizedBox(height: 2),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                h.$5 >= 0
+                                    ? Icons.trending_up_rounded
+                                    : Icons.trending_down_rounded,
+                                size: 14,
+                                color: h.$5 >= 0
+                                    ? AppColors.emerald600
+                                    : AppColors.rose500,
+                              ),
+                              const SizedBox(width: 2),
+                              AppText(
+                                '${h.$5 >= 0 ? '+' : ''}${h.$5}%',
+                                size: 12,
+                                weight: FontWeight.w700,
+                                color: h.$5 >= 0
+                                    ? AppColors.emerald600
+                                    : AppColors.rose500,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+            ],
+            const SizedBox(height: 6),
+          ]),
+        ),
       ),
     );
   }
 
-  Widget _stat(String label, String value, Color color) {
+  Widget _stat(String label, num value, Color color, {bool sign = false}) {
     return Expanded(
       child: Column(
         children: [
           AppText(label, size: 11, color: AppColors.slate400),
           const SizedBox(height: 2),
-          Text(value, style: moneyStyle(size: 12, color: color)),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: BalanceText(
+              value,
+              sign: sign,
+              space: false,
+              size: 12,
+              color: color,
+            ),
+          ),
         ],
       ),
     );

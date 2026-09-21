@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// Result of a completed transfer shown on the receipt screen.
 class TransferReceipt {
@@ -72,187 +73,176 @@ class TransferSuccessScreen extends StatelessWidget {
           onPressed: () => showAppSnack(context, 'Баримт хадгалагдлаа'),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          12,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            AppCard(
+              radius: 28,
+              padding: const EdgeInsets.all(20),
+              borderColor: AppColors.slate100,
+              child: Column(
+                children: [
+                  const MascotImage(
+                    asset: Mascots.bearStar,
+                    size: 128,
+                    background: Colors.white,
+                    semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',
+                  ),
+                  const SizedBox(height: 8),
+                  const StatusBadge(
+                    label: 'Хүлээн авагчийн дансанд орсон ✓',
+                    tone: BadgeTone.emerald,
+                    dot: true,
+                  ),
+                  const SizedBox(height: 10),
+                  AppText(
+                    'Гүйлгээ амжилттай!',
+                    size: 18,
+                    weight: FontWeight.w700,
+                  ),
+                  const SizedBox(height: 4),
+                  BalanceText(
+                    r.amount,
+                    size: 34,
+                    color: AppColors.sky500,
+                    currencySize: 24,
+                    currencyWeight: FontWeight.w600,
+                    currencyColor: AppColors.sky400,
+                  ),
+                  const SizedBox(height: 4),
+                  AppText(_date(r.time), size: 12, color: AppColors.slate400),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            AppCard(
+              radius: 28,
+              padding: const EdgeInsets.all(20),
+              borderColor: AppColors.slate100,
+              child: Column(
+                children: [
+                  _Row(
+                    label: 'Хүлээн авагч',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppText(
+                              r.recipient,
+                              size: 13,
+                              weight: FontWeight.w700,
+                            ),
+                            const SizedBox(width: 6),
+                            Container(
+                              width: 16,
+                              height: 16,
+                              decoration: const BoxDecoration(
+                                color: AppColors.emerald100,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.check_rounded,
+                                size: 11,
+                                color: AppColors.emerald600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 2),
+                        AppText(
+                          '${r.bank} • 5049****',
+                          size: 11,
+                          color: AppColors.slate400,
+                        ),
+                      ],
+                    ),
+                  ),
+                  _Row(
+                    label: 'Шилжүүлсэн',
+                    divider: true,
+                    child: AppText(
+                      r.destination,
+                      size: 12,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate700,
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  _Row(
+                    label: 'Гүйлгээний утга',
+                    divider: true,
+                    child: AppText(r.note, size: 13, weight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.sky50.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.account_balance_wallet_outlined,
+                            size: 18,
+                            color: AppColors.sky600,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: AppText(
+                            'Боломжит үлдэгдэл',
+                            size: 12,
+                            weight: FontWeight.w600,
+                            color: AppColors.slate600,
+                          ),
+                        ),
+                        BalanceText(r.balanceAfter, space: false, size: 14),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            const InfoNote(
+              icon: Icons.shield_outlined,
+              text:
+                  'Энэ гүйлгээ нь аав ээжийн тохируулсан өдрийн ₮100,000 лимитийн хүрээнд хамгаалагдсан байна.',
+            ),
+            const SizedBox(height: 18),
+            PrimaryButton(
+              label: 'Баримт хуваалцах',
+              leadingIcon: Icons.ios_share_rounded,
+              onPressed: () =>
+                  showAppSnack(context, 'Баримт хуваалцах холбоос бэлэн'),
+            ),
+            const SizedBox(height: 12),
+            SoftButton(
+              label: 'Нүүр хуудас руу буцах',
+              height: 52,
+              background: Colors.white,
+              foreground: AppColors.slate700,
+              border: AppColors.slate200,
+              onPressed: () => _home(context),
+            ),
+          ]),
         ),
-        children: [
-          AppCard(
-            radius: 28,
-            padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
-            child: Column(
-              children: [
-                const MascotImage(
-                  asset: Mascots.bearStar,
-                  size: 128,
-                  background: Colors.white,
-                  semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',
-                ),
-                const SizedBox(height: 8),
-                const StatusBadge(
-                  label: 'Хүлээн авагчийн дансанд орсон ✓',
-                  tone: BadgeTone.emerald,
-                  dot: true,
-                ),
-                const SizedBox(height: 10),
-                AppText(
-                  'Гүйлгээ амжилттай!',
-                  size: 18,
-                  weight: FontWeight.w700,
-                ),
-                const SizedBox(height: 4),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: '₮',
-                        style: moneyStyle(
-                          size: 24,
-                          weight: FontWeight.w600,
-                          color: AppColors.sky400,
-                        ),
-                      ),
-                      TextSpan(
-                        text: formatMnt(r.amount).substring(1),
-                        style: moneyStyle(size: 34, color: AppColors.sky500),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                AppText(_date(r.time), size: 12, color: AppColors.slate400),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          AppCard(
-            radius: 28,
-            padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
-            child: Column(
-              children: [
-                _Row(
-                  label: 'Хүлээн авагч',
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AppText(
-                            r.recipient,
-                            size: 13,
-                            weight: FontWeight.w700,
-                          ),
-                          const SizedBox(width: 6),
-                          Container(
-                            width: 16,
-                            height: 16,
-                            decoration: const BoxDecoration(
-                              color: AppColors.emerald100,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.check_rounded,
-                              size: 11,
-                              color: AppColors.emerald600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      AppText(
-                        '${r.bank} • 5049****',
-                        size: 11,
-                        color: AppColors.slate400,
-                      ),
-                    ],
-                  ),
-                ),
-                _Row(
-                  label: 'Шилжүүлсэн',
-                  divider: true,
-                  child: AppText(
-                    r.destination,
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate700,
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-                _Row(
-                  label: 'Гүйлгээний утга',
-                  divider: true,
-                  child: AppText(r.note, size: 13, weight: FontWeight.w600),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.sky50.withValues(alpha: 0.7),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.account_balance_wallet_outlined,
-                          size: 18,
-                          color: AppColors.sky600,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: AppText(
-                          'Боломжит үлдэгдэл',
-                          size: 12,
-                          weight: FontWeight.w600,
-                          color: AppColors.slate600,
-                        ),
-                      ),
-                      Text(
-                        formatMnt(r.balanceAfter, space: true),
-                        style: moneyStyle(size: 14),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          const InfoNote(
-            icon: Icons.shield_outlined,
-            text:
-                'Энэ гүйлгээ нь аав ээжийн тохируулсан өдрийн ₮100,000 лимитийн хүрээнд хамгаалагдсан байна.',
-          ),
-          const SizedBox(height: 18),
-          PrimaryButton(
-            label: 'Баримт хуваалцах',
-            leadingIcon: Icons.ios_share_rounded,
-            onPressed: () =>
-                showAppSnack(context, 'Баримт хуваалцах холбоос бэлэн'),
-          ),
-          const SizedBox(height: 12),
-          SoftButton(
-            label: 'Нүүр хуудас руу буцах',
-            height: 52,
-            background: Colors.white,
-            foreground: AppColors.slate700,
-            border: AppColors.slate200,
-            onPressed: () => _home(context),
-          ),
-        ],
       ),
     );
   }

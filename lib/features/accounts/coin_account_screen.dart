@@ -5,6 +5,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Койны данс - Дэлгэрэнгүй": coin balance and transactions.
 class CoinAccountScreen extends StatefulWidget {
@@ -89,174 +90,172 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
           onPressed: () => showAppSnack(context, 'Огноо сонгох'),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          12,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const CopyAccountNumber(number: 'MN 5049 8219 04'),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            'Нийт койны үлдэгдэл',
-                            size: 12,
-                            weight: FontWeight.w500,
-                            color: AppColors.slate400,
-                          ),
-                          const SizedBox(height: 2),
-                          FittedBox(
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: '₮',
-                                    style: moneyStyle(
-                                      size: 26,
-                                      weight: FontWeight.w600,
-                                      color: AppColors.slate700,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '50,000',
-                                    style: moneyStyle(size: 34),
-                                  ),
-                                ],
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            AppCard(
+              radius: 24,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CopyAccountNumber(number: 'MN 5049 8219 04'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              'Нийт койны үлдэгдэл',
+                              size: 12,
+                              weight: FontWeight.w500,
+                              color: AppColors.slate400,
+                            ),
+                            const SizedBox(height: 2),
+                            FittedBox(
+                              child: const BalanceText(
+                                50000,
+                                size: 30,
+                                currencySize: 24,
+                                currencyWeight: FontWeight.w600,
+                                currencyColor: AppColors.slate700,
+                                weight: FontWeight.w600,
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.emerald400,
-                                  shape: BoxShape.circle,
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.emerald400,
+                                    shape: BoxShape.circle,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 6),
-                              AppText(
-                                'Хөрвүүлэх ханш: 1 Койн = 1₮',
-                                size: 11,
-                                color: AppColors.slate500,
-                              ),
-                            ],
-                          ),
-                        ],
+                                const SizedBox(width: 6),
+                                AppText(
+                                  'Хөрвүүлэх ханш: 1 Койн = 1₮',
+                                  size: 11,
+                                  color: AppColors.slate500,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const MascotImage(
-                      asset: Mascots.puppyPiggy,
-                      size: 104,
-                      background: Colors.white,
-                      semanticLabel: 'PocketPal Puppy Saving Coins',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _MiniStat(
-                        asset: Mascots.bearHugCoin,
-                        label: 'Нийт орлого',
-                        value: '+${formatMnt(income, space: true)}',
-                        color: AppColors.emerald700,
+                      const MascotImage(
+                        asset: Mascots.puppyPiggy,
+                        size: 104,
+                        background: Colors.white,
+                        semanticLabel: 'PocketPal Puppy Saving Coins',
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _MiniStat(
-                        asset: Mascots.puppyGamepad,
-                        label: 'Нийт зарцуулалт',
-                        value: '-${formatMnt(spent, space: true)}',
-                        color: AppColors.rose600,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              FilterChipPill(
-                label: 'Бүгд  ${_items.length}',
-                selected: _filter == 0,
-                onTap: () => setState(() => _filter = 0),
-              ),
-              const SizedBox(width: 8),
-              FilterChipPill(
-                label: '● Орлого',
-                selected: _filter == 1,
-                onTap: () => setState(() => _filter = 1),
-              ),
-              const SizedBox(width: 8),
-              FilterChipPill(
-                label: '● Зарлага',
-                selected: _filter == 2,
-                onTap: () => setState(() => _filter = 2),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.sky100),
-            ),
-            child: Row(
-              children: [
-                AppText(
-                  'Энэ сар (9-р сар)',
-                  size: 12,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate700,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: AppText(
-                    '| 2026.09.01 - 09.12',
-                    size: 11,
-                    color: AppColors.slate400,
+                    ],
                   ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _MiniStat(
+                          asset: Mascots.bearHugCoin,
+                          label: 'Нийт орлого',
+                          value: income,
+                          color: AppColors.emerald700,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _MiniStat(
+                          asset: Mascots.puppyGamepad,
+                          label: 'Нийт зарцуулалт',
+                          value: -spent,
+                          color: AppColors.rose600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                FilterChipPill(
+                  label: 'Бүгд  ${_items.length}',
+                  selected: _filter == 0,
+                  onTap: () => setState(() => _filter = 0),
                 ),
-                AppText(
-                  'Өөрчлөх',
-                  size: 12,
-                  weight: FontWeight.w700,
-                  color: AppColors.sky600,
+                const SizedBox(width: 8),
+                FilterChipPill(
+                  label: '● Орлого',
+                  selected: _filter == 1,
+                  onTap: () => setState(() => _filter = 1),
+                ),
+                const SizedBox(width: 8),
+                FilterChipPill(
+                  label: '● Зарлага',
+                  selected: _filter == 2,
+                  onTap: () => setState(() => _filter = 2),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          const SectionHeader(
-            title: '📑 ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
-          ),
-          for (final item in visible) ...[
-            TransactionTile(item: item),
-            const SizedBox(height: 10),
-          ],
-        ],
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.sky100),
+              ),
+              child: Row(
+                children: [
+                  AppText(
+                    'Энэ сар (9-р сар)',
+                    size: 12,
+                    weight: FontWeight.w600,
+                    color: AppColors.slate700,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: AppText(
+                      '| 2026.09.01 - 09.12',
+                      size: 11,
+                      color: AppColors.slate400,
+                    ),
+                  ),
+                  AppText(
+                    'Өөрчлөх',
+                    size: 12,
+                    weight: FontWeight.w700,
+                    color: AppColors.sky600,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const SectionHeader(
+              title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
+              mascot: Mascots.penguinList,
+              padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
+            ),
+            for (final (i, item) in visible.indexed) ...[
+              ListItemEntrance(
+                id: item,
+                index: i,
+                group: _filter,
+                child: TransactionTile(item: item),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ]),
+        ),
       ),
     );
   }
@@ -272,7 +271,9 @@ class _MiniStat extends StatelessWidget {
 
   final String asset;
   final String label;
-  final String value;
+
+  /// Signed amount: shown as `+₮ …` or `-₮ …`.
+  final num value;
   final Color color;
 
   @override
@@ -304,7 +305,13 @@ class _MiniStat extends StatelessWidget {
                   color: AppColors.slate400,
                 ),
                 FittedBox(
-                  child: Text(value, style: moneyStyle(size: 12, color: color)),
+                  child: BalanceText(
+                    value,
+                    sign: true,
+                    space: false,
+                    size: 12,
+                    color: color,
+                  ),
                 ),
               ],
             ),

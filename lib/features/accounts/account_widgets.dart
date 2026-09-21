@@ -98,13 +98,14 @@ class TransactionTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                '${item.income ? '+' : '-'}${formatMnt(item.amount.abs(), space: true)}',
-                style: moneyStyle(
-                  size: 13,
-                  weight: FontWeight.w800,
-                  color: color,
-                ),
+              BalanceText(
+                item.income ? item.amount.abs() : -item.amount.abs(),
+                sign: true,
+                space: false,
+                size: 13,
+                weight: FontWeight.w500,
+                currencySize: 10,
+                color: color,
               ),
               if (whenBelow)
                 AppText(item.when, size: 9, color: AppColors.slate400),
@@ -149,6 +150,7 @@ class CopyAccountNumber extends StatelessWidget {
           label: 'Данс хуулах',
           child: GestureDetector(
             onTap: () {
+              HapticFeedback.selectionClick();
               Clipboard.setData(
                 ClipboardData(text: number.replaceAll(' ', '')),
               );

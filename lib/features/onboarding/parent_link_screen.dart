@@ -9,6 +9,7 @@ import '../../widgets/app_input.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/entrance.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 class ParentLinkScreen extends StatefulWidget {
@@ -127,264 +128,272 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
       // way it does on the other steps.
       body: SafeArea(
         bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-          children: [
-            Header(
-              step: 'Алхам 4/4',
-              trailing: GestureDetector(
-                onTap: () => _goHome(linked: false),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.slate100,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: const AppText(
-                    'Алгасах',
-                    size: 11,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate600,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Center(
-              child: MascotImage(
-                asset: Mascots.bearFamily,
-                size: 140,
-                background: AppColors.dsSurface,
-                semanticLabel: 'Parent and baby bear',
-              ),
-            ),
-            const SizedBox(height: 6),
-
-            Text.rich(
-              TextSpan(
-                text: 'Эцэг эхтэйгээ холбогдоод эрхээ ',
-                children: [
-                  TextSpan(
-                    text: '5 дахин',
-                    style:
-                        comfortaa(
-                          size: 20,
-                          weight: FontWeight.w800,
-                          color: AppColors.sky500,
-                        ).copyWith(
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.sky300,
-                          decorationThickness: 2,
-                        ),
-                  ),
-                  const TextSpan(text: ' нэмэгдүүлээрэй!'),
-                ],
-              ),
-              textAlign: TextAlign.center,
-              style: comfortaa(size: 20, weight: FontWeight.w800, height: 1.4),
-            ),
-            const SizedBox(height: 16),
-            _LimitCard(
-              icon: Icons.lock_outline_rounded,
-              title: 'Одоогийн эрх',
-              subtitle: 'Холбогдоогүй',
-              badge: const StatusBadge(
-                label: 'Хязгаарлагдмал',
-                tone: BadgeTone.slate,
-                dot: true,
-              ),
-              muted: true,
-              stats: const [
-                ('Өдрийн зарцуулалт', '₮ 20,000', null),
-                ('Өдрийн гүйлгээ', '2 удаа', null),
-              ],
-              footer: Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline_rounded,
-                    size: 14,
-                    color: AppColors.slate500,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: AppText(
-                      'Зөвхөн бэлэн мөнгө зарцуулах анхан шатны эрхтэй',
+        child: EntranceScope(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            children: EntranceItem.list([
+              Header(
+                step: 'Алхам 4/4',
+                trailing: GestureDetector(
+                  onTap: withHaptic(() => _goHome(linked: false)),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.slate100,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const AppText(
+                      'Алгасах',
                       size: 11,
-                      color: AppColors.slate500,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate600,
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            _LimitCard(
-              icon: Icons.verified_sharp,
-              title: 'Эцэг эх холбогдсоны дараа',
-              subtitle: 'Бүрэн боломж нээгдэнэ',
-              badge: const StatusBadge(
-                label: 'Бүрэн эрх',
-                tone: BadgeTone.emerald,
-              ),
-              muted: false,
-              stats: const [
-                ('Өдрийн зарцуулалт', '₮ 100,000+', BadgeTone.sky),
-                ('Өдрийн гүйлгээ', 'Хязгааргүй', BadgeTone.emerald),
-              ],
-              footer: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppColors.amber50.withValues(alpha: 0.9),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.amber200.withValues(alpha: 0.6),
-                  ),
                 ),
-                child: Row(
+              ),
+              const SizedBox(height: 8),
+              const Center(
+                child: MascotImage(
+                  asset: Mascots.bearFamily,
+                  size: 140,
+                  background: AppColors.dsSurface,
+                  semanticLabel: 'Parent and baby bear',
+                ),
+              ),
+              const SizedBox(height: 6),
+
+              Text.rich(
+                TextSpan(
+                  text: 'Эцэг эхтэйгээ холбогдоод эрхээ ',
+                  children: [
+                    TextSpan(
+                      text: '5 дахин',
+                      style:
+                          comfortaa(
+                            size: 20,
+                            weight: FontWeight.w800,
+                            color: AppColors.sky500,
+                          ).copyWith(
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.sky300,
+                            decorationThickness: 2,
+                          ),
+                    ),
+                    const TextSpan(text: ' нэмэгдүүлээрэй!'),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+                style: comfortaa(
+                  size: 20,
+                  weight: FontWeight.w800,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _LimitCard(
+                icon: Icons.lock_outline_rounded,
+                title: 'Одоогийн эрх',
+                subtitle: 'Холбогдоогүй',
+                badge: const StatusBadge(
+                  label: 'Хязгаарлагдмал',
+                  tone: BadgeTone.slate,
+                  dot: true,
+                ),
+                muted: true,
+                stats: const [
+                  ('Өдрийн зарцуулалт', 20000, null),
+                  ('Өдрийн гүйлгээ', '2 удаа', null),
+                ],
+                footer: Row(
                   children: [
                     const Icon(
-                      Icons.redeem_outlined,
-                      color: AppColors.amber800,
-                      size: 16,
+                      Icons.info_outline_rounded,
+                      size: 14,
+                      color: AppColors.slate500,
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: AppText(
-                        'Хүүхдийн хадгаламж, койн, урамшуулал авах боломжтой болно!',
+                        'Зөвхөн бэлэн мөнгө зарцуулах анхан шатны эрхтэй',
                         size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.amber800,
-                        height: 1.4,
+                        color: AppColors.slate500,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 18),
-            AppCard(
-              radius: 20,
-              padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppText(
-                    'Холбогдох асран хамгаалагчаа сонгоно уу',
-                    size: 13,
-                    weight: FontWeight.w700,
+              const SizedBox(height: 12),
+              _LimitCard(
+                icon: Icons.verified_sharp,
+                title: 'Эцэг эх холбогдсоны дараа',
+                subtitle: 'Бүрэн боломж нээгдэнэ',
+                badge: const StatusBadge(
+                  label: 'Бүрэн эрх',
+                  tone: BadgeTone.emerald,
+                ),
+                muted: false,
+                stats: const [
+                  ('Өдрийн зарцуулалт', (100000, '+'), BadgeTone.sky),
+                  ('Өдрийн гүйлгээ', 'Хязгааргүй', BadgeTone.emerald),
+                ],
+                footer: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.amber50.withValues(alpha: 0.9),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.amber200.withValues(alpha: 0.6),
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
+                  child: Row(
                     children: [
-                      for (final (i, r) in _roles.indexed) ...[
-                        if (i > 0) const SizedBox(width: 8),
-                        Expanded(
-                          child: _RoleButton(
-                            label: r.$1,
-                            asset: r.$2,
-                            selected: _role == i,
-                            onTap: () => setState(() => _role = i),
-                          ),
+                      const Icon(
+                        Icons.redeem_outlined,
+                        color: AppColors.amber800,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: AppText(
+                          'Хүүхдийн хадгаламж, койн, урамшуулал авах боломжтой болно!',
+                          size: 11,
+                          weight: FontWeight.w600,
+                          color: AppColors.amber800,
+                          height: 1.4,
                         ),
-                      ],
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-                  const AppFieldLabel('Эцэг / Эхийн утасны дугаар'),
-                  const SizedBox(height: 6),
-                  AppInputShell(
-                    hasError: _phoneError != null,
-                    leading: const AppText(
-                      '+976',
-                      size: 12,
+                ),
+              ),
+              const SizedBox(height: 18),
+              AppCard(
+                radius: 20,
+                padding: const EdgeInsets.all(16),
+                borderColor: AppColors.slate100,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppText(
+                      'Холбогдох асран хамгаалагчаа сонгоно уу',
+                      size: 13,
                       weight: FontWeight.w700,
-                      color: AppColors.sky700,
                     ),
-                    trailing: AppFieldTick(visible: _phoneValid),
-                    child: TextField(
-                      controller: _phone,
-                      focusNode: _phoneFocus,
-                      keyboardType: TextInputType.phone,
-                      textInputAction: TextInputAction.next,
-                      onSubmitted: (_) => _registerFocus.requestFocus(),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(_phoneLength),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        for (final (i, r) in _roles.indexed) ...[
+                          if (i > 0) const SizedBox(width: 8),
+                          Expanded(
+                            child: _RoleButton(
+                              label: r.$1,
+                              asset: r.$2,
+                              selected: _role == i,
+                              onTap: () => setState(() => _role = i),
+                            ),
+                          ),
+                        ],
                       ],
-                      style: appInputStyle(letterSpacing: 0.8),
-                      decoration: appInputDecoration('9909 ••••'),
                     ),
-                  ),
-                  AppFieldError(message: _phoneError),
-                  const SizedBox(height: 14),
-                  const AppFieldLabel('Өөрийн регистрийн дугаар'),
-                  const SizedBox(height: 6),
-                  AppInputShell(
-                    hasError: _registerError != null,
-                    leading: const AppText(
-                      'РД',
-                      size: 12,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky700,
+                    const SizedBox(height: 16),
+                    const AppFieldLabel('Эцэг / Эхийн утасны дугаар'),
+                    const SizedBox(height: 6),
+                    AppInputShell(
+                      hasError: _phoneError != null,
+                      leading: const AppText(
+                        '+976',
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.sky700,
+                      ),
+                      trailing: AppFieldTick(visible: _phoneValid),
+                      child: TextField(
+                        controller: _phone,
+                        onTapOutside: dismissKeyboard,
+                        focusNode: _phoneFocus,
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        onSubmitted: (_) => _registerFocus.requestFocus(),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(_phoneLength),
+                        ],
+                        style: appInputStyle(letterSpacing: 0.8),
+                        decoration: appInputDecoration('9909 ••••'),
+                      ),
                     ),
-                    trailing: AppFieldTick(visible: _registerValid),
-                    child: TextField(
-                      controller: _register,
-                      focusNode: _registerFocus,
-                      textInputAction: TextInputAction.done,
-                      autocorrect: false,
-                      enableSuggestions: false,
-                      onSubmitted: (_) => _submit(),
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(_registerLength),
-                        _UpperCaseFormatter(),
-                      ],
-                      style: appInputStyle(letterSpacing: 0.8),
-                      decoration: appInputDecoration('УХ12345678'),
+                    AppFieldError(message: _phoneError),
+                    const SizedBox(height: 14),
+                    const AppFieldLabel('Өөрийн регистрийн дугаар'),
+                    const SizedBox(height: 6),
+                    AppInputShell(
+                      hasError: _registerError != null,
+                      leading: const AppText(
+                        'РД',
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.sky700,
+                      ),
+                      trailing: AppFieldTick(visible: _registerValid),
+                      child: TextField(
+                        controller: _register,
+                        onTapOutside: dismissKeyboard,
+                        focusNode: _registerFocus,
+                        textInputAction: TextInputAction.done,
+                        autocorrect: false,
+                        enableSuggestions: false,
+                        onSubmitted: (_) => _submit(),
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(_registerLength),
+                          _UpperCaseFormatter(),
+                        ],
+                        style: appInputStyle(letterSpacing: 0.8),
+                        decoration: appInputDecoration('УХ12345678'),
+                      ),
                     ),
-                  ),
-                  AppFieldError(message: _registerError),
-                  const SizedBox(height: 14),
-                  const InfoNote(
-                    tone: BadgeTone.slate,
-                    icon: Icons.notifications_active_outlined,
-                    text:
-                        'Таны хүсэлт аав, ээжийн апп дээр очих бөгөөд зөвшөөрснөөр дансны эрх автоматаар нэмэгдэнэ.',
-                  ),
-                ],
+                    AppFieldError(message: _registerError),
+                    const SizedBox(height: 14),
+                    const InfoNote(
+                      tone: BadgeTone.slate,
+                      icon: Icons.notifications_active_outlined,
+                      text:
+                          'Таны хүсэлт аав, ээжийн апп дээр очих бөгөөд зөвшөөрснөөр дансны эрх автоматаар нэмэгдэнэ.',
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            // Always tappable: pressing it with a bad field is how the user
-            // finds out what is wrong, so gating it would hide the message.
-            AnimatedOpacity(
-              opacity: _valid ? 1 : 0.6,
-              duration: const Duration(milliseconds: 200),
-              child: PrimaryButton(
-                label: 'Эцэг эх рүү хүсэлт илгээх',
-                height: 56,
-                onPressed: _submit,
+              const SizedBox(height: 20),
+              // Always tappable: pressing it with a bad field is how the user
+              // finds out what is wrong, so gating it would hide the message.
+              AnimatedOpacity(
+                opacity: _valid ? 1 : 0.6,
+                duration: const Duration(milliseconds: 200),
+                child: PrimaryButton(
+                  label: 'Эцэг эх рүү хүсэлт илгээх',
+                  height: 56,
+                  onPressed: _submit,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            TextButton.icon(
-              onPressed: () => _goHome(linked: false),
-              icon: const Icon(
-                Icons.schedule_rounded,
-                size: 16,
-                color: AppColors.slate500,
+              const SizedBox(height: 10),
+              TextButton.icon(
+                onPressed: () => _goHome(linked: false),
+                icon: const Icon(
+                  Icons.schedule_rounded,
+                  size: 16,
+                  color: AppColors.slate500,
+                ),
+                label: AppText(
+                  'Дараа холбох (Хязгаарлагдмал эрхээр орох)',
+                  size: 12,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate500,
+                ),
               ),
-              label: AppText(
-                'Дараа холбох (Хязгаарлагдмал эрхээр орох)',
-                size: 12,
-                weight: FontWeight.w600,
-                color: AppColors.slate500,
-              ),
-            ),
-          ],
+            ]),
+          ),
         ),
       ),
     );
@@ -415,7 +424,9 @@ class _LimitCard extends StatelessWidget {
   final String subtitle;
   final Widget badge;
   final bool muted;
-  final List<(String, String, BadgeTone?)> stats;
+
+  /// `(label, value, tone)`; see [_StatBox.value].
+  final List<(String, Object, BadgeTone?)> stats;
   final Widget footer;
 
   @override
@@ -500,12 +511,15 @@ class _StatBox extends StatelessWidget {
   const _StatBox({required this.label, required this.value, this.tone});
 
   final String label;
-  final String value;
+
+  /// An amount, an `(amount, suffix)` pair such as `(100000, '+')`, or text.
+  final Object value;
   final BadgeTone? tone;
 
   @override
   Widget build(BuildContext context) {
     final colors = tone?.colors;
+    final color = colors?.$2 ?? AppColors.slate800;
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -523,18 +537,31 @@ class _StatBox extends StatelessWidget {
             color: colors?.$2 ?? AppColors.slate500,
           ),
           const SizedBox(height: 2),
-          Text(
-            value,
-            style: moneyStyle(
-              size: 14,
-              weight: FontWeight.w800,
-              color: colors?.$2 ?? AppColors.slate800,
+          switch (value) {
+            final num amount => _amount(amount, color),
+            (final num amount, final String suffix) => Row(
+              children: [
+                _amount(amount, color),
+                Text(suffix, style: _textStyle(color)),
+              ],
             ),
-          ),
+            _ => Text('$value', style: _textStyle(color)),
+          },
         ],
       ),
     );
   }
+
+  static Widget _amount(num amount, Color color) => BalanceText(
+    amount,
+    space: false,
+    size: 14,
+    weight: FontWeight.w500,
+    color: color,
+  );
+
+  static TextStyle _textStyle(Color color) =>
+      moneyStyle(size: 14, weight: FontWeight.w500, color: color);
 }
 
 class _RoleButton extends StatelessWidget {

@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/app_tabs.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'transfer_success_screen.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 enum TransferMode { friends, account, phone }
 
@@ -37,10 +39,10 @@ class _TransferScreenState extends State<TransferScreen> {
     ('Тэмүүлэн (8822****)', Mascots.bearSitting, '8822 4411', 'Т. Тэмүүлэн'),
   ];
   static const _purposes = [
-    ('📚', 'Ном дэвтэр', 'Ном авсан'),
-    ('🍬', 'Амттан', 'Амттан'),
-    ('🧸', 'Тоглоом', 'Тоглоом'),
-    ('💰', 'Халаасны мөнгө', 'Халаасны мөнгө'),
+    (Mascots.bearBooks, 'Ном дэвтэр', 'Ном авсан'),
+    (Mascots.pandaMilk, 'Амттан', 'Амттан'),
+    (Mascots.puppyGamepad, 'Тоглоом', 'Тоглоом'),
+    (Mascots.bunnyCoin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
   ];
 
   late TransferMode _mode = widget.initialMode;
@@ -128,118 +130,137 @@ class _TransferScreenState extends State<TransferScreen> {
           onPressed: () => context.push(AppRoutes.qrScan),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          12,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          _SourceCard(showAccount: _mode != TransferMode.friends),
-          const SizedBox(height: 16),
-          _ModeTabs(mode: _mode, onChanged: (m) => setState(() => _mode = m)),
-          const SizedBox(height: 16),
-          if (_mode == TransferMode.friends) ...[
-            _buildFriends(),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            _SourceCard(showAccount: _mode != TransferMode.friends),
             const SizedBox(height: 16),
-          ],
-          AppCard(
-            radius: 26,
-            padding: const EdgeInsets.all(16),
-            borderColor: AppColors.slate100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ...switch (_mode) {
-                  TransferMode.friends => _buildAccountField(
-                    label: 'Хүлээн авагч',
-                    showBanksBelow: true,
-                  ),
-                  TransferMode.account => [
-                    const _Label('Банк сонгох'),
-                    _buildBankChips(),
-                    const SizedBox(height: 14),
-                    ..._buildAccountField(label: 'Дансны дугаар'),
-                  ],
-                  TransferMode.phone => _buildPhoneFields(),
-                },
-                const SizedBox(height: 16),
-                const _Label('Гүйлгээний дүн'),
-                AppTextField(
-                  controller: _amount,
-                  prefixText: '₮',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    _ThousandsFormatter(),
-                  ],
-                  textStyle: moneyStyle(size: 20, color: AppColors.slate900),
-                  onChanged: (_) => setState(() => _quick = null),
-                  suffix: _ClearButton(onTap: () => _amount.clear()),
-                ),
-                if (_amountValue > _balance)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 4),
-                    child: AppText(
-                      'Үлдэгдэл хүрэлцэхгүй байна',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.rose500,
+            _ModeTabs(mode: _mode, onChanged: (m) => setState(() => _mode = m)),
+            const SizedBox(height: 16),
+            // The saved-friends strip only belongs to the friends mode; it
+            // folds open and closed rather than popping in and out.
+            _Collapse(
+              visible: _mode == TransferMode.friends,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: _buildFriends(),
+              ),
+            ),
+            AppCard(
+              radius: 26,
+              padding: const EdgeInsets.all(16),
+              borderColor: AppColors.slate100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Each mode's recipient fields slide in along the tabs'
+                  // direction, and the card eases to the new height.
+                  AppTabView(
+                    index: _mode.index,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: switch (_mode) {
+                        TransferMode.friends => _buildAccountField(
+                          label: 'Хүлээн авагч',
+                          showBanksBelow: true,
+                        ),
+                        TransferMode.account => [
+                          const _Label('Банк сонгох'),
+                          _buildBankChips(),
+                          const SizedBox(height: 14),
+                          ..._buildAccountField(label: 'Дансны дугаар'),
+                        ],
+                        TransferMode.phone => _buildPhoneFields(),
+                      },
                     ),
                   ),
-                if (_mode != TransferMode.phone) ...[
-                  const SizedBox(height: 10),
-                  QuickAmountChips(
-                    amounts: const [5000, 10000, 20000, 50000],
-                    selected: _quick,
-                    onSelected: (v) {
-                      _setAmount(_amountValue + v);
-                      setState(() => _quick = v);
-                    },
+                  const SizedBox(height: 16),
+                  const _Label('Гүйлгээний дүн'),
+                  AppTextField(
+                    controller: _amount,
+                    prefixText: '₮',
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      _ThousandsFormatter(),
+                    ],
+                    textStyle: moneyStyle(size: 20, color: AppColors.slate900),
+                    onChanged: (_) => setState(() => _quick = null),
+                    suffix: _ClearButton(onTap: () => _amount.clear()),
                   ),
-                ],
-                const SizedBox(height: 16),
-                const _Label('Гүйлгээний утга'),
-                AppTextField(
-                  controller: _note,
-                  hint: 'Жишээ нь: Номын мөнгө, хичээлийн хэрэгсэл',
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    AppText(
-                      'Сонгох:',
-                      size: 10,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
+                  if (_amountValue > _balance)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, left: 4),
+                      child: AppText(
+                        'Үлдэгдэл хүрэлцэхгүй байна',
+                        size: 11,
+                        weight: FontWeight.w600,
+                        color: AppColors.rose500,
+                      ),
                     ),
-                    for (final (i, p) in _purposes.indexed)
-                      _SmallChip(
-                        label: '${p.$1} ${p.$2}',
-                        selected: _purpose == i,
-                        onTap: () {
-                          setState(() => _purpose = i);
-                          _note.text = p.$3;
+                  _Collapse(
+                    visible: _mode != TransferMode.phone,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: QuickAmountChips(
+                        amounts: const [5000, 10000, 20000, 50000],
+                        selected: _quick,
+                        onSelected: (v) {
+                          _setAmount(_amountValue + v);
+                          setState(() => _quick = v);
                         },
                       ),
-                  ],
-                ),
-              ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const _Label('Гүйлгээний утга'),
+                  AppTextField(
+                    controller: _note,
+                    hint: 'Жишээ нь: Номын мөнгө, хичээлийн хэрэгсэл',
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      AppText(
+                        'Сонгох:',
+                        size: 10,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate400,
+                      ),
+                      for (final (i, p) in _purposes.indexed)
+                        _SmallChip(
+                          label: p.$2,
+                          asset: p.$1,
+                          selected: _purpose == i,
+                          onTap: () {
+                            setState(() => _purpose = i);
+                            _note.text = p.$3;
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          const _LimitNote(),
-          const SizedBox(height: 18),
-          PrimaryButton(
-            label: 'Гүйлгээ хийх',
-            leadingIcon: Icons.send_rounded,
-            onPressed: _valid ? _submit : null,
-          ),
-        ],
+            const SizedBox(height: 16),
+            const _LimitNote(),
+            const SizedBox(height: 18),
+            PrimaryButton(
+              label: 'Гүйлгээ хийх',
+              leadingIcon: Icons.send_rounded,
+              onPressed: _valid ? _submit : null,
+            ),
+          ]),
+        ),
       ),
     );
   }
@@ -404,19 +425,26 @@ class _SourceCard extends StatelessWidget {
                   color: AppColors.slate500,
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  formatMnt(567930),
-                  style: moneyStyle(size: 24, color: AppColors.slate900),
+                const BalanceText(
+                  567930,
+                  size: 30,
+                  color: AppColors.slate900,
+                  currencySize: 24,
+                  weight: FontWeight.w600,
+                  currencyWeight: FontWeight.w600,
                 ),
-                if (showAccount) ...[
-                  const SizedBox(height: 4),
-                  AppText(
-                    '•••• 3384  |  Хаан банк',
-                    size: 11,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate400,
+                _Collapse(
+                  visible: showAccount,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: AppText(
+                      '•••• 3384  |  Хаан банк',
+                      size: 11,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
+                    ),
                   ),
-                ],
+                ),
               ],
             ),
           ),
@@ -438,59 +466,119 @@ class _ModeTabs extends StatelessWidget {
   final TransferMode mode;
   final ValueChanged<TransferMode> onChanged;
 
+  static const _duration = Duration(milliseconds: 320);
+
   @override
   Widget build(BuildContext context) {
     const labels = ['Найзууд', 'Дансаар', 'Утсаар'];
+    final count = TransferMode.values.length;
+    final duration = MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : _duration;
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: AppColors.slate100.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          for (final m in TransferMode.values)
-            Expanded(
-              child: Semantics(
-                button: true,
-                selected: m == mode,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onChanged(m),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    padding: const EdgeInsets.symmetric(vertical: 9),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      gradient: m == mode
-                          ? const LinearGradient(
-                              colors: [AppColors.sky500, AppColors.sky600],
-                            )
-                          : null,
-                      boxShadow: m == mode
-                          ? [
-                              BoxShadow(
-                                color: AppColors.sky500.withValues(alpha: 0.35),
-                                offset: const Offset(0, 4),
-                                blurRadius: 12,
-                                spreadRadius: -2,
-                              ),
-                            ]
-                          : null,
+          // One pill that slides to the selected tab, instead of each tab
+          // painting its own and the highlight jumping.
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: duration,
+              curve: appEmphasizedDecelerate,
+              alignment: Alignment(-1 + 2 * mode.index / (count - 1), 0),
+              child: FractionallySizedBox(
+                widthFactor: 1 / count,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    gradient: const LinearGradient(
+                      colors: [AppColors.sky500, AppColors.sky600],
                     ),
-                    child: AppText(
-                      labels[m.index],
-                      size: 12,
-                      weight: m == mode ? FontWeight.w700 : FontWeight.w600,
-                      color: m == mode ? Colors.white : AppColors.slate500,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.sky500.withValues(alpha: 0.35),
+                        offset: const Offset(0, 4),
+                        blurRadius: 12,
+                        spreadRadius: -2,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
+          ),
+          Row(
+            children: [
+              for (final m in TransferMode.values)
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: m == mode,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: withHaptic(() => onChanged(m)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        child: Center(
+                          child: AnimatedDefaultTextStyle(
+                            duration: duration,
+                            curve: appEmphasizedDecelerate,
+                            style: comfortaa(
+                              size: 12,
+                              weight: m == mode
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
+                              color: m == mode
+                                  ? Colors.white
+                                  : AppColors.slate500,
+                            ),
+                            child: Text(labels[m.index]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
+    );
+  }
+}
+
+/// Shows or hides [child] by folding it open/closed while it fades, so the
+/// content below slides instead of jumping.
+class _Collapse extends StatelessWidget {
+  const _Collapse({required this.visible, required this.child});
+
+  final bool visible;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : const Duration(milliseconds: 300),
+      switchInCurve: appEmphasizedDecelerate,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SizeTransition(
+          sizeFactor: animation,
+          axisAlignment: -1,
+          child: child,
+        ),
+      ),
+      child: visible
+          ? KeyedSubtree(key: const ValueKey(true), child: child)
+          : const SizedBox(key: ValueKey(false), width: double.infinity),
     );
   }
 }
@@ -520,7 +608,7 @@ class _FriendAvatar extends StatelessWidget {
         label: label,
         excludeSemantics: true,
         child: GestureDetector(
-          onTap: onTap,
+          onTap: withHaptic(onTap),
           child: Column(
             children: [
               Stack(
@@ -663,7 +751,7 @@ class _SmallChip extends StatelessWidget {
       button: true,
       selected: selected,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: withHaptic(onTap),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: EdgeInsets.symmetric(
@@ -746,7 +834,7 @@ class _ClearButton extends StatelessWidget {
       button: true,
       label: 'Арилгах',
       child: GestureDetector(
-        onTap: onTap,
+        onTap: withHaptic(onTap),
         child: Container(
           width: 24,
           height: 24,

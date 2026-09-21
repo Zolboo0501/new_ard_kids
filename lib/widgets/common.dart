@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 
@@ -14,7 +15,10 @@ class CircleBackButton extends StatelessWidget {
       button: true,
       label: 'Буцах',
       child: GestureDetector(
-        onTap: onPressed ?? () => Navigator.of(context).maybePop(),
+        onTap: () {
+          HapticFeedback.selectionClick();
+          (onPressed ?? () => Navigator.of(context).maybePop())();
+        },
         child: Container(
           width: 40,
           height: 40,

@@ -8,6 +8,7 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
+import '../../../../widgets/ui.dart';
 
 /// "Найзын хүсэлт" screen: send a friend request by username.
 class FriendCodeScreen extends StatefulWidget {
@@ -321,7 +322,7 @@ class _SkipButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: withHaptic(onPressed),
       child: Container(
         padding: const EdgeInsets.fromLTRB(12, 6, 8, 6),
         decoration: BoxDecoration(
@@ -424,6 +425,7 @@ class _UsernameFieldState extends State<_UsernameField> {
             Expanded(
               child: TextField(
                 controller: widget.controller,
+                onTapOutside: dismissKeyboard,
                 focusNode: widget.focusNode,
                 textInputAction: TextInputAction.done,
                 autocorrect: false,
@@ -613,7 +615,7 @@ class _ConfirmButtonState extends State<_ConfirmButton> {
         onTapDown: (_) => _setPressed(true),
         onTapUp: (_) => _setPressed(false),
         onTapCancel: () => _setPressed(false),
-        onTap: widget.onPressed,
+        onTap: withHaptic(widget.onPressed),
         // Presses in slightly, and settles back up when the username becomes
         // valid and the button enables.
         child: AnimatedScale(

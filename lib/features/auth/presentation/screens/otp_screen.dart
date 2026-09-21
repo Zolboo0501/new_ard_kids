@@ -10,6 +10,7 @@ import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/ui.dart';
 
 /// "OTP Баталгаажуулалт" screen: enter the 4-digit code sent by SMS.
 class OtpScreen extends StatefulWidget {
@@ -273,7 +274,7 @@ class _OtpScreenState extends State<OtpScreen>
             alignment: PlaceholderAlignment.baseline,
             baseline: TextBaseline.alphabetic,
             child: GestureDetector(
-              onTap: () => Navigator.of(context).maybePop(),
+              onTap: withHaptic(() => Navigator.of(context).maybePop()),
               child: Text(
                 'Өөрчлөх',
                 style: base.copyWith(
@@ -359,7 +360,7 @@ class _OtpScreenState extends State<OtpScreen>
                 ),
                 const SizedBox(width: 4),
                 GestureDetector(
-                  onTap: _resend,
+                  onTap: withHaptic(_resend),
                   child: Text('Дахин илгээх', style: accent),
                 ),
               ],
@@ -482,7 +483,7 @@ class _VerifyButton extends StatelessWidget {
       button: true,
       enabled: enabled,
       child: GestureDetector(
-        onTap: enabled ? onPressed : null,
+        onTap: withHaptic(enabled ? onPressed : null),
         child: AnimatedOpacity(
           opacity: enabled ? 1 : 0.6,
           duration: const Duration(milliseconds: 200),

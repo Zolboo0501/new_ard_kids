@@ -33,7 +33,7 @@ double _entranceOpacity(WidgetTester tester, Finder of) {
   return opacity.opacity;
 }
 
-Finder get _title => find.text('Найзаа сонгоорой! 🐾');
+Finder get _title => find.text('Найзаа сонгоорой!');
 
 /// The pop applied to the card showing [name]'s mascot.
 double _mascotScale(WidgetTester tester, String name) {

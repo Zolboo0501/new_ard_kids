@@ -7,6 +7,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Урамшууллын данс - Минимал": rewards balance and history.
 class RewardsAccountScreen extends StatelessWidget {
@@ -69,105 +70,109 @@ class RewardsAccountScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kPageBackground,
       appBar: const SubPageHeader(title: 'Урамшууллын данс'),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.white, AppColors.amber50],
-              ),
-              border: Border.all(color: AppColors.amber100),
-            ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Positioned(
-                  right: -12,
-                  bottom: -16,
-                  child: MascotImage(
-                    asset: Mascots.redPandaTrophy,
-                    size: 120,
-                    background: Color(0xFFFFFDF5),
-                    semanticLabel: 'Урамшуулал маскот',
-                  ),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.white, AppColors.amber50],
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(
-                      'Нийт үлдэгдэл',
-                      size: 12,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
+                border: Border.all(color: AppColors.amber100),
+              ),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Positioned(
+                    right: -12,
+                    bottom: -16,
+                    child: MascotImage(
+                      asset: Mascots.redPandaTrophy,
+                      size: 120,
+                      background: Color(0xFFFFFDF5),
+                      semanticLabel: 'Урамшуулал маскот',
                     ),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: '₮', style: moneyStyle(size: 26)),
-                          TextSpan(text: '35,000', style: moneyStyle(size: 34)),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    CopyAccountNumber(
-                      number: 'MN 5049 8219 03',
-                      prefix: 'Данс: ',
-                      style: comfortaa(
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        'Нийт үлдэгдэл',
                         size: 12,
                         weight: FontWeight.w500,
                         color: AppColors.slate500,
                       ),
-                    ),
-                  ],
+                      const BalanceText(
+                        35000,
+                        size: 30,
+                        currencySize: 24,
+                        weight: FontWeight.w600,
+                      ),
+                      const SizedBox(height: 4),
+                      CopyAccountNumber(
+                        number: 'MN 5049 8219 03',
+                        prefix: 'Данс: ',
+                        style: comfortaa(
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _Shortcut(
+                    asset: Mascots.foxWave,
+                    title: 'Найз урих',
+                    subtitle: '5,000 оноо',
+                    subtitleColor: AppColors.emerald600,
+                    onTap: () => go(AppRoutes.inviteFriends),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _Shortcut(
+                    asset: Mascots.redPandaTrophy,
+                    title: 'Урамшуулал авах',
+                    subtitle: 'Даалгаврууд',
+                    subtitleColor: AppColors.sky600,
+                    onTap: () => go(AppRoutes.rewardOpportunities),
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Expanded(
-                child: _Shortcut(
-                  asset: Mascots.foxWave,
-                  title: 'Найз урих',
-                  subtitle: '5,000 оноо',
-                  subtitleColor: AppColors.emerald600,
-                  onTap: () => go(AppRoutes.inviteFriends),
-                ),
+            const SizedBox(height: 18),
+            SectionHeader(
+              title: 'Гүйлгээний жагсаалт',
+              icon: Icons.receipt_long_outlined,
+              padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+            ),
+            for (final (i, item) in _items.indexed) ...[
+              ListItemEntrance(
+                id: item,
+                index: i,
+                child: TransactionTile(item: item, whenBelow: true),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _Shortcut(
-                  asset: Mascots.redPandaTrophy,
-                  title: 'Урамшуулал авах',
-                  subtitle: 'Даалгаврууд',
-                  subtitleColor: AppColors.sky600,
-                  onTap: () => go(AppRoutes.rewardOpportunities),
-                ),
-              ),
+              const SizedBox(height: 8),
             ],
-          ),
-          const SizedBox(height: 18),
-          SectionHeader(
-            title: 'Гүйлгээний жагсаалт',
-            icon: Icons.receipt_long_outlined,
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-          ),
-          for (final item in _items) ...[
-            TransactionTile(item: item, whenBelow: true),
-            const SizedBox(height: 8),
-          ],
-        ],
+          ]),
+        ),
       ),
     );
   }

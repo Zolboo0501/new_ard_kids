@@ -5,6 +5,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Шинэ зорилго үүсгэх": create a savings goal.
 class NewGoalScreen extends StatefulWidget {
@@ -16,11 +17,11 @@ class NewGoalScreen extends StatefulWidget {
 
 class _NewGoalScreenState extends State<NewGoalScreen> {
   static const _topics = [
-    ('🎮', 'Тоглоом & Зугаа'),
-    ('🚲', 'Спорт & Хөдөлгөөн'),
-    ('📚', 'Хичээл & Ном'),
-    ('🎨', 'Урлаг & Хобби'),
-    ('✈️', 'Аялал & Зуслан'),
+    (Mascots.puppyGamepad, 'Тоглоом & Зугаа'),
+    (Mascots.foxJump, 'Спорт & Хөдөлгөөн'),
+    (Mascots.bearBooks, 'Хичээл & Ном'),
+    (Mascots.catNotes, 'Урлаг & Хобби'),
+    (Mascots.foxWave, 'Аялал & Зуслан'),
   ];
   static const _icons = [
     ('Тоглоом', Mascots.puppyGamepad),
@@ -66,294 +67,297 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
         title: 'Зорилго нэмэх',
         background: AppColors.dsSurface,
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          16,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [AppColors.sky50, AppColors.amber50],
-              ),
-              border: Border.all(color: AppColors.sky100),
-            ),
-            child: Row(
-              children: [
-                const MascotImage(
-                  asset: Mascots.bearConfetti,
-                  size: 80,
-                  background: AppColors.sky50,
-                  semanticLabel: 'Мөрөөдлийн бамбарууш',
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            16,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  colors: [AppColors.sky50, AppColors.amber50],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
+                border: Border.all(color: AppColors.sky100),
+              ),
+              child: Row(
+                children: [
+                  const MascotImage(
+                    asset: Mascots.bearConfetti,
+                    size: 80,
+                    background: AppColors.sky50,
+                    semanticLabel: 'Мөрөөдлийн бамбарууш',
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const StatusBadge(
+                          label: 'Мөрөөдлөө биелүүлцгээе!',
+                          tone: BadgeTone.amber,
+                        ),
+                        const SizedBox(height: 6),
+                        AppText(
+                          'Зорилгоо тодорхойлж, бага багаар хуримтлуулаад мөрөөдөлдөө хүрээрэй!',
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate600,
+                          height: 1.5,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            _Section(
+              dot: AppColors.sky500,
+              title: 'Зорилгын нэр',
+              children: [
+                AppTextField(
+                  controller: _name,
+                  hint: 'Жишээ нь: Шинэ дугуй, LEGO тоглоом...',
+                  suffix: _name.text.isEmpty
+                      ? null
+                      : GestureDetector(
+                          onTap: withHaptic(_name.clear),
+                          child: const CircleAvatar(
+                            radius: 12,
+                            backgroundColor: AppColors.slate200,
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 14,
+                              color: AppColors.slate500,
+                            ),
+                          ),
+                        ),
+                ),
+                const SizedBox(height: 10),
+                AppText(
+                  'Шуурхай сэдвүүд:',
+                  size: 11,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate400,
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 32,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _topics.length,
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    itemBuilder: (_, i) => FilterChipPill(
+                      label: _topics[i].$2,
+                      mascot: _topics[i].$1,
+                      selected: _topic == i,
+                      onTap: () => setState(() => _topic = i),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _Section(
+              dot: AppColors.amber400,
+              title: 'Хүрэх дүн',
+              trailing: 'Төгрөгөөр',
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.slate50,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.slate200),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: BalanceText(
+                          _target,
+                          animate: true,
+                          size: 24,
+                          weight: FontWeight.w600,
+                          space: false,
+                          currencySize: 20,
+                          currencyColor: AppColors.sky500,
+                        ),
+                      ),
+                      Semantics(
+                        button: true,
+                        label: 'Дүнг арилгах',
+                        child: GestureDetector(
+                          onTap: withHaptic(
+                            () => setState(() {
+                              _target = 0;
+                              _lastQuick = null;
+                            }),
+                          ),
+                          child: const CircleAvatar(
+                            radius: 14,
+                            backgroundColor: AppColors.slate200,
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 14,
+                              color: AppColors.slate600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                QuickAmountChips(
+                  amounts: const [10000, 20000, 50000, 100000],
+                  selected: _lastQuick,
+                  onSelected: (v) => setState(() {
+                    _target += v;
+                    _lastQuick = v;
+                  }),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _Section(
+              dot: AppColors.emerald400,
+              title: 'Сар бүр хадгалах дүн',
+              trailingWidget: StatusBadge(
+                label: '${formatMnt(_monthly, space: false)} / сар',
+              ),
+              children: [
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 10,
+                    activeTrackColor: AppColors.sky500,
+                    inactiveTrackColor: AppColors.slate100,
+                    thumbColor: AppColors.sky500,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 13,
+                    ),
+                    tickMarkShape: SliderTickMarkShape.noTickMark,
+                  ),
+                  child: Slider(
+                    value: _monthly,
+                    min: 5000,
+                    max: 100000,
+                    divisions: 19,
+                    onChanged: (v) => setState(() => _monthly = v),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      for (final l in ['₮5,000', '₮50,000', '₮100,000'])
+                        AppText(
+                          l,
+                          size: 10,
+                          weight: FontWeight.w700,
+                          color: AppColors.slate400,
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.amber50.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.amber200.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const StatusBadge(
-                        label: 'Мөрөөдлөө биелүүлцгээе!',
-                        tone: BadgeTone.amber,
-                      ),
-                      const SizedBox(height: 6),
-                      AppText(
-                        'Зорилгоо тодорхойлж, бага багаар хуримтлуулаад мөрөөдөлдөө хүрээрэй!',
-                        size: 12,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate600,
-                        height: 1.5,
+                      const MascotIcon(Mascots.owlAbacus, size: 22),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Санамж: ',
+                                style: comfortaa(
+                                  size: 11.5,
+                                  weight: FontWeight.w700,
+                                  color: const Color(0xFF451A03),
+                                ),
+                              ),
+                              const TextSpan(text: 'Сар бүр '),
+                              TextSpan(
+                                text: formatMnt(_monthly),
+                                style: comfortaa(
+                                  size: 11.5,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.sky600,
+                                ),
+                              ),
+                              const TextSpan(text: ' хадгалбал '),
+                              TextSpan(
+                                text: '$_months сарын дараа',
+                                style: comfortaa(
+                                  size: 11.5,
+                                  weight: FontWeight.w700,
+                                  color: const Color(0xFF451A03),
+                                ),
+                              ),
+                              const TextSpan(text: ' зорилгодоо 100% хүрнэ!'),
+                            ],
+                          ),
+                          style: comfortaa(
+                            size: 11.5,
+                            weight: FontWeight.w500,
+                            color: const Color(0xFF78350F),
+                            height: 1.5,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 18),
-          _Section(
-            dot: AppColors.sky500,
-            title: 'Зорилгын нэр',
-            children: [
-              AppTextField(
-                controller: _name,
-                hint: 'Жишээ нь: Шинэ дугуй, LEGO тоглоом...',
-                suffix: _name.text.isEmpty
-                    ? null
-                    : GestureDetector(
-                        onTap: _name.clear,
-                        child: const CircleAvatar(
-                          radius: 12,
-                          backgroundColor: AppColors.slate200,
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 14,
-                            color: AppColors.slate500,
-                          ),
-                        ),
-                      ),
-              ),
-              const SizedBox(height: 10),
-              AppText(
-                'Шуурхай сэдвүүд:',
-                size: 11,
-                weight: FontWeight.w600,
-                color: AppColors.slate400,
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 32,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _topics.length,
-                  separatorBuilder: (_, _) => const SizedBox(width: 8),
-                  itemBuilder: (_, i) => FilterChipPill(
-                    label: '${_topics[i].$1} ${_topics[i].$2}',
-                    selected: _topic == i,
-                    onTap: () => setState(() => _topic = i),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _Section(
-            dot: AppColors.amber400,
-            title: 'Хүрэх дүн',
-            trailing: 'Төгрөгөөр',
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.slate50,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.slate200),
-                ),
-                child: Row(
+            const SizedBox(height: 16),
+            _Section(
+              dot: AppColors.pink400,
+              title: 'Зорилгын бэлгэдэл дүрс',
+              trailing: 'Сонгох',
+              children: [
+                Row(
                   children: [
-                    AppText(
-                      '₮',
-                      size: 20,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky500,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        formatMnt(_target).substring(1),
-                        style: moneyStyle(size: 24, weight: FontWeight.w800),
-                      ),
-                    ),
-                    Semantics(
-                      button: true,
-                      label: 'Дүнг арилгах',
-                      child: GestureDetector(
-                        onTap: () => setState(() {
-                          _target = 0;
-                          _lastQuick = null;
-                        }),
-                        child: const CircleAvatar(
-                          radius: 14,
-                          backgroundColor: AppColors.slate200,
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 14,
-                            color: AppColors.slate600,
-                          ),
+                    for (final (i, ic) in _icons.indexed) ...[
+                      if (i > 0) const SizedBox(width: 10),
+                      Expanded(
+                        child: _IconChoice(
+                          label: ic.$1,
+                          asset: ic.$2,
+                          selected: _icon == i,
+                          onTap: () => setState(() => _icon = i),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
-              ),
-              const SizedBox(height: 10),
-              QuickAmountChips(
-                amounts: const [10000, 20000, 50000, 100000],
-                selected: _lastQuick,
-                onSelected: (v) => setState(() {
-                  _target += v;
-                  _lastQuick = v;
-                }),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _Section(
-            dot: AppColors.emerald400,
-            title: 'Сар бүр хадгалах дүн',
-            trailingWidget: StatusBadge(
-              label: '${formatMnt(_monthly, space: true)} / сар',
+              ],
             ),
-            children: [
-              SliderTheme(
-                data: SliderTheme.of(context).copyWith(
-                  trackHeight: 10,
-                  activeTrackColor: AppColors.sky500,
-                  inactiveTrackColor: AppColors.slate100,
-                  thumbColor: AppColors.sky500,
-                  thumbShape: const RoundSliderThumbShape(
-                    enabledThumbRadius: 13,
-                  ),
-                  tickMarkShape: SliderTickMarkShape.noTickMark,
-                ),
-                child: Slider(
-                  value: _monthly,
-                  min: 5000,
-                  max: 100000,
-                  divisions: 19,
-                  onChanged: (v) => setState(() => _monthly = v),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    for (final l in ['₮5,000', '₮50,000', '₮100,000'])
-                      AppText(
-                        l,
-                        size: 10,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate400,
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.amber50.withValues(alpha: 0.8),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.amber200.withValues(alpha: 0.7),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('💡', style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Санамж: ',
-                              style: comfortaa(
-                                size: 11.5,
-                                weight: FontWeight.w700,
-                                color: const Color(0xFF451A03),
-                              ),
-                            ),
-                            const TextSpan(text: 'Сар бүр '),
-                            TextSpan(
-                              text: formatMnt(_monthly),
-                              style: comfortaa(
-                                size: 11.5,
-                                weight: FontWeight.w700,
-                                color: AppColors.sky600,
-                              ),
-                            ),
-                            const TextSpan(text: ' хадгалбал '),
-                            TextSpan(
-                              text: '$_months сарын дараа',
-                              style: comfortaa(
-                                size: 11.5,
-                                weight: FontWeight.w700,
-                                color: const Color(0xFF451A03),
-                              ),
-                            ),
-                            const TextSpan(text: ' зорилгодоо 100% хүрнэ!'),
-                          ],
-                        ),
-                        style: comfortaa(
-                          size: 11.5,
-                          weight: FontWeight.w500,
-                          color: const Color(0xFF78350F),
-                          height: 1.5,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _Section(
-            dot: AppColors.pink400,
-            title: 'Зорилгын бэлгэдэл дүрс',
-            trailing: 'Сонгох',
-            children: [
-              Row(
-                children: [
-                  for (final (i, ic) in _icons.indexed) ...[
-                    if (i > 0) const SizedBox(width: 10),
-                    Expanded(
-                      child: _IconChoice(
-                        label: ic.$1,
-                        asset: ic.$2,
-                        selected: _icon == i,
-                        onTap: () => setState(() => _icon = i),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          PrimaryButton(
-            label: 'Зорилго үүсгэх',
-            height: 56,
-            onPressed: _valid ? _submit : null,
-          ),
-        ],
+            const SizedBox(height: 20),
+            PrimaryButton(
+              label: 'Зорилго үүсгэх',
+              height: 56,
+              onPressed: _valid ? _submit : null,
+            ),
+          ]),
+        ),
       ),
     );
   }

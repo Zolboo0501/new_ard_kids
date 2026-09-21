@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "PocketPal Kid Home" from Stitch. With [parentLinked] false it renders the
 /// "Эцэг эх холбогдоогүй" variant: limited balance, locked accounts and a
@@ -44,6 +45,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _go(String route) => context.push(route);
 
+  /// How far card [i] sits from the centre of the carousel, in pages:
+  /// 0 when it's showing, ±1 one swipe away. Before the PageView has a size
+  /// (first frame) the settled page is used.
+  double _pageOffset(int i) {
+    final position = _pages.hasClients ? _pages.position : null;
+    final page = position != null && position.haveDimensions
+        ? _pages.page ?? _page.toDouble()
+        : _page.toDouble();
+    return i - page;
+  }
+
   @override
   Widget build(BuildContext context) {
     final linked = widget.parentLinked;
@@ -56,76 +68,100 @@ class _HomeScreenState extends State<HomeScreen> {
             onNotifications: () => _go(AppRoutes.notifications),
           ),
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.fromLTRB(
-                16,
-                14,
-                16,
-                120 + MediaQuery.paddingOf(context).bottom,
-              ),
-              children: [
-                _PageDots(count: linked ? _cards.length : 4, index: _page),
-                const SizedBox(height: 12),
-                if (!linked && _bannerVisible) ...[
-                  _LinkParentBanner(
-                    onClose: () => setState(() => _bannerVisible = false),
-                    onLink: () => _go(AppRoutes.parentLink),
-                  ),
-                  const SizedBox(height: 14),
-                ],
-                SizedBox(
-                  height: 232,
-                  child: PageView.builder(
-                    controller: _pages,
-                    itemCount: linked ? _cards.length : 1,
-                    onPageChanged: (i) => setState(() => _page = i),
-                    itemBuilder: (_, i) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: _BalanceCard(
-                        account: linked ? _cards[i].$1 : 'MN •••• 3389',
-                        balance: linked ? _cards[i].$2 : 20000,
-                        mascot: _cards[i].$3,
-                        hidden: _hideBalance,
-                        limited: !linked,
-                        onToggleHidden: () =>
-                            setState(() => _hideBalance = !_hideBalance),
-                        onTransfer: () => _go(AppRoutes.transfer),
-                        onTopUp: () => _go(AppRoutes.requestMoney),
+            child: EntranceScope(
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(
+                  16,
+                  14,
+                  16,
+                  120 + MediaQuery.paddingOf(context).bottom,
+                ),
+                children: EntranceItem.list([
+                  _PageDots(count: linked ? _cards.length : 4, index: _page),
+                  const SizedBox(height: 12),
+                  if (!linked && _bannerVisible) ...[
+                    _LinkParentBanner(
+                      onClose: () => setState(() => _bannerVisible = false),
+                      onLink: () => _go(AppRoutes.parentLink),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                  SizedBox(
+                    height: 232,
+                    child: PageView.builder(
+                      controller: _pages,
+                      itemCount: linked ? _cards.length : 1,
+                      onPageChanged: (i) => setState(() => _page = i),
+                      // Each card follows the swipe: the one leaving shrinks
+                      // and dims while the next grows in, and the mascot
+                      // lags behind the card for a touch of depth.
+                      itemBuilder: (_, i) => AnimatedBuilder(
+                        animation: _pages,
+                        builder: (context, child) {
+                          final offset = _pageOffset(i);
+                          final t = offset.abs().clamp(0.0, 1.0);
+                          return Opacity(
+                            opacity: 1 - 0.35 * t,
+                            child: Transform.scale(
+                              scale: 1 - 0.08 * t,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 2,
+                                ),
+                                child: _BalanceCard(
+                                  account: linked
+                                      ? _cards[i].$1
+                                      : 'MN •••• 3389',
+                                  balance: linked ? _cards[i].$2 : 20000,
+                                  mascot: _cards[i].$3,
+                                  mascotShift: offset,
+                                  hidden: _hideBalance,
+                                  limited: !linked,
+                                  onToggleHidden: () => setState(
+                                    () => _hideBalance = !_hideBalance,
+                                  ),
+                                  onTransfer: () => _go(AppRoutes.transfer),
+                                  onTopUp: () => _go(AppRoutes.requestMoney),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                AppTabs(
-                  tabs: const [
-                    AppTab('Данс'),
-                    AppTab('Нэхэмжлэх'),
-                    AppTab('Карт'),
-                  ],
-                  index: _tab,
-                  dotOnActive: true,
-                  style: AppTabsStyle.card,
-                  onChanged: (i) => setState(() => _tab = i),
-                ),
-                const SizedBox(height: 14),
-                AppTabView(
-                  index: _tab,
-                  child: switch (_tab) {
-                    0 =>
-                      linked
-                          ? _AccountsPane(onOpen: _go)
-                          : _LockedAccountsPane(
-                              onLink: () => _go(AppRoutes.parentLink),
-                            ),
-                    1 => _InvoicesPane(
-                      filter: _invoiceFilter,
-                      onFilter: (i) => setState(() => _invoiceFilter = i),
-                      onOpen: _go,
-                    ),
-                    _ => _CardsPane(onOpen: _go),
-                  },
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  AppTabs(
+                    tabs: const [
+                      AppTab('Данс'),
+                      AppTab('Нэхэмжлэх'),
+                      AppTab('Карт'),
+                    ],
+                    index: _tab,
+                    dotOnActive: true,
+                    style: AppTabsStyle.card,
+                    onChanged: (i) => setState(() => _tab = i),
+                  ),
+                  const SizedBox(height: 14),
+                  AppTabView(
+                    index: _tab,
+                    child: switch (_tab) {
+                      0 =>
+                        linked
+                            ? _AccountsPane(onOpen: _go)
+                            : _LockedAccountsPane(
+                                onLink: () => _go(AppRoutes.parentLink),
+                              ),
+                      1 => _InvoicesPane(
+                        filter: _invoiceFilter,
+                        onFilter: (i) => setState(() => _invoiceFilter = i),
+                        onOpen: _go,
+                      ),
+                      _ => _CardsPane(onOpen: _go),
+                    },
+                  ),
+                ]),
+              ),
             ),
           ),
         ],
@@ -156,23 +192,31 @@ class _Header extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: [
-              Container(
-                width: 46,
-                height: 46,
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.sky100,
-                  border: Border.all(
-                    color: AppColors.sky500.withValues(alpha: 0.3),
-                    width: 2,
+              GestureDetector(
+                // Switch to the Profile tab (branch 1) like the nav bar does,
+                // so the bar's selection follows instead of a page on top.
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  StatefulNavigationShell.of(context).goBranch(1);
+                },
+                child: Container(
+                  width: 46,
+                  height: 46,
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.sky100,
+                    border: Border.all(
+                      color: AppColors.sky500.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
                   ),
-                ),
-                child: ClipOval(
-                  child: Image.asset(
-                    Mascots.bearSitting,
-                    fit: BoxFit.cover,
-                    semanticLabel: 'Тэмүүлэн',
+                  child: ClipOval(
+                    child: Image.asset(
+                      Mascots.bearSitting,
+                      fit: BoxFit.cover,
+                      semanticLabel: 'Тэмүүлэн',
+                    ),
                   ),
                 ),
               ),
@@ -182,11 +226,17 @@ class _Header extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    AppText(
-                      'Сайн уу 👋',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate500,
+                    Row(
+                      children: [
+                        AppText(
+                          'Сайн уу',
+                          size: 11,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate500,
+                        ),
+                        const SizedBox(width: 4),
+                        const MascotIcon(Mascots.foxWave, size: 16),
+                      ],
                     ),
                     AppText(
                       'Тэмүүлэн!',
@@ -251,6 +301,7 @@ class _BalanceCard extends StatelessWidget {
     required this.account,
     required this.balance,
     required this.mascot,
+    this.mascotShift = 0,
     required this.hidden,
     required this.limited,
     required this.onToggleHidden,
@@ -261,6 +312,11 @@ class _BalanceCard extends StatelessWidget {
   final String account;
   final int balance;
   final String mascot;
+
+  /// The card's distance from the centre of the carousel, in pages; the
+  /// mascot drifts by it so it moves slower than the card (parallax), and
+  /// the action buttons rise in by it (see [_SwipeIn]).
+  final double mascotShift;
   final bool hidden;
   final bool limited;
   final VoidCallback onToggleHidden;
@@ -287,7 +343,7 @@ class _BalanceCard extends StatelessWidget {
         clipBehavior: Clip.none,
         children: [
           Positioned(
-            right: -14,
+            right: -14 + 36 * mascotShift.clamp(-1.0, 1.0),
             top: -12,
             child: MascotImage(
               asset: mascot,
@@ -346,29 +402,51 @@ class _BalanceCard extends StatelessWidget {
               const SizedBox(height: 10),
               SizedBox(
                 height: 50,
-                child: hidden
-                    ? Text(
-                        '••••••••',
-                        style: moneyStyle(size: 30, letterSpacing: 4),
-                      )
-                    : Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: '₮',
-                              style: moneyStyle(
-                                size: 28,
-                                weight: FontWeight.w600,
-                                color: AppColors.slate700,
-                              ),
-                            ),
-                            TextSpan(
-                              text: formatMnt(balance).substring(1),
-                              style: moneyStyle(size: 34, letterSpacing: -0.8),
-                            ),
-                          ],
-                        ),
+                // Hiding or showing the balance rolls over: the old one
+                // rises and fades away as the new one comes up from below.
+                child: AnimatedSwitcher(
+                  duration: MediaQuery.disableAnimationsOf(context)
+                      ? Duration.zero
+                      : const Duration(milliseconds: 280),
+                  switchInCurve: appEmphasizedDecelerate,
+                  switchOutCurve: Curves.easeIn,
+                  layoutBuilder: (current, previous) => Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [...previous, ?current],
+                  ),
+                  transitionBuilder: (child, animation) {
+                    final incoming = child.key == ValueKey(hidden);
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween(
+                          begin: Offset(0, incoming ? 0.35 : -0.35),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
                       ),
+                    );
+                  },
+                  child: hidden
+                      ? Text(
+                          '••••••••',
+                          key: const ValueKey(true),
+                          style: moneyStyle(size: 30, letterSpacing: 4),
+                        )
+                      : BalanceText(
+                          balance,
+                          key: const ValueKey(false),
+                          // Rolls up from ₮0 when the balance is revealed or
+                          // its card swipes in, like the deposit amount does.
+                          animateFrom: 0,
+                          size: 32,
+                          weight: FontWeight.w600,
+                          letterSpacing: 0.1,
+                          currencySize: 26,
+                          currencyWeight: FontWeight.w600,
+                          currencyColor: AppColors.slate700,
+                        ),
+                ),
               ),
               if (limited)
                 AppText(
@@ -381,20 +459,28 @@ class _BalanceCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: _CardAction(
-                      label: 'Гүйлгээ',
-                      mascot: Mascots.foxPhone,
-                      primary: false,
-                      onTap: onTransfer,
+                    child: _SwipeIn(
+                      shift: mascotShift,
+                      delay: 0,
+                      child: _CardAction(
+                        label: 'Гүйлгээ',
+                        mascot: Mascots.foxPhone,
+                        primary: false,
+                        onTap: onTransfer,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: _CardAction(
-                      label: 'Цэнэглэх',
-                      mascot: Mascots.bunnyBattery,
-                      primary: true,
-                      onTap: onTopUp,
+                    child: _SwipeIn(
+                      shift: mascotShift,
+                      delay: 0.3,
+                      child: _CardAction(
+                        label: 'Цэнэглэх',
+                        mascot: Mascots.bunnyBattery,
+                        primary: true,
+                        onTap: onTopUp,
+                      ),
                     ),
                   ),
                 ],
@@ -403,6 +489,36 @@ class _BalanceCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Settles [child] into place as its card swipes to the centre: sunk and
+/// faded while the card is off to the side, at rest once it's showing.
+///
+/// [delay] (0–1) holds a button back so a row of them settles one after
+/// another; they leave in the reverse order.
+class _SwipeIn extends StatelessWidget {
+  const _SwipeIn({
+    required this.shift,
+    required this.delay,
+    required this.child,
+  });
+
+  /// The card's distance from the centre, in pages.
+  final double shift;
+  final double delay;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    // 0 at rest, 1 well before the card is a full page away, so the buttons
+    // are out of the way by the time the card is half gone.
+    final t = ((shift.abs() * 2 - (0.3 - delay)) / 0.7).clamp(0.0, 1.0);
+    if (t == 0) return child;
+    return Opacity(
+      opacity: 1 - t,
+      child: Transform.translate(offset: Offset(0, 18 * t), child: child),
     );
   }
 }
@@ -425,7 +541,7 @@ class _TinyIcon extends StatelessWidget {
       label: label,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: onTap,
+        onTap: withHaptic(onTap),
         child: Padding(
           padding: const EdgeInsets.all(6),
           child: Icon(icon, size: 16, color: AppColors.slate400),
@@ -524,7 +640,7 @@ class _AccountRow extends StatelessWidget {
   final String title;
   final String subtitle;
   final String mascot;
-  final String? amount;
+  final int? amount;
   final Widget? badge;
   final VoidCallback? onTap;
   final Color tileColor;
@@ -577,7 +693,8 @@ class _AccountRow extends StatelessWidget {
             if (trailing != null)
               trailing!
             else ...[
-              Text(amount ?? '', style: moneyStyle(size: 14)),
+              if (amount != null)
+                BalanceText(amount!, size: 14, weight: FontWeight.w500),
               const SizedBox(width: 4),
               const Icon(
                 Icons.chevron_right_rounded,
@@ -601,51 +718,75 @@ class _AccountsPane extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _AccountRow(
-          title: 'Хадгаламжийн данс',
-          subtitle: 'MN 5049 8219 01',
-          mascot: Mascots.puppyPiggy,
-          amount: '₮1,280,000',
-          onTap: () => onOpen(AppRoutes.savingsAccount),
-        ),
-        const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Хувьцаа данс',
-          subtitle: 'MN 5049 8219 02',
-          mascot: Mascots.foxPhone,
-          amount: '₮142,500',
-          onTap: () => onOpen(AppRoutes.stocks),
-        ),
-        const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Урамшууллын данс',
-          subtitle: 'MN 5049 8219 03',
-          mascot: Mascots.owlBook,
-          amount: '₮35,000',
-          onTap: () => onOpen(AppRoutes.rewardsAccount),
-        ),
-        const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Ард койны данс',
-          subtitle: 'MN 5049 8219 04',
-          mascot: Mascots.bunnyCoin,
-          tileColor: AppColors.amber50,
-          amount: '₮50,000',
-          badge: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-            decoration: BoxDecoration(
-              color: AppColors.amber500.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(color: AppColors.amber200),
-            ),
-            child: AppText(
-              '1 Койн = 1₮',
-              size: 9,
-              weight: FontWeight.w700,
-              color: AppColors.amber600,
-            ),
+        ListItemEntrance(
+          id: 'Хадгаламжийн данс',
+          index: 0,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Хадгаламжийн данс',
+            subtitle: 'MN 5049 8219 01',
+            mascot: Mascots.puppyPiggy,
+            amount: 1280000,
+            onTap: () => onOpen(AppRoutes.savingsAccount),
           ),
-          onTap: () => onOpen(AppRoutes.coinAccount),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: 'Хувьцаа данс',
+          index: 1,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Хувьцаа данс',
+            subtitle: 'MN 5049 8219 02',
+            mascot: Mascots.foxPhone,
+            amount: 142500,
+            onTap: () => onOpen(AppRoutes.stocks),
+          ),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: 'Урамшууллын данс',
+          index: 2,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Урамшууллын данс',
+            subtitle: 'MN 5049 8219 03',
+            mascot: Mascots.owlBook,
+            amount: 35000,
+            onTap: () => onOpen(AppRoutes.rewardsAccount),
+          ),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: 'Ард койны данс',
+          index: 3,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Ард койны данс',
+            subtitle: 'MN 5049 8219 04',
+            mascot: Mascots.bunnyCoin,
+            tileColor: AppColors.amber50,
+            amount: 50000,
+            badge: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                color: AppColors.amber500.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: AppColors.amber200),
+              ),
+              child: AppText(
+                '1 Койн = 1₮',
+                size: 9,
+                weight: FontWeight.w700,
+                color: AppColors.amber600,
+              ),
+            ),
+            onTap: () => onOpen(AppRoutes.coinAccount),
+          ),
         ),
       ],
     );
@@ -660,7 +801,7 @@ class _LockedAccountsPane extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget linkButton() => GestureDetector(
-      onTap: onLink,
+      onTap: withHaptic(onLink),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
@@ -677,11 +818,11 @@ class _LockedAccountsPane extends StatelessWidget {
       ),
     );
 
-    Widget status(String amount, String label, Color amountColor, Color c) =>
+    Widget status(num amount, String label, Color amountColor, Color c) =>
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(amount, style: moneyStyle(size: 13, color: amountColor)),
+            BalanceText(amount, size: 13, color: amountColor),
             const SizedBox(height: 2),
             AppText(label, size: 9, weight: FontWeight.w700, color: c),
           ],
@@ -689,57 +830,87 @@ class _LockedAccountsPane extends StatelessWidget {
 
     return Column(
       children: [
-        _AccountRow(
-          title: 'Халаасны үндсэн данс',
-          subtitle: 'MN 5049 8219 01',
-          mascot: Mascots.bearCard,
-          tileColor: AppColors.sky50,
-          trailing: status(
-            '₮20,000',
-            '● Идэвхтэй',
-            AppColors.slate800,
-            AppColors.emerald600,
+        ListItemEntrance(
+          id: 'Халаасны үндсэн данс',
+          index: 0,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Халаасны үндсэн данс',
+            subtitle: 'MN 5049 8219 01',
+            mascot: Mascots.bearCard,
+            tileColor: AppColors.sky50,
+            trailing: status(
+              20000,
+              '● Идэвхтэй',
+              AppColors.slate800,
+              AppColors.emerald600,
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Хадгаламжийн данс',
-          subtitle: 'Холболт шаардлагатай',
-          mascot: Mascots.bearStar,
-          tileColor: AppColors.amber50,
-          locked: true,
-          trailing: linkButton(),
-        ),
-        const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Хувьцаа данс',
-          subtitle: 'MN 5049 8219 02',
-          mascot: Mascots.foxPhone,
-          tileColor: AppColors.sky50,
-          locked: true,
-          trailing: linkButton(),
-        ),
-        const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Урамшууллын данс',
-          subtitle: 'Эхлэлийн урамшуулал',
-          mascot: Mascots.owlBook,
-          tileColor: AppColors.amber50,
-          trailing: status(
-            '₮10,000',
-            'Идэвхтэй',
-            AppColors.amber500,
-            AppColors.slate400,
+        ListItemEntrance(
+          id: 'Хадгаламжийн данс',
+          index: 1,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Хадгаламжийн данс',
+            subtitle: 'Холболт шаардлагатай',
+            mascot: Mascots.bearStar,
+            tileColor: AppColors.amber50,
+            locked: true,
+            trailing: linkButton(),
           ),
         ),
         const SizedBox(height: 10),
-        _AccountRow(
-          title: 'Койны данс',
-          subtitle: 'MN 5049 8219 04',
-          mascot: Mascots.bunnyCoin,
-          tileColor: AppColors.amber50,
-          locked: true,
-          trailing: linkButton(),
+        ListItemEntrance(
+          id: 'Хувьцаа данс',
+          index: 2,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Хувьцаа данс',
+            subtitle: 'MN 5049 8219 02',
+            mascot: Mascots.foxPhone,
+            tileColor: AppColors.sky50,
+            locked: true,
+            trailing: linkButton(),
+          ),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: 'Урамшууллын данс',
+          index: 3,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Урамшууллын данс',
+            subtitle: 'Эхлэлийн урамшуулал',
+            mascot: Mascots.owlBook,
+            tileColor: AppColors.amber50,
+            trailing: status(
+              10000,
+              'Идэвхтэй',
+              AppColors.amber500,
+              AppColors.slate400,
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: 'Койны данс',
+          index: 4,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _AccountRow(
+            title: 'Койны данс',
+            subtitle: 'MN 5049 8219 04',
+            mascot: Mascots.bunnyCoin,
+            tileColor: AppColors.amber50,
+            locked: true,
+            trailing: linkButton(),
+          ),
         ),
       ],
     );
@@ -792,7 +963,7 @@ class _LinkParentBanner extends StatelessWidget {
                   button: true,
                   label: 'Хаах',
                   child: GestureDetector(
-                    onTap: onClose,
+                    onTap: withHaptic(onClose),
                     child: const Padding(
                       padding: EdgeInsets.all(4),
                       child: Icon(
@@ -876,7 +1047,7 @@ class _InvoicesPane extends StatelessWidget {
         Mascots.catHeart,
         'Хүлээгдэж буй',
         AppColors.amber500,
-        '₮20,000',
+        20000,
         'Өнөөдөр',
         0,
       ),
@@ -885,7 +1056,7 @@ class _InvoicesPane extends StatelessWidget {
         Mascots.bearBooks,
         'Зөвшөөрсөн / Төлөх',
         AppColors.emerald500,
-        '₮18,500',
+        18500,
         'Өчигдөр',
         1,
       ),
@@ -894,8 +1065,8 @@ class _InvoicesPane extends StatelessWidget {
         Mascots.owlBook,
         'Батлагдсан ✔',
         AppColors.sky500,
-        '₮10,000',
-        '+ Олсон',
+        10000,
+        "",
         2,
       ),
     ];
@@ -926,106 +1097,124 @@ class _InvoicesPane extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 10),
-        for (final inv in visible) ...[
-          AppCard(
-            radius: 18,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    MascotTile(asset: inv.$2, label: inv.$1),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        for (final (i, inv) in visible.indexed) ...[
+          ListItemEntrance(
+            always: true,
+            delay: AppTabView.incomingDelay,
+            id: inv,
+            index: i,
+            group: filter,
+            child: AppCard(
+              radius: 18,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      MascotTile(asset: inv.$2, label: inv.$1),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(inv.$1, size: 13, weight: FontWeight.w700),
+                            const SizedBox(height: 3),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: inv.$4,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: AppText(
+                                    inv.$3,
+                                    size: 11,
+                                    weight: FontWeight.w600,
+                                    color: inv.$7 == 0
+                                        ? AppColors.slate500
+                                        : inv.$4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          AppText(inv.$1, size: 13, weight: FontWeight.w700),
-                          const SizedBox(height: 3),
-                          Row(
-                            children: [
-                              Container(
-                                width: 6,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  color: inv.$4,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              Flexible(
-                                child: AppText(
-                                  inv.$3,
-                                  size: 11,
-                                  weight: FontWeight.w600,
-                                  color: inv.$7 == 0
-                                      ? AppColors.slate500
-                                      : inv.$4,
-                                ),
-                              ),
-                            ],
+                          BalanceText(
+                            inv.$5,
+                            size: 14,
+                            weight: FontWeight.w400,
+                          ),
+                          AppText(
+                            inv.$6,
+                            size: 11,
+                            color: inv.$7 == 2
+                                ? AppColors.emerald600
+                                : AppColors.slate400,
                           ),
                         ],
                       ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    ],
+                  ),
+                  if (inv.$7 < 2) ...[
+                    const Divider(height: 20, color: AppColors.slate100),
+                    Row(
                       children: [
-                        Text(inv.$5, style: moneyStyle(size: 14)),
-                        AppText(
-                          inv.$6,
-                          size: 11,
-                          color: inv.$7 == 2
-                              ? AppColors.emerald600
-                              : AppColors.slate400,
+                        Expanded(
+                          child: AppText(
+                            inv.$7 == 0
+                                ? 'Ээжид мэдэгдэл илгээх'
+                                : 'Дэлгүүрийн нэхэмжлэх',
+                            size: 11,
+                            color: AppColors.slate400,
+                          ),
                         ),
+                        inv.$7 == 0
+                            ? SoftButton(
+                                label: 'Сануулах',
+                                icon: Icons.notifications_active_outlined,
+                                height: 30,
+                                onPressed: () => showAppSnack(
+                                  context,
+                                  'Ээжид сануулга илгээлээ',
+                                ),
+                              )
+                            : SoftButton(
+                                label: 'Төлөх',
+                                icon: Icons.payments_outlined,
+                                height: 30,
+                                background: AppColors.sky500,
+                                foreground: Colors.white,
+                                border: null,
+                                onPressed: () => onOpen(AppRoutes.cart),
+                              ),
                       ],
                     ),
                   ],
-                ),
-                if (inv.$7 < 2) ...[
-                  const Divider(height: 20, color: AppColors.slate100),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          inv.$7 == 0
-                              ? 'Ээжид мэдэгдэл илгээх'
-                              : 'Дэлгүүрийн нэхэмжлэх',
-                          size: 11,
-                          color: AppColors.slate400,
-                        ),
-                      ),
-                      inv.$7 == 0
-                          ? SoftButton(
-                              label: 'Сануулах',
-                              icon: Icons.notifications_active_outlined,
-                              height: 30,
-                              onPressed: () => showAppSnack(
-                                context,
-                                'Ээжид сануулга илгээлээ',
-                              ),
-                            )
-                          : SoftButton(
-                              label: 'Төлөх',
-                              icon: Icons.payments_outlined,
-                              height: 30,
-                              background: AppColors.sky500,
-                              foreground: Colors.white,
-                              border: null,
-                              onPressed: () => onOpen(AppRoutes.cart),
-                            ),
-                    ],
-                  ),
                 ],
-              ],
+              ),
             ),
           ),
           const SizedBox(height: 10),
         ],
-        _DashedAction(
-          icon: Icons.add_circle_outline_rounded,
-          label: 'Шинэ нэхэмжлэх / хүсэлт үүсгэх',
-          onTap: () => onOpen(AppRoutes.requestMoney),
+        ListItemEntrance(
+          id: #newInvoice,
+          index: visible.length,
+          group: filter,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _DashedAction(
+            icon: Icons.add_circle_outline_rounded,
+            label: 'Шинэ нэхэмжлэх / хүсэлт үүсгэх',
+            onTap: () => onOpen(AppRoutes.requestMoney),
+          ),
         ),
       ],
     );
@@ -1042,87 +1231,105 @@ class _CardsPane extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppCard(
-          radius: 18,
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              _IconTile(
-                icon: Icons.credit_card_rounded,
-                background: AppColors.sky100,
-                color: AppColors.sky600,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _TwoLine(
-                  title: 'PocketPal Junior Card',
-                  subtitle: '•••• 5521',
+        ListItemEntrance(
+          id: #juniorCard,
+          index: 0,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: AppCard(
+            radius: 18,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                _IconTile(
+                  icon: Icons.credit_card_rounded,
+                  background: AppColors.sky100,
+                  color: AppColors.sky600,
                 ),
-              ),
-              const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _TwoLine(
+                    title: 'PocketPal Junior Card',
+                    subtitle: '•••• 5521',
+                  ),
+                ),
+                const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        AppCard(
-          radius: 18,
-          padding: const EdgeInsets.all(16),
-          onTap: () => onOpen(AppRoutes.cardOrder),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  _IconTile(
-                    icon: Icons.credit_card_rounded,
-                    background: AppColors.amber500.withValues(alpha: 0.1),
-                    color: AppColors.amber500,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _TwoLine(
-                      title: 'PocketPal Custom Neon Card',
-                      subtitle: '•••• 8820',
+        ListItemEntrance(
+          id: #neonCard,
+          index: 1,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: AppCard(
+            radius: 18,
+            padding: const EdgeInsets.all(16),
+            onTap: () => onOpen(AppRoutes.cardOrder),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    _IconTile(
+                      icon: Icons.credit_card_rounded,
+                      background: AppColors.amber500.withValues(alpha: 0.1),
+                      color: AppColors.amber500,
                     ),
-                  ),
-                  const StatusBadge(
-                    label: 'Хүлээгдэж буй',
-                    tone: BadgeTone.amber,
-                    icon: Icons.schedule_rounded,
-                  ),
-                ],
-              ),
-              const Divider(height: 20, color: AppColors.slate100),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.info_outline_rounded,
-                    size: 14,
-                    color: AppColors.amber500,
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: AppText(
-                      'Эцэг эхийн зөвшөөрөл хүлээж байна',
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _TwoLine(
+                        title: 'PocketPal Custom Neon Card',
+                        subtitle: '•••• 8820',
+                      ),
+                    ),
+                    const StatusBadge(
+                      label: 'Хүлээгдэж буй',
+                      tone: BadgeTone.amber,
+                      icon: Icons.schedule_rounded,
+                    ),
+                  ],
+                ),
+                const Divider(height: 20, color: AppColors.slate100),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 14,
+                      color: AppColors.amber500,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: AppText(
+                        'Эцэг эхийн зөвшөөрөл хүлээж байна',
+                        size: 11,
+                        color: AppColors.slate400,
+                      ),
+                    ),
+                    AppText(
+                      'Дэлгэрэнгүй',
                       size: 11,
-                      color: AppColors.slate400,
+                      weight: FontWeight.w700,
+                      color: AppColors.sky600,
                     ),
-                  ),
-                  AppText(
-                    'Дэлгэрэнгүй',
-                    size: 11,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky600,
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 10),
-        _DashedAction(
-          icon: Icons.add_card_rounded,
-          label: 'Шинэ загварын хүүхдийн карт захиалах',
-          onTap: () => onOpen(AppRoutes.cardOrder),
+        ListItemEntrance(
+          id: #orderCard,
+          index: 2,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: _DashedAction(
+            icon: Icons.add_card_rounded,
+            label: 'Шинэ загварын хүүхдийн карт захиалах',
+            onTap: () => onOpen(AppRoutes.cardOrder),
+          ),
         ),
       ],
     );

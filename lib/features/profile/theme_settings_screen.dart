@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Өнгөний тохиргоо": choose the app color theme.
 class ThemeSettingsScreen extends StatefulWidget {
@@ -51,94 +52,96 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
     return Scaffold(
       backgroundColor: bg,
       appBar: const SubPageHeader(title: 'Өнгөний тохиргоо', background: bg),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          12,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [AppColors.sky50, AppColors.pink50],
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: const LinearGradient(
+                  colors: [AppColors.sky50, AppColors.pink50],
+                ),
+                border: Border.all(color: AppColors.sky100),
               ),
-              border: Border.all(color: AppColors.sky100),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    borderRadius: BorderRadius.circular(24),
+              child: Row(
+                children: [
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const MascotImage(
+                      asset: Mascots.foxPhone,
+                      size: 88,
+                      background: Colors.white,
+                      semanticLabel: 'PocketPal Fox Mascot',
+                    ),
                   ),
-                  child: const MascotImage(
-                    asset: Mascots.foxPhone,
-                    size: 88,
-                    background: Colors.white,
-                    semanticLabel: 'PocketPal Fox Mascot',
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const StatusBadge(
+                          label: 'Өөрийн хэв маяг',
+                          icon: Icons.auto_awesome_rounded,
+                        ),
+                        const SizedBox(height: 6),
+                        AppText(
+                          'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай!',
+                          size: 13,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate600,
+                          height: 1.5,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const StatusBadge(
-                        label: 'Өөрийн хэв маяг',
-                        icon: Icons.auto_awesome_rounded,
-                      ),
-                      const SizedBox(height: 6),
-                      AppText(
-                        'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай!',
-                        size: 13,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate600,
-                        height: 1.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 12),
-            child: AppText(
-              'ҮНДСЭН СЭДВҮҮД',
-              size: 12,
-              weight: FontWeight.w700,
-              color: AppColors.slate400,
-              letterSpacing: 0.6,
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 12),
+              child: AppText(
+                'ҮНДСЭН СЭДВҮҮД',
+                size: 12,
+                weight: FontWeight.w700,
+                color: AppColors.slate400,
+                letterSpacing: 0.6,
+              ),
             ),
-          ),
-          for (final (i, t) in _themes.indexed) ...[
-            _ThemeCard(
-              title: t.$1,
-              description: t.$2,
-              tag: t.$3,
-              swatches: t.$4,
-              icon: t.$5,
-              selected: _selected == i,
-              active: _saved == i,
-              onTap: () => setState(() => _selected = i),
+            for (final (i, t) in _themes.indexed) ...[
+              _ThemeCard(
+                title: t.$1,
+                description: t.$2,
+                tag: t.$3,
+                swatches: t.$4,
+                icon: t.$5,
+                selected: _selected == i,
+                active: _saved == i,
+                onTap: () => setState(() => _selected = i),
+              ),
+              const SizedBox(height: 16),
+            ],
+            const SizedBox(height: 4),
+            PrimaryButton(
+              label: 'Сонгосон өнгийг хадгалах',
+              leadingIcon: Icons.check_rounded,
+              color: _selected == 1 ? AppColors.rose500 : null,
+              onPressed: _selected == _saved ? null : _save,
             ),
-            const SizedBox(height: 16),
-          ],
-          const SizedBox(height: 4),
-          PrimaryButton(
-            label: 'Сонгосон өнгийг хадгалах',
-            leadingIcon: Icons.check_rounded,
-            color: _selected == 1 ? AppColors.rose500 : null,
-            onPressed: _selected == _saved ? null : _save,
-          ),
-        ],
+          ]),
+        ),
       ),
     );
   }

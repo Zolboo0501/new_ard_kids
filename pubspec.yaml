@@ -37,6 +37,7 @@ dependencies:
   go_router: ^17.5.0
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7
+  mobile_scanner: ^7.4.2
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +68,9 @@ flutter:
     - family: Comfortaa
       fonts:
         - asset: assets/fonts/Comfortaa-VariableFont_wght.ttf
+    - family: OpenSans
+      fonts:
+        - asset: assets/fonts/OpenSans-VariableFont_wght.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

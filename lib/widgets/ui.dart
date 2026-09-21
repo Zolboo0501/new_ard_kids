@@ -5,6 +5,23 @@ import '../theme/app_theme.dart';
 import 'common.dart';
 import '../widgets/app_text.dart';
 
+/// Wraps a tap handler so it plays the app's tap haptic
+/// ([HapticFeedback.selectionClick]) before running. `null` stays `null`, so
+/// a disabled button stays disabled: `onTap: withHaptic(enabled ? save : null)`.
+VoidCallback? withHaptic(VoidCallback? onTap) {
+  if (onTap == null) return null;
+  return () {
+    HapticFeedback.selectionClick();
+    onTap();
+  };
+}
+
+/// Hides the on-screen keyboard by dropping focus from the current field.
+/// Text fields pass it as `onTapOutside`, so tapping anywhere else on the
+/// screen (a card, a button, empty space, or starting a scroll) closes it.
+void dismissKeyboard([PointerDownEvent? _]) =>
+    FocusManager.instance.primaryFocus?.unfocus();
+
 /// Formats [amount] as Mongolian tugrik with thousands separators:
 /// `formatMnt(1280000)` → `₮1,280,000`.
 String formatMnt(num amount, {bool sign = false, bool space = false}) {
@@ -33,6 +50,183 @@ TextStyle moneyStyle({
     color: color,
     letterSpacing: letterSpacing,
   ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
+}
+
+/// Open Sans with tabular figures, the money face from the Stitch screens.
+/// Open Sans is a variable font, so the `wght` variation is set alongside
+/// [weight] (same as [comfortaa]).
+TextStyle openSans({
+  required double size,
+  FontWeight weight = FontWeight.w700,
+  Color color = AppColors.slate800,
+  double? height,
+  double? letterSpacing,
+}) {
+  return TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: size,
+    fontWeight: weight,
+    fontVariations: [FontVariation.weight(weight.value.toDouble())],
+    fontFeatures: const [FontFeature.tabularFigures()],
+    color: color,
+    height: height,
+    letterSpacing: letterSpacing,
+  );
+}
+
+/// A balance amount in Open Sans, formatted with [formatMnt] plus two
+/// decimal places: `BalanceText(1280000, size: 32)` → `₮1,280,000.00`.
+/// Pass `decimals: false` for whole tugriks only (`₮1,280,000`).
+///
+/// The `₮` (and any `+`/`-` sign) can be styled apart from the digits with
+/// [currencySize], [currencyWeight] and [currencyColor]; each falls back to
+/// the digit style:
+///
+/// ```dart
+/// BalanceText(
+///   567930,
+///   size: 34,
+///   weight: FontWeight.w600,
+///   letterSpacing: -0.8,
+///   currencySize: 28,
+///   currencyColor: AppColors.slate700,
+/// )
+/// ```
+///
+/// With [animate], a change of [amount] counts from the old value to the new
+/// one instead of jumping (skipped when the system asks for reduced motion).
+/// [animateFrom] also counts the first display up from that value, e.g.
+/// `animateFrom: 0` for a balance that should roll up when it's revealed.
+class BalanceText extends StatelessWidget {
+  const BalanceText(
+    this.amount, {
+    super.key,
+    required this.size,
+    this.weight = FontWeight.w400,
+    this.color = AppColors.slate800,
+    this.sign = false,
+    this.space = false,
+    this.decimals = true,
+    this.currencySize,
+    this.currencyWeight,
+    this.currencyColor,
+    this.height,
+    this.letterSpacing,
+    this.decoration,
+    this.textAlign,
+    this.maxLines = 1,
+    this.overflow,
+    this.semanticsLabel,
+    this.animate = false,
+    this.animateFrom,
+  });
+
+  final num amount;
+  final double size;
+  final FontWeight weight;
+  final Color color;
+
+  /// Forwarded to [formatMnt]: prefix `+` on positive amounts / a space
+  /// after `₮`.
+  final bool sign;
+  final bool space;
+
+  /// Appends the two-digit fraction (`.00`) after the whole amount.
+  final bool decimals;
+
+  /// Style of the `₮` span; `null` uses [size] / [weight] / [color].
+  final double? currencySize;
+  final FontWeight? currencyWeight;
+  final Color? currencyColor;
+
+  final double? height;
+  final double? letterSpacing;
+
+  /// e.g. [TextDecoration.lineThrough] for a declined amount.
+  final TextDecoration? decoration;
+  final TextAlign? textAlign;
+  final int? maxLines;
+  final TextOverflow? overflow;
+  final String? semanticsLabel;
+
+  /// Counts to a new [amount] over [animationDuration] rather than jumping.
+  final bool animate;
+
+  /// Where the first display counts up from. Implies [animate].
+  final num? animateFrom;
+
+  static const animationDuration = Duration(milliseconds: 450);
+
+  @override
+  Widget build(BuildContext context) {
+    if (!animate && animateFrom == null) return _build(amount);
+    return TweenAnimationBuilder<double>(
+      // Without [animateFrom] only `end` is given, so the first build shows
+      // [amount] straight away; either way later changes tween from wherever
+      // the count currently is.
+      tween: Tween(begin: animateFrom?.toDouble(), end: amount.toDouble()),
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : animationDuration,
+      curve: Curves.easeOutCubic,
+      // Whole tugriks while counting so the `.00` doesn't flicker; the exact
+      // amount once it lands.
+      builder: (context, value, _) =>
+          _build(value == amount ? amount : value.round()),
+    );
+  }
+
+  Widget _build(num value) {
+    final text = _format(value);
+    final split = text.indexOf('₮') + 1;
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: text.substring(0, split),
+            style: openSans(
+              size: currencySize ?? size,
+              weight: currencyWeight ?? weight,
+              color: currencyColor ?? color,
+              height: height,
+            ),
+          ),
+          TextSpan(text: text.substring(split)),
+        ],
+      ),
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow,
+      // Screen readers hear the final amount, not each counting step.
+      semanticsLabel:
+          semanticsLabel ??
+          (animate || animateFrom != null ? _format(amount) : null),
+      style: openSans(
+        size: size,
+        weight: weight,
+        color: color,
+        height: height,
+        letterSpacing: letterSpacing,
+      ).copyWith(decoration: decoration),
+    );
+  }
+
+  String _format(num value) => decimals
+      ? _withDecimals(value)
+      : formatMnt(value, sign: sign, space: space);
+
+  /// Rounds to whole cents first so e.g. 9.999 reads `₮10.00`, and keeps the
+  /// `-` for amounts between -1 and 0 that would round to a whole `0`.
+  String _withDecimals(num value) {
+    final cents = (value.abs() * 100).round();
+    final whole = formatMnt(
+      cents ~/ 100,
+      sign: sign && value > 0,
+      space: space,
+    );
+    final fraction = (cents % 100).toString().padLeft(2, '0');
+    return '${value < 0 ? '-' : ''}$whole.$fraction';
+  }
 }
 
 const _softShadow = [
@@ -161,7 +355,7 @@ class _PressableState extends State<Pressable> {
       onTapDown: enabled ? (_) => _set(true) : null,
       onTapUp: enabled ? (_) => _set(false) : null,
       onTapCancel: () => _set(false),
-      onTap: widget.onTap,
+      onTap: withHaptic(widget.onTap),
       child: AnimatedScale(
         scale: _pressed ? widget.scale : 1,
         duration: const Duration(milliseconds: 110),
@@ -477,6 +671,7 @@ class FilterChipPill extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.icon,
+    this.mascot,
   });
 
   final String label;
@@ -484,13 +679,16 @@ class FilterChipPill extends StatelessWidget {
   final VoidCallback onTap;
   final IconData? icon;
 
+  /// A [Mascots] asset shown before the label, in place of an emoji.
+  final String? mascot;
+
   @override
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
       selected: selected,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: withHaptic(onTap),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
@@ -511,6 +709,10 @@ class FilterChipPill extends StatelessWidget {
                   color: selected ? Colors.white : AppColors.slate500,
                 ),
                 const SizedBox(width: 4),
+              ],
+              if (mascot != null) ...[
+                MascotIcon(mascot!, size: 18),
+                const SizedBox(width: 5),
               ],
               AppText(
                 label,
@@ -609,6 +811,7 @@ class SectionHeader extends StatelessWidget {
     this.action,
     this.onAction,
     this.icon,
+    this.mascot,
     this.padding = const EdgeInsets.fromLTRB(4, 4, 4, 8),
   });
 
@@ -616,6 +819,9 @@ class SectionHeader extends StatelessWidget {
   final String? action;
   final VoidCallback? onAction;
   final IconData? icon;
+
+  /// A [Mascots] asset shown before the title, in place of an emoji.
+  final String? mascot;
   final EdgeInsetsGeometry padding;
 
   @override
@@ -628,10 +834,14 @@ class SectionHeader extends StatelessWidget {
             Icon(icon, size: 18, color: AppColors.sky500),
             const SizedBox(width: 6),
           ],
+          if (mascot != null) ...[
+            MascotIcon(mascot!, size: 22),
+            const SizedBox(width: 6),
+          ],
           Expanded(child: AppText(title, size: 14, weight: FontWeight.w700)),
           if (action != null)
             GestureDetector(
-              onTap: onAction,
+              onTap: withHaptic(onAction),
               child: AppText(
                 action!,
                 size: 12,
@@ -728,75 +938,112 @@ class _AppTextFieldState extends State<AppTextField> {
   @override
   Widget build(BuildContext context) {
     final focused = _focus.hasFocus;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      constraints: const BoxConstraints(minHeight: 52),
-      decoration: BoxDecoration(
-        color: widget.enabled ? Colors.white : AppColors.slate50,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: focused ? AppColors.sky400 : AppColors.slate200,
-          width: focused ? 1.6 : 1,
+    // The whole box (prefix, suffix such as the clear button) counts as
+    // part of the field, so tapping it doesn't close the keyboard.
+    return TextFieldTapRegion(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        constraints: const BoxConstraints(minHeight: 52),
+        decoration: BoxDecoration(
+          color: widget.enabled ? Colors.white : AppColors.slate50,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: focused ? AppColors.sky400 : AppColors.slate200,
+            width: focused ? 1.6 : 1,
+          ),
+          boxShadow: focused
+              ? [
+                  BoxShadow(
+                    color: AppColors.sky400.withValues(alpha: 0.15),
+                    blurRadius: 0,
+                    spreadRadius: 3,
+                  ),
+                ]
+              : null,
         ),
-        boxShadow: focused
-            ? [
-                BoxShadow(
-                  color: AppColors.sky400.withValues(alpha: 0.15),
-                  blurRadius: 0,
-                  spreadRadius: 3,
+        child: Row(
+          children: [
+            if (widget.prefixIcon != null) ...[
+              Icon(
+                widget.prefixIcon,
+                size: 20,
+                color: focused ? AppColors.sky500 : AppColors.slate400,
+              ),
+              const SizedBox(width: 10),
+            ],
+            if (widget.prefixText != null) ...[
+              AppText(
+                widget.prefixText!,
+                size: 18,
+                weight: FontWeight.w700,
+                color: AppColors.slate500,
+              ),
+              const SizedBox(width: 6),
+            ],
+            Expanded(
+              child: TextField(
+                controller: widget.controller,
+                focusNode: _focus,
+                onTapOutside: dismissKeyboard,
+                enabled: widget.enabled,
+                readOnly: widget.readOnly,
+                onTap: widget.onTap,
+                onChanged: widget.onChanged,
+                keyboardType: widget.keyboardType,
+                inputFormatters: widget.inputFormatters,
+                maxLines: widget.maxLines,
+                cursorColor: AppColors.sky500,
+                style:
+                    widget.textStyle ??
+                    comfortaa(size: 14, weight: FontWeight.w700),
+                decoration: InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                  hintText: widget.hint,
+                  hintStyle: comfortaa(size: 14, color: AppColors.slate400),
                 ),
-              ]
-            : null,
-      ),
-      child: Row(
-        children: [
-          if (widget.prefixIcon != null) ...[
-            Icon(
-              widget.prefixIcon,
-              size: 20,
-              color: focused ? AppColors.sky500 : AppColors.slate400,
-            ),
-            const SizedBox(width: 10),
-          ],
-          if (widget.prefixText != null) ...[
-            AppText(
-              widget.prefixText!,
-              size: 15,
-              weight: FontWeight.w700,
-              color: AppColors.slate500,
-            ),
-            const SizedBox(width: 6),
-          ],
-          Expanded(
-            child: TextField(
-              controller: widget.controller,
-              focusNode: _focus,
-              enabled: widget.enabled,
-              readOnly: widget.readOnly,
-              onTap: widget.onTap,
-              onChanged: widget.onChanged,
-              keyboardType: widget.keyboardType,
-              inputFormatters: widget.inputFormatters,
-              maxLines: widget.maxLines,
-              cursorColor: AppColors.sky500,
-              style:
-                  widget.textStyle ??
-                  comfortaa(size: 14, weight: FontWeight.w700),
-              decoration: InputDecoration(
-                isDense: true,
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(vertical: 15),
-                hintText: widget.hint,
-                hintStyle: comfortaa(size: 14, color: AppColors.slate400),
               ),
             ),
-          ),
-          if (widget.suffix != null) ...[
-            const SizedBox(width: 8),
-            widget.suffix!,
+            if (widget.suffix != null) ...[
+              const SizedBox(width: 8),
+              widget.suffix!,
+            ],
           ],
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A small animal sticker used in place of an emoji: the mascot inside a
+/// white circle, so it reads the same on white, tinted and filled surfaces.
+class MascotIcon extends StatelessWidget {
+  const MascotIcon(this.asset, {super.key, this.size = 22, this.label = ''});
+
+  final String asset;
+  final double size;
+
+  /// Semantic label; empty when the text next to it already says it all.
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: ClipOval(
+        child: MascotImage(
+          asset: asset,
+          size: size,
+          background: Colors.white,
+          semanticLabel: label,
+        ),
       ),
     );
   }
@@ -889,12 +1136,16 @@ class InfoNote extends StatelessWidget {
     this.icon = Icons.info_outline_rounded,
     this.tone = BadgeTone.sky,
     this.title,
+    this.mascot,
   });
 
   final String text;
   final String? title;
   final IconData icon;
   final BadgeTone tone;
+
+  /// A [Mascots] asset shown instead of [icon].
+  final String? mascot;
 
   @override
   Widget build(BuildContext context) {
@@ -910,7 +1161,10 @@ class InfoNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: fg),
+          if (mascot != null)
+            MascotIcon(mascot!, size: 24)
+          else
+            Icon(icon, size: 18, color: fg),
           const SizedBox(width: 8),
           Expanded(
             child: Column(
@@ -1006,7 +1260,7 @@ class QuickAmountChips extends StatelessWidget {
           if (i > 0) const SizedBox(width: 6),
           Expanded(
             child: GestureDetector(
-              onTap: () => onSelected(amounts[i]),
+              onTap: withHaptic(() => onSelected(amounts[i])),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1046,7 +1300,10 @@ class QuickAmountChips extends StatelessWidget {
 }
 
 /// Shows a short confirmation snack bar in the app style.
-void showAppSnack(BuildContext context, String message) {
+///
+/// [mascot] (a [Mascots] asset) shows an animal before the message, e.g. a
+/// celebrating bear for a success.
+void showAppSnack(BuildContext context, String message, {String? mascot}) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
@@ -1054,7 +1311,17 @@ void showAppSnack(BuildContext context, String message) {
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.slate800,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: AppText(message, size: 13, color: Colors.white),
+        content: mascot == null
+            ? AppText(message, size: 13, color: Colors.white)
+            : Row(
+                children: [
+                  MascotIcon(mascot, size: 28),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: AppText(message, size: 13, color: Colors.white),
+                  ),
+                ],
+              ),
       ),
     );
 }
@@ -1070,7 +1337,10 @@ class AppSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     return Switch.adaptive(
       value: value,
-      onChanged: onChanged,
+      onChanged: (v) {
+        HapticFeedback.selectionClick();
+        onChanged(v);
+      },
       activeTrackColor: AppColors.sky500,
       activeThumbColor: Colors.white,
       inactiveTrackColor: AppColors.slate200,

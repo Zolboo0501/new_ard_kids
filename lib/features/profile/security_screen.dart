@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/numeric_keypad.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Аюулгүй байдал & ПИН код": PIN, biometrics and device settings.
 class SecurityScreen extends StatefulWidget {
@@ -29,7 +30,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
       builder: (_) => const _PinSheet(),
     );
     if (changed == true && mounted) {
-      showAppSnack(context, 'ПИН код амжилттай шинэчлэгдлээ 🔐');
+      showAppSnack(
+        context,
+        'ПИН код амжилттай шинэчлэгдлээ',
+        mascot: Mascots.bearShield,
+      );
     }
   }
 
@@ -56,125 +61,130 @@ class _SecurityScreenState extends State<SecurityScreen> {
           ),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          12,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          const _GroupLabel('ПИН КОД & НУУЦЛАЛ', trailing: '4 оронтой'),
-          _Group(
-            children: [
-              _SettingTile(
-                icon: Icons.pin_outlined,
-                tone: BadgeTone.sky,
-                title: 'ПИН код солих',
-                subtitle: 'Гүйлгээний 4 оронтой нууц код',
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AppText(
-                      '••••',
-                      size: 12,
-                      weight: FontWeight.w700,
-                      color: AppColors.slate300,
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      color: AppColors.slate300,
-                    ),
-                  ],
-                ),
-                onTap: _changePin,
-              ),
-              _SettingTile(
-                icon: Icons.password_rounded,
-                tone: BadgeTone.slate,
-                iconColor: AppColors.indigo500,
-                iconBackground: AppColors.indigo50,
-                title: 'Апп руу нэвтрэх нууц үг',
-                subtitle: 'Сүүлд 14 хоногийн өмнө шинэчилсэн',
-                trailing: const Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.slate300,
-                ),
-                onTap: () => showAppSnack(context, 'Нууц үг солих'),
-              ),
-            ],
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
           ),
-          const SizedBox(height: 18),
-          const _GroupLabel('БИОМЕТРИК НЭВТРЭЛТ'),
-          _Group(
-            children: [
-              _SettingTile(
-                icon: Icons.face_retouching_natural_rounded,
-                tone: BadgeTone.sky,
-                title: 'Face ID нэвтрэх',
-                subtitle: 'Царай таньж шууд нэвтрэх',
-                trailing: AppSwitch(
-                  value: _faceId,
-                  onChanged: (v) => setState(() => _faceId = v),
+          children: EntranceItem.list([
+            const _GroupLabel('ПИН КОД & НУУЦЛАЛ', trailing: '4 оронтой'),
+            _Group(
+              children: [
+                _SettingTile(
+                  icon: Icons.pin_outlined,
+                  tone: BadgeTone.sky,
+                  title: 'ПИН код солих',
+                  subtitle: 'Гүйлгээний 4 оронтой нууц код',
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppText(
+                        '••••',
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: AppColors.slate300,
+                      ),
+                      const Icon(
+                        Icons.chevron_right_rounded,
+                        color: AppColors.slate300,
+                      ),
+                    ],
+                  ),
+                  onTap: _changePin,
                 ),
-              ),
-              _SettingTile(
-                icon: Icons.fingerprint_rounded,
-                tone: BadgeTone.emerald,
-                title: 'Хурууны хээ ашиглах',
-                subtitle: 'Түргэн баталгаажуулалт',
-                trailing: AppSwitch(
-                  value: _fingerprint,
-                  onChanged: (v) => setState(() => _fingerprint = v),
+                _SettingTile(
+                  icon: Icons.password_rounded,
+                  tone: BadgeTone.slate,
+                  iconColor: AppColors.indigo500,
+                  iconBackground: AppColors.indigo50,
+                  title: 'Апп руу нэвтрэх нууц үг',
+                  subtitle: 'Сүүлд 14 хоногийн өмнө шинэчилсэн',
+                  trailing: const Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.slate300,
+                  ),
+                  onTap: () => showAppSnack(context, 'Нууц үг солих'),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          const _GroupLabel('ЭЦЭГ ЭХИЙН БАТАЛГААЖУУЛАЛТ'),
-          _Group(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: InfoNote(
+              ],
+            ),
+            const SizedBox(height: 18),
+            const _GroupLabel('БИОМЕТРИК НЭВТРЭЛТ'),
+            _Group(
+              children: [
+                _SettingTile(
+                  icon: Icons.face_retouching_natural_rounded,
+                  tone: BadgeTone.sky,
+                  title: 'Face ID нэвтрэх',
+                  subtitle: 'Царай таньж шууд нэвтрэх',
+                  trailing: AppSwitch(
+                    value: _faceId,
+                    onChanged: (v) => setState(() => _faceId = v),
+                  ),
+                ),
+                _SettingTile(
+                  icon: Icons.fingerprint_rounded,
+                  tone: BadgeTone.emerald,
+                  title: 'Хурууны хээ ашиглах',
+                  subtitle: 'Түргэн баталгаажуулалт',
+                  trailing: AppSwitch(
+                    value: _fingerprint,
+                    onChanged: (v) => setState(() => _fingerprint = v),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            const _GroupLabel('ЭЦЭГ ЭХИЙН БАТАЛГААЖУУЛАЛТ'),
+            _Group(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: InfoNote(
+                    tone: BadgeTone.amber,
+                    icon: Icons.sms_outlined,
+                    text:
+                        'ПИН код шинэчлэхэд таны асран хамгаалагч Ээж (Б. Саруул)-ийн утсанд 6 оронтой баталгаажуулах код очно.',
+                  ),
+                ),
+                _SettingTile(
+                  icon: Icons.phonelink_lock_rounded,
                   tone: BadgeTone.amber,
-                  icon: Icons.sms_outlined,
-                  text:
-                      'ПИН код шинэчлэхэд таны асран хамгаалагч Ээж (Б. Саруул)-ийн утсанд 6 оронтой баталгаажуулах код очно.',
+                  title: 'Шинэ төхөөрөмжөөс нэвтрэх зөвшөөрөл',
+                  subtitle: 'Эцэг эхийн аппаас зөвшөөрөл шаардана',
+                  trailing: AppSwitch(
+                    value: _parentApproval,
+                    onChanged: (v) => setState(() => _parentApproval = v),
+                  ),
                 ),
-              ),
-              _SettingTile(
-                icon: Icons.phonelink_lock_rounded,
-                tone: BadgeTone.amber,
-                title: 'Шинэ төхөөрөмжөөс нэвтрэх зөвшөөрөл',
-                subtitle: 'Эцэг эхийн аппаас зөвшөөрөл шаардана',
-                trailing: AppSwitch(
-                  value: _parentApproval,
-                  onChanged: (v) => setState(() => _parentApproval = v),
+              ],
+            ),
+            const SizedBox(height: 18),
+            const _GroupLabel(
+              'НЭВТЭРСЭН ТӨХӨӨРӨМЖҮҮД',
+              trailing: '1 төхөөрөмж',
+            ),
+            _Group(
+              children: [
+                _SettingTile(
+                  icon: Icons.phone_iphone_rounded,
+                  tone: BadgeTone.slate,
+                  title: 'iPhone 14 Pro (Энэ утас)',
+                  subtitle: 'Улаанбаатар · Яг одоо идэвхтэй',
+                  trailing: const StatusBadge(label: 'Идэвхтэй'),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          const _GroupLabel('НЭВТЭРСЭН ТӨХӨӨРӨМЖҮҮД', trailing: '1 төхөөрөмж'),
-          _Group(
-            children: [
-              _SettingTile(
-                icon: Icons.phone_iphone_rounded,
-                tone: BadgeTone.slate,
-                title: 'iPhone 14 Pro (Энэ утас)',
-                subtitle: 'Улаанбаатар · Яг одоо идэвхтэй',
-                trailing: const StatusBadge(label: 'Идэвхтэй'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          PrimaryButton(
-            label: 'ПИН кодоо шинэчлэх',
-            leadingIcon: Icons.lock_reset_rounded,
-            onPressed: _changePin,
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 20),
+            PrimaryButton(
+              label: 'ПИН кодоо шинэчлэх',
+              leadingIcon: Icons.lock_reset_rounded,
+              onPressed: _changePin,
+            ),
+          ]),
+        ),
       ),
     );
   }
@@ -264,7 +274,7 @@ class _SettingTile extends StatelessWidget {
     final (bg, fg, _) = tone.colors;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap,
+      onTap: withHaptic(onTap),
       child: Row(
         children: [
           Container(

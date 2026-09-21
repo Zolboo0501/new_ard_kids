@@ -109,7 +109,11 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
   void _confirm() {
     if (!widget.editing) return _next();
     // TODO: persist the chosen avatar.
-    showAppSnack(context, '${_avatars[_selected].$1} таны шинэ найз боллоо 🐾');
+    showAppSnack(
+      context,
+      '${_avatars[_selected].$1} таны шинэ найз боллоо',
+      mascot: _avatars[_selected].$4,
+    );
     context.pop();
   }
 
@@ -152,11 +156,20 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         const SizedBox(height: 10),
                         Entrance(
                           t: _titleIn,
-                          child: const AppText(
-                            'Найзаа сонгоорой! 🐾',
-                            size: 24,
-                            weight: FontWeight.w700,
-                            letterSpacing: -0.5,
+                          // The animal next to the title is whichever friend
+                          // is currently picked.
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const AppText(
+                                'Найзаа сонгоорой!',
+                                size: 24,
+                                weight: FontWeight.w700,
+                                letterSpacing: -0.5,
+                              ),
+                              const SizedBox(width: 8),
+                              MascotIcon(_avatars[_selected].$4, size: 30),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 6),

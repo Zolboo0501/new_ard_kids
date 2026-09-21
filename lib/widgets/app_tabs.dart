@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 
@@ -200,7 +201,11 @@ class AppTabs extends StatelessWidget {
         selected: selected,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
-          onTap: () => onChanged(i),
+          onTap: () {
+            // Only a real switch clicks; tapping the current tab is silent.
+            if (!selected) HapticFeedback.selectionClick();
+            onChanged(i);
+          },
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: style.verticalPadding),
             child: Row(
@@ -293,6 +298,15 @@ class AppTabView extends StatefulWidget {
   final Widget child;
   final Duration duration;
 
+  /// Fraction of [duration] the incoming pane waits before it starts to fade
+  /// in, so the outgoing one is already gone.
+  static const _incomingStart = 0.35;
+
+  /// When a pane switched in with the default [duration] first becomes
+  /// visible. Content inside the pane that animates on its own (e.g.
+  /// [ListItemEntrance] rows) should start then, not while it's invisible.
+  static const incomingDelay = Duration(milliseconds: 112);
+
   @override
   State<AppTabView> createState() => _AppTabViewState();
 }
@@ -323,8 +337,16 @@ class _AppTabViewState extends State<AppTabView> {
         duration: widget.duration,
         // Incoming waits out the first third, by which time the outgoing pane
         // has already gone. Reversed for the outgoing child by AnimatedSwitcher.
-        switchInCurve: const Interval(0.35, 1, curve: appEmphasizedDecelerate),
-        switchOutCurve: const Interval(0.35, 1, curve: appEmphasizedDecelerate),
+        switchInCurve: const Interval(
+          AppTabView._incomingStart,
+          1,
+          curve: appEmphasizedDecelerate,
+        ),
+        switchOutCurve: const Interval(
+          AppTabView._incomingStart,
+          1,
+          curve: appEmphasizedDecelerate,
+        ),
         layoutBuilder: (currentChild, previousChildren) => Stack(
           alignment: Alignment.topCenter,
           children: [

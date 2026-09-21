@@ -1,15 +1,26 @@
+import 'dart:async';
 import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
-/// "QR уншуулах": scanner viewfinder plus the "Миний QR" tab.
+/// "QR уншуулах": a live camera QR scanner (mobile_scanner) plus the
+/// "Миний QR" tab.
+///
+/// The camera runs only while the scan tab is showing: [MobileScanner] starts
+/// it when mounted and stops it when the tab switches away, and it pauses and
+/// resumes with the app lifecycle on its own. Only codes inside the on-screen
+/// frame are read ([_frame]).
 class QrScanScreen extends StatefulWidget {
   const QrScanScreen({super.key});
 
@@ -24,13 +35,54 @@ class _QrScanScreenState extends State<QrScanScreen>
     duration: const Duration(milliseconds: 2200),
   )..repeat(reverse: true);
 
+  final _camera = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    formats: const [BarcodeFormat.qrCode],
+  );
+
+  /// Side of the square viewfinder; also the scan window.
+  static const _frame = 224.0;
+
   int _tab = 0;
-  bool _torch = false;
+
+  /// Set while a scanned code is being shown, so further frames that still
+  /// see the code don't open a second sheet.
+  bool _handling = false;
 
   @override
   void dispose() {
     _scan.dispose();
+    unawaited(_camera.dispose());
     super.dispose();
+  }
+
+  Future<void> _onDetect(BarcodeCapture capture) async {
+    if (_handling) return;
+    final value = capture.barcodes
+        .map((b) => b.rawValue)
+        .nonNulls
+        .where((v) => v.isNotEmpty)
+        .firstOrNull;
+    if (value == null) return;
+    _handling = true;
+    unawaited(HapticFeedback.mediumImpact());
+    // Freeze the preview on the code while the result is shown.
+    await _camera.pause();
+    if (!mounted) return;
+
+    final transfer = await showModalBottomSheet<bool>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ScanResultSheet(value: value),
+    );
+    if (!mounted) return;
+    if (transfer ?? false) {
+      // TODO: parse the recipient from [value] and prefill the transfer.
+      await context.push(AppRoutes.transfer);
+      if (!mounted) return;
+    }
+    _handling = false;
+    if (_tab == 0) unawaited(_camera.start());
   }
 
   @override
@@ -40,39 +92,56 @@ class _QrScanScreenState extends State<QrScanScreen>
       appBar: SubPageHeader(
         title: 'QR уншуулах',
         background: AppColors.dsSurface,
-        trailing: CircleIconButton(
-          icon: _torch ? Icons.flashlight_on_rounded : Icons.highlight_rounded,
-          label: 'Гэрэл асаах/унтраах',
-          color: _torch ? AppColors.amber500 : AppColors.slate600,
-          onPressed: () => setState(() => _torch = !_torch),
-        ),
+        trailing: _tab == 0
+            ? ValueListenableBuilder(
+                valueListenable: _camera,
+                builder: (context, state, _) {
+                  final on = state.torchState == TorchState.on;
+                  return CircleIconButton(
+                    icon: on
+                        ? Icons.flashlight_on_rounded
+                        : Icons.highlight_rounded,
+                    label: 'Гэрэл асаах/унтраах',
+                    color: on ? AppColors.amber500 : AppColors.slate600,
+                    // No flash (or no camera yet): the button does nothing.
+                    onPressed:
+                        state.isRunning &&
+                            state.torchState != TorchState.unavailable
+                        ? () => unawaited(_camera.toggleTorch())
+                        : null,
+                  );
+                },
+              )
+            : null,
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          12,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppTabs(
-            tabs: const [
-              AppTab('QR унших', icon: Icons.qr_code_scanner_rounded),
-              AppTab('Миний QR', icon: Icons.qr_code_2_rounded),
-            ],
-            index: _tab,
-            style: AppTabsStyle.solid,
-            onChanged: (i) => setState(() => _tab = i),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
           ),
-          const SizedBox(height: 16),
-          AppTabView(
-            index: _tab,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: _tab == 0 ? _buildScan() : _buildMyQr(),
+          children: EntranceItem.list([
+            AppTabs(
+              tabs: const [
+                AppTab('QR унших', icon: Icons.qr_code_scanner_rounded),
+                AppTab('Миний QR', icon: Icons.qr_code_2_rounded),
+              ],
+              index: _tab,
+              style: AppTabsStyle.solid,
+              onChanged: (i) => setState(() => _tab = i),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            AppTabView(
+              index: _tab,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _tab == 0 ? _buildScan() : _buildMyQr(),
+              ),
+            ),
+          ]),
+        ),
       ),
     );
   }
@@ -86,116 +155,38 @@ class _QrScanScreenState extends State<QrScanScreen>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              const Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Color(0xFF101B2B),
-                        Color(0xFF1A2838),
-                        Color(0xFF0F1A28),
-                      ],
+              // Only the scanner needs the size: its scan window is the
+              // centred frame, in its own coordinates.
+              Positioned.fill(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => MobileScanner(
+                    controller: _camera,
+                    scanWindow: Rect.fromCenter(
+                      center: constraints.biggest.center(Offset.zero),
+                      width: _frame,
+                      height: _frame,
+                    ),
+                    onDetect: _onDetect,
+                    placeholderBuilder: (_) => const _CameraBackdrop(),
+                    errorBuilder: (_, error) => _CameraError(
+                      error: error,
+                      onRetry: () => unawaited(_camera.start()),
                     ),
                   ),
                 ),
               ),
-              if (_torch)
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        colors: [
-                          Colors.white.withValues(alpha: 0.18),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              SizedBox(
-                width: 224,
-                height: 224,
-                child: Stack(
-                  children: [
-                    const Positioned.fill(
-                      child: CustomPaint(painter: _CornerPainter()),
-                    ),
-                    Center(
-                      child: Container(
-                        width: 176,
-                        height: 176,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.25),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.filter_center_focus_rounded,
-                          size: 36,
-                          color: AppColors.sky300.withValues(alpha: 0.6),
-                        ),
-                      ),
-                    ),
-                    AnimatedBuilder(
-                      animation: _scan,
-                      builder: (_, _) => Positioned(
-                        left: 24,
-                        right: 24,
-                        top: 24 + 176 * Curves.easeInOut.transform(_scan.value),
-                        child: Container(
-                          height: 2,
-                          decoration: BoxDecoration(
-                            color: AppColors.sky400,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.sky400.withValues(alpha: 0.8),
-                                blurRadius: 12,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 20,
-                child: AppText(
-                  'QR кодыг хүрээн дотор байрлуулна уу',
-                  size: 12,
-                  weight: FontWeight.w600,
-                  color: Colors.white.withValues(alpha: 0.8),
+              // The viewfinder only makes sense over a working camera.
+              Positioned.fill(
+                child: ValueListenableBuilder(
+                  valueListenable: _camera,
+                  builder: (context, state, child) =>
+                      state.error == null ? child! : const SizedBox.shrink(),
+                  child: _Viewfinder(scan: _scan),
                 ),
               ),
             ],
           ),
         ),
-      ),
-      const SizedBox(height: 16),
-      Row(
-        children: [
-          Expanded(
-            child: SoftButton(
-              label: 'Зургаас унших',
-              icon: Icons.image_outlined,
-              onPressed: () => showAppSnack(context, 'Зургийн сан нээгдэнэ'),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: SoftButton(
-              label: 'Гараар оруулах',
-              icon: Icons.keyboard_alt_outlined,
-              onPressed: () => context.pushReplacement(AppRoutes.transfer),
-            ),
-          ),
-        ],
       ),
       const SizedBox(height: 16),
       const InfoNote(
@@ -333,6 +324,289 @@ class _QrScanScreenState extends State<QrScanScreen>
         ),
       ),
     ];
+  }
+}
+
+/// Dark fill shown until the camera's first frame (and behind errors).
+class _CameraBackdrop extends StatelessWidget {
+  const _CameraBackdrop({this.child});
+
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF101B2B), Color(0xFF1A2838), Color(0xFF0F1A28)],
+        ),
+      ),
+      child: SizedBox.expand(child: child),
+    );
+  }
+}
+
+/// Frosts the camera preview around the centred frame, leaving the square
+/// sharp. It sizes itself, so it needs no [LayoutBuilder].
+class _OutsideBlur extends StatelessWidget {
+  const _OutsideBlur();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: const _HoleClipper(),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: ColoredBox(color: Colors.black.withValues(alpha: 0.35)),
+      ),
+    );
+  }
+}
+
+/// The whole area minus a centred [_QrScanScreenState._frame] square with
+/// the same rounded corners as [_CornerPainter].
+class _HoleClipper extends CustomClipper<Path> {
+  const _HoleClipper();
+
+  static const _radius = Radius.circular(18);
+
+  @override
+  Path getClip(Size size) => Path()
+    ..fillType = PathFillType.evenOdd
+    ..addRect(Offset.zero & size)
+    ..addRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: size.center(Offset.zero),
+          width: _QrScanScreenState._frame,
+          height: _QrScanScreenState._frame,
+        ),
+        _radius,
+      ),
+    );
+
+  @override
+  bool shouldReclip(_HoleClipper old) => false;
+}
+
+/// Everything drawn over the camera: the blur around the frame, the frame
+/// corners, a sweeping scan line and the hint. Fills the whole camera view.
+class _Viewfinder extends StatelessWidget {
+  const _Viewfinder({required this.scan});
+
+  final Animation<double> scan;
+
+  static const _frame = _QrScanScreenState._frame;
+  static const _inset = 24.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      // Expand so the blur and the hint span the camera view, not just the
+      // frame (a Stack otherwise sizes to its one non-positioned child).
+      fit: StackFit.expand,
+      alignment: Alignment.center,
+      children: [
+        // Blur and dim everything outside the frame so it's clear only the
+        // square is read (the scan window matches it).
+        const _OutsideBlur(),
+        Center(
+          child: SizedBox(
+            width: _frame,
+            height: _frame,
+            child: Stack(
+              children: [
+                const Positioned.fill(
+                  child: CustomPaint(painter: _CornerPainter()),
+                ),
+                AnimatedBuilder(
+                  animation: scan,
+                  builder: (_, _) => Positioned(
+                    left: _inset,
+                    right: _inset,
+                    top:
+                        _inset +
+                        (_frame - 2 * _inset) *
+                            Curves.easeInOut.transform(scan.value),
+                    child: Container(
+                      height: 2,
+                      decoration: BoxDecoration(
+                        color: AppColors.sky400,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.sky400.withValues(alpha: 0.8),
+                            blurRadius: 12,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Shown in place of the preview when the camera can't start.
+class _CameraError extends StatelessWidget {
+  const _CameraError({required this.error, required this.onRetry});
+
+  final MobileScannerException error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, title, body) = switch (error.errorCode) {
+      MobileScannerErrorCode.permissionDenied => (
+        Icons.no_photography_outlined,
+        'Камерын зөвшөөрөл хэрэгтэй',
+        'Тохиргоо руу орж камер ашиглахыг зөвшөөрнө үү.',
+      ),
+      MobileScannerErrorCode.unsupported => (
+        Icons.videocam_off_outlined,
+        'Камер дэмжигдэхгүй байна',
+        'Энэ төхөөрөмж дээр QR уншигч ажиллахгүй байна.',
+      ),
+      _ => (
+        Icons.error_outline_rounded,
+        'Камер нээж чадсангүй',
+        'Түр хүлээгээд дахин оролдоно уу.',
+      ),
+    };
+    return _CameraBackdrop(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 40, color: AppColors.sky300),
+            const SizedBox(height: 12),
+            AppText(
+              title,
+              size: 15,
+              weight: FontWeight.w700,
+              color: Colors.white,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            AppText(
+              body,
+              size: 12,
+              color: Colors.white.withValues(alpha: 0.75),
+              textAlign: TextAlign.center,
+              height: 1.4,
+            ),
+            if (error.errorCode != MobileScannerErrorCode.unsupported) ...[
+              const SizedBox(height: 16),
+              SoftButton(
+                label: 'Дахин оролдох',
+                icon: Icons.refresh_rounded,
+                height: 40,
+                onPressed: onRetry,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Bottom sheet with the scanned value; pops `true` to start a transfer.
+class _ScanResultSheet extends StatelessWidget {
+  const _ScanResultSheet({required this.value});
+
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        12,
+        20,
+        20 + MediaQuery.paddingOf(context).bottom,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.slate200,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.emerald50,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.qr_code_2_rounded,
+                  color: AppColors.emerald600,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: AppText(
+                  'QR код уншигдлаа',
+                  size: 16,
+                  weight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.slate50,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.slate100),
+            ),
+            child: AppText(
+              value,
+              size: 12,
+              color: AppColors.slate600,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(height: 16),
+          PrimaryButton(
+            label: 'Гүйлгээ хийх',
+            icon: Icons.arrow_forward_rounded,
+            onPressed: () => Navigator.pop(context, true),
+          ),
+          const SizedBox(height: 8),
+          SoftButton(
+            label: 'Дахин унших',
+            icon: Icons.qr_code_scanner_rounded,
+            onPressed: () => Navigator.pop(context, false),
+          ),
+        ],
+      ),
+    );
   }
 }
 

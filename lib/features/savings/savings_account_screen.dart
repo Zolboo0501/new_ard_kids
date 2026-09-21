@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// Savings goal shown on the savings screens.
 class SavingsGoal {
@@ -67,151 +68,135 @@ class SavingsAccountScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: bg,
       appBar: const SubPageHeader(title: 'Хадгаламжийн данс', background: bg),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          12,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            'Нийт хуримтлал',
-                            size: 11,
-                            weight: FontWeight.w500,
-                            color: AppColors.slate400,
-                          ),
-                          const SizedBox(height: 2),
-                          const _BigMoney(amount: 1280000),
-                        ],
-                      ),
-                    ),
-                    const MascotImage(
-                      asset: Mascots.puppyPiggy,
-                      size: 80,
-                      background: Colors.white,
-                      semanticLabel: 'Cute mascot sticker',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                const _StatStrip(
-                  items: [
-                    ('Бодогдсон хүү', '+₮ 48,250', AppColors.emerald600),
-                    ('Жилийн хүү', '13.5%', AppColors.slate800),
-                    ('Хугацаа', '2026.12.31', AppColors.slate800),
-                  ],
-                ),
-              ],
-            ),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _Shortcut(
-                label: 'Орлого хийх',
-                asset: Mascots.puppyPiggy,
-                onTap: () => go(AppRoutes.savingsDeposit),
-              ),
-              const SizedBox(width: 10),
-              _Shortcut(
-                label: 'Тооцоолуур',
-                asset: Mascots.owlAbacus,
-                onTap: () => go(AppRoutes.savingsCalculator),
-              ),
-              const SizedBox(width: 10),
-              _Shortcut(
-                label: 'Дэлгэрэнгүй',
-                asset: Mascots.penguinChecklist,
-                onTap: () => go(AppRoutes.savingsHistory),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(16),
-            borderColor: AppColors.slate100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        'Миний зорилтууд',
-                        size: 14,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate900,
+          children: EntranceItem.list([
+            AppCard(
+              radius: 24,
+              padding: const EdgeInsets.all(20),
+              borderColor: AppColors.slate100,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              'Нийт хуримтлал',
+                              size: 11,
+                              weight: FontWeight.w500,
+                              color: AppColors.slate400,
+                            ),
+                            const SizedBox(height: 2),
+                            const BalanceText(
+                              1280000,
+                              size: 30,
+                              weight: FontWeight.w600,
+                              currencySize: 24,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SoftButton(
-                      label: '+ Шинэ зорилт',
-                      height: 30,
-                      onPressed: () => go(AppRoutes.newGoal),
-                    ),
-                  ],
-                ),
-                const Divider(height: 24, color: AppColors.slate100),
-                for (final g in kSampleGoals) ...[
-                  GoalTile(goal: g),
-                  const SizedBox(height: 10),
+                      const MascotImage(
+                        asset: Mascots.puppyPiggy,
+                        size: 80,
+                        background: Colors.white,
+                        semanticLabel: 'Cute mascot sticker',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  const _StatStrip(
+                    items: [
+                      ('Бодогдсон хүү', 48250, AppColors.emerald600),
+                      ('Жилийн хүү', '13.5%', AppColors.slate800),
+                      ('Хугацаа', '2026.12.31', AppColors.slate800),
+                    ],
+                  ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                _Shortcut(
+                  label: 'Орлого хийх',
+                  asset: Mascots.puppyPiggy,
+                  onTap: () => go(AppRoutes.savingsDeposit),
+                ),
+                const SizedBox(width: 10),
+                _Shortcut(
+                  label: 'Тооцоолуур',
+                  asset: Mascots.owlAbacus,
+                  onTap: () => go(AppRoutes.savingsCalculator),
+                ),
+                const SizedBox(width: 10),
+                _Shortcut(
+                  label: 'Дэлгэрэнгүй',
+                  asset: Mascots.penguinChecklist,
+                  onTap: () => go(AppRoutes.savingsHistory),
+                ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BigMoney extends StatelessWidget {
-  const _BigMoney({required this.amount});
-
-  final int amount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text.rich(
-      TextSpan(
-        children: [
-          TextSpan(
-            text: '₮',
-            style: moneyStyle(
-              size: 26,
-              weight: FontWeight.w600,
-              color: AppColors.slate700,
+            const SizedBox(height: 16),
+            AppCard(
+              radius: 24,
+              padding: const EdgeInsets.all(16),
+              borderColor: AppColors.slate100,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppText(
+                          'Миний зорилтууд',
+                          size: 14,
+                          weight: FontWeight.w700,
+                          color: AppColors.slate900,
+                        ),
+                      ),
+                      SoftButton(
+                        label: '+ Шинэ зорилт',
+                        height: 30,
+                        onPressed: () => go(AppRoutes.newGoal),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 24, color: AppColors.slate100),
+                  for (final (i, g) in kSampleGoals.indexed) ...[
+                    ListItemEntrance(
+                      id: g,
+                      index: i,
+                      child: GoalTile(goal: g),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ],
+              ),
             ),
-          ),
-          TextSpan(
-            text: formatMnt(amount).substring(1),
-            style: moneyStyle(size: 32, letterSpacing: -0.6),
-          ),
-        ],
+          ]),
+        ),
       ),
     );
   }
 }
 
-/// Three-column label/value strip on a tinted background.
 class _StatStrip extends StatelessWidget {
   const _StatStrip({required this.items});
 
-  final List<(String, String, Color)> items;
+  /// `(label, value, color)`; a numeric value is an amount, shown signed
+  /// with [BalanceText], anything else is shown as text.
+  final List<(String, Object, Color)> items;
 
   @override
   Widget build(BuildContext context) {
@@ -240,7 +225,18 @@ class _StatStrip extends StatelessWidget {
                       color: AppColors.slate400,
                     ),
                     const SizedBox(height: 2),
-                    Text(it.$2, style: moneyStyle(size: 12, color: it.$3)),
+                    switch (it.$2) {
+                      final num amount => BalanceText(
+                        amount,
+                        sign: true,
+                        size: 12,
+                        color: it.$3,
+                      ),
+                      final value => Text(
+                        '$value',
+                        style: moneyStyle(size: 12, color: it.$3),
+                      ),
+                    },
                   ],
                 ),
               ),
@@ -335,7 +331,13 @@ class GoalTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Row(
+                // Category left, "saved / target" right; the amounts drop to
+                // their own line when both don't fit.
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 2,
                   children: [
                     AppText(
                       goal.category,
@@ -343,10 +345,33 @@ class GoalTile extends StatelessWidget {
                       weight: FontWeight.w600,
                       color: fg,
                     ),
-                    const Spacer(),
-                    Text(
-                      '${formatMnt(goal.saved, space: true)} / ${formatMnt(goal.target, space: true)}',
-                      style: moneyStyle(size: 10, color: AppColors.slate600),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          BalanceText(
+                            goal.saved,
+                            space: false,
+                            size: 10,
+                            color: AppColors.slate600,
+                            decimals: false,
+                          ),
+                          Text(
+                            ' / ',
+                            style: moneyStyle(
+                              size: 10,
+                              color: AppColors.slate600,
+                            ),
+                          ),
+                          BalanceText(
+                            goal.target,
+                            space: false,
+                            size: 10,
+                            color: AppColors.slate600,
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

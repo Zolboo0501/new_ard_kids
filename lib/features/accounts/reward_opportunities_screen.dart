@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 /// "Урамшуулал авах боломжууд": ways to earn reward points.
 class RewardOpportunitiesScreen extends StatefulWidget {
@@ -62,7 +63,11 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
         null,
         'Үзэх',
         false,
-        () => showAppSnack(context, 'Хичээл удахгүй нээгдэнэ 📚'),
+        () => showAppSnack(
+          context,
+          'Хичээл удахгүй нээгдэнэ',
+          mascot: Mascots.owlBook,
+        ),
       ),
     ];
 
@@ -77,153 +82,162 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
           onPressed: () => showAppSnack(context, '1 оноо = 1₮'),
         ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          16,
-          16,
-          16,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        'Даалгавар биелүүлж урамшуулал ав!',
-                        size: 18,
-                        weight: FontWeight.w700,
-                        height: 1.35,
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            AppCard(
+              radius: 24,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: AppText(
+                          'Даалгавар биелүүлж урамшуулал ав!',
+                          size: 18,
+                          weight: FontWeight.w700,
+                          height: 1.35,
+                        ),
                       ),
-                    ),
-                    const MascotImage(
-                      asset: Mascots.redPandaTrophy,
-                      size: 112,
-                      background: Colors.white,
-                      semanticLabel: 'Урамшуулал авсан бамбарууш',
-                    ),
-                  ],
+                      const MascotImage(
+                        asset: Mascots.redPandaTrophy,
+                        size: 112,
+                        background: Colors.white,
+                        semanticLabel: 'Урамшуулал авсан бамбарууш',
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 24, color: AppColors.slate100),
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: _Stat(
+                          icon: Icons.verified_rounded,
+                          label: 'Нийт боломж',
+                          value: '5 даалгавар',
+                          tone: BadgeTone.sky,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _Stat(
+                          icon: Icons.monetization_on_rounded,
+                          label: 'Боломжит дүн',
+                          value: _dailyClaimed ? 33000 : 34000,
+                          tone: BadgeTone.amber,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            const SectionHeader(
+              title: 'Урамшуулал авах аргууд',
+              icon: Icons.military_tech_rounded,
+              action: 'Шинэ боломжууд',
+              padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
+            ),
+            for (final (i, t) in tasks.indexed) ...[
+              ListItemEntrance(
+                id: t,
+                index: i,
+                child: _TaskTile(
+                  title: t.$1,
+                  asset: t.$2,
+                  points: t.$3,
+                  pointsColor: t.$4,
+                  badge: t.$5,
+                  action: t.$6,
+                  primary: t.$7,
+                  onTap: t.$8,
                 ),
-                const Divider(height: 24, color: AppColors.slate100),
-                Row(
-                  children: [
-                    const Expanded(
-                      child: _Stat(
-                        icon: Icons.verified_rounded,
-                        label: 'Нийт боломж',
-                        value: '5 даалгавар',
-                        tone: BadgeTone.sky,
+              ),
+              const SizedBox(height: 10),
+            ],
+            _TaskTile(
+              title: 'Өдөр бүр аппдаа нэвтрэх',
+              asset: Mascots.penguinChecklist,
+              points: 1000,
+              pointsColor: AppColors.emerald600,
+              action: _dailyClaimed ? 'Авсан ✓' : 'Авах',
+              green: true,
+              onTap: _dailyClaimed
+                  ? null
+                  : () {
+                      setState(() => _dailyClaimed = true);
+                      showAppSnack(
+                        context,
+                        '+₮1,000 оноо авлаа',
+                        mascot: Mascots.bearConfetti,
+                      );
+                    },
+            ),
+            const SizedBox(height: 16),
+            AppCard(
+              radius: 18,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: AppColors.sky50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.info_outline_rounded,
+                          size: 18,
+                          color: AppColors.sky600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _Stat(
-                        icon: Icons.monetization_on_rounded,
-                        label: 'Боломжит дүн',
-                        value:
-                            '+${formatMnt(_dailyClaimed ? 33000 : 34000, space: true)}',
+                      const SizedBox(width: 8),
+                      AppText(
+                        'Оноогоо хэрхэн зарцуулах вэ?',
+                        size: 13,
+                        weight: FontWeight.w700,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  AppText(
+                    'Цуглуулсан оноогоороо халаасны мөнгө болгон хэтэвч рүүгээ шилжүүлэх эсвэл Roblox, Интерном, Кино тасалбар зэрэг бэлгийн эрхүүдээс сонгон авах боломжтой.',
+                    size: 12,
+                    color: AppColors.slate500,
+                    height: 1.6,
+                  ),
+                  const SizedBox(height: 10),
+                  const Wrap(
+                    spacing: 8,
+                    children: [
+                      StatusBadge(
+                        label: 'Хэтэвчинд бэлэн мөнгө',
+                        icon: Icons.account_balance_wallet_outlined,
+                      ),
+                      StatusBadge(
+                        label: 'Бэлгийн эрх',
+                        icon: Icons.redeem_rounded,
                         tone: BadgeTone.amber,
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 18),
-          const SectionHeader(
-            title: 'Урамшуулал авах аргууд',
-            icon: Icons.military_tech_rounded,
-            action: 'Шинэ боломжууд',
-            padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
-          ),
-          for (final t in tasks) ...[
-            _TaskTile(
-              title: t.$1,
-              asset: t.$2,
-              points: t.$3,
-              pointsColor: t.$4,
-              badge: t.$5,
-              action: t.$6,
-              primary: t.$7,
-              onTap: t.$8,
-            ),
-            const SizedBox(height: 10),
-          ],
-          _TaskTile(
-            title: 'Өдөр бүр аппдаа нэвтрэх',
-            asset: Mascots.penguinChecklist,
-            points: 1000,
-            pointsColor: AppColors.emerald600,
-            action: _dailyClaimed ? 'Авсан ✓' : 'Авах',
-            green: true,
-            onTap: _dailyClaimed
-                ? null
-                : () {
-                    setState(() => _dailyClaimed = true);
-                    showAppSnack(context, '+₮1,000 оноо авлаа 🎉');
-                  },
-          ),
-          const SizedBox(height: 16),
-          AppCard(
-            radius: 18,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color: AppColors.sky50,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.info_outline_rounded,
-                        size: 18,
-                        color: AppColors.sky600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    AppText(
-                      'Оноогоо хэрхэн зарцуулах вэ?',
-                      size: 13,
-                      weight: FontWeight.w700,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                AppText(
-                  'Цуглуулсан оноогоороо халаасны мөнгө болгон хэтэвч рүүгээ шилжүүлэх эсвэл Roblox, Интерном, Кино тасалбар зэрэг бэлгийн эрхүүдээс сонгон авах боломжтой.',
-                  size: 12,
-                  color: AppColors.slate500,
-                  height: 1.6,
-                ),
-                const SizedBox(height: 10),
-                const Wrap(
-                  spacing: 8,
-                  children: [
-                    StatusBadge(
-                      label: 'Хэтэвчинд бэлэн мөнгө',
-                      icon: Icons.account_balance_wallet_outlined,
-                    ),
-                    StatusBadge(
-                      label: 'Бэлгийн эрх',
-                      icon: Icons.redeem_rounded,
-                      tone: BadgeTone.amber,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
+          ]),
+        ),
       ),
     );
   }
@@ -239,7 +253,9 @@ class _Stat extends StatelessWidget {
 
   final IconData icon;
   final String label;
-  final String value;
+
+  /// An amount (shown signed with [BalanceText]) or preformatted text.
+  final Object value;
   final BadgeTone tone;
 
   @override
@@ -275,14 +291,25 @@ class _Stat extends StatelessWidget {
                   color: tone == BadgeTone.amber ? fg : AppColors.slate400,
                 ),
                 FittedBox(
-                  child: Text(
-                    value,
-                    style: moneyStyle(
+                  child: switch (value) {
+                    final num amount => BalanceText(
+                      amount,
+                      animate: true,
+                      sign: true,
+                      space: false,
                       size: 13,
                       weight: FontWeight.w800,
                       color: fg,
                     ),
-                  ),
+                    _ => Text(
+                      '$value',
+                      style: moneyStyle(
+                        size: 13,
+                        weight: FontWeight.w800,
+                        color: fg,
+                      ),
+                    ),
+                  },
                 ),
               ],
             ),
@@ -343,13 +370,25 @@ class _TaskTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  '+${formatMnt(points, space: true)} оноо',
-                  style: moneyStyle(
-                    size: 12,
-                    weight: FontWeight.w800,
-                    color: pointsColor,
-                  ),
+                Row(
+                  children: [
+                    BalanceText(
+                      points,
+                      sign: true,
+                      space: false,
+                      size: 12,
+                      weight: FontWeight.w800,
+                      color: pointsColor,
+                    ),
+                    Text(
+                      ' оноо',
+                      style: moneyStyle(
+                        size: 12,
+                        weight: FontWeight.w800,
+                        color: pointsColor,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

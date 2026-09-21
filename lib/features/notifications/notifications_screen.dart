@@ -5,6 +5,7 @@ import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/entrance.dart';
 
 enum NotificationKind { transaction, request, goal }
 
@@ -52,7 +53,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       route: AppRoutes.home,
       kind: NotificationKind.transaction,
       time: '10 минутын өмнө',
-      title: 'Ээж ₮ 20,000 халаасны мөнгө шилжүүллээ! 🎉',
+      title: 'Ээж ₮ 20,000 халаасны мөнгө шилжүүллээ!',
       body: const TextSpan(text: '«Сайн сураарай миний хүү!»'),
       asset: Mascots.foxPhone,
       tint: AppColors.amber50,
@@ -92,7 +93,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       route: AppRoutes.coinAccount,
       kind: NotificationKind.transaction,
       time: 'Өчигдөр, 16:45',
-      title: 'CU дэлгүүрт карт уншуулав 🍦',
+      title: 'CU дэлгүүрт карт уншуулав',
       body: TextSpan(
         text: '₮ 5,600 зарцууллаа. Үлдэгдэл: ',
         children: [TextSpan(text: '₮ 567,930', style: _bold)],
@@ -105,7 +106,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       route: AppRoutes.profile,
       kind: NotificationKind.request,
       time: 'Өчигдөр, 09:12',
-      title: 'Өдрийн лимит шинэчлэгдлээ 🛡️',
+      title: 'Өдрийн лимит шинэчлэгдлээ',
       body: const TextSpan(
         text: 'Аав өдрийн зарцуулалтын лимитийг ₮ 100,000 болгон тохирууллаа.',
       ),
@@ -117,7 +118,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       route: AppRoutes.rewardsAccount,
       kind: NotificationKind.goal,
       time: '2 өдрийн өмнө',
-      title: 'Шинэ тэмдэг нээгдлээ: "Тэргүүн хэмнэгч" 🏅',
+      title: 'Шинэ тэмдэг нээгдлээ: "Тэргүүн хэмнэгч"',
       body: TextSpan(
         text: 'Баяр хүргэе! Танд ',
         children: [
@@ -171,60 +172,74 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 }),
               ),
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(
-          20,
-          12,
-          20,
-          24 + MediaQuery.paddingOf(context).bottom,
-        ),
-        children: [
-          SizedBox(
-            height: 36,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                for (final (i, l) in [
-                  'Бүгд (${_items.length})',
-                  'Гүйлгээ',
-                  'Хүсэлт & Батлах',
-                  'Зорилго & Тэмдэг',
-                ].indexed)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: FilterChipPill(
-                      label: l,
-                      selected: _filter == i,
-                      onTap: () => setState(() => _filter = i),
-                    ),
-                  ),
-              ],
-            ),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            12,
+            20,
+            24 + MediaQuery.paddingOf(context).bottom,
           ),
-          const SizedBox(height: 16),
-          if (today.isNotEmpty) ...[
-            _GroupHeader(
-              label: 'ӨНӨӨДӨР',
-              badge: unread > 0 ? '$unread шинэ' : null,
-            ),
-            for (final n in today) _tile(n),
-          ],
-          if (earlier.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            const _GroupHeader(label: 'ӨЧИГДӨР'),
-            for (final n in earlier) _tile(n),
-          ],
-          if (today.isEmpty && earlier.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
-              child: AppText(
-                'Мэдэгдэл алга',
-                size: 13,
-                color: AppColors.slate400,
-                textAlign: TextAlign.center,
+          children: EntranceItem.list([
+            SizedBox(
+              height: 36,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  for (final (i, l) in [
+                    'Бүгд (${_items.length})',
+                    'Гүйлгээ',
+                    'Хүсэлт & Батлах',
+                    'Зорилго & Тэмдэг',
+                  ].indexed)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: FilterChipPill(
+                        label: l,
+                        selected: _filter == i,
+                        onTap: () => setState(() => _filter = i),
+                      ),
+                    ),
+                ],
               ),
             ),
-        ],
+            const SizedBox(height: 16),
+            if (today.isNotEmpty) ...[
+              _GroupHeader(
+                label: 'ӨНӨӨДӨР',
+                badge: unread > 0 ? '$unread шинэ' : null,
+              ),
+              for (final (i, n) in today.indexed)
+                ListItemEntrance(
+                  id: n,
+                  index: i,
+                  group: _filter,
+                  child: _tile(n),
+                ),
+            ],
+            if (earlier.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              const _GroupHeader(label: 'ӨЧИГДӨР'),
+              for (final (i, n) in earlier.indexed)
+                ListItemEntrance(
+                  id: n,
+                  index: today.length + i,
+                  group: _filter,
+                  child: _tile(n),
+                ),
+            ],
+            if (today.isEmpty && earlier.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 40),
+                child: AppText(
+                  'Мэдэгдэл алга',
+                  size: 13,
+                  color: AppColors.slate400,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ]),
+        ),
       ),
     );
   }

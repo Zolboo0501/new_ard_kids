@@ -81,7 +81,9 @@ class _AppInputShellState extends State<AppInputShell>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _shake,
-      child: _buildShell(),
+      // Leading/trailing parts count as the field, so tapping them doesn't
+      // close the keyboard (see `dismissKeyboard`).
+      child: TextFieldTapRegion(child: _buildShell()),
       builder: (context, child) {
         if (_shake.isDismissed) return child!;
         // Three decaying swings either side of centre.
