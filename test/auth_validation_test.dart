@@ -177,12 +177,39 @@ void main() {
     expect(find.text('Гар утасны дугаараа оруулна уу.'), findsOneWidget);
   });
 
-  testWidgets('Auth: a valid form submits and opens OTP', (tester) async {
+  testWidgets('Auth: Нэвтрэх with a valid form signs in and opens home', (
+    tester,
+  ) async {
     _usePhoneViewport(tester);
-    await tester.pumpWidget(_wrap(AppRoutes.auth));
+    final router = AppRoutes.createRouter(initialLocation: AppRoutes.auth);
+    await tester.pumpWidget(
+      MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
+    );
 
     await _fillValid(tester);
     await tester.tap(find.text('Үргэлжлүүлэх'));
+    await tester.pump();
+    expect(find.text('Илгээж байна...'), findsOneWidget);
+
+    // Simulated sign-in takes 900ms, then the stack resets to home.
+    await tester.pump(const Duration(milliseconds: 900));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(router.state.uri.path, AppRoutes.home);
+    expect(find.byType(OtpScreen), findsNothing);
+  });
+
+  testWidgets('Auth: Бүртгүүлэх with a valid form sends a code and opens OTP', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    await tester.pumpWidget(_wrap(AppRoutes.auth));
+
+    await tester.tap(find.text('Бүртгүүлэх'));
+    await tester.pumpAndSettle();
+    await _fillValid(tester);
+    await tester.tap(find.text('Код авах'));
 
     // Simulated send: 900ms to "sent", then 700ms before pushing OTP.
     await tester.pump(const Duration(milliseconds: 900));

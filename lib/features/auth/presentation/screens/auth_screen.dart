@@ -149,6 +149,19 @@ class _AuthScreenState extends State<AuthScreen>
 
     FocusScope.of(context).unfocus();
     setState(() => _submitState = _SubmitState.sending);
+
+    // Нэвтрэх signs straight in; Бүртгүүлэх goes on to verify the phone.
+    if (_mode == AuthMode.login) {
+      // TODO: replace the simulated delay with the real sign-in request.
+      _timers.add(
+        Timer(
+          const Duration(milliseconds: 900),
+          () => context.go(AppRoutes.home),
+        ),
+      );
+      return;
+    }
+
     // TODO: replace the simulated delays with the real OTP request.
     _timers.add(
       Timer(const Duration(milliseconds: 900), () {
