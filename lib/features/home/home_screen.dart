@@ -9,6 +9,7 @@ import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../widgets/value_switcher.dart';
 
 /// "PocketPal Kid Home" from Stitch. With [parentLinked] false it renders the
 /// "Эцэг эх холбогдоогүй" variant: limited balance, locked accounts and a
@@ -404,7 +405,8 @@ class _BalanceCard extends StatelessWidget {
                 height: 50,
                 // Hiding or showing the balance rolls over: the old one
                 // rises and fades away as the new one comes up from below.
-                child: AnimatedSwitcher(
+                child: ValueSwitcher(
+                  value: hidden,
                   duration: MediaQuery.disableAnimationsOf(context)
                       ? Duration.zero
                       : const Duration(milliseconds: 280),
@@ -414,8 +416,7 @@ class _BalanceCard extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     children: [...previous, ?current],
                   ),
-                  transitionBuilder: (child, animation) {
-                    final incoming = child.key == ValueKey(hidden);
+                  transitionBuilder: (child, animation, incoming) {
                     return FadeTransition(
                       opacity: animation,
                       child: SlideTransition(

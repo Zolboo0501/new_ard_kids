@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'app_text.dart';
+import 'value_switcher.dart';
 
 /// The label sitting above an [AppInputShell].
 class AppFieldLabel extends StatelessWidget {
@@ -168,11 +169,12 @@ class AppFieldError extends StatelessWidget {
       duration: _duration,
       curve: appEmphasizedDecelerate,
       alignment: Alignment.topCenter,
-      child: AnimatedSwitcher(
+      child: ValueSwitcher(
+        value: message,
         duration: _duration,
         switchInCurve: appEmphasizedDecelerate,
         switchOutCurve: appEmphasizedAccelerate,
-        transitionBuilder: (child, animation) => FadeTransition(
+        transitionBuilder: (child, animation, _) => FadeTransition(
           opacity: animation,
           child: SlideTransition(
             position: Tween(

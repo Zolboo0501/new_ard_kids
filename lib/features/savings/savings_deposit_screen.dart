@@ -54,7 +54,8 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
     const bg = Color(0xFFF8FAFF);
     const keyStyle = KeypadStyle(
       keyHeight: 48,
-      radius: 16,
+      // Fully rounded (pill-shaped) keys.
+      radius: 999,
       gap: 10,
       fontSize: 18,
       border: AppColors.slate100,

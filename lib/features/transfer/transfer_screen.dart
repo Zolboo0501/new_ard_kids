@@ -10,6 +10,7 @@ import '../../widgets/ui.dart';
 import 'transfer_success_screen.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../widgets/value_switcher.dart';
 
 enum TransferMode { friends, account, phone }
 
@@ -562,13 +563,14 @@ class _Collapse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
+    return ValueSwitcher(
+      value: visible,
       duration: MediaQuery.disableAnimationsOf(context)
           ? Duration.zero
           : const Duration(milliseconds: 300),
       switchInCurve: appEmphasizedDecelerate,
       switchOutCurve: Curves.easeInCubic,
-      transitionBuilder: (child, animation) => FadeTransition(
+      transitionBuilder: (child, animation, _) => FadeTransition(
         opacity: animation,
         child: SizeTransition(
           sizeFactor: animation,

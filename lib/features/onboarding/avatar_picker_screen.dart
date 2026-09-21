@@ -8,6 +8,7 @@ import '../../widgets/app_text.dart';
 import '../../widgets/common.dart';
 import '../../widgets/entrance.dart';
 import '../../widgets/ui.dart';
+import '../../widgets/value_switcher.dart';
 
 /// "Аватар сонгох" (onboarding step 3/3): pick a mascot companion.
 ///
@@ -478,13 +479,18 @@ class _AvatarCardState extends State<_AvatarCard>
                           ? null
                           : Border.all(color: AppColors.slate300, width: 2),
                     ),
-                    child: AnimatedSwitcher(
+                    child: ValueSwitcher(
+                      value: selected,
                       duration: const Duration(milliseconds: 240),
                       switchInCurve: Curves.easeOutBack,
-                      transitionBuilder: (child, animation) => ScaleTransition(
-                        scale: animation,
-                        child: FadeTransition(opacity: animation, child: child),
-                      ),
+                      transitionBuilder: (child, animation, _) =>
+                          ScaleTransition(
+                            scale: animation,
+                            child: FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            ),
+                          ),
                       child: selected
                           ? const Icon(
                               Icons.check_rounded,

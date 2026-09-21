@@ -370,25 +370,31 @@ class _TaskTile extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 2),
-                Row(
-                  children: [
-                    BalanceText(
-                      points,
-                      sign: true,
-                      space: false,
-                      size: 12,
-                      weight: FontWeight.w800,
-                      color: pointsColor,
-                    ),
-                    Text(
-                      ' оноо',
-                      style: moneyStyle(
+                // Shrinks rather than overflowing on a narrow tile.
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BalanceText(
+                        points,
+                        sign: true,
+                        space: false,
                         size: 12,
                         weight: FontWeight.w800,
                         color: pointsColor,
                       ),
-                    ),
-                  ],
+                      Text(
+                        ' оноо',
+                        style: moneyStyle(
+                          size: 12,
+                          weight: FontWeight.w800,
+                          color: pointsColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

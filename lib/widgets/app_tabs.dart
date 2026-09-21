@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
+import 'value_switcher.dart';
 
 /// One segment of an [AppTabs] control.
 class AppTab {
@@ -333,7 +334,8 @@ class _AppTabViewState extends State<AppTabView> {
       duration: widget.duration,
       curve: appEmphasizedDecelerate,
       alignment: Alignment.topCenter,
-      child: AnimatedSwitcher(
+      child: ValueSwitcher(
+        value: widget.index,
         duration: widget.duration,
         // Incoming waits out the first third, by which time the outgoing pane
         // has already gone. Reversed for the outgoing child by AnimatedSwitcher.
@@ -357,8 +359,7 @@ class _AppTabViewState extends State<AppTabView> {
             ?currentChild,
           ],
         ),
-        transitionBuilder: (child, animation) {
-          final incoming = (child.key as ValueKey<int>?)?.value == widget.index;
+        transitionBuilder: (child, animation, incoming) {
           // Each pane animates from its own side back to rest; the outgoing
           // one runs this in reverse, so it exits the way the new one came.
           final from = Offset(0.14 * (incoming ? sign : -sign), 0);
@@ -370,7 +371,7 @@ class _AppTabViewState extends State<AppTabView> {
             ),
           );
         },
-        child: KeyedSubtree(key: ValueKey(widget.index), child: widget.child),
+        child: widget.child,
       ),
     );
   }

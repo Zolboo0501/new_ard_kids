@@ -537,16 +537,22 @@ class _StatBox extends StatelessWidget {
             color: colors?.$2 ?? AppColors.slate500,
           ),
           const SizedBox(height: 2),
-          switch (value) {
-            final num amount => _amount(amount, color),
-            (final num amount, final String suffix) => Row(
-              children: [
-                _amount(amount, color),
-                Text(suffix, style: _textStyle(color)),
-              ],
-            ),
-            _ => Text('$value', style: _textStyle(color)),
-          },
+          // Shrinks rather than overflowing in the half-width box.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: switch (value) {
+              final num amount => _amount(amount, color),
+              (final num amount, final String suffix) => Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _amount(amount, color),
+                  Text(suffix, style: _textStyle(color)),
+                ],
+              ),
+              _ => Text('$value', style: _textStyle(color)),
+            },
+          ),
         ],
       ),
     );

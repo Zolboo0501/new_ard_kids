@@ -11,6 +11,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
+import '../../../../widgets/value_switcher.dart';
 
 /// "OTP Баталгаажуулалт" screen: enter the 4-digit code sent by SMS.
 class OtpScreen extends StatefulWidget {
@@ -439,11 +440,12 @@ class _OtpBox extends StatelessWidget {
       ),
       // The digit springs in when the key is pressed, and the cursor it
       // replaces fades out under it.
-      child: AnimatedSwitcher(
+      child: ValueSwitcher(
+        value: digit ?? (active ? '|' : ''),
         duration: const Duration(milliseconds: 220),
         switchInCurve: Curves.easeOutBack,
         switchOutCurve: appEmphasizedAccelerate,
-        transitionBuilder: (child, animation) => FadeTransition(
+        transitionBuilder: (child, animation, _) => FadeTransition(
           opacity: animation,
           child: ScaleTransition(
             // easeOutBack overshoots past 1, so the digit lands with a small

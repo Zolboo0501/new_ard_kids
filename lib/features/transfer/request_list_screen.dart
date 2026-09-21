@@ -482,7 +482,7 @@ class _RequestCard extends StatelessWidget {
                 sign: true,
                 space: false,
                 size: 14,
-                weight: FontWeight.w800,
+                weight: FontWeight.w500,
                 color: switch (r.status) {
                   _Status.pending => AppColors.sky600,
                   _Status.approved => const Color(0xFF006C49),

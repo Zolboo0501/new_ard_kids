@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/value_switcher.dart';
 
 /// Signed-in root built by go_router's `StatefulShellRoute`: the Home and
 /// Profile tabs are branches of [navigationShell] (each keeps its own state
@@ -345,10 +346,11 @@ class _NavItemState extends State<_NavItem> {
                 children: [
                   // The filled and outlined glyphs are different icons, so
                   // cross-fade them rather than swapping in place.
-                  AnimatedSwitcher(
+                  ValueSwitcher(
+                    value: selected,
                     duration: _duration,
                     switchInCurve: appEmphasizedDecelerate,
-                    transitionBuilder: (child, animation) => ScaleTransition(
+                    transitionBuilder: (child, animation, _) => ScaleTransition(
                       scale: Tween(begin: 0.8, end: 1.0).animate(animation),
                       child: FadeTransition(opacity: animation, child: child),
                     ),

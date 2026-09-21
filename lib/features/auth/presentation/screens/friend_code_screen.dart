@@ -9,6 +9,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../../../widgets/value_switcher.dart';
 
 /// "Найзын хүсэлт" screen: send a friend request by username.
 class FriendCodeScreen extends StatefulWidget {
@@ -472,11 +473,12 @@ class _FieldError extends StatelessWidget {
       duration: _duration,
       curve: appEmphasizedDecelerate,
       alignment: Alignment.topCenter,
-      child: AnimatedSwitcher(
+      child: ValueSwitcher(
+        value: message,
         duration: _duration,
         switchInCurve: appEmphasizedDecelerate,
         switchOutCurve: appEmphasizedAccelerate,
-        transitionBuilder: (child, animation) => FadeTransition(
+        transitionBuilder: (child, animation, _) => FadeTransition(
           opacity: animation,
           child: SlideTransition(
             position: Tween(
