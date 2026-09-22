@@ -1194,7 +1194,7 @@ class _InvoicesPane extends StatelessWidget {
                                 background: AppColors.sky500,
                                 foreground: Colors.white,
                                 border: null,
-                                onPressed: () => onOpen(AppRoutes.cart),
+                                onPressed: () => {},
                               ),
                       ],
                     ),

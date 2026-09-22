@@ -75,7 +75,7 @@ abstract final class AppRoutes {
   static const rewardOpportunities = '/accounts/rewards/opportunities';
   static const stocks = '/accounts/stocks';
   static const cardOrder = '/card/order';
-  static const cart = '/cart';
+  // static const cart = '/cart';
 
   static const addFriend = '/friends/add';
   static const inviteFriends = '/friends/invite';
@@ -111,7 +111,7 @@ abstract final class AppRoutes {
     rewardOpportunities: (_, _) => const RewardOpportunitiesScreen(),
     stocks: (_, _) => const StocksScreen(),
     cardOrder: (_, _) => const CardOrderScreen(),
-    cart: (_, _) => const CartScreen(),
+    // cart: (_, _) => const CartScreen(),
     addFriend: (_, _) => const AddFriendScreen(),
     inviteFriends: (_, _) => const InviteFriendsScreen(),
     notifications: (_, _) => const NotificationsScreen(),

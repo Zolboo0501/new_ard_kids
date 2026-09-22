@@ -27,7 +27,7 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Ard Kids Wallet',
+      title: 'Ard Kidsv2',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       routerConfig: _router,
