@@ -325,17 +325,18 @@ class _BalanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
+      // Clipped to the card so the mascot's white square never shows past
+      // the edge while it drifts during a swipe. The border is drawn on top
+      // so the mascot can't cover it either. No shadow: the PageView clips
+      // it to a hard-edged rectangle.
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
+      ),
+      foregroundDecoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(color: AppColors.sky100.withValues(alpha: 0.8)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F0F172A),
-            offset: Offset(0, 4),
-            blurRadius: 16,
-          ),
-        ],
       ),
       child: Stack(
         clipBehavior: Clip.none,

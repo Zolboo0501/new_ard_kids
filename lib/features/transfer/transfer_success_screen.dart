@@ -111,6 +111,7 @@ class TransferSuccessScreen extends StatelessWidget {
                     r.amount,
                     size: 34,
                     color: AppColors.sky500,
+                    weight: FontWeight.w600,
                     currencyWeight: FontWeight.w600,
                     currencyColor: AppColors.sky400,
                   ),
@@ -225,13 +226,6 @@ class TransferSuccessScreen extends StatelessWidget {
                   'Энэ гүйлгээ нь аав ээжийн тохируулсан өдрийн ₮100,000 лимитийн хүрээнд хамгаалагдсан байна.',
             ),
             const SizedBox(height: 18),
-            PrimaryButton(
-              label: 'Баримт хуваалцах',
-              leadingIcon: Icons.ios_share_rounded,
-              onPressed: () =>
-                  showAppSnack(context, 'Баримт хуваалцах холбоос бэлэн'),
-            ),
-            const SizedBox(height: 12),
             SoftButton(
               label: 'Нүүр хуудас руу буцах',
               height: 52,

@@ -287,6 +287,14 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 const Divider(height: 1, indent: 64, color: AppColors.slate100),
                 _MenuTile(
+                  icon: Icons.pets_rounded,
+                  tone: BadgeTone.slate,
+                  title: 'Аватар',
+                  subtitle: 'Бяцхан туслах найзаа солих',
+                  onTap: () => go(AppRoutes.avatarPickerEdit),
+                ),
+                const Divider(height: 1, indent: 64, color: AppColors.slate100),
+                _MenuTile(
                   icon: Icons.shield_outlined,
                   tone: BadgeTone.emerald,
                   title: 'Аюулгүй байдал & ПИН код',
