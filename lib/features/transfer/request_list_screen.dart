@@ -144,7 +144,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                         asset: Mascots.catHeart,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'PocketPal Cat holding heart coin',
+                        semanticLabel: 'Cat holding heart coin',
                       ),
                     ],
                   ),
@@ -447,10 +447,7 @@ class _RequestCard extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: r.when,
-                            style: inter(
-                              size: 10,
-                              color: AppColors.slate400,
-                            ),
+                            style: inter(size: 10, color: AppColors.slate400),
                           ),
                         ],
                       ),

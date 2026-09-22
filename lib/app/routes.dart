@@ -5,7 +5,6 @@ import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart'
 
 import '../features/accounts/card_order_screen.dart';
 import '../features/accounts/cart_screen.dart';
-import '../features/accounts/coin_account_screen.dart';
 import '../features/accounts/reward_opportunities_screen.dart';
 import '../features/accounts/rewards_account_screen.dart';
 import '../features/accounts/stocks_screen.dart';
@@ -106,7 +105,7 @@ abstract final class AppRoutes {
     savingsDeposit: (_, _) => const SavingsDepositScreen(),
     savingsCalculator: (_, _) => const SavingsCalculatorScreen(),
     newGoal: (_, _) => const NewGoalScreen(),
-    coinAccount: (_, _) => const CoinAccountScreen(),
+    coinAccount: (_, _) => const RewardsAccountScreen(initialTab: 1),
     rewardsAccount: (_, _) => const RewardsAccountScreen(),
     rewardOpportunities: (_, _) => const RewardOpportunitiesScreen(),
     stocks: (_, _) => const StocksScreen(),

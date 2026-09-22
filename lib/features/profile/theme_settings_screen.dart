@@ -83,7 +83,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                       asset: Mascots.foxPhone,
                       size: 88,
                       background: Colors.white,
-                      semanticLabel: 'PocketPal Fox Mascot',
+                      semanticLabel: 'Fox Mascot',
                     ),
                   ),
                   const SizedBox(width: 14),

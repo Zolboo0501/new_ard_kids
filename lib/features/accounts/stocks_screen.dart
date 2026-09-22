@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
@@ -16,6 +17,9 @@ class StocksScreen extends StatefulWidget {
 }
 
 class _StocksScreenState extends State<StocksScreen> {
+  /// The eye button's state: hides the account number and portfolio value.
+  bool _hidden = false;
+
   static const _holdings = [
     (
       'Apple',
@@ -94,15 +98,22 @@ class _StocksScreenState extends State<StocksScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
-                              'Хүүхдийн хөрөнгө оруулалтын данс',
+                              'Нийт багцын үнэлгээ',
                               size: 12,
                               weight: FontWeight.w500,
                               color: AppColors.slate400,
                             ),
-                            const SizedBox(height: 4),
-                            const CopyAccountNumber(
-                              number: '•••• 9924',
-                              prefix: 'Брокер: ',
+                            const SizedBox(height: 2),
+                            HideableBalance(
+                              hidden: _hidden,
+                              balance: const BalanceText(
+                                340000,
+                                animateFrom: 0,
+                                space: false,
+                                size: 30,
+                                weight: FontWeight.w600,
+                                color: AppColors.slate900,
+                              ),
                             ),
                           ],
                         ),
@@ -115,21 +126,7 @@ class _StocksScreenState extends State<StocksScreen> {
                       ),
                     ],
                   ),
-                  AppText(
-                    'Нийт багцын үнэлгээ',
-                    size: 12,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate400,
-                  ),
-                  const SizedBox(height: 2),
-                  const BalanceText(
-                    340000,
-                    space: false,
-                    size: 30,
-                    currencySize: 24,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate900,
-                  ),
+
                   const Divider(height: 28, color: AppColors.slate100),
                   IntrinsicHeight(
                     child: Row(

@@ -209,7 +209,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                             animate: true,
                             size: 16,
                             space: false,
-                            currencySize: 18,
                             currencyColor: AppColors.emerald600,
                             decimals: false,
                           ),
@@ -282,7 +281,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     space: false,
                     size: 26,
                     weight: FontWeight.w600,
-                    currencySize: 20,
                   ),
                   const Divider(height: 24, color: AppColors.slate100),
                   Row(
@@ -552,7 +550,6 @@ class _ResultBox extends StatelessWidget {
               sign: sign,
               size: 14,
               color: valueColor,
-              currencySize: 12,
             ),
           ),
         ],

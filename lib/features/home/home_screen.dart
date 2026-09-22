@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/accounts.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
@@ -9,11 +10,7 @@ import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
-import '../../widgets/value_switcher.dart';
 
-/// "PocketPal Kid Home" from Stitch. With [parentLinked] false it renders the
-/// "Эцэг эх холбогдоогүй" variant: limited balance, locked accounts and a
-/// banner prompting to link a parent.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.parentLinked = true});
 
@@ -32,10 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _bannerVisible = true;
 
   static const _cards = [
-    ('MN •••• 3389', 567930, Mascots.bearCard),
-    ('MN •••• 8201', 1280000, Mascots.puppyPiggy),
-    ('MN •••• 8202', 142500, Mascots.otterInvest),
-    ('MN •••• 8203', 35000, Mascots.redPandaTrophy),
+    (Accounts.main, 567930, Mascots.bearCard),
+    (Accounts.savings, 1280000, Mascots.puppyPiggy),
+    (Accounts.stocks, 142500, Mascots.otterInvest),
+    (Accounts.rewards, 35000, Mascots.redPandaTrophy),
   ];
 
   @override
@@ -112,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: _BalanceCard(
                                   account: linked
                                       ? _cards[i].$1
-                                      : 'MN •••• 3389',
+                                      : Accounts.main,
                                   balance: linked ? _cards[i].$2 : 20000,
                                   mascot: _cards[i].$3,
                                   mascotShift: offset,
@@ -242,7 +239,7 @@ class _Header extends StatelessWidget {
                     AppText(
                       'Тэмүүлэн!',
                       size: 17,
-                      weight: FontWeight.w700,
+                      weight: FontWeight.w500,
                       letterSpacing: -0.3,
                     ),
                     if (!linked)
@@ -370,12 +367,20 @@ class _BalanceCard extends StatelessWidget {
                         color: AppColors.sky100.withValues(alpha: 0.6),
                       ),
                     ),
-                    child: Text(
-                      account,
-                      style: moneyStyle(
-                        size: 12,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate400,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      layoutBuilder: (current, previous) => Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [...previous, ?current],
+                      ),
+                      child: Text(
+                        hidden ? maskIban(account) : formatIban(account),
+                        key: ValueKey(hidden),
+                        style: moneyStyle(
+                          size: 12,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate400,
+                        ),
                       ),
                     ),
                   ),
@@ -384,68 +389,30 @@ class _BalanceCard extends StatelessWidget {
                     icon: Icons.content_copy_rounded,
                     label: 'Данс хуулах',
                     onTap: () {
-                      Clipboard.setData(
-                        const ClipboardData(text: 'MN5049821903389'),
-                      );
+                      Clipboard.setData(ClipboardData(text: account));
                       showAppSnack(context, 'Дансны дугаар хуулагдлаа');
                     },
                   ),
-                  _TinyIcon(
-                    icon: hidden
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    label: hidden ? 'Үлдэгдэл харах' : 'Үлдэгдэл нуух',
-                    onTap: onToggleHidden,
-                  ),
+                  // Hides the account number and the balance together.
+                  EyeToggle(hidden: hidden, onTap: onToggleHidden),
                 ],
               ),
               const SizedBox(height: 10),
               SizedBox(
                 height: 50,
-                // Hiding or showing the balance rolls over: the old one
-                // rises and fades away as the new one comes up from below.
-                child: ValueSwitcher(
-                  value: hidden,
-                  duration: MediaQuery.disableAnimationsOf(context)
-                      ? Duration.zero
-                      : const Duration(milliseconds: 280),
-                  switchInCurve: appEmphasizedDecelerate,
-                  switchOutCurve: Curves.easeIn,
-                  layoutBuilder: (current, previous) => Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [...previous, ?current],
+                child: HideableBalance(
+                  hidden: hidden,
+                  balance: BalanceText(
+                    balance,
+                    // Rolls in from ₮0 when the balance is revealed or its
+                    // card swipes in.
+                    animateFrom: 0,
+                    size: 32,
+                    weight: FontWeight.w600,
+                    letterSpacing: 0.1,
+                    currencyWeight: FontWeight.w600,
+                    currencyColor: AppColors.slate700,
                   ),
-                  transitionBuilder: (child, animation, incoming) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: SlideTransition(
-                        position: Tween(
-                          begin: Offset(0, incoming ? 0.35 : -0.35),
-                          end: Offset.zero,
-                        ).animate(animation),
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: hidden
-                      ? Text(
-                          '••••••••',
-                          key: const ValueKey(true),
-                          style: moneyStyle(size: 30, letterSpacing: 4),
-                        )
-                      : BalanceText(
-                          balance,
-                          key: const ValueKey(false),
-                          // Rolls up from ₮0 when the balance is revealed or
-                          // its card swipes in, like the deposit amount does.
-                          animateFrom: 0,
-                          size: 32,
-                          weight: FontWeight.w600,
-                          letterSpacing: 0.1,
-                          currencySize: 26,
-                          currencyWeight: FontWeight.w600,
-                          currencyColor: AppColors.slate700,
-                        ),
                 ),
               ),
               if (limited)
@@ -674,7 +641,7 @@ class _AccountRow extends StatelessWidget {
                       AppText(
                         title,
                         size: 13,
-                        weight: FontWeight.w700,
+                        weight: FontWeight.w500,
                         color: locked ? AppColors.slate600 : AppColors.slate800,
                       ),
                       ?badge,
@@ -694,7 +661,12 @@ class _AccountRow extends StatelessWidget {
               trailing!
             else ...[
               if (amount != null)
-                BalanceText(amount!, size: 14, weight: FontWeight.w500),
+                BalanceText(
+                  amount!,
+                  size: 14,
+                  weight: FontWeight.w600,
+                  decimals: false,
+                ),
               const SizedBox(width: 4),
               const Icon(
                 Icons.chevron_right_rounded,
@@ -719,13 +691,13 @@ class _AccountsPane extends StatelessWidget {
     return Column(
       children: [
         ListItemEntrance(
-          id: 'Хадгаламжийн данс',
+          id: 'Хадгаламж',
           index: 0,
           always: true,
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
-            title: 'Хадгаламжийн данс',
-            subtitle: 'MN 5049 8219 01',
+            title: 'Хадгаламж',
+            subtitle: 'Хуримтлал үүсгээрэй',
             mascot: Mascots.puppyPiggy,
             amount: 1280000,
             onTap: () => onOpen(AppRoutes.savingsAccount),
@@ -733,13 +705,13 @@ class _AccountsPane extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         ListItemEntrance(
-          id: 'Хувьцаа данс',
+          id: 'Миний өв',
           index: 1,
           always: true,
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
-            title: 'Хувьцаа данс',
-            subtitle: 'MN 5049 8219 02',
+            title: 'Миний өв',
+            subtitle: 'Хөрөнгө оруулалтаа хараарай',
             mascot: Mascots.foxPhone,
             amount: 142500,
             onTap: () => onOpen(AppRoutes.stocks),
@@ -747,47 +719,47 @@ class _AccountsPane extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         ListItemEntrance(
-          id: 'Урамшууллын данс',
+          id: 'Урамшуулал',
           index: 2,
           always: true,
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
-            title: 'Урамшууллын данс',
-            subtitle: 'MN 5049 8219 03',
+            title: 'Урамшуулал',
+            subtitle: 'Оноогоо хараарай',
             mascot: Mascots.owlBook,
             amount: 35000,
             onTap: () => onOpen(AppRoutes.rewardsAccount),
           ),
         ),
         const SizedBox(height: 10),
-        ListItemEntrance(
-          id: 'Ард койны данс',
-          index: 3,
-          always: true,
-          delay: AppTabView.incomingDelay,
-          child: _AccountRow(
-            title: 'Ард койны данс',
-            subtitle: 'MN 5049 8219 04',
-            mascot: Mascots.bunnyCoin,
-            tileColor: AppColors.amber50,
-            amount: 50000,
-            badge: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(
-                color: AppColors.amber500.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: AppColors.amber200),
-              ),
-              child: AppText(
-                '1 Койн = 1₮',
-                size: 9,
-                weight: FontWeight.w700,
-                color: AppColors.amber600,
-              ),
-            ),
-            onTap: () => onOpen(AppRoutes.coinAccount),
-          ),
-        ),
+        // ListItemEntrance(
+        //   id: 'Ард койны данс',
+        //   index: 3,
+        //   always: true,
+        //   delay: AppTabView.incomingDelay,
+        //   child: _AccountRow(
+        //     title: 'Ард койны данс',
+        //     subtitle: 'MN 5049 8219 04',
+        //     mascot: Mascots.bunnyCoin,
+        //     tileColor: AppColors.amber50,
+        //     amount: 50000,
+        //     badge: Container(
+        //       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+        //       decoration: BoxDecoration(
+        //         color: AppColors.amber500.withValues(alpha: 0.1),
+        //         borderRadius: BorderRadius.circular(4),
+        //         border: Border.all(color: AppColors.amber200),
+        //       ),
+        //       child: AppText(
+        //         '1 Койн = 1₮',
+        //         size: 9,
+        //         weight: FontWeight.w700,
+        //         color: AppColors.amber600,
+        //       ),
+        //     ),
+        //     onTap: () => onOpen(AppRoutes.coinAccount),
+        //   ),
+        // ),
       ],
     );
   }
@@ -837,7 +809,7 @@ class _LockedAccountsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
             title: 'Халаасны үндсэн данс',
-            subtitle: 'MN 5049 8219 01',
+            subtitle: formatIban(Accounts.main),
             mascot: Mascots.bearCard,
             tileColor: AppColors.sky50,
             trailing: status(
@@ -871,7 +843,7 @@ class _LockedAccountsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
             title: 'Хувьцаа данс',
-            subtitle: 'MN 5049 8219 02',
+            subtitle: formatIban(Accounts.stocks),
             mascot: Mascots.foxPhone,
             tileColor: AppColors.sky50,
             locked: true,
@@ -905,7 +877,7 @@ class _LockedAccountsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: _AccountRow(
             title: 'Койны данс',
-            subtitle: 'MN 5049 8219 04',
+            subtitle: formatIban(Accounts.coin),
             mascot: Mascots.bunnyCoin,
             tileColor: AppColors.amber50,
             locked: true,
@@ -1116,7 +1088,7 @@ class _InvoicesPane extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            AppText(inv.$1, size: 13, weight: FontWeight.w700),
+                            AppText(inv.$1, size: 13, weight: FontWeight.w500),
                             const SizedBox(height: 3),
                             Row(
                               children: [
@@ -1150,7 +1122,7 @@ class _InvoicesPane extends StatelessWidget {
                           BalanceText(
                             inv.$5,
                             size: 14,
-                            weight: FontWeight.w400,
+                            weight: FontWeight.w600,
                           ),
                           AppText(
                             inv.$6,
@@ -1248,10 +1220,7 @@ class _CardsPane extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _TwoLine(
-                    title: 'PocketPal Junior Card',
-                    subtitle: '•••• 5521',
-                  ),
+                  child: _TwoLine(title: 'Junior Card', subtitle: '•••• 5521'),
                 ),
                 const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
               ],
@@ -1280,7 +1249,7 @@ class _CardsPane extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _TwoLine(
-                        title: 'PocketPal Custom Neon Card',
+                        title: 'Custom Neon Card',
                         subtitle: '•••• 8820',
                       ),
                     ),
@@ -1372,9 +1341,9 @@ class _TwoLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(title, size: 13, weight: FontWeight.w700),
+        AppText(title, size: 13, weight: FontWeight.w500),
         const SizedBox(height: 2),
-        AppText(subtitle, size: 11, color: AppColors.slate400),
+        AppText(subtitle, size: 11, color: AppColors.slate600),
       ],
     );
   }

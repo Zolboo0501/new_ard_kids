@@ -13,7 +13,7 @@ import '../../widgets/entrance.dart';
 class InviteFriendsScreen extends StatelessWidget {
   const InviteFriendsScreen({super.key});
 
-  static const _code = 'POCKET-ANAR26';
+  static const _code = 'ANAR26';
 
   static const _invited = [
     ('Anar B.', '2025.02.14-нд нэгдсэн', true, AppColors.sky50),
@@ -233,7 +233,7 @@ class InviteFriendsScreen extends StatelessWidget {
                       'Код эсвэл шууд линкийг найзууддаа хуваалцаарай.',
                     ),
                     (
-                      'Найз тань PocketPal-д бүртгүүлэх',
+                      'Найз тань апп-д бүртгүүлэх',
                       'Таны кодоор шинэ данс нээж баталгаажуулна.',
                     ),
                     (
@@ -341,7 +341,6 @@ class InviteFriendsScreen extends StatelessWidget {
                             space: false,
                             size: 13,
                             weight: FontWeight.w500,
-                            currencySize: 11,
                             color: f.$3
                                 ? AppColors.emerald600
                                 : AppColors.slate400,

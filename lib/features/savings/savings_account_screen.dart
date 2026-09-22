@@ -101,7 +101,6 @@ class SavingsAccountScreen extends StatelessWidget {
                               1280000,
                               size: 30,
                               weight: FontWeight.w600,
-                              currencySize: 24,
                             ),
                           ],
                         ),

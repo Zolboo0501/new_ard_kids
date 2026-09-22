@@ -111,7 +111,6 @@ class TransferSuccessScreen extends StatelessWidget {
                     r.amount,
                     size: 34,
                     color: AppColors.sky500,
-                    currencySize: 24,
                     currencyWeight: FontWeight.w600,
                     currencyColor: AppColors.sky400,
                   ),

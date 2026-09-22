@@ -185,7 +185,6 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                           size: 24,
                           weight: FontWeight.w600,
                           space: false,
-                          currencySize: 20,
                           currencyColor: AppColors.sky500,
                         ),
                       ),

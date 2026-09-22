@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
@@ -110,14 +111,13 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                             const BalanceText(
                               1280000,
                               size: 30,
-                              currencySize: 24,
                               weight: FontWeight.w600,
                               currencyWeight: FontWeight.w600,
                               currencyColor: AppColors.slate700,
                             ),
                             const SizedBox(height: 2),
                             AppText(
-                              'Данс: •••• 3384 | Хаан банк',
+                              'Хаан банк · ${formatIban(Accounts.khanBank)}',
                               size: 10,
                               weight: FontWeight.w600,
                               color: AppColors.slate400,

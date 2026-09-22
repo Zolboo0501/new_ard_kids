@@ -39,7 +39,7 @@ void main() {
     // Change state inside the Home branch.
     await tester.tap(find.text('Карт'));
     await tester.pumpAndSettle();
-    expect(find.text('PocketPal Junior Card'), findsOneWidget);
+    expect(find.text('Junior Card'), findsOneWidget);
 
     await tester.tap(find.text('Профайл'));
     await tester.pumpAndSettle();
@@ -49,7 +49,7 @@ void main() {
     await tester.tap(find.text('Нүүр'));
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.home);
-    expect(find.text('PocketPal Junior Card'), findsOneWidget);
+    expect(find.text('Junior Card'), findsOneWidget);
   });
 
   testWidgets('pushed screens cover the nav bar and pop back to the tab', (
@@ -112,5 +112,30 @@ void main() {
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.profile);
     expect(find.byType(HomeShell), findsOneWidget);
+  });
+
+  testWidgets('rewards account switches to the coin tab', (tester) async {
+    await _pumpApp(tester, AppRoutes.rewardsAccount);
+    expect(find.text('Урамшууллын данс'), findsOneWidget);
+    expect(find.text('Нийт койны үлдэгдэл'), findsNothing);
+
+    await tester.tap(find.text('Койн'));
+    await tester.pumpAndSettle();
+    expect(find.text('Койны данс'), findsOneWidget);
+    expect(find.text('Нийт койны үлдэгдэл'), findsOneWidget);
+    expect(find.text('Нийт үлдэгдэл'), findsNothing);
+  });
+
+  testWidgets('coin account route opens rewards on the coin tab', (
+    tester,
+  ) async {
+    await _pumpApp(tester, AppRoutes.coinAccount);
+    expect(find.text('Койны данс'), findsOneWidget);
+    expect(find.text('Нийт койны үлдэгдэл'), findsOneWidget);
+
+    await tester.tap(find.text('Урамшуулал'));
+    await tester.pumpAndSettle();
+    expect(find.text('Урамшууллын данс'), findsOneWidget);
+    expect(find.text('Нийт үлдэгдэл'), findsOneWidget);
   });
 }

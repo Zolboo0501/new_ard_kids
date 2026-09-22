@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 
+import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
+import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
 
-/// "Койны данс - Дэлгэрэнгүй": coin balance and transactions.
-class CoinAccountScreen extends StatefulWidget {
-  const CoinAccountScreen({super.key});
+/// "Койны данс - Дэлгэрэнгүй": coin balance and transactions. It is the
+/// "Койн" tab of [RewardsAccountScreen], so it lays out as a [Column] inside
+/// that screen's list rather than owning a scaffold.
+class CoinAccountPane extends StatefulWidget {
+  const CoinAccountPane({
+    super.key,
+    this.hidden = false,
+    required this.onToggleHidden,
+  });
+
+  /// Whether the screen's eye button hides the number and balance.
+  final bool hidden;
+  final VoidCallback onToggleHidden;
 
   @override
-  State<CoinAccountScreen> createState() => _CoinAccountScreenState();
+  State<CoinAccountPane> createState() => _CoinAccountPaneState();
 }
 
-class _CoinAccountScreenState extends State<CoinAccountScreen> {
+class _CoinAccountPaneState extends State<CoinAccountPane> {
   static const _items = [
     TxItem(
       title: 'Өдөр тутмын чекин',
@@ -66,7 +78,6 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF5F9FF);
     final visible = switch (_filter) {
       1 => _items.where((e) => e.income),
       2 => _items.where((e) => !e.income),
@@ -79,184 +90,174 @@ class _CoinAccountScreenState extends State<CoinAccountScreen> {
         .where((e) => !e.income)
         .fold(0, (a, e) => a - e.amount);
 
-    return Scaffold(
-      backgroundColor: bg,
-      appBar: SubPageHeader(
-        title: 'Койны данс',
-        background: bg,
-        trailing: CircleIconButton(
-          icon: Icons.calendar_month_outlined,
-          label: 'Огноо шүүлтүүр',
-          onPressed: () => showAppSnack(context, 'Огноо сонгох'),
-        ),
-      ),
-      body: EntranceScope(
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            12,
-            16,
-            24 + MediaQuery.paddingOf(context).bottom,
-          ),
-          children: EntranceItem.list([
-            AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        AppCard(
+          radius: 24,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CopyAccountNumber(
+                number: Accounts.coin,
+                hidden: widget.hidden,
+                onToggleHidden: widget.onToggleHidden,
+              ),
+              Row(
                 children: [
-                  const CopyAccountNumber(number: 'MN 5049 8219 04'),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          'Нийт койны үлдэгдэл',
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate400,
+                        ),
+                        const SizedBox(height: 2),
+                        HideableBalance(
+                          hidden: widget.hidden,
+                          balance: const BalanceText(
+                            50000,
+                            animateFrom: 0,
+                            size: 30,
+                            currencyWeight: FontWeight.w600,
+                            currencyColor: AppColors.slate700,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
                           children: [
-                            AppText(
-                              'Нийт койны үлдэгдэл',
-                              size: 12,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
-                            const SizedBox(height: 2),
-                            FittedBox(
-                              child: const BalanceText(
-                                50000,
-                                size: 30,
-                                currencySize: 24,
-                                currencyWeight: FontWeight.w600,
-                                currencyColor: AppColors.slate700,
-                                weight: FontWeight.w600,
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                color: AppColors.emerald400,
+                                shape: BoxShape.circle,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.emerald400,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                AppText(
-                                  'Хөрвүүлэх ханш: 1 Койн = 1₮',
-                                  size: 11,
-                                  color: AppColors.slate500,
-                                ),
-                              ],
+                            const SizedBox(width: 6),
+                            AppText(
+                              'Хөрвүүлэх ханш: 1 Койн = 1₮',
+                              size: 11,
+                              color: AppColors.slate500,
                             ),
                           ],
                         ),
-                      ),
-                      const MascotImage(
-                        asset: Mascots.puppyPiggy,
-                        size: 104,
-                        background: Colors.white,
-                        semanticLabel: 'PocketPal Puppy Saving Coins',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _MiniStat(
-                          asset: Mascots.bearHugCoin,
-                          label: 'Нийт орлого',
-                          value: income,
-                          color: AppColors.emerald700,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _MiniStat(
-                          asset: Mascots.puppyGamepad,
-                          label: 'Нийт зарцуулалт',
-                          value: -spent,
-                          color: AppColors.rose600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                FilterChipPill(
-                  label: 'Бүгд  ${_items.length}',
-                  selected: _filter == 0,
-                  onTap: () => setState(() => _filter = 0),
-                ),
-                const SizedBox(width: 8),
-                FilterChipPill(
-                  label: '● Орлого',
-                  selected: _filter == 1,
-                  onTap: () => setState(() => _filter = 1),
-                ),
-                const SizedBox(width: 8),
-                FilterChipPill(
-                  label: '● Зарлага',
-                  selected: _filter == 2,
-                  onTap: () => setState(() => _filter = 2),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.7),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.sky100),
-              ),
-              child: Row(
-                children: [
-                  AppText(
-                    'Энэ сар (9-р сар)',
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: AppColors.slate700,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: AppText(
-                      '| 2026.09.01 - 09.12',
-                      size: 11,
-                      color: AppColors.slate400,
+                      ],
                     ),
                   ),
-                  AppText(
-                    'Өөрчлөх',
-                    size: 12,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky600,
+                  const MascotImage(
+                    asset: Mascots.puppyPiggy,
+                    size: 104,
+                    background: Colors.white,
+                    semanticLabel: 'Puppy Saving Coins',
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            const SectionHeader(
-              title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-              mascot: Mascots.penguinList,
-              padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
-            ),
-            for (final (i, item) in visible.indexed) ...[
-              ListItemEntrance(
-                id: item,
-                index: i,
-                group: _filter,
-                child: TransactionTile(item: item),
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: _MiniStat(
+                      asset: Mascots.bearHugCoin,
+                      label: 'Нийт орлого',
+                      value: income,
+                      color: AppColors.emerald700,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _MiniStat(
+                      asset: Mascots.puppyGamepad,
+                      label: 'Нийт зарцуулалт',
+                      value: -spent,
+                      color: AppColors.rose600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
             ],
-          ]),
+          ),
         ),
-      ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            FilterChipPill(
+              label: 'Бүгд  ${_items.length}',
+              selected: _filter == 0,
+              onTap: () => setState(() => _filter = 0),
+            ),
+            const SizedBox(width: 8),
+            FilterChipPill(
+              label: '● Орлого',
+              selected: _filter == 1,
+              onTap: () => setState(() => _filter = 1),
+            ),
+            const SizedBox(width: 8),
+            FilterChipPill(
+              label: '● Зарлага',
+              selected: _filter == 2,
+              onTap: () => setState(() => _filter = 2),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.sky100),
+          ),
+          child: Row(
+            children: [
+              AppText(
+                'Энэ сар (9-р сар)',
+                size: 12,
+                weight: FontWeight.w600,
+                color: AppColors.slate700,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: AppText(
+                  '| 2026.09.01 - 09.12',
+                  size: 11,
+                  color: AppColors.slate400,
+                ),
+              ),
+              AppText(
+                'Өөрчлөх',
+                size: 12,
+                weight: FontWeight.w700,
+                color: AppColors.sky600,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        const SectionHeader(
+          title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
+          mascot: Mascots.penguinList,
+          padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
+        ),
+        for (final (i, item) in visible.indexed) ...[
+          ListItemEntrance(
+            id: item,
+            index: i,
+            group: _filter,
+            // The pane fades in with its tab, so rows cascade every time it
+            // appears, after the tab switch has started.
+            always: true,
+            delay: AppTabView.incomingDelay,
+            child: TransactionTile(item: item),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ],
     );
   }
 }

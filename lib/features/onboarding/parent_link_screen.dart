@@ -186,11 +186,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                   ],
                 ),
                 textAlign: TextAlign.center,
-                style: inter(
-                  size: 20,
-                  weight: FontWeight.w800,
-                  height: 1.4,
-                ),
+                style: inter(size: 20, weight: FontWeight.w800, height: 1.4),
               ),
               const SizedBox(height: 16),
               _LimitCard(

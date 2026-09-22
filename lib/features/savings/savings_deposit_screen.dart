@@ -117,7 +117,6 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                                 animate: true,
                                 size: 36,
                                 weight: FontWeight.w600,
-                                currencySize: 28,
                                 color: _amount > _available
                                     ? AppColors.rose500
                                     : AppColors.slate800,
@@ -139,10 +138,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                                   ),
                                 ],
                               ),
-                              style: inter(
-                                size: 11,
-                                color: AppColors.slate400,
-                              ),
+                              style: inter(size: 11, color: AppColors.slate400),
                             ),
                           ],
                         ),

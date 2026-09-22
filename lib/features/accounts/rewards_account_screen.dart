@@ -1,17 +1,101 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/accounts.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import 'account_widgets.dart';
+import 'coin_account_screen.dart';
+import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
 
-/// "Урамшууллын данс - Минимал": rewards balance and history.
-class RewardsAccountScreen extends StatelessWidget {
-  const RewardsAccountScreen({super.key});
+/// "Урамшууллын данс - Минимал": rewards balance and history, with the coin
+/// account ([CoinAccountPane]) as a second tab. [initialTab] 1 opens straight
+/// on coins, which is what [AppRoutes.coinAccount] does.
+class RewardsAccountScreen extends StatefulWidget {
+  const RewardsAccountScreen({super.key, this.initialTab = 0});
+
+  final int initialTab;
+
+  @override
+  State<RewardsAccountScreen> createState() => _RewardsAccountScreenState();
+}
+
+class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
+  late int _tab = widget.initialTab;
+
+  /// The eye button's state, shared by both tabs: hides every account
+  /// number and balance on the screen.
+  bool _hidden = false;
+
+  void _toggleHidden() => setState(() => _hidden = !_hidden);
+
+  @override
+  Widget build(BuildContext context) {
+    final coins = _tab == 1;
+    return Scaffold(
+      backgroundColor: kPageBackground,
+      appBar: SubPageHeader(
+        // The title names the account the selected tab shows.
+        title: coins ? 'Койны данс' : 'Урамшууллын данс',
+        trailing: coins
+            ? CircleIconButton(
+                icon: Icons.calendar_month_outlined,
+                label: 'Огноо шүүлтүүр',
+                onPressed: () => showAppSnack(context, 'Огноо сонгох'),
+              )
+            : null,
+      ),
+      body: EntranceScope(
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            24 + MediaQuery.paddingOf(context).bottom,
+          ),
+          children: EntranceItem.list([
+            AppTabs(
+              tabs: const [AppTab('Урамшуулал'), AppTab('Койн')],
+              index: _tab,
+              dotOnActive: true,
+              style: AppTabsStyle.card,
+              onChanged: (i) => setState(() => _tab = i),
+            ),
+            const SizedBox(height: 14),
+            AppTabView(
+              index: _tab,
+              child: coins
+                  ? CoinAccountPane(
+                      hidden: _hidden,
+                      onToggleHidden: _toggleHidden,
+                    )
+                  : _RewardsPane(
+                      hidden: _hidden,
+                      onToggleHidden: _toggleHidden,
+                      onOpen: (r) => context.push(r),
+                    ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _RewardsPane extends StatelessWidget {
+  const _RewardsPane({
+    required this.hidden,
+    required this.onToggleHidden,
+    required this.onOpen,
+  });
+
+  final bool hidden;
+  final VoidCallback onToggleHidden;
+  final ValueChanged<String> onOpen;
 
   static const _items = [
     TxItem(
@@ -65,115 +149,109 @@ class RewardsAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void go(String r) => context.push(r);
-
-    return Scaffold(
-      backgroundColor: kPageBackground,
-      appBar: const SubPageHeader(title: 'Урамшууллын данс'),
-      body: EntranceScope(
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            16,
-            16,
-            24 + MediaQuery.paddingOf(context).bottom,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, AppColors.amber50],
+            ),
+            border: Border.all(color: AppColors.amber100),
           ),
-          children: EntranceItem.list([
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white, AppColors.amber50],
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              const Positioned(
+                right: -12,
+                bottom: -16,
+                child: MascotImage(
+                  asset: Mascots.redPandaTrophy,
+                  size: 120,
+                  background: Color(0xFFFFFDF5),
+                  semanticLabel: 'Урамшуулал маскот',
                 ),
-                border: Border.all(color: AppColors.amber100),
               ),
-              child: Stack(
-                clipBehavior: Clip.none,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Positioned(
-                    right: -12,
-                    bottom: -16,
-                    child: MascotImage(
-                      asset: Mascots.redPandaTrophy,
-                      size: 120,
-                      background: Color(0xFFFFFDF5),
-                      semanticLabel: 'Урамшуулал маскот',
+                  AppText(
+                    'Нийт үлдэгдэл',
+                    size: 12,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate500,
+                  ),
+                  HideableBalance(
+                    hidden: hidden,
+                    balance: const BalanceText(
+                      35000,
+                      animateFrom: 0,
+                      size: 30,
+                      weight: FontWeight.w600,
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        'Нийт үлдэгдэл',
-                        size: 12,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate500,
-                      ),
-                      const BalanceText(
-                        35000,
-                        size: 30,
-                        currencySize: 24,
-                        weight: FontWeight.w600,
-                      ),
-                      const SizedBox(height: 4),
-                      CopyAccountNumber(
-                        number: 'MN 5049 8219 03',
-                        prefix: 'Данс: ',
-                        style: inter(
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate500,
-                        ),
-                      ),
-                    ],
+                  const SizedBox(height: 4),
+                  CopyAccountNumber(
+                    number: Accounts.rewards,
+                    prefix: 'Данс: ',
+                    hidden: hidden,
+                    onToggleHidden: onToggleHidden,
+                    style: moneyStyle(
+                      size: 12,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
+                    ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: _Shortcut(
-                    asset: Mascots.foxWave,
-                    title: 'Найз урих',
-                    subtitle: '5,000 оноо',
-                    subtitleColor: AppColors.emerald600,
-                    onTap: () => go(AppRoutes.inviteFriends),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _Shortcut(
-                    asset: Mascots.redPandaTrophy,
-                    title: 'Урамшуулал авах',
-                    subtitle: 'Даалгаврууд',
-                    subtitleColor: AppColors.sky600,
-                    onTap: () => go(AppRoutes.rewardOpportunities),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            SectionHeader(
-              title: 'Гүйлгээний жагсаалт',
-              icon: Icons.receipt_long_outlined,
-              padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-            ),
-            for (final (i, item) in _items.indexed) ...[
-              ListItemEntrance(
-                id: item,
-                index: i,
-                child: TransactionTile(item: item, whenBelow: true),
-              ),
-              const SizedBox(height: 8),
             ],
-          ]),
+          ),
         ),
-      ),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(
+              child: _Shortcut(
+                asset: Mascots.foxWave,
+                title: 'Найз урих',
+                subtitle: '5,000 оноо',
+                subtitleColor: AppColors.emerald600,
+                onTap: () => onOpen(AppRoutes.inviteFriends),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _Shortcut(
+                asset: Mascots.redPandaTrophy,
+                title: 'Урамшуулал авах',
+                subtitle: 'Даалгаврууд',
+                subtitleColor: AppColors.sky600,
+                onTap: () => onOpen(AppRoutes.rewardOpportunities),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 18),
+        SectionHeader(
+          title: 'Гүйлгээний жагсаалт',
+          icon: Icons.receipt_long_outlined,
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+        ),
+        for (final (i, item) in _items.indexed) ...[
+          ListItemEntrance(
+            id: item,
+            index: i,
+            always: true,
+            delay: AppTabView.incomingDelay,
+            child: TransactionTile(item: item, whenBelow: true),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ],
     );
   }
 }

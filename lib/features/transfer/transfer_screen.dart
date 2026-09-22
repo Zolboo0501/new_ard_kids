@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/routes.dart';
+import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/common.dart';
@@ -419,7 +420,7 @@ class _SourceCard extends StatelessWidget {
                   color: AppColors.slate400,
                   letterSpacing: 0.6,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 10),
                 AppText(
                   'Боломжит үлдэгдэл',
                   size: 11,
@@ -430,7 +431,6 @@ class _SourceCard extends StatelessWidget {
                   567930,
                   size: 30,
                   color: AppColors.slate900,
-                  currencySize: 24,
                   weight: FontWeight.w600,
                   currencyWeight: FontWeight.w600,
                 ),
@@ -439,7 +439,7 @@ class _SourceCard extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: AppText(
-                      '•••• 3384  |  Хаан банк',
+                      'Хаан банк · ${formatIban(Accounts.khanBank)}',
                       size: 11,
                       weight: FontWeight.w600,
                       color: AppColors.slate400,
