@@ -236,7 +236,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.info_outline_rounded,
                                     size: 20,
                                     color: AppColors.sky600,
@@ -342,7 +342,7 @@ class _StepPill extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.sky500,
               shape: BoxShape.circle,
             ),

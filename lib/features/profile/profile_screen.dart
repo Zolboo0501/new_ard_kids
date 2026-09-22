@@ -60,7 +60,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF4F6FB);
+    final bg = AppColors.pageBackgroundMuted;
     void go(String r) => context.push(r);
     final bottom = MediaQuery.paddingOf(context).bottom + (embedded ? 110 : 24);
 
@@ -378,7 +378,7 @@ class ProfileAvatar extends StatelessWidget {
           width: size,
           height: size,
           padding: const EdgeInsets.all(3),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
               begin: Alignment.bottomLeft,

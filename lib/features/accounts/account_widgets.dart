@@ -14,7 +14,7 @@ class TxItem {
     required this.when,
     required this.amount,
     required this.asset,
-    this.tint = AppColors.sky50,
+    this.tint,
     this.badge,
     this.badgeTone = BadgeTone.emerald,
     this.amountColor,
@@ -25,7 +25,9 @@ class TxItem {
   final String when;
   final int amount;
   final String asset;
-  final Color tint;
+
+  /// Defaults to the theme accent (`AppColors.sky50`).
+  final Color? tint;
   final String? badge;
   final BadgeTone badgeTone;
   final Color? amountColor;
@@ -57,7 +59,7 @@ class TransactionTile extends StatelessWidget {
         children: [
           MascotTile(
             asset: item.asset,
-            background: item.tint,
+            background: item.tint ?? AppColors.sky50,
             radius: 14,
             label: item.title,
           ),

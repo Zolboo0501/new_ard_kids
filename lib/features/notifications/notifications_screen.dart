@@ -316,7 +316,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 width: 10,
                 height: 10,
                 margin: const EdgeInsets.only(left: 6),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.sky500,
                   shape: BoxShape.circle,
                 ),

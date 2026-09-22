@@ -339,7 +339,7 @@ class _OtpScreenState extends State<OtpScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.schedule_rounded,
                 size: 18,
                 color: AppColors.dsPrimary,
@@ -463,7 +463,7 @@ class _OtpBox extends StatelessWidget {
                 key: ValueKey('digit-$digit'),
               )
             : active
-            ? const BlinkingCursor(
+            ? BlinkingCursor(
                 key: ValueKey('cursor'),
                 color: AppColors.dsPrimary,
               )

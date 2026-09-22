@@ -1164,7 +1164,7 @@ class _InvoicesPane extends StatelessWidget {
                                 height: 30,
                                 background: AppColors.sky500,
                                 foreground: Colors.white,
-                                border: null,
+                                border: Colors.transparent,
                                 onPressed: () => {},
                               ),
                       ],

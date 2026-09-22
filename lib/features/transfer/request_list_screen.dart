@@ -520,7 +520,7 @@ class _RequestCard extends StatelessWidget {
                         height: 34,
                         background: AppColors.sky500,
                         foreground: Colors.white,
-                        border: null,
+                        border: Colors.transparent,
                         onPressed: onNudge,
                       ),
                     ),
@@ -530,7 +530,7 @@ class _RequestCard extends StatelessWidget {
                       height: 34,
                       background: AppColors.rose50,
                       foreground: AppColors.rose600,
-                      border: null,
+                      border: Colors.transparent,
                       onPressed: onCancel,
                     ),
                   ],
@@ -562,7 +562,7 @@ class _RequestCard extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.chat_bubble_outline_rounded,
                           size: 14,
                           color: AppColors.sky600,

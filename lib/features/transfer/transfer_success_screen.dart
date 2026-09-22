@@ -196,7 +196,7 @@ class TransferSuccessScreen extends StatelessWidget {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.account_balance_wallet_outlined,
                             size: 18,
                             color: AppColors.sky600,

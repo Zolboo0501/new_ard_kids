@@ -80,14 +80,14 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppColors.sky50, AppColors.amber50],
                 ),
                 border: Border.all(color: AppColors.sky100),
               ),
               child: Row(
                 children: [
-                  const MascotImage(
+                  MascotImage(
                     asset: Mascots.bearConfetti,
                     size: 80,
                     background: AppColors.sky50,

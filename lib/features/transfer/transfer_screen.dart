@@ -317,7 +317,7 @@ class _TransferScreenState extends State<TransferScreen> {
         inputFormatters: [
           _GroupFormatter(const [4, 4, 2]),
         ],
-        suffix: const Icon(
+        suffix: Icon(
           Icons.contacts_outlined,
           size: 20,
           color: AppColors.sky600,
@@ -364,7 +364,7 @@ class _TransferScreenState extends State<TransferScreen> {
         inputFormatters: [
           _GroupFormatter(const [4, 4]),
         ],
-        suffix: const Icon(
+        suffix: Icon(
           Icons.contact_phone_outlined,
           size: 20,
           color: AppColors.sky600,
@@ -497,7 +497,7 @@ class _ModeTabs extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       colors: [AppColors.sky500, AppColors.sky600],
                     ),
                     boxShadow: [
@@ -590,18 +590,19 @@ class _FriendAvatar extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.asset,
-    this.tint = AppColors.sky50,
+    this.tint,
     this.selected = false,
   });
 
   final String label;
   final String? asset;
-  final Color tint;
+  final Color? tint;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final tint = this.tint ?? AppColors.sky50;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Semantics(
@@ -636,7 +637,7 @@ class _FriendAvatar extends StatelessWidget {
                     child: asset == null
                         ? CustomPaint(
                             painter: _DashedBoxPainter(),
-                            child: const Center(
+                            child: Center(
                               child: Icon(
                                 Icons.add_rounded,
                                 color: AppColors.sky600,
@@ -877,7 +878,7 @@ class _LimitNote extends StatelessWidget {
               color: AppColors.sky100,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.shield_outlined,
               size: 15,
               color: AppColors.sky600,

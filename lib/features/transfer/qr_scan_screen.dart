@@ -212,7 +212,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                   width: 80,
                   height: 80,
                   padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColors.sky100,
                     shape: BoxShape.circle,
                   ),
@@ -301,7 +301,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                     height: 40,
                     background: AppColors.dsSurfaceContainerHigh,
                     foreground: AppColors.dsOnSurface,
-                    border: null,
+                    border: Colors.transparent,
                     onPressed: () => showAppSnack(context, 'QR хуваалцах'),
                   ),
                 ),
@@ -313,7 +313,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                     height: 40,
                     background: AppColors.dsSurfaceContainerHigh,
                     foreground: AppColors.dsOnSurface,
-                    border: null,
+                    border: Colors.transparent,
                     onPressed: () =>
                         showAppSnack(context, 'Зураг хадгалагдлаа'),
                   ),

@@ -108,14 +108,14 @@ class _CartScreenState extends State<CartScreen> {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppColors.sky50, AppColors.indigo50],
                 ),
                 border: Border.all(color: AppColors.sky100),
               ),
               child: Row(
                 children: [
-                  const MascotImage(
+                  MascotImage(
                     asset: Mascots.pandaPiggy,
                     size: 56,
                     background: AppColors.sky50,

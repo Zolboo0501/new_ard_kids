@@ -20,7 +20,8 @@ class _StocksScreenState extends State<StocksScreen> {
   /// The eye button's state: hides the account number and portfolio value.
   bool _hidden = false;
 
-  static const _holdings = [
+  static List<(String, String, String, int, double, IconData?, Color, Color)>
+  get _holdings => [
     (
       'Apple',
       'AAPL',

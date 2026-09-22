@@ -15,7 +15,7 @@ class InviteFriendsScreen extends StatelessWidget {
 
   static const _code = 'ANAR26';
 
-  static const _invited = [
+  static List<(String, String, bool, Color)> get _invited => [
     ('Anar B.', '2025.02.14-нд нэгдсэн', true, AppColors.sky50),
     ('Misheel T.', '2025.02.10-нд нэгдсэн', true, AppColors.amber50),
     ('Temuulen E.', 'Урилга илгээсэн', false, AppColors.slate100),
@@ -111,7 +111,7 @@ class InviteFriendsScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.pin_outlined,
                         size: 16,
                         color: AppColors.sky600,
@@ -173,7 +173,7 @@ class InviteFriendsScreen extends StatelessWidget {
                           height: 36,
                           background: AppColors.sky500,
                           foreground: Colors.white,
-                          border: null,
+                          border: Colors.transparent,
                           onPressed: () => _copy(context),
                         ),
                       ],

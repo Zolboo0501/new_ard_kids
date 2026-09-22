@@ -54,7 +54,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             shape: BoxShape.circle,
             border: Border.all(color: AppColors.sky100),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.verified_user_outlined,
             size: 20,
             color: AppColors.sky600,

@@ -630,7 +630,7 @@ class _ConfirmButtonState extends State<_ConfirmButton> {
             child: Container(
               height: 52,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppColors.sky400, AppColors.sky500],
                 ),
                 borderRadius: BorderRadius.circular(999),

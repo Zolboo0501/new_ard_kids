@@ -110,11 +110,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.edit_outlined,
-                    size: 12,
-                    color: AppColors.sky500,
-                  ),
+                  Icon(Icons.edit_outlined, size: 12, color: AppColors.sky500),
                   const SizedBox(width: 2),
                   AppText(
                     'Засварлах',
@@ -142,7 +138,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                           color: AppColors.sky50,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.person_outline_rounded,
                           size: 18,
                           color: AppColors.sky500,
@@ -197,7 +193,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                               weight: FontWeight.w700,
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.calendar_month_outlined,
                             size: 20,
                             color: AppColors.sky500,

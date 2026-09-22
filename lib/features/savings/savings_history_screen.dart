@@ -16,7 +16,8 @@ class SavingsHistoryScreen extends StatefulWidget {
 }
 
 class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
-  static const _months = [
+  static List<(String, bool, List<(String, String, int, String, Color, Color)>)>
+  get _months => [
     (
       'ЭНЭ САР (9-Р САР)',
       true,
@@ -282,7 +283,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                   ),
                   title: AppText(r, size: 14, weight: FontWeight.w600),
                   trailing: i == _range
-                      ? const Icon(Icons.check_rounded, color: AppColors.sky500)
+                      ? Icon(Icons.check_rounded, color: AppColors.sky500)
                       : null,
                   onTap: () => Navigator.of(context).pop(i),
                 ),

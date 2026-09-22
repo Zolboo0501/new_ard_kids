@@ -305,7 +305,7 @@ class _AuthScreenState extends State<AuthScreen>
         const SizedBox(height: 6),
         AppInputShell(
           hasError: _nameError != null,
-          leading: const Icon(
+          leading: Icon(
             Icons.person_outline_rounded,
             size: 18,
             color: AppColors.sky500,
@@ -534,7 +534,7 @@ class _HelperNote extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.mark_email_read_outlined,
             size: 18,
             color: AppColors.sky500,
@@ -654,7 +654,7 @@ class _SubmitButtonState extends State<_SubmitButton> {
             height: 48,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [AppColors.sky500, AppColors.sky500, AppColors.sky600],
               ),
               boxShadow: [

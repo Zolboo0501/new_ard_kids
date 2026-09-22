@@ -197,7 +197,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                           color: AppColors.sky50,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.info_outline_rounded,
                           size: 18,
                           color: AppColors.sky600,
@@ -413,7 +413,7 @@ class _TaskTile extends StatelessWidget {
                 : green
                 ? AppColors.emerald600
                 : AppColors.sky600,
-            border: null,
+            border: Colors.transparent,
             onPressed: onTap,
           ),
         ],

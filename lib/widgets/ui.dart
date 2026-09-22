@@ -624,8 +624,8 @@ const _softShadow = [
   BoxShadow(color: Color(0x0D000000), offset: Offset(0, 1), blurRadius: 2),
 ];
 
-/// Page background shared by the in-app screens.
-const kPageBackground = Color(0xFFF5F8FE);
+/// Page background shared by the in-app screens. Follows the theme.
+Color get kPageBackground => AppColors.pageBackground;
 
 /// White rounded container with a thin sky border.
 class AppCard extends StatelessWidget {
@@ -635,7 +635,7 @@ class AppCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(14),
     this.radius = 20,
     this.color = Colors.white,
-    this.borderColor = AppColors.sky100,
+    this.borderColor,
     this.dashed = false,
     this.onTap,
     this.margin,
@@ -646,6 +646,8 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final double radius;
   final Color color;
+
+  /// Defaults to the theme accent (`AppColors.sky100`).
   final Color? borderColor;
   final bool dashed;
   final VoidCallback? onTap;
@@ -654,23 +656,22 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderColor = this.borderColor ?? AppColors.sky100;
     Widget box = Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(radius),
-        border: borderColor == null || dashed
-            ? null
-            : Border.all(color: borderColor!),
+        border: dashed ? null : Border.all(color: borderColor),
         boxShadow: shadow ? _softShadow : null,
       ),
       child: child,
     );
-    if (dashed && borderColor != null) {
+    if (dashed) {
       box = CustomPaint(
         foregroundPainter: _DashedRRectPainter(
-          color: borderColor!,
+          color: borderColor,
           radius: radius,
         ),
         child: box,
@@ -794,7 +795,7 @@ class PrimaryButton extends StatelessWidget {
             gradient: enabled
                 ? LinearGradient(
                     colors: color == null
-                        ? const [AppColors.sky500, AppColors.sky600]
+                        ? [AppColors.sky500, AppColors.sky600]
                         : [base, base],
                   )
                 : null,
@@ -853,21 +854,26 @@ class SoftButton extends StatelessWidget {
     required this.onPressed,
     this.icon,
     this.height = 48,
-    this.background = AppColors.sky50,
-    this.foreground = AppColors.sky600,
-    this.border = AppColors.sky100,
+    this.background,
+    this.foreground,
+    this.border,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
   final double height;
-  final Color background;
-  final Color foreground;
+
+  /// The colors default to the theme accent (`AppColors.sky50`/`sky600`/
+  /// `sky100`). Pass [Colors.transparent] as [border] for no border.
+  final Color? background;
+  final Color? foreground;
   final Color? border;
 
   @override
   Widget build(BuildContext context) {
+    final foreground = this.foreground ?? AppColors.sky600;
+    final border = this.border ?? AppColors.sky100;
     return Semantics(
       button: true,
       child: Pressable(
@@ -876,9 +882,9 @@ class SoftButton extends StatelessWidget {
           height: height,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: background,
+            color: background ?? AppColors.sky50,
             borderRadius: BorderRadius.circular(999),
-            border: border == null ? null : Border.all(color: border!),
+            border: border.a == 0 ? null : Border.all(color: border),
           ),
           alignment: Alignment.center,
           child: Row(
@@ -913,7 +919,7 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
     this.subtitle,
     this.trailing,
     this.onBack,
-    this.background = kPageBackground,
+    this.background,
     this.showBack = true,
   });
 
@@ -921,7 +927,9 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onBack;
-  final Color background;
+
+  /// Defaults to [kPageBackground].
+  final Color? background;
   final bool showBack;
 
   @override
@@ -930,7 +938,7 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: background.withValues(alpha: 0.95),
+      color: (background ?? kPageBackground).withValues(alpha: 0.95),
       child: SafeArea(
         bottom: false,
         child: Container(
@@ -1486,15 +1494,17 @@ class InitialsAvatar extends StatelessWidget {
     super.key,
     required this.name,
     this.size = 44,
-    this.background = AppColors.sky100,
-    this.foreground = AppColors.sky700,
+    this.background,
+    this.foreground,
     this.square = false,
   });
 
   final String name;
   final double size;
-  final Color background;
-  final Color foreground;
+
+  /// Default to the theme accent (`AppColors.sky100`/`sky700`).
+  final Color? background;
+  final Color? foreground;
   final bool square;
 
   @override
@@ -1505,7 +1515,7 @@ class InitialsAvatar extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: background,
+        color: background ?? AppColors.sky100,
         shape: square ? BoxShape.rectangle : BoxShape.circle,
         borderRadius: square ? BorderRadius.circular(size * 0.32) : null,
       ),
@@ -1513,7 +1523,7 @@ class InitialsAvatar extends StatelessWidget {
         trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase(),
         size: size * 0.4,
         weight: FontWeight.w700,
-        color: foreground,
+        color: foreground ?? AppColors.sky700,
       ),
     );
   }
@@ -1593,13 +1603,15 @@ class ProgressTrack extends StatelessWidget {
     super.key,
     required this.value,
     this.height = 8,
-    this.color = AppColors.sky500,
+    this.color,
     this.track = AppColors.slate100,
   });
 
   final double value;
   final double height;
-  final Color color;
+
+  /// Defaults to the theme accent (`AppColors.sky500`).
+  final Color? color;
   final Color track;
 
   @override
@@ -1615,7 +1627,7 @@ class ProgressTrack extends StatelessWidget {
               widthFactor: value.clamp(0.0, 1.0),
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: color,
+                  color: color ?? AppColors.sky500,
                   borderRadius: BorderRadius.circular(height),
                 ),
                 child: const SizedBox.expand(),

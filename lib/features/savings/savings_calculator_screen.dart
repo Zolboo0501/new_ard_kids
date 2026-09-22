@@ -100,7 +100,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
               color: Colors.white.withValues(alpha: 0.8),
               child: Row(
                 children: [
-                  const MascotTile(
+                  MascotTile(
                     asset: Mascots.owlAbacus,
                     size: 64,
                     background: AppColors.sky50,
@@ -335,7 +335,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     ),
                     child: Row(
                       children: [
-                        const MascotTile(
+                        MascotTile(
                           asset: Mascots.puppyGamepad,
                           background: AppColors.sky50,
                           radius: 12,

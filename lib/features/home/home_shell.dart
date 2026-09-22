@@ -81,7 +81,7 @@ class _HomeShellState extends State<HomeShell>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8FE),
+      backgroundColor: AppColors.pageBackground,
       extendBody: true,
       body: AnimatedBuilder(
         animation: _curved,
@@ -252,7 +252,7 @@ class _QrButtonState extends State<_QrButton> {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
+                    gradient: LinearGradient(
                       begin: Alignment.bottomLeft,
                       end: Alignment.topRight,
                       colors: [AppColors.sky500, AppColors.sky400],

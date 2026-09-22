@@ -18,7 +18,7 @@ class AddFriendScreen extends StatefulWidget {
 }
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
-  static const _relations = [
+  static List<(String, String, Color)> get _relations => [
     ('Найз', Mascots.foxWave, AppColors.sky50),
     ('Дүү / Ах', Mascots.bunnyBattery, AppColors.amber50),
     ('Аав / Ээж', Mascots.bearFamily, AppColors.pink50),
@@ -31,7 +31,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   final _phone = TextEditingController();
   int _relation = 0;
   int _bank = 0;
-  final _suggested = [
+  List<(String, String, String, Color)> get _suggested => [
     (
       'Тэмүүлэн',
       'Хаан банк • 5042******',
@@ -161,7 +161,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   AppTextField(
                     controller: _nickname,
                     hint: 'Жишээ: Анар, Батаа...',
-                    suffix: const Icon(
+                    suffix: Icon(
                       Icons.badge_outlined,
                       size: 20,
                       color: AppColors.sky600,
@@ -177,7 +177,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
                     ],
-                    suffix: const Icon(
+                    suffix: Icon(
                       Icons.account_balance_outlined,
                       size: 20,
                       color: AppColors.sky600,
@@ -222,7 +222,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(8),
                     ],
-                    suffix: const Icon(
+                    suffix: Icon(
                       Icons.phone_iphone_rounded,
                       size: 20,
                       color: AppColors.sky600,

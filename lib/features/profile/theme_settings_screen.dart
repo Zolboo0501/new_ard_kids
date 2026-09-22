@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
+import '../../theme/theme_store.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
@@ -17,33 +18,30 @@ class ThemeSettingsScreen extends StatefulWidget {
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
   static const _themes = [
     (
+      AppThemeChoice.blue,
       'Тэнгэрийн цэнхэр (Playful Blue)',
       'Эрч хүчтэй, цэлмэг цэнхэр өнгө төрх',
       'Хүү болон ерөнхий сэдэв',
-      [AppColors.sky500, AppColors.sky400, AppColors.sky100, AppColors.sky600],
+      AppPalette.blue,
       Icons.water_drop_outlined,
     ),
     (
+      AppThemeChoice.pink,
       'Сарнайн ягаан (Pastel Bloom)',
       'Зөөлөн дулаахан, ягаан өнгө төрх',
       'Охидын сэдэв',
-      [
-        AppColors.rose500,
-        AppColors.rose400,
-        AppColors.rose100,
-        AppColors.rose600,
-      ],
+      AppPalette.pink,
       Icons.local_florist_outlined,
     ),
   ];
 
-  int _saved = 0;
-  int _selected = 0;
+  late AppThemeChoice _selected = appThemeChoice.value;
 
   void _save() {
-    // TODO: persist and apply the theme app-wide.
-    setState(() => _saved = _selected);
-    showAppSnack(context, '"${_themes[_selected].$3}" өнгө хадгалагдлаа');
+    appThemeChoice.value = _selected;
+    ThemeStore.save(_selected);
+    final tag = _themes.firstWhere((t) => t.$1 == _selected).$4;
+    showAppSnack(context, '"$tag" өнгө хадгалагдлаа');
   }
 
   @override
@@ -65,7 +63,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                gradient: const LinearGradient(
+                gradient: LinearGradient(
                   colors: [AppColors.sky50, AppColors.pink50],
                 ),
                 border: Border.all(color: AppColors.sky100),
@@ -120,16 +118,16 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                 letterSpacing: 0.6,
               ),
             ),
-            for (final (i, t) in _themes.indexed) ...[
+            for (final t in _themes) ...[
               _ThemeCard(
-                title: t.$1,
-                description: t.$2,
-                tag: t.$3,
-                swatches: t.$4,
-                icon: t.$5,
-                selected: _selected == i,
-                active: _saved == i,
-                onTap: () => setState(() => _selected = i),
+                title: t.$2,
+                description: t.$3,
+                tag: t.$4,
+                palette: t.$5,
+                icon: t.$6,
+                selected: _selected == t.$1,
+                active: appThemeChoice.value == t.$1,
+                onTap: () => setState(() => _selected = t.$1),
               ),
               const SizedBox(height: 16),
             ],
@@ -137,8 +135,8 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
             PrimaryButton(
               label: 'Сонгосон өнгийг хадгалах',
               leadingIcon: Icons.check_rounded,
-              color: _selected == 1 ? AppColors.rose500 : null,
-              onPressed: _selected == _saved ? null : _save,
+              color: AppPalette.of(_selected).c500,
+              onPressed: _selected == appThemeChoice.value ? null : _save,
             ),
           ]),
         ),
@@ -152,7 +150,7 @@ class _ThemeCard extends StatelessWidget {
     required this.title,
     required this.description,
     required this.tag,
-    required this.swatches,
+    required this.palette,
     required this.icon,
     required this.selected,
     required this.active,
@@ -162,7 +160,7 @@ class _ThemeCard extends StatelessWidget {
   final String title;
   final String description;
   final String tag;
-  final List<Color> swatches;
+  final AppPalette palette;
   final IconData icon;
   final bool selected;
   final bool active;
@@ -170,7 +168,8 @@ class _ThemeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = swatches.first;
+    final accent = palette.c500;
+    final swatches = [palette.c500, palette.c400, palette.c100, palette.c600];
     return Semantics(
       button: true,
       selected: selected,

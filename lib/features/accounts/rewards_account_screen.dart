@@ -97,7 +97,7 @@ class _RewardsPane extends StatelessWidget {
   final VoidCallback onToggleHidden;
   final ValueChanged<String> onOpen;
 
-  static const _items = [
+  static List<TxItem> get _items => [
     TxItem(
       title: 'Гэрийн даалгавраа онц хийсэн',
       subtitle: 'Ааваас олгосон',

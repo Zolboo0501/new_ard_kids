@@ -69,7 +69,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           color: AppColors.sky50,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.person_outline_rounded,
                           size: 18,
                           color: AppColors.sky500,
@@ -179,7 +179,7 @@ class StudentHeaderCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Colors.white, AppColors.sky50, AppColors.emerald50],

@@ -28,7 +28,7 @@ class CoinAccountPane extends StatefulWidget {
 }
 
 class _CoinAccountPaneState extends State<CoinAccountPane> {
-  static const _items = [
+  static List<TxItem> get _items => [
     TxItem(
       title: 'Өдөр тутмын чекин',
       subtitle: 'Хичээл & Апп идэвх',

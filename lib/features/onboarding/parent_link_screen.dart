@@ -299,7 +299,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                     const SizedBox(height: 6),
                     AppInputShell(
                       hasError: _phoneError != null,
-                      leading: const AppText(
+                      leading: AppText(
                         '+976',
                         size: 12,
                         weight: FontWeight.w700,
@@ -327,7 +327,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                     const SizedBox(height: 6),
                     AppInputShell(
                       hasError: _registerError != null,
-                      leading: const AppText(
+                      leading: AppText(
                         'РД',
                         size: 12,
                         weight: FontWeight.w700,

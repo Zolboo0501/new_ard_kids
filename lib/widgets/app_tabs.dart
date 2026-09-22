@@ -58,13 +58,11 @@ class AppTabsStyle {
   final double dotSize;
 
   /// Sky gradient pill on a slate track. The sign-in screen's mode switcher.
-  static final pill = AppTabsStyle(
+  static AppTabsStyle get pill => AppTabsStyle(
     trackColor: AppColors.slate100.withValues(alpha: 0.8),
     trackRadius: 999,
     trackBorder: AppColors.slate200.withValues(alpha: 0.5),
-    pillGradient: const LinearGradient(
-      colors: [AppColors.sky500, AppColors.sky400],
-    ),
+    pillGradient: LinearGradient(colors: [AppColors.sky500, AppColors.sky400]),
     pillRadius: 999,
     pillShadow: [
       BoxShadow(
@@ -79,7 +77,7 @@ class AppTabsStyle {
   );
 
   /// White card pill on a sky track. The home screen's account tabs.
-  static final card = AppTabsStyle(
+  static AppTabsStyle get card => AppTabsStyle(
     trackColor: AppColors.sky100.withValues(alpha: 0.6),
     trackRadius: 16,
     trackBorder: AppColors.sky100,
@@ -97,7 +95,7 @@ class AppTabsStyle {
   );
 
   /// Solid sky pill on a slate track. The QR screen's scan/show tabs.
-  static final solid = AppTabsStyle(
+  static AppTabsStyle get solid => AppTabsStyle(
     trackColor: AppColors.slate200.withValues(alpha: 0.7),
     trackRadius: 16,
     pillColor: AppColors.sky500,

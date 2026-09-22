@@ -47,13 +47,10 @@ class CircleBackButton extends StatelessWidget {
 
 /// Thin blinking text cursor shown inside the active code box.
 class BlinkingCursor extends StatefulWidget {
-  const BlinkingCursor({
-    super.key,
-    this.color = AppColors.sky500,
-    this.height = 24,
-  });
+  const BlinkingCursor({super.key, this.color, this.height = 24});
 
-  final Color color;
+  /// Defaults to the theme accent (`AppColors.sky500`).
+  final Color? color;
   final double height;
 
   @override
@@ -81,7 +78,7 @@ class _BlinkingCursorState extends State<BlinkingCursor>
         width: 2,
         height: widget.height,
         decoration: BoxDecoration(
-          color: widget.color,
+          color: widget.color ?? AppColors.sky500,
           borderRadius: BorderRadius.circular(2),
         ),
       ),
@@ -146,7 +143,7 @@ class PulsingDotState extends State<PulsingDot>
       child: Container(
         width: 8,
         height: 8,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppColors.sky500,
           shape: BoxShape.circle,
         ),

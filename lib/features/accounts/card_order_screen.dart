@@ -117,7 +117,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: AppColors.sky100),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.account_balance_wallet_outlined,
                           size: 18,
                           color: AppColors.sky600,
