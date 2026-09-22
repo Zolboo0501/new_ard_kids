@@ -1794,5 +1794,8 @@ abstract final class Mascots {
   static const foxJump = '$_d/mascot_fox_jump.jpg';
   static const fox = '$_d/mascot_fox.jpg';
   static const redPanda = '$_d/mascot_red_panda.jpg';
+
+  /// [redPanda] cut out onto a transparent background.
+  static const redPandaCutout = '$_d/mascot_red_panda_cutout.png';
   static const pandaKey = '$_d/mascot_panda_key.png';
 }

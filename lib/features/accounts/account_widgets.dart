@@ -73,7 +73,7 @@ class TransactionTile extends StatelessWidget {
                   runSpacing: 2,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    AppText(item.title, size: 12, weight: FontWeight.w700),
+                    AppText(item.title, size: 12, weight: FontWeight.w500),
                     if (item.badge != null && !whenBelow)
                       StatusBadge(label: item.badge!, tone: item.badgeTone),
                   ],
@@ -106,7 +106,7 @@ class TransactionTile extends StatelessWidget {
                 sign: true,
                 space: false,
                 size: 13,
-                weight: FontWeight.w500,
+                weight: FontWeight.w600,
                 color: color,
               ),
               if (whenBelow)

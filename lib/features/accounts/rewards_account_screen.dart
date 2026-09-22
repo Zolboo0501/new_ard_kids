@@ -104,7 +104,7 @@ class _RewardsPane extends StatelessWidget {
       when: 'Өнөөдөр',
       amount: 10000,
       asset: Mascots.owlBook,
-      tint: Colors.white,
+      tint: AppColors.sky50,
     ),
     TxItem(
       title: 'Хадгаламжийн зорилгодоо хүрсэн',
@@ -112,8 +112,7 @@ class _RewardsPane extends StatelessWidget {
       when: 'Өчигдөр',
       amount: 15000,
       asset: Mascots.bearConfetti,
-      tint: Colors.white,
-      amountColor: AppColors.sky600,
+      tint: AppColors.amber50,
     ),
     TxItem(
       title: 'Найзаа урьж бүртгүүлсэн',
@@ -121,7 +120,7 @@ class _RewardsPane extends StatelessWidget {
       when: '05.12',
       amount: 5000,
       asset: Mascots.foxWave,
-      tint: Colors.white,
+      tint: AppColors.orange50,
       badge: 'Амжилттай',
       badgeTone: BadgeTone.amber,
     ),
@@ -131,7 +130,7 @@ class _RewardsPane extends StatelessWidget {
       when: '05.10',
       amount: 10000,
       asset: Mascots.owlMedal,
-      tint: Colors.white,
+      tint: AppColors.violet50,
       badge: 'Биелүүлсэн',
     ),
     TxItem(
@@ -140,20 +139,31 @@ class _RewardsPane extends StatelessWidget {
       when: '05.08',
       amount: -20000,
       asset: Mascots.bearBooks,
-      tint: Colors.white,
+      tint: AppColors.rose50,
       badge: 'Зарцуулсан',
       badgeTone: BadgeTone.slate,
-      amountColor: AppColors.slate700,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final items = _items;
+    // Summed from the history below, so the card and the list agree.
+    final earned = items
+        .where((i) => i.income)
+        .fold<int>(0, (sum, i) => sum + i.amount);
+    final spent = items
+        .where((i) => !i.income)
+        .fold<int>(0, (sum, i) => sum - i.amount);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // Same structure as the coin card (number, balance beside the
+        // mascot, then the totals) so switching tabs changes the content,
+        // not the layout; the warm amber keeps the two accounts apart.
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: const LinearGradient(
@@ -162,95 +172,193 @@ class _RewardsPane extends StatelessWidget {
               colors: [Colors.white, AppColors.amber50],
             ),
             border: Border.all(color: AppColors.amber100),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.amber500.withValues(alpha: 0.08),
+                offset: const Offset(0, 10),
+                blurRadius: 24,
+                spreadRadius: -8,
+              ),
+            ],
           ),
-          child: Stack(
-            clipBehavior: Clip.none,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Positioned(
-                right: -12,
-                bottom: -16,
-                child: MascotImage(
-                  asset: Mascots.redPandaTrophy,
-                  size: 120,
-                  background: Color(0xFFFFFDF5),
-                  semanticLabel: 'Урамшуулал маскот',
+              CopyAccountNumber(
+                number: Accounts.rewards,
+                prefix: 'Данс: ',
+                hidden: hidden,
+                onToggleHidden: onToggleHidden,
+                style: moneyStyle(
+                  size: 12,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate500,
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              Row(
                 children: [
-                  AppText(
-                    'Нийт үлдэгдэл',
-                    size: 12,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate500,
-                  ),
-                  HideableBalance(
-                    hidden: hidden,
-                    balance: const BalanceText(
-                      35000,
-                      animateFrom: 0,
-                      size: 30,
-                      weight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          'Нийт үлдэгдэл',
+                          size: 12,
+                          weight: FontWeight.w500,
+                          color: AppColors.slate500,
+                        ),
+                        const SizedBox(height: 2),
+                        HideableBalance(
+                          hidden: hidden,
+                          balance: const BalanceText(
+                            35000,
+                            animateFrom: 0,
+                            size: 30,
+                            currencyWeight: FontWeight.w600,
+                            currencyColor: AppColors.slate700,
+                            weight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  CopyAccountNumber(
-                    number: Accounts.rewards,
-                    prefix: 'Данс: ',
-                    hidden: hidden,
-                    onToggleHidden: onToggleHidden,
-                    style: moneyStyle(
-                      size: 12,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
-                    ),
+                  const MascotImage(
+                    asset: Mascots.redPandaTrophy,
+                    size: 100,
+                    background: Color(0xFFFFFCF2),
+                    semanticLabel: 'Урамшуулал маскот',
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.amber100),
+                ),
+                child: IntrinsicHeight(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _Total(
+                          label: 'Нийт орлого',
+                          value: earned,
+                          color: AppColors.emerald700,
+                          hidden: hidden,
+                        ),
+                      ),
+                      const VerticalDivider(
+                        width: 24,
+                        thickness: 1,
+                        color: AppColors.amber100,
+                      ),
+                      Expanded(
+                        child: _Total(
+                          label: 'Нийт зарцуулалт',
+                          value: -spent,
+                          color: AppColors.rose600,
+                          hidden: hidden,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        Row(
-          children: [
-            Expanded(
-              child: _Shortcut(
-                asset: Mascots.foxWave,
-                title: 'Найз урих',
-                subtitle: '5,000 оноо',
-                subtitleColor: AppColors.emerald600,
-                onTap: () => onOpen(AppRoutes.inviteFriends),
+        // Equal-height tiles, whatever each title wraps to.
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: _Shortcut(
+                  asset: Mascots.foxWave,
+                  tint: AppColors.orange50,
+                  title: 'Найз урих',
+                  subtitle: '5,000 оноо',
+                  subtitleColor: AppColors.emerald600,
+                  onTap: () => onOpen(AppRoutes.inviteFriends),
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _Shortcut(
-                asset: Mascots.redPandaTrophy,
-                title: 'Урамшуулал авах',
-                subtitle: 'Даалгаврууд',
-                subtitleColor: AppColors.sky600,
-                onTap: () => onOpen(AppRoutes.rewardOpportunities),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _Shortcut(
+                  asset: Mascots.redPandaTrophy,
+                  tint: AppColors.amber50,
+                  title: 'Урамшуулал авах',
+                  subtitle: 'Даалгаврууд',
+                  subtitleColor: AppColors.sky600,
+                  onTap: () => onOpen(AppRoutes.rewardOpportunities),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(height: 18),
-        SectionHeader(
-          title: 'Гүйлгээний жагсаалт',
-          icon: Icons.receipt_long_outlined,
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+        const SizedBox(height: 20),
+        const SectionHeader(
+          title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
+          mascot: Mascots.penguinList,
+          padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
-        for (final (i, item) in _items.indexed) ...[
+        for (final (i, item) in items.indexed) ...[
           ListItemEntrance(
             id: item,
             index: i,
             always: true,
             delay: AppTabView.incomingDelay,
-            child: TransactionTile(item: item, whenBelow: true),
+            child: TransactionTile(item: item),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
         ],
+      ],
+    );
+  }
+}
+
+/// One of the card's two totals: a small label over a signed amount.
+class _Total extends StatelessWidget {
+  const _Total({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.hidden,
+  });
+
+  final String label;
+  final int value;
+  final Color color;
+  final bool hidden;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          label,
+          size: 11,
+          weight: FontWeight.w500,
+          color: AppColors.slate500,
+        ),
+        const SizedBox(height: 2),
+        HideableBalance(
+          hidden: hidden,
+          balance: BalanceText(
+            value,
+            size: 15,
+            sign: value > 0,
+            weight: FontWeight.w700,
+            color: color,
+          ),
+        ),
       ],
     );
   }
@@ -259,6 +367,7 @@ class _RewardsPane extends StatelessWidget {
 class _Shortcut extends StatelessWidget {
   const _Shortcut({
     required this.asset,
+    required this.tint,
     required this.title,
     required this.subtitle,
     required this.subtitleColor,
@@ -266,6 +375,7 @@ class _Shortcut extends StatelessWidget {
   });
 
   final String asset;
+  final Color tint;
   final String title;
   final String subtitle;
   final Color subtitleColor;
@@ -274,36 +384,54 @@ class _Shortcut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      radius: 18,
-      padding: const EdgeInsets.all(12),
+      radius: 20,
+      padding: const EdgeInsets.all(14),
       onTap: onTap,
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MascotImage(
-            asset: asset,
-            size: 40,
-            background: Colors.white,
-            semanticLabel: title,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(title, size: 12, weight: FontWeight.w700),
-                AppText(
-                  subtitle,
-                  size: 10,
-                  weight: FontWeight.w700,
-                  color: subtitleColor,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: tint,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-              ],
-            ),
+                child: MascotImage(
+                  asset: asset,
+                  size: 42,
+                  background: tint,
+                  semanticLabel: title,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: const BoxDecoration(
+                  color: AppColors.slate50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: AppColors.slate500,
+                ),
+              ),
+            ],
           ),
-          const Icon(
-            Icons.chevron_right_rounded,
-            size: 18,
-            color: AppColors.slate400,
+          const SizedBox(height: 12),
+          AppText(title, size: 13, weight: FontWeight.w700),
+          const SizedBox(height: 2),
+          AppText(
+            subtitle,
+            size: 11,
+            weight: FontWeight.w700,
+            color: subtitleColor,
           ),
         ],
       ),

@@ -178,6 +178,9 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Short phones (SE, small Androids) shrink the hero so the submit button
+    // stays above the fold.
+    final compact = MediaQuery.sizeOf(context).height < 720;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -189,7 +192,7 @@ class _AuthScreenState extends State<AuthScreen>
               const _TopBar(),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                  padding: EdgeInsets.fromLTRB(20, compact ? 0 : 8, 20, 24),
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   child: Center(
@@ -199,47 +202,65 @@ class _AuthScreenState extends State<AuthScreen>
                         children: [
                           Entrance(
                             t: _mascotIn,
-                            // The mascot leads, and grows in slightly rather
-                            // than just sliding.
+                            // The mascot leads, and grows in slightly
+                            // rather than just sliding.
                             scaleFrom: 0.94,
-                            child: const _Mascot(),
+                            child: _Mascot(size: compact ? 110 : 156),
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: compact ? 12 : 18),
                           Entrance(
                             t: _titleIn,
-                            child: AppText(
-                              'Ard KIDS',
-                              size: 20,
-                              weight: FontWeight.w700,
-                              height: 1.25,
-                              letterSpacing: -0.4,
+                            child: Text.rich(
+                              TextSpan(
+                                text: 'Ard ',
+                                children: [
+                                  TextSpan(
+                                    text: 'KIDS',
+                                    style: inter(
+                                      size: compact ? 24 : 28,
+                                      weight: FontWeight.w800,
+                                      color: AppColors.sky500,
+                                      height: 1.15,
+                                      letterSpacing: -0.6,
+                                    ),
+                                  ),
+                                ],
+                              ),
                               textAlign: TextAlign.center,
+                              style: inter(
+                                size: compact ? 24 : 28,
+                                weight: FontWeight.w800,
+                                color: AppColors.slate800,
+                                height: 1.15,
+                                letterSpacing: -0.6,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 6),
                           Entrance(
                             t: _subtitleIn,
+                            // Narrow enough that the sentence breaks
+                            // into two even lines, not a lone last word.
                             child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 290),
+                              constraints: const BoxConstraints(maxWidth: 240),
                               child: AppText(
                                 'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
-                                size: 12,
+                                size: 13,
                                 weight: FontWeight.w500,
                                 color: AppColors.slate500,
-                                height: 1.6,
+                                height: 1.5,
                                 textAlign: TextAlign.center,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: compact ? 16 : 24),
                           Entrance(
                             t: _cardIn,
-                            // Travels a little further, so the card reads as
-                            // settling into place under the heading.
+                            // Travels a little further, so the card reads
+                            // as settling into place under the heading.
                             offsetY: 24,
                             child: _buildFormCard(),
                           ),
-                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -256,7 +277,7 @@ class _AuthScreenState extends State<AuthScreen>
   Widget _buildFormCard() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
@@ -284,7 +305,7 @@ class _AuthScreenState extends State<AuthScreen>
             index: _mode.index,
             onChanged: (i) => setState(() => _mode = AuthMode.values[i]),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           _ModeSwitch(
             index: _mode.index,
             builder: (shown) => _buildFields(AuthMode.values[shown]),
@@ -359,13 +380,13 @@ class _AuthScreenState extends State<AuthScreen>
           ),
         ),
         AppFieldError(message: _phoneError),
-        const SizedBox(height: 14),
+        const SizedBox(height: 12),
         _HelperNote(
           text: isLogin
               ? 'Таны утсанд 4 оронтой баталгаажуулах нууц код очно.'
               : 'Шинэ бүртгэл үүсгэхэд таны утасны дугаарт баталгаажуулах код илгээнэ.',
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 16),
         _SubmitButton(
           state: _submitState,
           label: isLogin ? 'Үргэлжлүүлэх' : 'Код авах',
@@ -476,19 +497,13 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 48,
+      height: 44,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: AppColors.surface.withValues(alpha: 0.9),
-        border: Border(
-          bottom: BorderSide(color: AppColors.sky100.withValues(alpha: 0.6)),
-        ),
-      ),
       alignment: Alignment.centerRight,
       child: Image.asset(
         'assets/images/ard_logo.png',
-        width: 40,
-        height: 40,
+        width: 36,
+        height: 36,
         fit: BoxFit.contain,
         semanticLabel: 'Ard',
       ),
@@ -496,24 +511,20 @@ class _TopBar extends StatelessWidget {
   }
 }
 
+/// The red panda sticker, cut out onto a transparent background so it sits
+/// straight on the page.
 class _Mascot extends StatelessWidget {
-  const _Mascot();
+  const _Mascot({required this.size});
+
+  final double size;
 
   @override
   Widget build(BuildContext context) {
-    // The source image has a white background; multiplying with the page
-    // surface color blends it in (same as `mix-blend-mode: multiply`).
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Image.asset(
-        'assets/images/mascot_red_panda.jpg',
-        width: 160,
-        height: 160,
-        fit: BoxFit.contain,
-        color: AppColors.surface,
-        colorBlendMode: BlendMode.multiply,
-        semanticLabel: 'Ard KIDS улаан панда',
-      ),
+    return Image.asset(
+      Mascots.redPandaCutout,
+      height: size,
+      fit: BoxFit.contain,
+      semanticLabel: 'Ard KIDS улаан панда',
     );
   }
 }
@@ -525,40 +536,43 @@ class _HelperNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.sky50.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.sky100.withValues(alpha: 0.8)),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.mark_email_read_outlined,
-            size: 18,
-            color: AppColors.sky500,
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppColors.sky50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.sms_outlined, size: 14, color: AppColors.sky600),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             // The copy changes with the mode, so cross-fade it instead of
             // snapping to the new sentence.
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 240),
-              curve: appEmphasizedDecelerate,
-              alignment: Alignment.topCenter,
-              child: ValueSwitcher(
-                value: text,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: AnimatedSize(
                 duration: const Duration(milliseconds: 240),
-                switchInCurve: appEmphasizedDecelerate,
-                switchOutCurve: appEmphasizedAccelerate,
-                child: AppText(
-                  text,
-                  size: 11,
-                  weight: FontWeight.w500,
-                  color: AppColors.sky800,
-                  height: 1.25,
-                  key: ValueKey(text),
+                curve: appEmphasizedDecelerate,
+                alignment: Alignment.topCenter,
+                child: ValueSwitcher(
+                  value: text,
+                  duration: const Duration(milliseconds: 240),
+                  switchInCurve: appEmphasizedDecelerate,
+                  switchOutCurve: appEmphasizedAccelerate,
+                  child: AppText(
+                    text,
+                    size: 12,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate500,
+                    height: 1.4,
+                    key: ValueKey(text),
+                  ),
                 ),
               ),
             ),
@@ -651,17 +665,18 @@ class _SubmitButtonState extends State<_SubmitButton> {
           opacity: busy ? 0.8 : 1,
           duration: const Duration(milliseconds: 200),
           child: Container(
-            height: 48,
+            height: 52,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
               gradient: LinearGradient(
-                colors: [AppColors.sky500, AppColors.sky500, AppColors.sky600],
+                colors: [AppColors.sky500, AppColors.sky600],
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.sky500.withValues(alpha: 0.35),
+                  color: AppColors.sky500.withValues(alpha: 0.3),
                   offset: const Offset(0, 8),
-                  blurRadius: 20,
+                  blurRadius: 18,
+                  spreadRadius: -2,
                 ),
               ],
             ),
@@ -673,52 +688,6 @@ class _SubmitButtonState extends State<_SubmitButton> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ParentNote extends StatelessWidget {
-  const _ParentNote();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.emerald50.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.emerald200.withValues(alpha: 0.6)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            margin: const EdgeInsets.only(top: 2),
-            decoration: const BoxDecoration(
-              color: AppColors.emerald100,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.verified_user_outlined,
-              size: 16,
-              color: AppColors.emerald600,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: AppText(
-              'Эцэг эхийн зөвшөөрөлтэй, хүүхдэд зориулсан 100% найдвартай аюулгүй санхүүгийн платформ.',
-              size: 11,
-              weight: FontWeight.w500,
-              color: AppColors.emerald800,
-              height: 1.6,
-            ),
-          ),
-        ],
       ),
     );
   }
