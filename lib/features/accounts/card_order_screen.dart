@@ -79,7 +79,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                 const FieldLabel('Дээр бичигдэх нэр (Латинаар)'),
                 AppTextField(
                   controller: _name,
-                  textStyle: comfortaa(
+                  textStyle: inter(
                     size: 13,
                     weight: FontWeight.w700,
                     letterSpacing: 1,
@@ -207,7 +207,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                     controller: _address,
                     hint: 'Дүүрэг, хороо, байр, орцны дугаар...',
                     prefixIcon: Icons.location_on_outlined,
-                    textStyle: comfortaa(size: 12, weight: FontWeight.w500),
+                    textStyle: inter(size: 12, weight: FontWeight.w500),
                   ),
                 ],
               ],

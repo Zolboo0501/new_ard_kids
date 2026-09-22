@@ -372,10 +372,9 @@ class _BalanceCard extends StatelessWidget {
                     ),
                     child: Text(
                       account,
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                      style: moneyStyle(
+                        size: 12,
+                        weight: FontWeight.w600,
                         color: AppColors.slate400,
                       ),
                     ),
@@ -994,7 +993,7 @@ class _LinkParentBanner extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: '₮20,000 / ₮20,000',
-                            style: comfortaa(
+                            style: inter(
                               size: 10,
                               weight: FontWeight.w700,
                               color: AppColors.amber600,
@@ -1002,7 +1001,7 @@ class _LinkParentBanner extends StatelessWidget {
                           ),
                         ],
                       ),
-                      style: comfortaa(
+                      style: inter(
                         size: 10,
                         weight: FontWeight.w500,
                         color: AppColors.slate500,

@@ -287,7 +287,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                             children: [
                               TextSpan(
                                 text: 'Санамж: ',
-                                style: comfortaa(
+                                style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
                                   color: const Color(0xFF451A03),
@@ -296,7 +296,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                               const TextSpan(text: 'Сар бүр '),
                               TextSpan(
                                 text: formatMnt(_monthly),
-                                style: comfortaa(
+                                style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
                                   color: AppColors.sky600,
@@ -305,7 +305,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                               const TextSpan(text: ' хадгалбал '),
                               TextSpan(
                                 text: '$_months сарын дараа',
-                                style: comfortaa(
+                                style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
                                   color: const Color(0xFF451A03),
@@ -314,7 +314,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                               const TextSpan(text: ' зорилгодоо 100% хүрнэ!'),
                             ],
                           ),
-                          style: comfortaa(
+                          style: inter(
                             size: 11.5,
                             weight: FontWeight.w500,
                             color: const Color(0xFF78350F),

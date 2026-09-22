@@ -172,7 +172,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                     TextSpan(
                       text: '5 дахин',
                       style:
-                          comfortaa(
+                          inter(
                             size: 20,
                             weight: FontWeight.w800,
                             color: AppColors.sky500,
@@ -186,7 +186,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                   ],
                 ),
                 textAlign: TextAlign.center,
-                style: comfortaa(
+                style: inter(
                   size: 20,
                   weight: FontWeight.w800,
                   height: 1.4,

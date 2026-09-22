@@ -447,14 +447,14 @@ class _RequestCard extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: r.when,
-                            style: comfortaa(
+                            style: inter(
                               size: 10,
                               color: AppColors.slate400,
                             ),
                           ),
                         ],
                       ),
-                      style: comfortaa(
+                      style: inter(
                         size: 11,
                         weight: FontWeight.w600,
                         color: AppColors.slate500,

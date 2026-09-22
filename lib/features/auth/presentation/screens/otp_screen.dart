@@ -250,7 +250,7 @@ class _OtpScreenState extends State<OtpScreen>
   }
 
   Widget _buildInstructions() {
-    final base = comfortaa(
+    final base = inter(
       size: 14,
       weight: FontWeight.w500,
       color: AppColors.dsOnSurfaceVariant,
@@ -294,13 +294,13 @@ class _OtpScreenState extends State<OtpScreen>
 
   Widget _buildCodeCard() {
     final counting = _secondsLeft > 0;
-    final label = comfortaa(
+    final label = inter(
       size: 12,
       weight: FontWeight.w500,
       color: AppColors.dsOnSurfaceVariant,
       letterSpacing: 0.24,
     );
-    final accent = comfortaa(
+    final accent = inter(
       size: 12,
       weight: FontWeight.w700,
       color: AppColors.dsPrimary,

@@ -365,7 +365,7 @@ class _NavItemState extends State<_NavItem> {
                   AnimatedDefaultTextStyle(
                     duration: _duration,
                     curve: appEmphasizedDecelerate,
-                    style: comfortaa(
+                    style: inter(
                       size: 11,
                       weight: selected ? FontWeight.w700 : FontWeight.w500,
                       color: tint ?? color,

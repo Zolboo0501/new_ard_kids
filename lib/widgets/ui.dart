@@ -36,45 +36,25 @@ String formatMnt(num amount, {bool sign = false, bool space = false}) {
   return '$prefix₮${space ? ' ' : ''}$buf';
 }
 
-/// Balance-style numerals (the Stitch screens use Open Sans with tabular
-/// figures for money; Comfortaa with tabular figures is the closest match).
+/// Money numerals: Inter with tabular figures, so digits keep one width and
+/// amounts line up in lists and don't shift while a balance counts up.
 TextStyle moneyStyle({
-  required double size,
-  FontWeight weight = FontWeight.w700,
-  Color color = AppColors.slate800,
-  double? letterSpacing,
-}) {
-  return comfortaa(
-    size: size,
-    weight: weight,
-    color: color,
-    letterSpacing: letterSpacing,
-  ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
-}
-
-/// Open Sans with tabular figures, the money face from the Stitch screens.
-/// Open Sans is a variable font, so the `wght` variation is set alongside
-/// [weight] (same as [comfortaa]).
-TextStyle openSans({
   required double size,
   FontWeight weight = FontWeight.w700,
   Color color = AppColors.slate800,
   double? height,
   double? letterSpacing,
 }) {
-  return TextStyle(
-    fontFamily: 'OpenSans',
-    fontSize: size,
-    fontWeight: weight,
-    fontVariations: [FontVariation.weight(weight.value.toDouble())],
-    fontFeatures: const [FontFeature.tabularFigures()],
+  return inter(
+    size: size,
+    weight: weight,
     color: color,
     height: height,
     letterSpacing: letterSpacing,
-  );
+  ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
 }
 
-/// A balance amount in Open Sans, formatted with [formatMnt] plus two
+/// A balance amount in [moneyStyle], formatted with [formatMnt] plus two
 /// decimal places: `BalanceText(1280000, size: 32)` → `₮1,280,000.00`.
 /// Pass `decimals: false` for whole tugriks only (`₮1,280,000`).
 ///
@@ -184,7 +164,7 @@ class BalanceText extends StatelessWidget {
         children: [
           TextSpan(
             text: text.substring(0, split),
-            style: openSans(
+            style: moneyStyle(
               size: currencySize ?? size,
               weight: currencyWeight ?? weight,
               color: currencyColor ?? color,
@@ -201,7 +181,7 @@ class BalanceText extends StatelessWidget {
       semanticsLabel:
           semanticsLabel ??
           (animate || animateFrom != null ? _format(amount) : null),
-      style: openSans(
+      style: moneyStyle(
         size: size,
         weight: weight,
         color: color,
@@ -996,13 +976,13 @@ class _AppTextFieldState extends State<AppTextField> {
                 cursorColor: AppColors.sky500,
                 style:
                     widget.textStyle ??
-                    comfortaa(size: 14, weight: FontWeight.w700),
+                    inter(size: 14, weight: FontWeight.w700),
                 decoration: InputDecoration(
                   isDense: true,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
                   hintText: widget.hint,
-                  hintStyle: comfortaa(size: 14, color: AppColors.slate400),
+                  hintStyle: inter(size: 14, color: AppColors.slate400),
                 ),
               ),
             ),

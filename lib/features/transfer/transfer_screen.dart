@@ -529,7 +529,7 @@ class _ModeTabs extends StatelessWidget {
                           child: AnimatedDefaultTextStyle(
                             duration: duration,
                             curve: appEmphasizedDecelerate,
-                            style: comfortaa(
+                            style: inter(
                               size: 12,
                               weight: m == mode
                                   ? FontWeight.w700
@@ -891,7 +891,7 @@ class _LimitNote extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: 'өдрийн ₮100,000 лимитийн',
-                    style: comfortaa(
+                    style: inter(
                       size: 11,
                       weight: FontWeight.w700,
                       color: AppColors.sky900,
@@ -900,7 +900,7 @@ class _LimitNote extends StatelessWidget {
                   const TextSpan(text: ' хүрээнд хамгаалагдсан байна.'),
                 ],
               ),
-              style: comfortaa(
+              style: inter(
                 size: 11,
                 weight: FontWeight.w500,
                 color: AppColors.sky700,

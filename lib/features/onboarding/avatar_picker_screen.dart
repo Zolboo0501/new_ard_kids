@@ -41,7 +41,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
       BadgeTone.emerald,
     ),
     (
-      'Бөжинхөн',
+      'Бүжинхэн',
       'Данс цэнэглэгч',
       'Эрч хүчтэйгээр өдөр бүр даалгавар биелүүлнэ!',
       Mascots.bunnyBattery,
@@ -251,7 +251,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                       children: [
                                         TextSpan(
                                           text: 'Профайл',
-                                          style: comfortaa(
+                                          style: inter(
                                             size: 11,
                                             weight: FontWeight.w700,
                                             color: AppColors.sky600,
@@ -263,7 +263,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                         ),
                                       ],
                                     ),
-                                    style: comfortaa(
+                                    style: inter(
                                       size: 11,
                                       color: AppColors.slate600,
                                       height: 1.4,

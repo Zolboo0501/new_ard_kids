@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// A [Text] that is always styled with Comfortaa.
+/// A [Text] that is always styled with Inter.
 ///
-/// Use this instead of `Text(..., style: comfortaa(...))` so screens never
-/// reach for a raw [TextStyle]. The defaults match [comfortaa] exactly, so
+/// Use this instead of `Text(..., style: inter(...))` so screens never
+/// reach for a raw [TextStyle]. The defaults match [inter] exactly, so
 /// swapping one for the other does not change how anything renders.
 ///
 /// ```dart
 /// const AppText('Найзаа нэмэх', size: 22, weight: FontWeight.w700)
 /// ```
 ///
-/// Reach for [comfortaa] directly only where a [TextStyle] is what is wanted
+/// Reach for [inter] directly only where a [TextStyle] is what is wanted
 /// rather than a widget — inside a [TextSpan], an [InputDecoration.hintStyle]
 /// or a [TextField.style].
 class AppText extends StatelessWidget {
@@ -36,14 +36,14 @@ class AppText extends StatelessWidget {
 
   final String data;
 
-  // Type: forwarded to [comfortaa].
+  // Type: forwarded to [inter].
   final double size;
   final FontWeight weight;
   final Color color;
   final double? height;
   final double? letterSpacing;
 
-  // Applied on top of the Comfortaa style, for the few places that need them.
+  // Applied on top of the Inter style, for the few places that need them.
   final FontStyle? fontStyle;
   final TextDecoration? decoration;
   final Color? decorationColor;
@@ -69,7 +69,7 @@ class AppText extends StatelessWidget {
   }
 
   TextStyle get _style {
-    final base = comfortaa(
+    final base = inter(
       size: size,
       weight: weight,
       color: color,

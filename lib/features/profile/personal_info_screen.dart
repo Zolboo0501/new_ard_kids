@@ -298,7 +298,7 @@ class _InfoRow extends StatelessWidget {
             child: Align(
               alignment: Alignment.centerRight,
               child: DefaultTextStyle(
-                style: comfortaa(
+                style: inter(
                   size: 12,
                   weight: FontWeight.w600,
                   color: AppColors.slate700,

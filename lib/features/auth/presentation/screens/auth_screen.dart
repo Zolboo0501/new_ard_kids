@@ -590,7 +590,7 @@ class _SubmitButtonState extends State<_SubmitButton> {
   @override
   Widget build(BuildContext context) {
     final busy = widget.state != _SubmitState.idle;
-    final textStyle = comfortaa(
+    final textStyle = inter(
       size: 14,
       weight: FontWeight.w700,
       color: Colors.white,

@@ -132,7 +132,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     ),
   ];
 
-  static final _bold = comfortaa(
+  static final _bold = inter(
     size: 11,
     weight: FontWeight.w700,
     color: AppColors.slate700,
@@ -289,7 +289,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   const SizedBox(height: 4),
                   Text.rich(
                     n.body,
-                    style: comfortaa(
+                    style: inter(
                       size: 11,
                       weight: FontWeight.w500,
                       color: AppColors.slate500,

@@ -227,11 +227,11 @@ class AppTabs extends StatelessWidget {
                 Flexible(
                   // AnimatedDefaultTextStyle needs a plain Text child, so this
                   // is the one place a raw Text is correct over AppText; the
-                  // style still comes from comfortaa().
+                  // style still comes from inter().
                   child: AnimatedDefaultTextStyle(
                     duration: _duration,
                     curve: appEmphasizedDecelerate,
-                    style: comfortaa(
+                    style: inter(
                       size: style.labelSize,
                       weight: selected
                           ? style.selectedWeight

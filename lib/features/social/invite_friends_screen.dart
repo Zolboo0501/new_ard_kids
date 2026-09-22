@@ -58,7 +58,7 @@ class InviteFriendsScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: '₮5,000',
-                          style: comfortaa(
+                          style: inter(
                             size: 20,
                             weight: FontWeight.w800,
                             color: AppColors.sky600,
@@ -68,7 +68,7 @@ class InviteFriendsScreen extends StatelessWidget {
                       ],
                     ),
                     textAlign: TextAlign.center,
-                    style: comfortaa(
+                    style: inter(
                       size: 20,
                       weight: FontWeight.w800,
                       height: 1.35,
@@ -82,7 +82,7 @@ class InviteFriendsScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: '5,000 оноо',
-                          style: comfortaa(
+                          style: inter(
                             size: 12,
                             weight: FontWeight.w700,
                             color: AppColors.slate700,
@@ -92,7 +92,7 @@ class InviteFriendsScreen extends StatelessWidget {
                       ],
                     ),
                     textAlign: TextAlign.center,
-                    style: comfortaa(
+                    style: inter(
                       size: 12,
                       weight: FontWeight.w500,
                       color: AppColors.slate500,

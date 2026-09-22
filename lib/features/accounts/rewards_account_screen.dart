@@ -122,7 +122,7 @@ class RewardsAccountScreen extends StatelessWidget {
                       CopyAccountNumber(
                         number: 'MN 5049 8219 03',
                         prefix: 'Данс: ',
-                        style: comfortaa(
+                        style: inter(
                           size: 12,
                           weight: FontWeight.w500,
                           color: AppColors.slate500,

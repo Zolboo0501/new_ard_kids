@@ -239,9 +239,9 @@ class AppFieldTick extends StatelessWidget {
   }
 }
 
-/// The Comfortaa style the fields inside an [AppInputShell] use.
+/// The Inter style the fields inside an [AppInputShell] use.
 TextStyle appInputStyle({double letterSpacing = 0}) =>
-    comfortaa(size: 14, weight: FontWeight.w700, letterSpacing: letterSpacing);
+    inter(size: 14, weight: FontWeight.w700, letterSpacing: letterSpacing);
 
 /// Borderless decoration for a field inside an [AppInputShell].
 InputDecoration appInputDecoration(String hint) => InputDecoration(
@@ -249,5 +249,5 @@ InputDecoration appInputDecoration(String hint) => InputDecoration(
   border: InputBorder.none,
   contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
   hintText: hint,
-  hintStyle: comfortaa(size: 14, color: AppColors.slate300),
+  hintStyle: inter(size: 14, color: AppColors.slate300),
 );

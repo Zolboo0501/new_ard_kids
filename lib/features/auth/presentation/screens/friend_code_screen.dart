@@ -437,7 +437,7 @@ class _UsernameFieldState extends State<_UsernameField> {
                   FilteringTextInputFormatter.allow(widget.allowed),
                   LengthLimitingTextInputFormatter(widget.maxLength),
                 ],
-                style: comfortaa(
+                style: inter(
                   size: 16,
                   weight: FontWeight.w700,
                   color: AppColors.sky700,
@@ -447,7 +447,7 @@ class _UsernameFieldState extends State<_UsernameField> {
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   hintText: 'temuulen_07',
-                  hintStyle: comfortaa(size: 16, color: AppColors.slate300),
+                  hintStyle: inter(size: 16, color: AppColors.slate300),
                 ),
               ),
             ),
@@ -524,7 +524,7 @@ class _RewardBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = comfortaa(
+    final base = inter(
       size: 11.5,
       weight: FontWeight.w600,
       color: AppColors.emerald800,

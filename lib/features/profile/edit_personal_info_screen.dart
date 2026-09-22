@@ -264,7 +264,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                     controller: TextEditingController(text: 'УХ14251812'),
                     prefixIcon: Icons.fingerprint_rounded,
                     enabled: false,
-                    textStyle: comfortaa(
+                    textStyle: inter(
                       size: 14,
                       weight: FontWeight.w700,
                       color: AppColors.slate400,

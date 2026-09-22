@@ -38,7 +38,7 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
   - Colors are compile-time `AppColors` constants, so `ThemeSettingsScreen` only saves the choice locally. Theme switching would need real theme plumbing.
 - `lib/widgets/`: widgets shared across screens.
   - `ui.dart`: the shared kit: `AppCard`, `PrimaryButton`/`SoftButton`, `SubPageHeader`, `StatusBadge`/`BadgeTone`, `AppTextField`, `MascotTile`, `ProgressTrack`, `formatMnt` (₮ formatting), `moneyStyle`, and `Mascots` (asset paths). Use these instead of re-styling.
-  - `app_text.dart`: `AppText`, a `Text` that is always Comfortaa. Use it instead of `Text(..., style: comfortaa(...))`; reach for `comfortaa()` directly only where a `TextStyle` is needed (inside a `TextSpan`, a `hintStyle`, a `TextField.style`).
+  - `app_text.dart`: `AppText`, a `Text` that is always Inter. Use it instead of `Text(..., style: inter(...))`; reach for `inter()` directly only where a `TextStyle` is needed (inside a `TextSpan`, a `hintStyle`, a `TextField.style`).
   - `app_tabs.dart`: `AppTabs`/`AppTab`, the segmented control with a pill that slides between tabs, and `AppTabView` for its content pane (a Material 3 shared-axis transition: offset fades, directional slide, eased height). Used by the sign-in, home and QR screens. The behaviour is shared but the look is not: pass `AppTabsStyle.pill` (sign-in, the default), `.card` (home) or `.solid` (QR), each of which keeps that screen's original chrome. The scrollable filter chips in the request/notification lists are a different affordance and are not this.
   - `app_input.dart`: `AppInputShell`, `AppFieldLabel`, `AppFieldError`, `AppFieldTick`, plus `appInputStyle()`/`appInputDecoration()` — the form-field look, including the shake when a field newly becomes invalid.
   - `entrance.dart`: `Entrance`/`EntranceStagger`, the staggered fade-and-rise a screen plays once on open. Slices are built once in `initState` and disposed with the controller.
@@ -47,8 +47,8 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 - `lib/theme/app_theme.dart`: the design tokens.
   - The screens are ports of a Google Stitch design ("Playful Youth Fintech"). `AppColors` holds Tailwind-style scales (sky/slate/emerald) and the Stitch Material 3 `ds*` tokens.
   - Use `AppColors` rather than hard-coding colors.
-  - Build text styles with the `comfortaa(size:, weight:, color:)` helper, not raw `TextStyle`. Comfortaa is a variable font, so the helper also sets the `wght` font variation, which weight needs to render correctly.
-- Assets: `assets/images/` (logo, mascots) and `assets/fonts/` (Comfortaa) are declared in `pubspec.yaml`.
+  - Build text styles with the `inter(size:, weight:, color:)` helper, not raw `TextStyle`. Inter is a variable font, so the helper also sets the `wght` font variation, which weight needs to render correctly, and an `opsz` that follows the size. Use `moneyStyle()` for amounts and account numbers (Inter with tabular figures).
+- Assets: `assets/images/` (logo, mascots) and `assets/fonts/` (Inter) are declared in `pubspec.yaml`.
   - To port another Stitch screen, fetch its HTML and screenshot with the Stitch MCP (`get_screen`).
   - Image URLs inside the Stitch HTML return 403, so take mascots from the project's image screens. Save them as ≤512px JPEGs in `assets/images/` and add them to `Mascots`.
 
@@ -58,7 +58,7 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 - `test/screens_smoke_test.dart` pumps every route at 390×844 and scrolls it. Any `RenderFlex` overflow or build error fails the test, so run it after layout changes.
 - To check the current location in a test, read `router.state.uri`. `routerDelegate.currentConfiguration` ignores screens opened with `push`.
 - The QR scanner animates forever, so use `pump(Duration)` there instead of `pumpAndSettle`.
-- `test/flutter_test_config.dart` loads the real Comfortaa font for all tests. The default test font renders glyphs as wide squares and causes false overflow errors.
+- `test/flutter_test_config.dart` loads the real Inter font for all tests. The default test font renders glyphs as wide squares and causes false overflow errors.
 - Screens with a keypad set a phone-sized viewport (`tester.view.physicalSize` / `devicePixelRatio`, reset with `addTearDown`) so all keys fit on screen.
 - Keypad digits can match other text, so tests tap `find.text(d).last`.
 - Advance simulated delays and countdowns with `tester.pump(Duration)`.

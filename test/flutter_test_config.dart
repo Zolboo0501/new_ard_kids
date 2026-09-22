@@ -8,8 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// false layout overflows with Cyrillic copy).
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
-  final loader = FontLoader('Comfortaa')
-    ..addFont(rootBundle.load('assets/fonts/Comfortaa-VariableFont_wght.ttf'));
+  final loader = FontLoader('Inter')
+    ..addFont(rootBundle.load('assets/fonts/Inter-VariableFont_opsz,wght.ttf'));
   await loader.load();
   await testMain();
 }

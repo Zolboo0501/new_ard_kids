@@ -139,7 +139,7 @@ class CopyAccountNumber extends StatelessWidget {
           '$prefix$number',
           style:
               style ??
-              comfortaa(
+              inter(
                 size: 11,
                 weight: FontWeight.w600,
                 color: AppColors.slate400,

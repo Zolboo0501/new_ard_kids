@@ -139,7 +139,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                                   ),
                                 ],
                               ),
-                              style: comfortaa(
+                              style: inter(
                                 size: 11,
                                 color: AppColors.slate400,
                               ),
@@ -270,7 +270,7 @@ class _QuickButton extends StatelessWidget {
             child: AnimatedDefaultTextStyle(
               duration: duration,
               curve: appEmphasizedDecelerate,
-              style: comfortaa(
+              style: inter(
                 size: 12,
                 weight: FontWeight.w700,
                 color: selected ? AppColors.sky700 : AppColors.slate600,

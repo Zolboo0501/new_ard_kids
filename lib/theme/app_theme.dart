@@ -85,9 +85,11 @@ abstract final class AppColors {
 const appEmphasizedDecelerate = Cubic(0.05, 0.7, 0.1, 1);
 const appEmphasizedAccelerate = Cubic(0.3, 0, 0.8, 0.15);
 
-/// Comfortaa ships as a variable font, so weight is applied through the
-/// `wght` axis as well as [FontWeight] to render correctly on every platform.
-TextStyle comfortaa({
+/// Inter ships as a variable font, so weight is applied through the `wght`
+/// axis as well as [FontWeight] to render correctly on every platform. Its
+/// `opsz` axis (14–32) follows the font size, so small labels get the open
+/// text cut and balances the tighter display cut.
+TextStyle inter({
   required double size,
   FontWeight weight = FontWeight.w400,
   Color color = AppColors.slate800,
@@ -95,10 +97,13 @@ TextStyle comfortaa({
   double? letterSpacing,
 }) {
   return TextStyle(
-    fontFamily: 'Comfortaa',
+    fontFamily: 'Inter',
     fontSize: size,
     fontWeight: weight,
-    fontVariations: [FontVariation.weight(weight.value.toDouble())],
+    fontVariations: [
+      FontVariation.weight(weight.value.toDouble()),
+      FontVariation.opticalSize(size.clamp(14, 32).toDouble()),
+    ],
     color: color,
     height: height,
     letterSpacing: letterSpacing,
@@ -108,7 +113,7 @@ TextStyle comfortaa({
 ThemeData buildAppTheme() {
   return ThemeData(
     useMaterial3: true,
-    fontFamily: 'Comfortaa',
+    fontFamily: 'Inter',
     scaffoldBackgroundColor: AppColors.surface,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.sky500,

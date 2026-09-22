@@ -150,7 +150,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                   AppTextField(
                     controller: _initial,
                     prefixText: '₮',
-                    textStyle: openSans(size: 16, weight: FontWeight.w600),
+                    textStyle: moneyStyle(size: 16, weight: FontWeight.w600),
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
