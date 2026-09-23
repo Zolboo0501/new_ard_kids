@@ -342,6 +342,9 @@ class _BalanceCard extends StatelessWidget {
   final VoidCallback onTransfer;
   final VoidCallback onTopUp;
 
+  static TextStyle get _ibanStyle =>
+      moneyStyle(size: 12, weight: FontWeight.w600, color: AppColors.slate400);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -362,14 +365,20 @@ class _BalanceCard extends StatelessWidget {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
+          // Vertically centred on the card's right side, in the space above
+          // the action buttons (50 high).
           Positioned(
             right: -14 + 36 * mascotShift.clamp(-1.0, 1.0),
-            top: -12,
-            child: MascotImage(
-              asset: mascot,
-              size: 130,
-              background: Colors.white,
-              semanticLabel: mascotName,
+            top: 0,
+            bottom: 50,
+            child: Center(
+              widthFactor: 1,
+              child: MascotImage(
+                asset: mascot,
+                size: 100,
+                background: Colors.white,
+                semanticLabel: mascotName,
+              ),
             ),
           ),
           Column(
@@ -391,18 +400,32 @@ class _BalanceCard extends StatelessWidget {
                     ),
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 220),
+                      // Both texts are laid out invisibly underneath so the
+                      // pill keeps one width, and the shorter masked number
+                      // sits centred in it.
                       layoutBuilder: (current, previous) => Stack(
-                        alignment: Alignment.centerLeft,
-                        children: [...previous, ?current],
+                        alignment: Alignment.center,
+                        children: [
+                          for (final text in [
+                            formatIban(account),
+                            maskIban(account),
+                          ])
+                            ExcludeSemantics(
+                              child: Text(
+                                text,
+                                style: _ibanStyle.copyWith(
+                                  color: Colors.transparent,
+                                ),
+                              ),
+                            ),
+                          ...previous,
+                          ?current,
+                        ],
                       ),
                       child: Text(
                         hidden ? maskIban(account) : formatIban(account),
                         key: ValueKey(hidden),
-                        style: moneyStyle(
-                          size: 12,
-                          weight: FontWeight.w600,
-                          color: AppColors.slate400,
-                        ),
+                        style: _ibanStyle,
                       ),
                     ),
                   ),
@@ -415,8 +438,16 @@ class _BalanceCard extends StatelessWidget {
                       showAppSnack(context, 'Дансны дугаар хуулагдлаа');
                     },
                   ),
-                  // Hides the account number and the balance together.
-                  EyeToggle(hidden: hidden, onTap: onToggleHidden),
+                  const Spacer(),
+                  // Hides the account number and the balance together. Sits
+                  // in the card's right corner so it doesn't move with the
+                  // number's width.
+                  EyeToggle(
+                    hidden: hidden,
+                    onTap: onToggleHidden,
+                    size: 18,
+                    highlighted: true,
+                  ),
                 ],
               ),
               const SizedBox(height: 10),

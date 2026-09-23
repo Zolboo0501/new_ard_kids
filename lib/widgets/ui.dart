@@ -580,11 +580,16 @@ class EyeToggle extends StatelessWidget {
     required this.hidden,
     required this.onTap,
     this.size = 16,
+    this.highlighted = false,
   });
 
   final bool hidden;
   final VoidCallback onTap;
   final double size;
+
+  /// Draws the eye in the theme accent on a tinted circle, for where it's
+  /// the card's main control (the Home balance card).
+  final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
@@ -595,8 +600,15 @@ class EyeToggle extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: withHaptic(onTap),
-        child: Padding(
-          padding: const EdgeInsets.all(6),
+        child: Container(
+          padding: EdgeInsets.all(highlighted ? 7 : 6),
+          decoration: highlighted
+              ? BoxDecoration(
+                  color: AppColors.sky50,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.sky200),
+                )
+              : null,
           child: AnimatedSwitcher(
             duration: MediaQuery.disableAnimationsOf(context)
                 ? Duration.zero
@@ -611,7 +623,7 @@ class EyeToggle extends StatelessWidget {
                   : Icons.visibility_outlined,
               key: ValueKey(hidden),
               size: size,
-              color: AppColors.slate400,
+              color: highlighted ? AppColors.sky600 : AppColors.slate400,
             ),
           ),
         ),
