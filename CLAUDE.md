@@ -38,6 +38,7 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 - `lib/features/<feature>/`: one file per screen, ported from the Stitch project "Kids Finance & Allowance App" (`projects/13411384382310318082`). Screens are `StatefulWidget`s with local state, and each file keeps its small subwidgets private.
   - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `ParentLinkScreen` → `HomeShell` (`/home`, or `AppRoutes.homeUnlinked` when the parent link is skipped). The auth screens live in `auth/presentation/screens/`.
   - `home/home_shell.dart`: the `FloatingNavBar` for the shell. The center QR button pushes `/qr`.
+  - `home/invoices.dart`: `Invoice`, `mockInvoices` and `InvoiceCard`, shared by Home's Нэхэмжлэх tab (the newest three) and `InvoiceHistoryScreen` (`/invoices/history`, opened by Хуулга харах: every invoice with the date filter).
   - Other folders: `transfer` (transfer, receipt, QR, money requests), `savings`, `accounts` (coin, rewards, stocks, card order, cart), `social`, `notifications`, `profile`, `onboarding`.
   - The `auth` screens simulate network calls with `Timer`s and cancel them in `dispose`.
   - `ThemeSettingsScreen` switches the app theme (blue/pink) through `appThemeChoice`. `ThemeStore` (`lib/theme/theme_store.dart`) saves it in `flutter_secure_storage` under `app_theme`, and `main()` loads it before `runApp`. Tests fake the storage with `FlutterSecureStorage.setMockInitialValues`.
@@ -48,6 +49,8 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
   - `app_input.dart`: `AppInputShell`, `AppFieldLabel`, `AppFieldError`, `AppFieldTick`, plus `appInputStyle()`/`appInputDecoration()` — the form-field look, including the shake when a field newly becomes invalid.
   - `entrance.dart`: `Entrance`/`EntranceStagger`, the staggered fade-and-rise a screen plays once on open. Slices are built once in `initState` and disposed with the controller.
   - `value_switcher.dart`: an `AnimatedSwitcher` for content that changes with a value. Use it instead of keying children with `ValueKey(value)`, which throws "Duplicate keys found" on quick back-and-forth changes.
+  - `date_range_filter.dart`: `DateRangeFilterBar`, the date filter above every transaction list (savings history, rewards, coin, invoice statement), and `DateRangeEmpty` for an empty range. The list owns a `DateTimeRange` that starts at `thisMonthRange()` and filters with `rangeContains`. The bar opens `showDateRangeSheet` (`date_range_sheet.dart`: presets Энэ сар / Сүүлийн 2 сар / Сүүлийн 3 сар, a `calendar_date_picker2` range calendar, and Цэвэрлэх back to this month). `TxItem` carries a `date`; its `when` label is derived from it.
+  - `pin_code_sheet.dart`: `showPinCodeSheet`, the PIN bottom sheet that confirms a transfer.
   - `NumericKeypad` / `KeypadKey`: an on-screen digit pad used instead of the system keyboard. Each screen passes its own `KeypadStyle`.
   - `common.dart`: `CircleBackButton`, `BlinkingCursor` and `MascotImage`. `MascotImage` multiply-blends white-background JPEG mascots into the surface color, and draws `.png` cutouts (the stickers) as they are.
 - `lib/theme/app_theme.dart`: the design tokens.

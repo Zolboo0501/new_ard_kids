@@ -11,6 +11,7 @@ import '../../widgets/ui.dart';
 import 'transfer_success_screen.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../widgets/pin_code_sheet.dart';
 import '../../widgets/value_switcher.dart';
 import '../../app/avatar.dart';
 
@@ -103,8 +104,25 @@ class _TransferScreenState extends State<TransferScreen> {
     };
   }
 
-  void _submit() {
+  /// Mock PIN until the backend checks it.
+  static const _mockPin = '0000';
+
+  Future<void> _confirm() async {
     FocusScope.of(context).unfocus();
+    final ok = await showPinCodeSheet(
+      context,
+      title: 'Гүйлгээ баталгаажуулах',
+      summary: _PinSummary(amount: _amountValue, recipient: _recipientName),
+      // TODO: verify the PIN with the backend.
+      onVerify: (pin) => Future.delayed(
+        const Duration(milliseconds: 500),
+        () => pin == _mockPin,
+      ),
+    );
+    if (ok == true && mounted) _submit();
+  }
+
+  void _submit() {
     // TODO: call the transfer API.
     final receipt = TransferReceipt(
       amount: _amountValue,
@@ -260,7 +278,7 @@ class _TransferScreenState extends State<TransferScreen> {
             PrimaryButton(
               label: 'Гүйлгээ хийх',
               leadingIcon: Icons.send_rounded,
-              onPressed: _valid ? _submit : null,
+              onPressed: _valid ? _confirm : null,
             ),
           ]),
         ),
@@ -852,6 +870,42 @@ class _ClearButton extends StatelessWidget {
             color: AppColors.slate500,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// What the PIN confirms: the amount and who receives it.
+class _PinSummary extends StatelessWidget {
+  const _PinSummary({required this.amount, required this.recipient});
+
+  final int amount;
+  final String recipient;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.slate50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.slate100),
+      ),
+      child: Column(
+        children: [
+          Text(
+            formatMnt(amount),
+            style: moneyStyle(size: 22, color: AppColors.slate900),
+          ),
+          const SizedBox(height: 2),
+          AppText(
+            '$recipient руу шилжүүлнэ',
+            size: 12,
+            weight: FontWeight.w600,
+            color: AppColors.slate500,
+          ),
+        ],
       ),
     );
   }

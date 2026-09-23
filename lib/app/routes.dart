@@ -10,6 +10,7 @@ import '../features/accounts/rewards_account_screen.dart';
 import '../features/accounts/stocks_screen.dart';
 import '../features/home/home_screen.dart';
 import '../features/home/home_shell.dart';
+import '../features/home/invoice_history_screen.dart';
 import '../features/notifications/notifications_screen.dart';
 import '../features/onboarding/avatar_picker_screen.dart';
 import '../features/onboarding/parent_link_screen.dart';
@@ -62,6 +63,7 @@ abstract final class AppRoutes {
   static const qrScan = '/qr';
   static const requestMoney = '/request';
   static const requestList = '/request/list';
+  static const invoiceHistory = '/invoices/history';
 
   static const savingsAccount = '/savings';
   static const savingsHistory = '/savings/history';
@@ -100,6 +102,7 @@ abstract final class AppRoutes {
     qrScan: (_, _) => const QrScanScreen(),
     requestMoney: (_, _) => const RequestMoneyScreen(),
     requestList: (_, _) => const RequestListScreen(),
+    invoiceHistory: (_, _) => const InvoiceHistoryScreen(),
     savingsAccount: (_, _) => const SavingsAccountScreen(),
     savingsHistory: (_, _) => const SavingsHistoryScreen(),
     savingsDeposit: (_, _) => const SavingsDepositScreen(),
@@ -141,7 +144,7 @@ abstract final class AppRoutes {
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: initialLocation,
+      initialLocation: home,
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

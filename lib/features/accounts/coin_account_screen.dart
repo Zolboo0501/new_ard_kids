@@ -7,6 +7,8 @@ import '../../widgets/ui.dart';
 import 'account_widgets.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/date_range_filter.dart';
+import '../../widgets/date_range_sheet.dart';
 import '../../widgets/entrance.dart';
 import '../../app/avatar.dart';
 
@@ -33,7 +35,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     TxItem(
       title: 'Өдөр тутмын чекин',
       subtitle: 'Хичээл & Апп идэвх',
-      when: 'Өнөөдөр',
+      date: daysAgo(0),
       amount: 5000,
       asset: Mascots.penguinChecklist,
       tint: AppColors.amber50,
@@ -41,7 +43,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     TxItem(
       title: 'Roblox карт авах',
       subtitle: 'Тоглоом & Зугаа',
-      when: '09.10',
+      date: daysAgo(13),
       amount: -15000,
       asset: Mascots.puppyGamepad,
       tint: AppColors.violet50,
@@ -51,7 +53,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     TxItem(
       title: 'Математикийн шалгалт амжилттай',
       subtitle: 'Ааваас урамшуулал',
-      when: '09.08',
+      date: daysAgo(15),
       amount: 20000,
       asset: Mascots.owlMedal,
       tint: AppColors.sky50,
@@ -59,7 +61,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     TxItem(
       title: 'Найзаа урьж урамшуулал авав',
       subtitle: 'Найзын бэлэг',
-      when: '09.05',
+      date: daysAgo(18),
       amount: 10000,
       asset: Stickers.gift,
       tint: AppColors.orange50,
@@ -68,21 +70,43 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     TxItem(
       title: 'Хадгаламжийн челленж',
       subtitle: 'Тэргүүн хэмнэгч',
-      when: '09.02',
+      date: daysAgo(21),
       amount: 30000,
       asset: Mascots.hedgehogPiggy,
       tint: AppColors.amber50,
     ),
+    TxItem(
+      title: 'Долоо хоногийн уншлагын челленж',
+      subtitle: 'Сургуулийн даалгавар',
+      date: daysAgo(40),
+      amount: 8000,
+      asset: Mascots.owlBook,
+      tint: AppColors.sky50,
+    ),
+    TxItem(
+      title: 'Кино театрын тасалбар',
+      subtitle: 'Тоглоом & Зугаа',
+      date: daysAgo(70),
+      amount: -12000,
+      asset: Mascots.puppyGamepad,
+      tint: AppColors.violet50,
+      badge: 'Зарцуулсан',
+      badgeTone: BadgeTone.rose,
+    ),
   ];
 
   int _filter = 0;
+  DateTimeRange _range = thisMonthRange();
 
   @override
   Widget build(BuildContext context) {
+    // The date range narrows the list first; the chips then split it into
+    // income and spending, and count within the range.
+    final inRange = _items.where((e) => rangeContains(_range, e.date));
     final visible = switch (_filter) {
-      1 => _items.where((e) => e.income),
-      2 => _items.where((e) => !e.income),
-      _ => _items,
+      1 => inRange.where((e) => e.income),
+      2 => inRange.where((e) => !e.income),
+      _ => inRange,
     }.toList();
     final income = _items
         .where((e) => e.income)
@@ -185,59 +209,26 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
           ),
         ),
         const SizedBox(height: 16),
-        Row(
+        Wrap(
+          spacing: 6,
           children: [
-            FilterChipPill(
-              label: 'Бүгд  ${_items.length}',
-              selected: _filter == 0,
-              onTap: () => setState(() => _filter = 0),
-            ),
-            const SizedBox(width: 8),
-            FilterChipPill(
-              label: '● Орлого',
-              selected: _filter == 1,
-              onTap: () => setState(() => _filter = 1),
-            ),
-            const SizedBox(width: 8),
-            FilterChipPill(
-              label: '● Зарлага',
-              selected: _filter == 2,
-              onTap: () => setState(() => _filter = 2),
-            ),
+            for (final (i, l) in [
+              'Бүгд (${inRange.length})',
+              'Орлого (${inRange.where((e) => e.income).length})',
+              'Зарлага (${inRange.where((e) => !e.income).length})',
+            ].indexed)
+              FilterChipPill(
+                label: l,
+                selected: _filter == i,
+                onTap: () => setState(() => _filter = i),
+              ),
           ],
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.7),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.sky100),
-          ),
-          child: Row(
-            children: [
-              AppText(
-                'Энэ сар (9-р сар)',
-                size: 12,
-                weight: FontWeight.w600,
-                color: AppColors.slate700,
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: AppText(
-                  '| 2026.09.01 - 09.12',
-                  size: 11,
-                  color: AppColors.slate400,
-                ),
-              ),
-              AppText(
-                'Өөрчлөх',
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.sky600,
-              ),
-            ],
-          ),
+        DateRangeFilterBar(
+          range: _range,
+          count: visible.length,
+          onChanged: (r) => setState(() => _range = r),
         ),
         const SizedBox(height: 16),
         SectionHeader(
@@ -245,11 +236,12 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
           mascot: Stickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
+        if (visible.isEmpty) const DateRangeEmpty(),
         for (final (i, item) in visible.indexed) ...[
           ListItemEntrance(
             id: item,
             index: i,
-            group: _filter,
+            group: (_filter, _range),
             // The pane fades in with its tab, so rows cascade every time it
             // appears, after the tab switch has started.
             always: true,

@@ -10,6 +10,8 @@ import 'account_widgets.dart';
 import 'coin_account_screen.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/date_range_filter.dart';
+import '../../widgets/date_range_sheet.dart';
 import '../../widgets/entrance.dart';
 import '../../app/avatar.dart';
 
@@ -87,7 +89,7 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
   }
 }
 
-class _RewardsPane extends StatelessWidget {
+class _RewardsPane extends StatefulWidget {
   const _RewardsPane({
     required this.hidden,
     required this.onToggleHidden,
@@ -98,11 +100,16 @@ class _RewardsPane extends StatelessWidget {
   final VoidCallback onToggleHidden;
   final ValueChanged<String> onOpen;
 
+  @override
+  State<_RewardsPane> createState() => _RewardsPaneState();
+}
+
+class _RewardsPaneState extends State<_RewardsPane> {
   static List<TxItem> get _items => [
     TxItem(
       title: 'Гэрийн даалгавраа онц хийсэн',
       subtitle: 'Ааваас олгосон',
-      when: 'Өнөөдөр',
+      date: daysAgo(0),
       amount: 10000,
       asset: Mascots.owlBook,
       tint: AppColors.sky50,
@@ -110,7 +117,7 @@ class _RewardsPane extends StatelessWidget {
     TxItem(
       title: 'Хадгаламжийн зорилгодоо хүрсэн',
       subtitle: 'Ээжийн нэмэгдэл',
-      when: 'Өчигдөр',
+      date: daysAgo(1),
       amount: 15000,
       asset: Mascots.bearConfetti,
       tint: AppColors.amber50,
@@ -118,7 +125,7 @@ class _RewardsPane extends StatelessWidget {
     TxItem(
       title: 'Найзаа урьж бүртгүүлсэн',
       subtitle: 'Урамшуулал',
-      when: '05.12',
+      date: daysAgo(11),
       amount: 5000,
       asset: Stickers.gift,
       tint: AppColors.orange50,
@@ -128,7 +135,7 @@ class _RewardsPane extends StatelessWidget {
     TxItem(
       title: 'Ном унших сарын челленж',
       subtitle: 'Сургуулийн даалгавар',
-      when: '05.10',
+      date: daysAgo(13),
       amount: 10000,
       asset: Mascots.owlMedal,
       tint: AppColors.violet50,
@@ -137,19 +144,41 @@ class _RewardsPane extends StatelessWidget {
     TxItem(
       title: 'Интерном эрхийн бичиг авсан',
       subtitle: 'Бэлэг худалдан авалт',
-      when: '05.08',
+      date: daysAgo(15),
       amount: -20000,
       asset: Mascots.bearBooks,
       tint: AppColors.rose50,
       badge: 'Зарцуулсан',
       badgeTone: BadgeTone.slate,
     ),
+    TxItem(
+      title: 'Гэрийн цэвэрлэгээнд тусалсан',
+      subtitle: 'Ээжээс олгосон',
+      date: daysAgo(45),
+      amount: 8000,
+      asset: Mascots.bearConfetti,
+      tint: AppColors.amber50,
+    ),
+    TxItem(
+      title: 'Тоглоомын дэлгүүрээс худалдан авалт',
+      subtitle: 'Бэлэг худалдан авалт',
+      date: daysAgo(80),
+      amount: -10000,
+      asset: Mascots.puppyGamepad,
+      tint: AppColors.rose50,
+      badge: 'Зарцуулсан',
+      badgeTone: BadgeTone.slate,
+    ),
   ];
+
+  DateTimeRange _range = thisMonthRange();
 
   @override
   Widget build(BuildContext context) {
     final items = _items;
-    // Summed from the history below, so the card and the list agree.
+    final visible = items.where((e) => rangeContains(_range, e.date)).toList();
+    // The card's totals cover the whole history; the date range only
+    // narrows the list below.
     final earned = items
         .where((i) => i.income)
         .fold<int>(0, (sum, i) => sum + i.amount);
@@ -188,8 +217,8 @@ class _RewardsPane extends StatelessWidget {
               CopyAccountNumber(
                 number: Accounts.rewards,
                 prefix: 'Данс: ',
-                hidden: hidden,
-                onToggleHidden: onToggleHidden,
+                hidden: widget.hidden,
+                onToggleHidden: widget.onToggleHidden,
                 style: moneyStyle(
                   size: 12,
                   weight: FontWeight.w500,
@@ -210,7 +239,7 @@ class _RewardsPane extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         HideableBalance(
-                          hidden: hidden,
+                          hidden: widget.hidden,
                           balance: const BalanceText(
                             35000,
                             animateFrom: 0,
@@ -250,7 +279,7 @@ class _RewardsPane extends StatelessWidget {
                           label: 'Нийт орлого',
                           value: earned,
                           color: AppColors.emerald700,
-                          hidden: hidden,
+                          hidden: widget.hidden,
                         ),
                       ),
                       const VerticalDivider(
@@ -263,7 +292,7 @@ class _RewardsPane extends StatelessWidget {
                           label: 'Нийт зарцуулалт',
                           value: -spent,
                           color: AppColors.rose600,
-                          hidden: hidden,
+                          hidden: widget.hidden,
                         ),
                       ),
                     ],
@@ -286,7 +315,7 @@ class _RewardsPane extends StatelessWidget {
                   title: 'Найз урих',
                   subtitle: '5,000 оноо',
                   subtitleColor: AppColors.emerald600,
-                  onTap: () => onOpen(AppRoutes.inviteFriends),
+                  onTap: () => widget.onOpen(AppRoutes.inviteFriends),
                 ),
               ),
               const SizedBox(width: 12),
@@ -297,22 +326,30 @@ class _RewardsPane extends StatelessWidget {
                   title: 'Урамшуулал авах',
                   subtitle: 'Даалгаврууд',
                   subtitleColor: AppColors.sky600,
-                  onTap: () => onOpen(AppRoutes.rewardOpportunities),
+                  onTap: () => widget.onOpen(AppRoutes.rewardOpportunities),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 20),
+        DateRangeFilterBar(
+          range: _range,
+          count: visible.length,
+          onChanged: (r) => setState(() => _range = r),
+        ),
+        const SizedBox(height: 16),
         SectionHeader(
           title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
           mascot: Stickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
-        for (final (i, item) in items.indexed) ...[
+        if (visible.isEmpty) const DateRangeEmpty(),
+        for (final (i, item) in visible.indexed) ...[
           ListItemEntrance(
             id: item,
             index: i,
+            group: _range,
             always: true,
             delay: AppTabView.incomingDelay,
             child: TransactionTile(item: item),

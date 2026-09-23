@@ -108,10 +108,6 @@ class ProfileScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const StatusBadge(
-                            label: 'Сурагч карт',
-                            icon: Icons.badge_outlined,
-                          ),
                           const SizedBox(height: 6),
                           AppText(
                             'Бат-Ирээдүй Т.',
@@ -332,11 +328,6 @@ class ProfileScreen extends StatelessWidget {
               title: 'Миний профайл',
               background: bg,
               showBack: false,
-              trailing: CircleIconButton(
-                icon: Icons.settings_outlined,
-                label: 'Тохиргоо',
-                onPressed: () => go(AppRoutes.security),
-              ),
             ),
             Expanded(child: body),
           ],

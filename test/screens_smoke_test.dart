@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/transfer/transfer_success_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/pin_code_sheet.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
 /// Pumps the app with a fresh router starting at [route] on a phone viewport.
@@ -99,6 +100,26 @@ void main() {
       scrollable: find.byType(Scrollable).first,
     );
     await tester.tap(button);
+    await tester.pumpAndSettle();
+    expect(find.byType(PinCodeSheet), findsOneWidget);
+    expect(find.text('Гүйлгээ баталгаажуулах'), findsOneWidget);
+
+    // A wrong PIN keeps the sheet open and says so.
+    for (final d in '1234'.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(
+      find.text('ПИН код буруу байна. Дахин оролдоно уу.'),
+      findsOneWidget,
+    );
+    expect(find.byType(TransferSuccessScreen), findsNothing);
+
+    for (final d in '0000'.split('')) {
+      await tester.tap(find.text(d).last);
+      await tester.pump();
+    }
     await tester.pumpAndSettle();
     expect(find.byType(TransferSuccessScreen), findsOneWidget);
     expect(find.text('Гүйлгээ амжилттай!'), findsOneWidget);

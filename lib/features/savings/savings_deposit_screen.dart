@@ -113,14 +113,22 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                             ),
                             const SizedBox(height: 4),
                             FittedBox(
+                              // Like the Home balance card: rolls in from ₮0
+                              // when the screen opens, then rolls between
+                              // values as the keypad changes it.
                               child: BalanceText(
                                 _amount,
-                                animate: true,
+                                animateFrom: 0,
                                 size: 36,
                                 weight: FontWeight.w600,
+                                letterSpacing: 0.1,
+                                currencyWeight: FontWeight.w600,
                                 color: _amount > _available
                                     ? AppColors.rose500
                                     : AppColors.slate800,
+                                currencyColor: _amount > _available
+                                    ? AppColors.rose500
+                                    : AppColors.slate700,
                               ),
                             ),
                             const SizedBox(height: 4),

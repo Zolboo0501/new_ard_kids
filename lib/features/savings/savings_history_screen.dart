@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
+import '../../widgets/date_range_filter.dart';
+import '../../widgets/date_range_sheet.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
@@ -17,61 +19,119 @@ class SavingsHistoryScreen extends StatefulWidget {
 }
 
 class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
-  static List<(String, bool, List<(String, String, int, String, Color)>)>
-  get _months => [
-    (
-      'ЭНЭ САР (9-Р САР)',
-      true,
-      [
-        (
-          'Сар бүрийн хүү бодогдов',
-          'Хүүхдийн өсөлтийн хүү • 9 сарын 10',
-          14400,
-          Stickers.growth,
-          AppColors.amber50,
-        ),
-        (
-          'Ааваас хадгаламжид нэмэв',
-          'PlayStation 5 зорилго • 9 сарын 05',
-          50000,
-          Stickers.jar,
-          AppColors.sky50,
-        ),
-        (
-          'Зорилго биелэлтийн урамшуулал',
-          'Ээжийн 50% урамшуулал • 9 сарын 02',
-          25000,
-          Stickers.gift,
-          AppColors.rose50,
-        ),
-      ],
-    ),
-    (
-      'ӨНГӨРСӨН САР (8-Р САР)',
-      false,
-      [
-        (
-          'Сар бүрийн хүү бодогдов',
-          'Хүүхдийн өсөлтийн хүү • 8 сарын 10',
-          13850,
-          Stickers.growth,
-          AppColors.amber50,
-        ),
-        (
-          'Зуны амралтын шагнал',
-          'Өвөө, эмээгээс дугуйн сан руу • 8 сарын 01',
-          100000,
-          Stickers.gift,
-          AppColors.pink50,
-        ),
-      ],
-    ),
-  ];
+  static final _now = DateTime.now();
 
-  int _range = 0;
+  /// Mock entries dated relative to today, spread over five months, so
+  /// widening the range from this month brings older ones in.
+  /// (title, category, date, amount, sticker, tint)
+  static List<(String, String, DateTime, int, String, Color)> get _entries {
+    DateTime ago(int days) => dateOnly(_now.subtract(Duration(days: days)));
+    return [
+      (
+        'Сар бүрийн хүү бодогдов',
+        'Хүүхдийн өсөлтийн хүү',
+        ago(13),
+        14400,
+        Stickers.growth,
+        AppColors.amber50,
+      ),
+      (
+        'Ааваас хадгаламжид нэмэв',
+        'PlayStation 5 зорилго',
+        ago(18),
+        50000,
+        Stickers.jar,
+        AppColors.sky50,
+      ),
+      (
+        'Зорилго биелэлтийн урамшуулал',
+        'Ээжийн 50% урамшуулал',
+        ago(21),
+        25000,
+        Stickers.gift,
+        AppColors.rose50,
+      ),
+      (
+        'Сар бүрийн хүү бодогдов',
+        'Хүүхдийн өсөлтийн хүү',
+        ago(44),
+        13850,
+        Stickers.growth,
+        AppColors.amber50,
+      ),
+      (
+        'Зуны амралтын шагнал',
+        'Өвөө, эмээгээс дугуйн сан руу',
+        ago(53),
+        100000,
+        Stickers.gift,
+        AppColors.pink50,
+      ),
+      (
+        'Сар бүрийн хүү бодогдов',
+        'Хүүхдийн өсөлтийн хүү',
+        ago(75),
+        13200,
+        Stickers.growth,
+        AppColors.amber50,
+      ),
+      (
+        'Ээжээс хадгаламжид нэмэв',
+        'Дугуйн сан',
+        ago(84),
+        30000,
+        Stickers.jar,
+        AppColors.sky50,
+      ),
+      (
+        'Сар бүрийн хүү бодогдов',
+        'Хүүхдийн өсөлтийн хүү',
+        ago(106),
+        12600,
+        Stickers.growth,
+        AppColors.amber50,
+      ),
+      (
+        'Төрсөн өдрийн бэлэг',
+        'Авга эгчээс',
+        ago(130),
+        80000,
+        Stickers.gift,
+        AppColors.rose50,
+      ),
+    ];
+  }
+
+  /// Defaults to this month, up to today.
+  DateTimeRange _range = thisMonthRange(now: _now);
+
+  /// The entries inside [_range], grouped by month, newest first.
+  List<(DateTime, List<(String, String, DateTime, int, String, Color)>)>
+  get _months {
+    final groups =
+        <DateTime, List<(String, String, DateTime, int, String, Color)>>{};
+    for (final e in _entries.where((e) => rangeContains(_range, e.$3))) {
+      groups.putIfAbsent(DateTime(e.$3.year, e.$3.month), () => []).add(e);
+    }
+    return [
+      for (final m in groups.keys.toList()..sort((a, b) => b.compareTo(a)))
+        (m, groups[m]!..sort((a, b) => b.$3.compareTo(a.$3))),
+    ];
+  }
+
+  String _monthLabel(DateTime m) {
+    final offset = (_now.year - m.year) * 12 + _now.month - m.month;
+    return switch (offset) {
+      0 => 'ЭНЭ САР (${m.month}-Р САР)',
+      1 => 'ӨНГӨРСӨН САР (${m.month}-Р САР)',
+      _ when m.year != _now.year => '${m.year} ОНЫ ${m.month}-Р САР',
+      _ => '${m.month}-Р САР',
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
+    final months = _months;
     return Scaffold(
       backgroundColor: AppColors.dsSurface,
       appBar: SubPageHeader(
@@ -157,14 +217,21 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            for (final (label, current, items) in _months) ...[
+            DateRangeFilterBar(
+              range: _range,
+              count: months.fold(0, (a, m) => a + m.$2.length),
+              onChanged: (r) => setState(() => _range = r),
+            ),
+            const SizedBox(height: 16),
+            if (months.isEmpty) const DateRangeEmpty(),
+            for (final (month, items) in months) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
                 child: Row(
                   children: [
                     Expanded(
                       child: AppText(
-                        label,
+                        _monthLabel(month),
                         size: 11,
                         weight: FontWeight.w700,
                         color: AppColors.slate400,
@@ -173,10 +240,12 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                     ),
                     StatusBadge(
                       label: formatMnt(
-                        items.fold(0, (a, e) => a + e.$3),
+                        items.fold(0, (a, e) => a + e.$4),
                         sign: true,
                       ),
-                      tone: current ? BadgeTone.emerald : BadgeTone.slate,
+                      tone: month.year == _now.year && month.month == _now.month
+                          ? BadgeTone.emerald
+                          : BadgeTone.slate,
                     ),
                   ],
                 ),
@@ -185,6 +254,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                 ListItemEntrance(
                   id: it,
                   index: i,
+                  group: _range,
                   child: AppCard(
                     radius: 18,
                     padding: const EdgeInsets.all(12),
@@ -192,9 +262,9 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                     child: Row(
                       children: [
                         MascotTile(
-                          asset: it.$4,
+                          asset: it.$5,
                           size: 44,
-                          background: it.$5,
+                          background: it.$6,
                           label: it.$1,
                         ),
                         const SizedBox(width: 12),
@@ -205,7 +275,8 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                               AppText(it.$1, size: 12, weight: FontWeight.w700),
                               const SizedBox(height: 2),
                               AppText(
-                                it.$2,
+                                '${it.$2} • ${it.$3.month} сарын '
+                                '${it.$3.day.toString().padLeft(2, '0')}',
                                 size: 10,
                                 color: AppColors.slate400,
                               ),
@@ -214,7 +285,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                         ),
                         // Every entry is money coming in, so all amounts are green.
                         BalanceText(
-                          it.$3,
+                          it.$4,
                           sign: true,
                           size: 12,
                           color: AppColors.emerald600,
@@ -257,43 +328,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
   }
 
   Future<void> _pickRange() async {
-    const ranges = ['Сүүлийн 2 сар', 'Сүүлийн 6 сар', 'Энэ жил'];
-    final picked = await showModalBottomSheet<int>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(
-                'Хугацаагаар шүүх',
-                size: 16,
-                weight: FontWeight.w700,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 12),
-              for (final (i, r) in ranges.indexed)
-                ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  title: AppText(r, size: 14, weight: FontWeight.w600),
-                  trailing: i == _range
-                      ? Icon(Icons.check_rounded, color: AppColors.sky500)
-                      : null,
-                  onTap: () => Navigator.of(context).pop(i),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
+    final picked = await showDateRangeSheet(context, initial: _range);
     if (picked != null) setState(() => _range = picked);
   }
 }

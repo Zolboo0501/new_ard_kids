@@ -5,13 +5,14 @@ import '../../app/accounts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../widgets/date_range_sheet.dart';
 
 /// One row in an account's transaction list.
 class TxItem {
   const TxItem({
     required this.title,
     required this.subtitle,
-    required this.when,
+    required this.date,
     required this.amount,
     required this.asset,
     this.tint,
@@ -22,7 +23,9 @@ class TxItem {
 
   final String title;
   final String subtitle;
-  final String when;
+
+  /// When it happened; lists filter on it with [rangeContains].
+  final DateTime date;
   final int amount;
   final String asset;
 
@@ -33,6 +36,9 @@ class TxItem {
   final Color? amountColor;
 
   bool get income => amount >= 0;
+
+  /// `Өнөөдөр`, `Өчигдөр`, else `09.10`; see [dayLabel].
+  String get when => dayLabel(date);
 }
 
 class TransactionTile extends StatelessWidget {

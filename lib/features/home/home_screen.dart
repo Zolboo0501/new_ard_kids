@@ -11,6 +11,7 @@ import '../../widgets/app_tabs.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import 'invoices.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.parentLinked = true});
@@ -1068,42 +1069,10 @@ class _InvoicesPane extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final invoices = [
-      (
-        'Ээжээс халаасны мөнгө',
-        Mascots.catHeart,
-        'Хүлээгдэж буй',
-        AppColors.amber500,
-        20000,
-        'Өнөөдөр',
-        0,
-      ),
-      (
-        'Ном, дэвтэр авах',
-        Mascots.bearBooks,
-        'Зөвшөөрсөн / Төлөх',
-        AppColors.emerald500,
-        18500,
-        'Өчигдөр',
-        1,
-      ),
-      (
-        'Ааваас даалгаврын урамшуулал',
-        Mascots.owlBook,
-        'Батлагдсан ✔',
-        AppColors.sky500,
-        10000,
-        "",
-        2,
-      ),
-    ];
-    final visible = invoices.where(
-      (e) => switch (filter) {
-        1 => e.$7 < 2,
-        2 => e.$7 == 2,
-        _ => true,
-      },
-    );
+    // The newest few; the full, date-filtered list is the statement
+    // (Хуулга харах).
+    final recent = mockInvoices.take(3).toList();
+    final visible = recent.where(invoiceFilters[filter].$2).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1111,13 +1080,9 @@ class _InvoicesPane extends StatelessWidget {
         Wrap(
           spacing: 6,
           children: [
-            for (final (i, l) in [
-              'Бүгд (3)',
-              'Хүлээгдэж буй (2)',
-              'Төлөгдсөн (1)',
-            ].indexed)
+            for (final (i, (label, test)) in invoiceFilters.indexed)
               FilterChipPill(
-                label: l,
+                label: '$label (${recent.where(test).length})',
                 selected: filter == i,
                 onTap: () => onFilter(i),
               ),
@@ -1128,112 +1093,29 @@ class _InvoicesPane extends StatelessWidget {
           ListItemEntrance(
             always: true,
             delay: AppTabView.incomingDelay,
-            id: inv,
+            id: inv.title,
             index: i,
             group: filter,
-            child: AppCard(
-              radius: 18,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      MascotTile(asset: inv.$2, label: inv.$1),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(inv.$1, size: 13, weight: FontWeight.w500),
-                            const SizedBox(height: 3),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: inv.$4,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 5),
-                                Flexible(
-                                  child: AppText(
-                                    inv.$3,
-                                    size: 11,
-                                    weight: FontWeight.w600,
-                                    color: inv.$7 == 0
-                                        ? AppColors.slate500
-                                        : inv.$4,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          BalanceText(
-                            inv.$5,
-                            size: 14,
-                            weight: FontWeight.w600,
-                          ),
-                          AppText(
-                            inv.$6,
-                            size: 11,
-                            color: inv.$7 == 2
-                                ? AppColors.emerald600
-                                : AppColors.slate400,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  if (inv.$7 < 2) ...[
-                    const Divider(height: 20, color: AppColors.slate100),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppText(
-                            inv.$7 == 0
-                                ? 'Ээжид мэдэгдэл илгээх'
-                                : 'Дэлгүүрийн нэхэмжлэх',
-                            size: 11,
-                            color: AppColors.slate400,
-                          ),
-                        ),
-                        inv.$7 == 0
-                            ? SoftButton(
-                                label: 'Сануулах',
-                                icon: Icons.notifications_active_outlined,
-                                height: 30,
-                                onPressed: () => showAppSnack(
-                                  context,
-                                  'Ээжид сануулга илгээлээ',
-                                ),
-                              )
-                            : SoftButton(
-                                label: 'Төлөх',
-                                icon: Icons.payments_outlined,
-                                height: 30,
-                                background: AppColors.sky500,
-                                foreground: Colors.white,
-                                border: Colors.transparent,
-                                onPressed: () => {},
-                              ),
-                      ],
-                    ),
-                  ],
-                ],
-              ),
-            ),
+            child: InvoiceCard(invoice: inv),
           ),
           const SizedBox(height: 10),
         ],
         ListItemEntrance(
-          id: #newInvoice,
+          id: #invoiceHistory,
           index: visible.length,
+          group: filter,
+          always: true,
+          delay: AppTabView.incomingDelay,
+          child: SoftButton(
+            label: 'Хуулга харах',
+            icon: Icons.receipt_long_rounded,
+            onPressed: () => onOpen(AppRoutes.invoiceHistory),
+          ),
+        ),
+        const SizedBox(height: 10),
+        ListItemEntrance(
+          id: #newInvoice,
+          index: visible.length + 1,
           group: filter,
           always: true,
           delay: AppTabView.incomingDelay,
