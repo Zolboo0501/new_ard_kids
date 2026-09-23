@@ -12,24 +12,28 @@ import '../../app/avatar.dart';
 enum _Status { pending, approved, declined }
 
 class _Request {
-  const _Request({
+  _Request({
     required this.from,
     required this.when,
     required this.title,
     required this.amount,
-    required this.asset,
+    required String Function() sticker,
     required this.status,
     this.tag,
     this.reply,
     this.reason,
-  });
+  }) : _sticker = sticker;
 
   final String from;
   final String when;
   final String title;
   final int amount;
-  final String asset;
   final _Status status;
+
+  /// Read on each build, so the picture follows the chosen companion while
+  /// the list (kept in state, since requests can be cancelled) stays put.
+  final String Function() _sticker;
+  String get asset => _sticker();
   final String? tag;
   final String? reply;
   final String? reason;
@@ -49,38 +53,38 @@ class RequestListScreen extends StatefulWidget {
 
 class _RequestListScreenState extends State<RequestListScreen> {
   final _requests = [
-    const _Request(
+    _Request(
       from: 'Ээж',
       when: 'Өнөөдөр, 14:20',
       title: 'Зургийн дэвтэр, усан будаг, багс авах',
       amount: 20000,
-      asset: Mascots.catNotes,
+      sticker: () => Stickers.art,
       status: _Status.pending,
       tag: 'Хичээл',
     ),
-    const _Request(
+    _Request(
       from: 'Аав',
       when: 'Өчигдөр, 18:45',
       title: 'PlayStation тоглоом, эрхийн карт',
       amount: 25000,
-      asset: Mascots.puppyGamepad,
+      sticker: () => Stickers.games,
       status: _Status.approved,
       reply: 'Аав: "Хичээлээ сайн хийгээрэй миний хүү!"',
     ),
-    const _Request(
+    _Request(
       from: 'Ээж',
       when: '2026.09.09',
       title: 'Өдрийн хоол, амттан, сүү',
       amount: 10000,
-      asset: Mascots.pandaMilk,
+      sticker: () => Stickers.snack,
       status: _Status.approved,
     ),
-    const _Request(
+    _Request(
       from: 'Аав',
       when: '2026.09.05',
       title: 'Шинэ лего тоглоом',
       amount: 40000,
-      asset: Mascots.foxBlocks,
+      sticker: () => Stickers.gift,
       status: _Status.declined,
       reason: 'Хязгаар хүрсэн',
     ),
@@ -145,7 +149,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                         asset: Stickers.contacts,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'Хүсэлтийн жагсаалттай үнэг',
+                        semanticLabel: 'Хүсэлтийн жагсаалттай маскот',
                       ),
                     ],
                   ),

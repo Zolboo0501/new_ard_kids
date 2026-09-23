@@ -177,4 +177,46 @@ void main() {
     expect(_showsAsset(tester, PenguinStickers.piggy), isTrue);
     expect(_showsAsset(tester, RabbitStickers.piggy), isFalse);
   });
+
+  testWidgets('Avatar: the transfer screen swaps to each companion', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    await tester.pumpWidget(const ArdKidsApp());
+    await tester.pumpAndSettle();
+    GoRouter.of(
+      tester.element(find.byType(Scaffold).first),
+    ).go(AppRoutes.transfer);
+    await tester.pumpAndSettle();
+
+    String sticker(String set, String name) =>
+        'assets/images/$set/${set}_$name.png';
+    for (final (avatar, set, games) in [
+      (AppAvatar.fox, 'fox', 'games'),
+      (AppAvatar.bear, 'bear', 'sports'),
+      (AppAvatar.bunny, 'rabbit', 'sports'),
+      (AppAvatar.penguin, 'penguin', 'games'),
+    ]) {
+      appAvatar.value = avatar;
+      await tester.pumpAndSettle();
+      // Balance card, saved friends and the purpose chips.
+      for (final name in [
+        'payment',
+        'siblings',
+        'mom',
+        'dad',
+        'books',
+        games,
+      ]) {
+        expect(
+          _showsAsset(tester, sticker(set, name)),
+          isTrue,
+          reason: '$set $name',
+        );
+      }
+      if (set != 'fox') {
+        expect(_showsAsset(tester, sticker('fox', 'payment')), isFalse);
+      }
+    }
+  });
 }

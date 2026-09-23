@@ -30,13 +30,14 @@ class SavingsGoal {
   double get progress => target == 0 ? 0 : saved / target;
 }
 
-const kSampleGoals = [
+/// Sample goals, pictured with the chosen companion's stickers.
+List<SavingsGoal> get kSampleGoals => [
   SavingsGoal(
     title: 'PlayStation 5 тоглоом',
     category: 'Дижитал зугаа',
     saved: 180000,
     target: 250000,
-    asset: Mascots.puppyGamepad,
+    asset: Stickers.games,
     tone: BadgeTone.sky,
   ),
   SavingsGoal(
@@ -44,7 +45,7 @@ const kSampleGoals = [
     category: 'Хичээл & Хөгжил',
     saved: 95000,
     target: 100000,
-    asset: Mascots.bearBooks,
+    asset: Stickers.books,
     tone: BadgeTone.emerald,
   ),
   SavingsGoal(
@@ -52,7 +53,7 @@ const kSampleGoals = [
     category: 'Аялал, зуслан',
     saved: 450000,
     target: 800000,
-    asset: Mascots.catHeart,
+    asset: Stickers.travel,
     tone: BadgeTone.amber,
   ),
 ];
@@ -110,7 +111,7 @@ class SavingsAccountScreen extends StatelessWidget {
                         asset: Stickers.piggy,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'Гахайн сантай үнэг',
+                        semanticLabel: 'Гахайн сантай маскот',
                       ),
                     ],
                   ),
@@ -175,7 +176,9 @@ class SavingsAccountScreen extends StatelessWidget {
                   const Divider(height: 24, color: AppColors.slate100),
                   for (final (i, g) in kSampleGoals.indexed) ...[
                     ListItemEntrance(
-                      id: g,
+                      // The title, not the goal: the list is rebuilt with new
+                      // instances whenever the companion changes.
+                      id: g.title,
                       index: i,
                       child: GoalTile(goal: g),
                     ),

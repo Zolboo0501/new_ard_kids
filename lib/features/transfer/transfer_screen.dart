@@ -30,21 +30,21 @@ class TransferScreen extends StatefulWidget {
 class _TransferScreenState extends State<TransferScreen> {
   static const _balance = 567930;
   static const _banks = ['Хаан банк', 'Голомт банк', 'ХХБ', 'Төрийн банк'];
-  static const _friends = [
-    ('Анар (Дүү)', Mascots.foxPhone, AppColors.amber100, '5049 8219 02'),
-    ('Мишээл', Mascots.bunnyBattery, AppColors.emerald100, '5049 7712 45'),
-    ('Аав', Mascots.owlBook, Color(0xFFDBEAFE), '5049 1102 33'),
-    ('Ээж', Mascots.catHeart, AppColors.pink100, '5049 3321 08'),
+  static List<(String, String, Color, String)> get _friends => [
+    ('Анар (Дүү)', Stickers.siblings, AppColors.amber100, '5049 8219 02'),
+    ('Мишээл', Stickers.love, AppColors.emerald100, '5049 7712 45'),
+    ('Аав', Stickers.dad, const Color(0xFFDBEAFE), '5049 1102 33'),
+    ('Ээж', Stickers.mom, AppColors.pink100, '5049 3321 08'),
   ];
-  static const _phones = [
-    ('Ээж (9911****)', Mascots.catHeart, '9911 2345', 'Б. Бат-Эрдэнэ'),
-    ('Аав (9909****)', Mascots.owlBook, '9909 1188', 'Д. Ганбаатар'),
-    ('Тэмүүлэн (8822****)', Mascots.bearSitting, '8822 4411', 'Т. Тэмүүлэн'),
+  static List<(String, String, String, String)> get _phones => [
+    ('Ээж (9911****)', Stickers.mom, '9911 2345', 'Б. Бат-Эрдэнэ'),
+    ('Аав (9909****)', Stickers.dad, '9909 1188', 'Д. Ганбаатар'),
+    ('Тэмүүлэн (8822****)', Stickers.friends, '8822 4411', 'Т. Тэмүүлэн'),
   ];
   static List<(String, String, String)> get _purposes => [
-    (Mascots.bearBooks, 'Ном дэвтэр', 'Ном авсан'),
-    (Mascots.pandaMilk, 'Амттан', 'Амттан'),
-    (Mascots.puppyGamepad, 'Тоглоом', 'Тоглоом'),
+    (Stickers.books, 'Ном дэвтэр', 'Ном авсан'),
+    (Stickers.snack, 'Амттан', 'Амттан'),
+    (Stickers.games, 'Тоглоом', 'Тоглоом'),
     (Stickers.coin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
   ];
 
@@ -450,11 +450,11 @@ class _SourceCard extends StatelessWidget {
               ],
             ),
           ),
-          const MascotImage(
-            asset: Mascots.sleepingCat,
+          MascotImage(
+            asset: Stickers.payment,
             size: 110,
             background: Colors.white,
-            semanticLabel: 'Sleeping cat mascot',
+            semanticLabel: 'Гүйлгээ хийж буй маскот',
           ),
         ],
       ),

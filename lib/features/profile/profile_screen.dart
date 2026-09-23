@@ -166,20 +166,6 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: AppColors.emerald50,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.family_restroom_rounded,
-                        size: 15,
-                        color: AppColors.emerald600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
                       child: AppText(
                         'ЭЦЭГ ЭХИЙН ХОЛБОЛТ',
@@ -198,8 +184,8 @@ class ProfileScreen extends StatelessWidget {
                 const Divider(height: 24, color: AppColors.slate100),
                 Row(
                   children: [
-                    const MascotTile(
-                      asset: Mascots.catHeart,
+                    MascotTile(
+                      asset: Stickers.mom,
                       background: AppColors.pink50,
                       label: 'Ээж (Б. Саруул)',
                     ),
@@ -222,9 +208,11 @@ class ProfileScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 8),
                     SoftButton(
                       label: 'Хянах',
-                      height: 32,
+                      icon: Icons.tune_rounded,
+                      height: 40,
                       onPressed: () => go(AppRoutes.parentLink),
                     ),
                   ],

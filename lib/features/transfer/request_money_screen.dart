@@ -19,15 +19,15 @@ class RequestMoneyScreen extends StatefulWidget {
 }
 
 class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
-  static const _parents = [
-    ('Ээж', 'Голомт • 1605******', Mascots.catHeart, AppColors.pink50),
-    ('Аав', 'Хаан • 5042******', Mascots.owlBook, Color(0xFFEFF6FF)),
+  static List<(String, String, String, Color)> get _parents => [
+    ('Ээж', 'Голомт • 1605******', Stickers.mom, AppColors.pink50),
+    ('Аав', 'Хаан • 5042******', Stickers.dad, const Color(0xFFEFF6FF)),
   ];
   static List<(String, String)> get _types => [
-    (Mascots.bearBooks, 'Ном дэвтэр'),
-    (Mascots.puppyGamepad, 'Тоглоом'),
-    (Mascots.pandaMilk, 'Өдрийн хоол'),
-    (Mascots.catNotes, 'Дугуйлан'),
+    (Stickers.books, 'Ном дэвтэр'),
+    (Stickers.games, 'Тоглоом'),
+    (Stickers.snack, 'Өдрийн хоол'),
+    (Stickers.art, 'Дугуйлан'),
     (Stickers.avatar, 'Бусад'),
   ];
 
@@ -111,7 +111,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     asset: Stickers.family,
                     size: 96,
                     background: Colors.white,
-                    semanticLabel: 'Аав ээжтэйгээ үнэг',
+                    semanticLabel: 'Аав ээжтэйгээ маскот',
                   ),
                 ],
               ),

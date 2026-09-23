@@ -49,11 +49,24 @@ void main() {
   testWidgets('renders /qr "Миний QR" tab without errors', (tester) async {
     await _pumpRoute(tester, AppRoutes.qrScan);
 
-    await tester.tap(find.text('Миний QR'));
-    // The scanner animates forever, so pump a fixed duration.
+    // _pumpRoute scrolled the tabs off the top; bring them back to tap.
+    final tab = find.text('Миний QR');
+    await tester.ensureVisible(tab);
+    // The scanner animates forever, so pump fixed durations.
     await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(tab);
+    await tester.pump(const Duration(milliseconds: 600));
 
     expect(find.text('QR Хуваалцах'), findsOneWidget);
+    // Scroll through the tab so an overflow in it fails the test too.
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(
+        find.byType(Scrollable).first,
+        const Offset(0, -600),
+        warnIfMissed: false,
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+    }
   });
 
   test('formatMnt groups thousands', () {

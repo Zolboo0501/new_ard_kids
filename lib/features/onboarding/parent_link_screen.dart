@@ -38,7 +38,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
   String? _phoneError;
   String? _registerError;
 
-  static const _roles = [('Ээж', Mascots.catHeart), ('Аав', Mascots.owlBook)];
+  static List<(String, String)> get _roles => [
+    ('Ээж', Stickers.mom),
+    ('Аав', Stickers.dad),
+  ];
 
   @override
   void initState() {
@@ -161,7 +164,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                   asset: Stickers.family,
                   size: 140,
                   background: AppColors.dsSurface,
-                  semanticLabel: 'Ээж, хүүхэд үнэг',
+                  semanticLabel: 'Гэр бүлийн маскот',
                 ),
               ),
               const SizedBox(height: 6),
@@ -582,44 +585,69 @@ class _RoleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? AppColors.sky50 : AppColors.slate100;
+    final bg = selected ? AppColors.sky50 : Colors.white;
     return Semantics(
       button: true,
       selected: selected,
       child: Pressable(
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          height: 46,
-          decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: selected ? AppColors.sky500 : Colors.transparent,
-              width: 2,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              MascotImage(
-                asset: asset,
-                size: 26,
-                background: bg,
-                semanticLabel: '',
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: AppText(
-                  label,
-                  size: 12,
-                  weight: FontWeight.w700,
-                  color: selected ? AppColors.sky700 : AppColors.slate600,
-                  overflow: TextOverflow.ellipsis,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              height: 56,
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: selected ? AppColors.sky500 : AppColors.slate200,
+                  width: selected ? 2 : 1,
                 ),
               ),
-            ],
-          ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MascotImage(
+                    asset: asset,
+                    size: 36,
+                    background: bg,
+                    semanticLabel: '',
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: AppText(
+                      label,
+                      size: 14,
+                      weight: FontWeight.w700,
+                      color: selected ? AppColors.sky700 : AppColors.slate600,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // The same corner tick the other pickers use.
+            if (selected)
+              Positioned(
+                top: -6,
+                right: -6,
+                child: Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: AppColors.sky500,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                  ),
+                  child: const Icon(
+                    Icons.check_rounded,
+                    size: 11,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

@@ -105,7 +105,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     asset: Stickers.calculator,
                     size: 64,
                     background: AppColors.sky50,
-                    label: 'Тооцоолуур барьсан үнэг',
+                    label: 'Тооцоолуур барьсан маскот',
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -337,7 +337,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     child: Row(
                       children: [
                         MascotTile(
-                          asset: Mascots.puppyGamepad,
+                          asset: Stickers.games,
                           background: AppColors.sky50,
                           radius: 12,
                           label: 'PlayStation 5 тоглоом',

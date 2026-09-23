@@ -130,6 +130,27 @@ abstract final class Stickers {
   static String get shield => _path('shield');
   static String get success => _path('success');
   static String get transfer => _path('transfer');
+
+  // Hobbies, people and everyday things, from each set's second sheet.
+  static String get art => _path('art');
+  static String get books => _path('books');
+  static String get dad => _path('dad');
+  static String get lesson => _path('lesson');
+  static String get love => _path('love');
+  static String get mom => _path('mom');
+  static String get payment => _path('payment');
+  static String get qr => _path('qr');
+  static String get siblings => _path('siblings');
+  static String get snack => _path('snack');
+  static String get sports => _path('sports');
+  static String get study => _path('study');
+  static String get travel => _path('travel');
+
+  /// The bear and rabbit sheets drew an invite where the others have games,
+  /// so those two show their sports sticker instead.
+  static String get games =>
+      _path(_noGames.contains(appAvatar.value.stickerSet) ? 'sports' : 'games');
+  static const _noGames = {'bear', 'rabbit'};
 }
 
 /// The chosen companion. Home and Profile listen to it, so a change made in

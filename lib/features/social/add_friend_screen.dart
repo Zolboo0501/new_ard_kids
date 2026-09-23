@@ -21,9 +21,9 @@ class AddFriendScreen extends StatefulWidget {
 class _AddFriendScreenState extends State<AddFriendScreen> {
   static List<(String, String, Color)> get _relations => [
     ('Найз', Stickers.friends, AppColors.sky50),
-    ('Дүү / Ах', Mascots.bunnyBattery, AppColors.amber50),
+    ('Дүү / Ах', Stickers.siblings, AppColors.amber50),
     ('Аав / Ээж', Stickers.family, AppColors.pink50),
-    ('Ангийн', Mascots.penguinChecklist, AppColors.emerald50),
+    ('Ангийн', Stickers.study, AppColors.emerald50),
   ];
   static const _banks = ['Хаан банк', 'Голомт банк', 'ХХБ', 'Төрийн банк'];
 
@@ -36,13 +36,13 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     (
       'Тэмүүлэн',
       'Хаан банк • 5042******',
-      Mascots.bearSitting,
+      Stickers.friends,
       AppColors.sky100,
     ),
     (
       'Сарнай (эгч)',
       'Голомт банк • 1605******',
-      Mascots.catHeart,
+      Stickers.siblings,
       AppColors.amber100,
     ),
   ];
@@ -124,7 +124,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     asset: Stickers.addFriend,
                     size: 96,
                     background: Colors.white,
-                    semanticLabel: 'Найз нэмж буй үнэг',
+                    semanticLabel: 'Найз нэмж буй маскот',
                   ),
                 ],
               ),
@@ -259,9 +259,13 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(width: 8),
                       SoftButton(
-                        label: _added.contains(s.$1) ? 'Нэмсэн ✓' : 'Нэмэх',
-                        height: 32,
+                        label: _added.contains(s.$1) ? 'Нэмсэн' : 'Нэмэх',
+                        icon: _added.contains(s.$1)
+                            ? Icons.check_rounded
+                            : Icons.person_add_alt_1_rounded,
+                        height: 36,
                         background: _added.contains(s.$1)
                             ? AppColors.emerald50
                             : AppColors.sky50,
@@ -341,15 +345,16 @@ class _RelationButton extends StatelessWidget {
           ),
           child: Column(
             children: [
+              // The whole sticker, not cropped to a circle.
               Container(
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: selected ? Colors.white.withValues(alpha: 0.2) : tint,
-                  borderRadius: BorderRadius.circular(12),
+                  color: selected ? Colors.white : tint,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                padding: const EdgeInsets.all(2),
-                child: ClipOval(child: Image.asset(asset, fit: BoxFit.cover)),
+                padding: const EdgeInsets.all(3),
+                child: Image.asset(asset, fit: BoxFit.contain),
               ),
               const SizedBox(height: 4),
               AppText(

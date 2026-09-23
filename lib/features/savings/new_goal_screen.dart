@@ -17,17 +17,17 @@ class NewGoalScreen extends StatefulWidget {
 }
 
 class _NewGoalScreenState extends State<NewGoalScreen> {
-  static const _topics = [
-    (Mascots.puppyGamepad, 'Тоглоом'),
-    (Mascots.foxJump, 'Спорт'),
-    (Mascots.bearBooks, 'Хичээл'),
-    (Mascots.catNotes, 'Урлаг'),
-    (Mascots.foxWave, 'Аялал'),
+  static List<(String, String)> get _topics => [
+    (Stickers.games, 'Тоглоом'),
+    (Stickers.sports, 'Спорт'),
+    (Stickers.lesson, 'Хичээл'),
+    (Stickers.art, 'Урлаг'),
+    (Stickers.travel, 'Аялал'),
   ];
   static List<(String, String)> get _icons => [
-    ('Тоглоом', Mascots.puppyGamepad),
+    ('Тоглоом', Stickers.games),
     ('Хуритмлал', Stickers.piggy),
-    ('Аялал', Mascots.owlBook),
+    ('Аялал', Stickers.travel),
     ('Мөрөөдөл', Stickers.goal),
   ];
 
@@ -92,7 +92,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                     asset: Stickers.goal,
                     size: 80,
                     background: AppColors.sky50,
-                    semanticLabel: 'Зорилгодоо онилсон үнэг',
+                    semanticLabel: 'Зорилгодоо онилсон маскот',
                   ),
                   const SizedBox(width: 12),
                   Expanded(

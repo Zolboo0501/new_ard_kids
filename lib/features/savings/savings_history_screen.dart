@@ -17,7 +17,7 @@ class SavingsHistoryScreen extends StatefulWidget {
 }
 
 class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
-  static List<(String, bool, List<(String, String, int, String, Color, Color)>)>
+  static List<(String, bool, List<(String, String, int, String, Color)>)>
   get _months => [
     (
       'ЭНЭ САР (9-Р САР)',
@@ -29,7 +29,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           14400,
           Stickers.growth,
           AppColors.amber50,
-          AppColors.emerald600,
         ),
         (
           'Ааваас хадгаламжид нэмэв',
@@ -37,7 +36,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           50000,
           Stickers.jar,
           AppColors.sky50,
-          AppColors.sky600,
         ),
         (
           'Зорилго биелэлтийн урамшуулал',
@@ -45,7 +43,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           25000,
           Stickers.gift,
           AppColors.rose50,
-          AppColors.amber600,
         ),
       ],
     ),
@@ -59,7 +56,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           13850,
           Stickers.growth,
           AppColors.amber50,
-          AppColors.emerald600,
         ),
         (
           'Зуны амралтын шагнал',
@@ -67,7 +63,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           100000,
           Stickers.gift,
           AppColors.pink50,
-          AppColors.emerald600,
         ),
       ],
     ),
@@ -127,11 +122,11 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                           ],
                         ),
                       ),
-                      const MascotImage(
-                        asset: Mascots.sleepingCat,
+                      MascotImage(
+                        asset: Stickers.report,
                         size: 90,
                         background: Colors.white,
-                        semanticLabel: 'Хөөрхөн унтаж буй муужгай',
+                        semanticLabel: 'Гүйлгээний түүх харж буй маскот',
                       ),
                     ],
                   ),
@@ -217,7 +212,13 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                             ],
                           ),
                         ),
-                        BalanceText(it.$3, sign: true, size: 12, color: it.$6),
+                        // Every entry is money coming in, so all amounts are green.
+                        BalanceText(
+                          it.$3,
+                          sign: true,
+                          size: 12,
+                          color: AppColors.emerald600,
+                        ),
                       ],
                     ),
                   ),

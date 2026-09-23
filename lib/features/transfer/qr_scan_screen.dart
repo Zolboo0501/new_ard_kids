@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../app/avatar.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_tabs.dart';
@@ -219,9 +220,11 @@ class _QrScanScreenState extends State<QrScanScreen>
                   child: ClipOval(
                     child: Container(
                       color: Colors.white,
+                      // The kid's chosen companion, as on Home and Profile.
                       child: Image.asset(
-                        Mascots.bearSitting,
-                        semanticLabel: 'Profile Mascot',
+                        appAvatar.value.portrait,
+                        fit: BoxFit.cover,
+                        semanticLabel: 'Тэмүүлэн',
                       ),
                     ),
                   ),
@@ -290,30 +293,26 @@ class _QrScanScreenState extends State<QrScanScreen>
               ),
             ),
             const SizedBox(height: 16),
-            // The two labels are wider than a narrow phone at their natural
-            // size, so they share the row and ellipsize instead of overflowing.
+            // Sharing is the tab's main action, so it leads in the accent;
+            // saving sits beside it as the softer secondary. The labels are
+            // wider than a narrow phone at their natural size, so they share
+            // the row and ellipsize instead of overflowing.
             Row(
               children: [
                 Expanded(
-                  child: SoftButton(
+                  child: PrimaryButton(
                     label: 'QR Хуваалцах',
-                    icon: Icons.share_rounded,
-                    height: 40,
-                    background: AppColors.dsSurfaceContainerHigh,
-                    foreground: AppColors.dsOnSurface,
-                    border: Colors.transparent,
+                    leadingIcon: Icons.share_rounded,
+                    height: 48,
                     onPressed: () => showAppSnack(context, 'QR хуваалцах'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
                   child: SoftButton(
                     label: 'Зураг хадгалах',
                     icon: Icons.download_rounded,
-                    height: 40,
-                    background: AppColors.dsSurfaceContainerHigh,
-                    foreground: AppColors.dsOnSurface,
-                    border: Colors.transparent,
+                    height: 48,
                     onPressed: () =>
                         showAppSnack(context, 'Зураг хадгалагдлаа'),
                   ),
