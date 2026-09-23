@@ -104,13 +104,17 @@ class MascotImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The JPEG mascots carry a white box that the multiply blend melts into
+    // the surface; the PNG cutouts are already transparent, so blending them
+    // would only tint the artwork.
+    final cutout = asset.endsWith('.png');
     return Image.asset(
       asset,
       width: size,
       height: size,
       fit: BoxFit.contain,
-      color: background,
-      colorBlendMode: BlendMode.multiply,
+      color: cutout ? null : background,
+      colorBlendMode: cutout ? null : BlendMode.multiply,
       semanticLabel: semanticLabel,
     );
   }

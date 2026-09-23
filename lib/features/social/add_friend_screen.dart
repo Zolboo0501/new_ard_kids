@@ -19,9 +19,9 @@ class AddFriendScreen extends StatefulWidget {
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
   static List<(String, String, Color)> get _relations => [
-    ('Найз', Mascots.foxWave, AppColors.sky50),
+    ('Найз', FoxStickers.friends, AppColors.sky50),
     ('Дүү / Ах', Mascots.bunnyBattery, AppColors.amber50),
-    ('Аав / Ээж', Mascots.bearFamily, AppColors.pink50),
+    ('Аав / Ээж', FoxStickers.family, AppColors.pink50),
     ('Ангийн', Mascots.penguinChecklist, AppColors.emerald50),
   ];
   static const _banks = ['Хаан банк', 'Голомт банк', 'ХХБ', 'Төрийн банк'];
@@ -70,7 +70,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     showAppSnack(
       context,
       '${_nickname.text.trim()} найзаар нэмэгдлээ',
-      mascot: Mascots.bearConfetti,
+      mascot: FoxStickers.success,
     );
     context.pop();
   }
@@ -120,10 +120,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                     ),
                   ),
                   const MascotImage(
-                    asset: Mascots.fox,
+                    asset: FoxStickers.addFriend,
                     size: 96,
                     background: Colors.white,
-                    semanticLabel: 'Cute fox mascot',
+                    semanticLabel: 'Найз нэмж буй үнэг',
                   ),
                 ],
               ),

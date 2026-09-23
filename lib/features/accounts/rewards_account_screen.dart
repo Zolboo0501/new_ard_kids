@@ -119,7 +119,7 @@ class _RewardsPane extends StatelessWidget {
       subtitle: 'Урамшуулал',
       when: '05.12',
       amount: 5000,
-      asset: Mascots.foxWave,
+      asset: FoxStickers.gift,
       tint: AppColors.orange50,
       badge: 'Амжилттай',
       badgeTone: BadgeTone.amber,
@@ -223,7 +223,7 @@ class _RewardsPane extends StatelessWidget {
                     ),
                   ),
                   const MascotImage(
-                    asset: Mascots.redPandaTrophy,
+                    asset: FoxStickers.gift,
                     size: 100,
                     background: Color(0xFFFFFCF2),
                     semanticLabel: 'Урамшуулал маскот',
@@ -280,7 +280,7 @@ class _RewardsPane extends StatelessWidget {
             children: [
               Expanded(
                 child: _Shortcut(
-                  asset: Mascots.foxWave,
+                  asset: FoxStickers.addFriend,
                   tint: AppColors.orange50,
                   title: 'Найз урих',
                   subtitle: '5,000 оноо',
@@ -291,7 +291,7 @@ class _RewardsPane extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _Shortcut(
-                  asset: Mascots.redPandaTrophy,
+                  asset: FoxStickers.goal,
                   tint: AppColors.amber50,
                   title: 'Урамшуулал авах',
                   subtitle: 'Даалгаврууд',
@@ -305,7 +305,7 @@ class _RewardsPane extends StatelessWidget {
         const SizedBox(height: 20),
         const SectionHeader(
           title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: Mascots.penguinList,
+          mascot: FoxStickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
         for (final (i, item) in items.indexed) ...[

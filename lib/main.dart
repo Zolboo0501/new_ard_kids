@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app/avatar.dart';
 import 'app/routes.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_store.dart';
@@ -8,7 +9,7 @@ import 'theme/theme_store.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Before the first frame, so a saved pink theme doesn't flash blue.
-  await ThemeStore.load();
+  await Future.wait([ThemeStore.load(), AvatarStore.load()]);
   runApp(const ArdKidsApp());
 }
 

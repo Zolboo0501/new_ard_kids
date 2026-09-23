@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../app/avatar.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
@@ -400,11 +401,15 @@ class ProfileAvatar extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(2),
-            child: ClipOval(
-              child: Image.asset(
-                Mascots.bearSitting,
-                fit: BoxFit.cover,
-                semanticLabel: 'Хүүхдийн профайл зураг',
+            // Follows the companion picked in "Аватар сонгох".
+            child: ValueListenableBuilder(
+              valueListenable: appAvatar,
+              builder: (context, avatar, _) => ClipOval(
+                child: Image.asset(
+                  avatar.portrait,
+                  fit: BoxFit.cover,
+                  semanticLabel: 'Хүүхдийн профайл зураг',
+                ),
               ),
             ),
           ),

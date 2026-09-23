@@ -120,10 +120,10 @@ class _StocksScreenState extends State<StocksScreen> {
                         ),
                       ),
                       const MascotImage(
-                        asset: Mascots.otterInvest,
+                        asset: FoxStickers.growth,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'Mascot',
+                        semanticLabel: 'Өсөлтийн графиктай үнэг',
                       ),
                     ],
                   ),

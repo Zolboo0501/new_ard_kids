@@ -78,10 +78,10 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: const MascotImage(
-                      asset: Mascots.foxPhone,
+                      asset: FoxStickers.edit,
                       size: 88,
                       background: Colors.white,
-                      semanticLabel: 'Fox Mascot',
+                      semanticLabel: 'Үнэг маскот',
                     ),
                   ),
                   const SizedBox(width: 14),

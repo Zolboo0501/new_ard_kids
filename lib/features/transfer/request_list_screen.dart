@@ -141,10 +141,10 @@ class _RequestListScreenState extends State<RequestListScreen> {
                         ),
                       ),
                       const MascotImage(
-                        asset: Mascots.catHeart,
+                        asset: FoxStickers.contacts,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'Cat holding heart coin',
+                        semanticLabel: 'Хүсэлтийн жагсаалттай үнэг',
                       ),
                     ],
                   ),
@@ -224,7 +224,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                   onNudge: () => showAppSnack(
                     context,
                     '${r.fromDative} сануулга илгээлээ',
-                    mascot: Mascots.redPandaLetter,
+                    mascot: FoxStickers.notification,
                   ),
                   onCancel: () => setState(() => _requests.remove(r)),
                 ),

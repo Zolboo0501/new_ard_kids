@@ -89,7 +89,7 @@ class TransferSuccessScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const MascotImage(
-                    asset: Mascots.bearStar,
+                    asset: FoxStickers.success,
                     size: 128,
                     background: Colors.white,
                     semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',

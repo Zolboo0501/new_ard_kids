@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/common.dart';
@@ -50,7 +53,22 @@ double _mascotScale(WidgetTester tester, String name) {
   return scale.scale.value;
 }
 
+/// Whether an [Image] showing [asset] is on screen.
+bool _showsAsset(WidgetTester tester, String asset) => tester
+    .widgetList<Image>(find.byType(Image))
+    .any(
+      (i) =>
+          i.image is AssetImage && (i.image as AssetImage).assetName == asset,
+    );
+
 void main() {
+  // appAvatar is global and outlives a test.
+  setUp(() {
+    FlutterSecureStorage.setMockInitialValues({});
+    appAvatar.value = AppAvatar.fox;
+  });
+  tearDown(() => appAvatar.value = AppAvatar.fox);
+
   testWidgets('Avatar: content fades in and settles fully opaque', (
     tester,
   ) async {
@@ -95,5 +113,36 @@ void main() {
 
     // Exactly one card carries the tick.
     expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+  });
+
+  testWidgets('Avatar: saving a companion swaps the Home and Profile images', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    final router = AppRoutes.createRouter(initialLocation: AppRoutes.home);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
+    );
+    await tester.pumpAndSettle();
+    expect(_showsAsset(tester, AppAvatar.fox.portrait), isTrue);
+    expect(_showsAsset(tester, AppAvatar.fox.savings), isTrue);
+
+    router.push(AppRoutes.avatarPickerEdit);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+    await tester.tap(find.text('Бамбарууш'));
+    await tester.pump();
+    final save = find.text('Аватараа хадгалах');
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+
+    expect(appAvatar.value, AppAvatar.bear);
+    expect(await const FlutterSecureStorage().read(key: 'app_avatar'), 'bear');
+    expect(_showsAsset(tester, AppAvatar.bear.portrait), isTrue);
+    expect(_showsAsset(tester, AppAvatar.bear.pick), isTrue);
+    expect(_showsAsset(tester, AppAvatar.bear.savings), isTrue);
+    expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });
 }

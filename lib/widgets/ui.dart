@@ -1798,4 +1798,48 @@ abstract final class Mascots {
   /// [redPanda] cut out onto a transparent background.
   static const redPandaCutout = '$_d/mascot_red_panda_cutout.png';
   static const pandaKey = '$_d/mascot_panda_key.png';
+
+  // Each picker companion's set for Home and Profile (see `AppAvatar`).
+  static const bearPortrait = '$_d/mascot_bear_portrait.jpg';
+  static const bearPiggy = '$_d/mascot_bear_piggy.jpg';
+  static const bearGrow = '$_d/mascot_bear_grow.jpg';
+  static const bearTrophy = '$_d/mascot_bear_trophy.jpg';
+  static const bunnyPortrait = '$_d/mascot_bunny_portrait.jpg';
+  static const bunnyPiggy = '$_d/mascot_bunny_piggy.jpg';
+  static const bunnyGrow = '$_d/mascot_bunny_grow.jpg';
+  static const bunnyTrophy = '$_d/mascot_bunny_trophy.jpg';
+  static const penguinPortrait = '$_d/mascot_penguin_portrait.jpg';
+  static const penguinPiggy = '$_d/mascot_penguin_piggy.jpg';
+  static const penguinGrow = '$_d/mascot_penguin_grow.jpg';
+  static const penguinTrophy = '$_d/mascot_penguin_trophy.jpg';
+}
+
+/// The fox companion's sticker set, cut from one sheet onto a transparent
+/// background. Unlike the [Mascots] JPEGs these need no multiply blend, so
+/// [MascotImage] leaves PNGs alone.
+abstract final class FoxStickers {
+  static const _d = 'assets/images';
+  static const addFriend = '$_d/fox/fox_add_friend.png';
+  static const avatar = '$_d/fox/fox_avatar.png';
+  static const calculator = '$_d/fox/fox_calculator.png';
+  static const card = '$_d/fox/fox_card.png';
+  static const coin = '$_d/fox/fox_coin.png';
+  static const coins = '$_d/fox/fox_coins.png';
+  static const contacts = '$_d/fox/fox_contacts.png';
+  static const edit = '$_d/fox/fox_edit.png';
+  static const family = '$_d/fox/fox_family.png';
+  static const friends = '$_d/fox/fox_friends.png';
+  static const gift = '$_d/fox/fox_gift.png';
+  static const goal = '$_d/fox/fox_goal.png';
+  static const growth = '$_d/fox/fox_growth.png';
+  static const home = '$_d/fox/fox_home.png';
+  static const jar = '$_d/fox/fox_jar.png';
+  static const notification = '$_d/fox/fox_notification.png';
+  static const piggy = '$_d/fox/fox_piggy.png';
+  static const profile = '$_d/fox/fox_profile.png';
+  static const receive = '$_d/fox/fox_receive.png';
+  static const report = '$_d/fox/fox_report.png';
+  static const shield = '$_d/fox/fox_shield.png';
+  static const success = '$_d/fox/fox_success.png';
+  static const transfer = '$_d/fox/fox_transfer.png';
 }

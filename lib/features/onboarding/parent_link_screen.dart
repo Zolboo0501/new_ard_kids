@@ -157,10 +157,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               const SizedBox(height: 8),
               const Center(
                 child: MascotImage(
-                  asset: Mascots.bearFamily,
+                  asset: FoxStickers.family,
                   size: 140,
                   background: AppColors.dsSurface,
-                  semanticLabel: 'Parent and baby bear',
+                  semanticLabel: 'Ээж, хүүхэд үнэг',
                 ),
               ),
               const SizedBox(height: 6),

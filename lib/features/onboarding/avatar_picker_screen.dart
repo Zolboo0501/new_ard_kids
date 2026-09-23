@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_ard_kids/features/auth/presentation/widgets/header.dart';
 
+import '../../app/avatar.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/app_text.dart';
@@ -25,38 +26,10 @@ class AvatarPickerScreen extends StatefulWidget {
 
 class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     with SingleTickerProviderStateMixin {
-  static const _avatars = [
-    (
-      'Үнэгхэн',
-      'Гүйлгээний мастер',
-      'Мөнгөө хурдан, ухаалгаар тооцоолно!',
-      Mascots.foxPhone,
-      BadgeTone.sky,
-    ),
-    (
-      'Бамбарууш',
-      'Хадгаламж сахигч',
-      'Мөнгөө зорилгодоо хүртэл найдвартай хадгална!',
-      Mascots.bearCard,
-      BadgeTone.emerald,
-    ),
-    (
-      'Бүжинхэн',
-      'Данс цэнэглэгч',
-      'Эрч хүчтэйгээр өдөр бүр даалгавар биелүүлнэ!',
-      Mascots.bunnyBattery,
-      BadgeTone.amber,
-    ),
-    (
-      'Шувуухай',
-      'Хяналтын нярав',
-      'Зарцуулалт ба тайлангаа нямбай тэмдэглэнэ!',
-      Mascots.penguinChecklist,
-      BadgeTone.slate,
-    ),
-  ];
+  static const _avatars = AppAvatar.values;
 
-  int _selected = 0;
+  /// Starts on the current companion, so editing shows what's in use.
+  late int _selected = appAvatar.value.index;
 
   /// Drives the one-shot entrance: each element fades and rises over its own
   /// slice of this controller (see [Entrance]).
@@ -108,12 +81,14 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
   void _next() => context.push(AppRoutes.parentLink);
 
   void _confirm() {
+    final avatar = _avatars[_selected];
+    appAvatar.value = avatar;
+    AvatarStore.save(avatar);
     if (!widget.editing) return _next();
-    // TODO: persist the chosen avatar.
     showAppSnack(
       context,
-      '${_avatars[_selected].$1} таны шинэ найз боллоо',
-      mascot: _avatars[_selected].$4,
+      '${avatar.name} таны шинэ найз боллоо',
+      mascot: avatar.pick,
     );
     context.pop();
   }
@@ -169,7 +144,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                 letterSpacing: -0.5,
                               ),
                               const SizedBox(width: 8),
-                              MascotIcon(_avatars[_selected].$4, size: 30),
+                              MascotIcon(_avatars[_selected].pick, size: 30),
                             ],
                           ),
                         ),
@@ -202,11 +177,11 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                 offsetY: 20,
                                 scaleFrom: 0.94,
                                 child: _AvatarCard(
-                                  name: a.$1,
-                                  role: a.$2,
-                                  description: a.$3,
-                                  asset: a.$4,
-                                  tone: a.$5,
+                                  name: a.name,
+                                  role: a.role,
+                                  description: a.description,
+                                  asset: a.pick,
+                                  tone: a.tone,
                                   selected: _selected == i,
                                   onTap: () => setState(() => _selected = i),
                                 ),

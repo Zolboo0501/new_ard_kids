@@ -27,7 +27,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
     final tasks = [
       (
         'Найзаа урих',
-        Mascots.foxWave,
+        FoxStickers.addFriend,
         5000,
         AppColors.amber600,
         ('Хялбар', BadgeTone.amber),
@@ -37,7 +37,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
       ),
       (
         'Хадгаламжийн зорилгодоо хүрэх',
-        Mascots.puppyPiggy,
+        FoxStickers.goal,
         15000,
         AppColors.sky600,
         ('Тусгай', BadgeTone.sky),
@@ -107,10 +107,10 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                         ),
                       ),
                       const MascotImage(
-                        asset: Mascots.redPandaTrophy,
+                        asset: FoxStickers.gift,
                         size: 112,
                         background: Colors.white,
-                        semanticLabel: 'Урамшуулал авсан бамбарууш',
+                        semanticLabel: 'Бэлэг барьсан үнэг',
                       ),
                     ],
                   ),
@@ -177,7 +177,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                       showAppSnack(
                         context,
                         '+₮1,000 оноо авлаа',
-                        mascot: Mascots.bearConfetti,
+                        mascot: FoxStickers.success,
                       );
                     },
             ),

@@ -25,9 +25,9 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
   ];
   static const _icons = [
     ('Тоглоом', Mascots.puppyGamepad),
-    ('Мөнгө', Mascots.puppyPiggy),
+    ('Мөнгө', FoxStickers.piggy),
     ('Ухаалаг', Mascots.owlBook),
-    ('Мөрөөдөл', Mascots.bearConfetti),
+    ('Мөрөөдөл', FoxStickers.goal),
   ];
 
   final _name = TextEditingController(text: 'PlayStation 5 тоглоом');
@@ -88,10 +88,10 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
               child: Row(
                 children: [
                   MascotImage(
-                    asset: Mascots.bearConfetti,
+                    asset: FoxStickers.goal,
                     size: 80,
                     background: AppColors.sky50,
-                    semanticLabel: 'Мөрөөдлийн бамбарууш',
+                    semanticLabel: 'Зорилгодоо онилсон үнэг',
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -278,7 +278,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MascotIcon(Mascots.owlAbacus, size: 22),
+                      const MascotIcon(FoxStickers.calculator, size: 22),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text.rich(

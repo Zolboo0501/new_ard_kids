@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/accounts.dart';
+import '../../app/avatar.dart';
 import '../../app/routes.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/common.dart';
@@ -28,15 +29,25 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hideBalance = false;
   bool _bannerVisible = true;
 
-  static const _cards = [
-    (Accounts.main, 567930, Mascots.bearCard),
-    (Accounts.savings, 1280000, Mascots.puppyPiggy),
-    (Accounts.stocks, 142500, Mascots.otterInvest),
-    (Accounts.rewards, 35000, Mascots.redPandaTrophy),
+  /// The balance cards, each shown with the chosen companion's image for it.
+  static List<(String, int, String)> _cards(AppAvatar a) => [
+    (Accounts.main, 567930, a.pick),
+    (Accounts.savings, 1280000, a.savings),
+    (Accounts.stocks, 142500, a.stocks),
+    (Accounts.rewards, 35000, a.rewards),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    appAvatar.addListener(_onAvatarChanged);
+  }
+
+  void _onAvatarChanged() => setState(() {});
+
+  @override
   void dispose() {
+    appAvatar.removeListener(_onAvatarChanged);
     _pages.dispose();
     super.dispose();
   }
@@ -57,12 +68,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final linked = widget.parentLinked;
+    final avatar = appAvatar.value;
+    final cards = _cards(avatar);
     return ColoredBox(
       color: kPageBackground,
       child: Column(
         children: [
           _Header(
             linked: linked,
+            avatar: avatar,
             onNotifications: () => _go(AppRoutes.notifications),
           ),
           Expanded(
@@ -75,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   120 + MediaQuery.paddingOf(context).bottom,
                 ),
                 children: EntranceItem.list([
-                  _PageDots(count: linked ? _cards.length : 4, index: _page),
+                  _PageDots(count: linked ? cards.length : 4, index: _page),
                   const SizedBox(height: 12),
                   if (!linked && _bannerVisible) ...[
                     _LinkParentBanner(
@@ -88,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 232,
                     child: PageView.builder(
                       controller: _pages,
-                      itemCount: linked ? _cards.length : 1,
+                      itemCount: linked ? cards.length : 1,
                       onPageChanged: (i) => setState(() => _page = i),
                       // Each card follows the swipe: the one leaving shrinks
                       // and dims while the next grows in, and the mascot
@@ -107,11 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   horizontal: 2,
                                 ),
                                 child: _BalanceCard(
-                                  account: linked
-                                      ? _cards[i].$1
-                                      : Accounts.main,
-                                  balance: linked ? _cards[i].$2 : 20000,
-                                  mascot: _cards[i].$3,
+                                  account: linked ? cards[i].$1 : Accounts.main,
+                                  balance: linked ? cards[i].$2 : 20000,
+                                  mascot: cards[i].$3,
+                                  mascotName: avatar.name,
                                   mascotShift: offset,
                                   hidden: _hideBalance,
                                   limited: !linked,
@@ -146,8 +159,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: switch (_tab) {
                       0 =>
                         linked
-                            ? _AccountsPane(onOpen: _go)
+                            ? _AccountsPane(avatar: avatar, onOpen: _go)
                             : _LockedAccountsPane(
+                                avatar: avatar,
                                 onLink: () => _go(AppRoutes.parentLink),
                               ),
                       1 => _InvoicesPane(
@@ -169,9 +183,14 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.linked, required this.onNotifications});
+  const _Header({
+    required this.linked,
+    required this.avatar,
+    required this.onNotifications,
+  });
 
   final bool linked;
+  final AppAvatar avatar;
   final VoidCallback onNotifications;
 
   @override
@@ -211,7 +230,7 @@ class _Header extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: Image.asset(
-                      Mascots.bearSitting,
+                      avatar.portrait,
                       fit: BoxFit.cover,
                       semanticLabel: 'Тэмүүлэн',
                     ),
@@ -233,7 +252,7 @@ class _Header extends StatelessWidget {
                           color: AppColors.slate500,
                         ),
                         const SizedBox(width: 4),
-                        const MascotIcon(Mascots.foxWave, size: 16),
+                        const MascotIcon(FoxStickers.avatar, size: 16),
                       ],
                     ),
                     AppText(
@@ -299,6 +318,7 @@ class _BalanceCard extends StatelessWidget {
     required this.account,
     required this.balance,
     required this.mascot,
+    required this.mascotName,
     this.mascotShift = 0,
     required this.hidden,
     required this.limited,
@@ -310,6 +330,7 @@ class _BalanceCard extends StatelessWidget {
   final String account;
   final int balance;
   final String mascot;
+  final String mascotName;
 
   /// The card's distance from the centre of the carousel, in pages; the
   /// mascot drifts by it so it moves slower than the card (parallax), and
@@ -348,7 +369,7 @@ class _BalanceCard extends StatelessWidget {
               asset: mascot,
               size: 130,
               background: Colors.white,
-              semanticLabel: 'Бамбарууш',
+              semanticLabel: mascotName,
             ),
           ),
           Column(
@@ -432,7 +453,7 @@ class _BalanceCard extends StatelessWidget {
                       delay: 0,
                       child: _CardAction(
                         label: 'Гүйлгээ',
-                        mascot: Mascots.foxPhone,
+                        mascot: FoxStickers.transfer,
                         primary: false,
                         onTap: onTransfer,
                       ),
@@ -445,7 +466,7 @@ class _BalanceCard extends StatelessWidget {
                       delay: 0.3,
                       child: _CardAction(
                         label: 'Цэнэглэх',
-                        mascot: Mascots.bunnyBattery,
+                        mascot: FoxStickers.receive,
                         primary: true,
                         onTap: onTopUp,
                       ),
@@ -683,8 +704,9 @@ class _AccountRow extends StatelessWidget {
 }
 
 class _AccountsPane extends StatelessWidget {
-  const _AccountsPane({required this.onOpen});
+  const _AccountsPane({required this.avatar, required this.onOpen});
 
+  final AppAvatar avatar;
   final ValueChanged<String> onOpen;
 
   @override
@@ -699,7 +721,7 @@ class _AccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Хадгаламж',
             subtitle: 'Хуримтлал үүсгээрэй',
-            mascot: Mascots.puppyPiggy,
+            mascot: avatar.savings,
             amount: 1280000,
             onTap: () => onOpen(AppRoutes.savingsAccount),
           ),
@@ -713,7 +735,7 @@ class _AccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Миний өв',
             subtitle: 'Хөрөнгө оруулалтаа хараарай',
-            mascot: Mascots.foxPhone,
+            mascot: avatar.stocks,
             amount: 142500,
             onTap: () => onOpen(AppRoutes.stocks),
           ),
@@ -727,7 +749,7 @@ class _AccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Урамшуулал',
             subtitle: 'Оноогоо хараарай',
-            mascot: Mascots.owlBook,
+            mascot: avatar.rewards,
             amount: 35000,
             onTap: () => onOpen(AppRoutes.rewardsAccount),
           ),
@@ -767,8 +789,9 @@ class _AccountsPane extends StatelessWidget {
 }
 
 class _LockedAccountsPane extends StatelessWidget {
-  const _LockedAccountsPane({required this.onLink});
+  const _LockedAccountsPane({required this.avatar, required this.onLink});
 
+  final AppAvatar avatar;
   final VoidCallback onLink;
 
   @override
@@ -811,7 +834,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Халаасны үндсэн данс',
             subtitle: formatIban(Accounts.main),
-            mascot: Mascots.bearCard,
+            mascot: avatar.pick,
             tileColor: AppColors.sky50,
             trailing: status(
               20000,
@@ -830,7 +853,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Хадгаламжийн данс',
             subtitle: 'Холболт шаардлагатай',
-            mascot: Mascots.bearStar,
+            mascot: avatar.savings,
             tileColor: AppColors.amber50,
             locked: true,
             trailing: linkButton(),
@@ -845,7 +868,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Хувьцаа данс',
             subtitle: formatIban(Accounts.stocks),
-            mascot: Mascots.foxPhone,
+            mascot: avatar.stocks,
             tileColor: AppColors.sky50,
             locked: true,
             trailing: linkButton(),
@@ -860,7 +883,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Урамшууллын данс',
             subtitle: 'Эхлэлийн урамшуулал',
-            mascot: Mascots.owlBook,
+            mascot: avatar.rewards,
             tileColor: AppColors.amber50,
             trailing: status(
               10000,
@@ -879,7 +902,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Койны данс',
             subtitle: formatIban(Accounts.coin),
-            mascot: Mascots.bunnyCoin,
+            mascot: FoxStickers.coins,
             tileColor: AppColors.amber50,
             locked: true,
             trailing: linkButton(),

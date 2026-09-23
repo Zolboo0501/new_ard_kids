@@ -106,10 +106,10 @@ class SavingsAccountScreen extends StatelessWidget {
                         ),
                       ),
                       const MascotImage(
-                        asset: Mascots.puppyPiggy,
+                        asset: FoxStickers.piggy,
                         size: 80,
                         background: Colors.white,
-                        semanticLabel: 'Cute mascot sticker',
+                        semanticLabel: 'Гахайн сантай үнэг',
                       ),
                     ],
                   ),
@@ -129,19 +129,19 @@ class SavingsAccountScreen extends StatelessWidget {
               children: [
                 _Shortcut(
                   label: 'Орлого хийх',
-                  asset: Mascots.puppyPiggy,
+                  asset: FoxStickers.jar,
                   onTap: () => go(AppRoutes.savingsDeposit),
                 ),
                 const SizedBox(width: 10),
                 _Shortcut(
                   label: 'Тооцоолуур',
-                  asset: Mascots.owlAbacus,
+                  asset: FoxStickers.calculator,
                   onTap: () => go(AppRoutes.savingsCalculator),
                 ),
                 const SizedBox(width: 10),
                 _Shortcut(
                   label: 'Дэлгэрэнгүй',
-                  asset: Mascots.penguinChecklist,
+                  asset: FoxStickers.report,
                   onTap: () => go(AppRoutes.savingsHistory),
                 ),
               ],

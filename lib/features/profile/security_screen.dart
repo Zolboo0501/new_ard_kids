@@ -33,7 +33,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
       showAppSnack(
         context,
         'ПИН код амжилттай шинэчлэгдлээ',
-        mascot: Mascots.bearShield,
+        mascot: FoxStickers.shield,
       );
     }
   }

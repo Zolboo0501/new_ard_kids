@@ -107,10 +107,10 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     ),
                   ),
                   const MascotImage(
-                    asset: Mascots.bearFamily,
+                    asset: FoxStickers.family,
                     size: 96,
                     background: Colors.white,
-                    semanticLabel: 'Аав ээж бамбарууш',
+                    semanticLabel: 'Аав ээжтэйгээ үнэг',
                   ),
                 ],
               ),
@@ -222,7 +222,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
             const InfoNote(
               tone: BadgeTone.amber,
               icon: Icons.mark_email_unread_outlined,
-              mascot: Mascots.redPandaLetter,
+              mascot: FoxStickers.notification,
               text:
                   'Таны хүсэлт аав ээжийн утсанд мэдэгдэл болон очно. Зөвшөөрснөөр таны дансанд шууд орно!',
             ),

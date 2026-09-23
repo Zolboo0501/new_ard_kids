@@ -60,7 +60,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
       subtitle: 'Найзын бэлэг',
       when: '09.05',
       amount: 10000,
-      asset: Mascots.foxWave,
+      asset: FoxStickers.gift,
       tint: AppColors.orange50,
       badge: 'Амжилттай',
     ),
@@ -151,10 +151,10 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                     ),
                   ),
                   const MascotImage(
-                    asset: Mascots.puppyPiggy,
+                    asset: FoxStickers.coin,
                     size: 104,
                     background: Colors.white,
-                    semanticLabel: 'Puppy Saving Coins',
+                    semanticLabel: 'Зоос барьсан үнэг',
                   ),
                 ],
               ),
@@ -163,7 +163,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                 children: [
                   Expanded(
                     child: _MiniStat(
-                      asset: Mascots.bearHugCoin,
+                      asset: FoxStickers.receive,
                       label: 'Нийт орлого',
                       value: income,
                       color: AppColors.emerald700,
@@ -172,7 +172,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: _MiniStat(
-                      asset: Mascots.puppyGamepad,
+                      asset: FoxStickers.transfer,
                       label: 'Нийт зарцуулалт',
                       value: -spent,
                       color: AppColors.rose600,
@@ -241,7 +241,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
         const SizedBox(height: 16),
         const SectionHeader(
           title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: Mascots.penguinList,
+          mascot: FoxStickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
         for (final (i, item) in visible.indexed) ...[

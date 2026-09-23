@@ -44,7 +44,7 @@ class _TransferScreenState extends State<TransferScreen> {
     (Mascots.bearBooks, 'Ном дэвтэр', 'Ном авсан'),
     (Mascots.pandaMilk, 'Амттан', 'Амттан'),
     (Mascots.puppyGamepad, 'Тоглоом', 'Тоглоом'),
-    (Mascots.bunnyCoin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
+    (FoxStickers.coin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
   ];
 
   late TransferMode _mode = widget.initialMode;

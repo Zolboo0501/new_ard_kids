@@ -46,7 +46,7 @@ class InviteFriendsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const MascotImage(
-                    asset: Mascots.foxWave,
+                    asset: FoxStickers.friends,
                     size: 128,
                     background: Colors.white,
                     semanticLabel: 'Найз урих урамшууллын зураг',

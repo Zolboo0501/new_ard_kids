@@ -44,7 +44,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
     showAppSnack(
       context,
       '${formatMnt(_amount)} хадгаламжид орлоо',
-      mascot: Mascots.bearConfetti,
+      mascot: FoxStickers.success,
     );
     context.pop();
   }
@@ -86,10 +86,10 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                   child: Column(
                     children: EntranceItem.list([
                       const MascotImage(
-                        asset: Mascots.puppyPiggy,
+                        asset: FoxStickers.jar,
                         size: 96,
                         background: bg,
-                        semanticLabel: 'Mascot',
+                        semanticLabel: 'Зоосны лонхтой үнэг',
                       ),
                       const SizedBox(height: 4),
                       const StatusBadge(

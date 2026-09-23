@@ -101,10 +101,10 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
               child: Row(
                 children: [
                   MascotTile(
-                    asset: Mascots.owlAbacus,
+                    asset: FoxStickers.calculator,
                     size: 64,
                     background: AppColors.sky50,
-                    label: 'Ухаалаг шар шувуу',
+                    label: 'Тооцоолуур барьсан үнэг',
                   ),
                   const SizedBox(width: 12),
                   Expanded(
