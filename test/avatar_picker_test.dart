@@ -149,28 +149,32 @@ void main() {
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });
 
-  testWidgets(
-    'Avatar: picking the bear swaps screen stickers to the bear set',
-    (tester) async {
-      _usePhoneViewport(tester);
-      await tester.pumpWidget(const ArdKidsApp());
-      await tester.pumpAndSettle();
-      GoRouter.of(
-        tester.element(find.byType(Scaffold).first),
-      ).go(AppRoutes.savingsAccount);
-      await tester.pumpAndSettle();
-      expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+  testWidgets('Avatar: screen stickers follow the chosen companion', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    await tester.pumpWidget(const ArdKidsApp());
+    await tester.pumpAndSettle();
+    GoRouter.of(
+      tester.element(find.byType(Scaffold).first),
+    ).go(AppRoutes.savingsAccount);
+    await tester.pumpAndSettle();
+    expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
 
-      // Already-open screens follow the change, not only newly opened ones.
-      appAvatar.value = AppAvatar.bear;
-      await tester.pumpAndSettle();
-      expect(_showsAsset(tester, BearStickers.piggy), isTrue);
-      expect(_showsAsset(tester, FoxStickers.piggy), isFalse);
+    // Already-open screens follow the change, not only newly opened ones.
+    appAvatar.value = AppAvatar.bear;
+    await tester.pumpAndSettle();
+    expect(_showsAsset(tester, BearStickers.piggy), isTrue);
+    expect(_showsAsset(tester, FoxStickers.piggy), isFalse);
 
-      // Companions without their own sheet fall back to the fox's.
-      appAvatar.value = AppAvatar.bunny;
-      await tester.pumpAndSettle();
-      expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
-    },
-  );
+    appAvatar.value = AppAvatar.bunny;
+    await tester.pumpAndSettle();
+    expect(_showsAsset(tester, RabbitStickers.piggy), isTrue);
+    expect(_showsAsset(tester, BearStickers.piggy), isFalse);
+
+    // Companions without their own sheet fall back to the fox's.
+    appAvatar.value = AppAvatar.penguin;
+    await tester.pumpAndSettle();
+    expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+  });
 }

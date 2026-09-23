@@ -252,7 +252,7 @@ class _Header extends StatelessWidget {
                           color: AppColors.slate500,
                         ),
                         const SizedBox(width: 4),
-                        const MascotIcon(Mascots.foxWave, size: 16),
+                        MascotIcon(Stickers.success, size: 16),
                       ],
                     ),
                     AppText(

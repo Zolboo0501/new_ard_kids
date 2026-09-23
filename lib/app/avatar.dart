@@ -34,16 +34,16 @@ enum AppAvatar {
   ),
   bunny(
     id: 'bunny',
-    stickerSet: 'fox',
+    stickerSet: 'rabbit',
     name: 'Бүжинхэн',
     role: 'Данс цэнэглэгч',
     description: 'Эрч хүчтэйгээр өдөр бүр даалгавар биелүүлнэ!',
     tone: BadgeTone.amber,
-    pick: Mascots.bunnyBattery,
-    portrait: Mascots.bunnyPortrait,
-    savings: Mascots.bunnyPiggy,
-    stocks: Mascots.bunnyGrow,
-    rewards: Mascots.bunnyTrophy,
+    pick: RabbitStickers.receive,
+    portrait: RabbitStickers.avatar,
+    savings: RabbitStickers.piggy,
+    stocks: RabbitStickers.growth,
+    rewards: RabbitStickers.gift,
   ),
   penguin(
     id: 'penguin',
@@ -99,8 +99,8 @@ enum AppAvatar {
   final String rewards;
 }
 
-/// Screen illustrations in the chosen companion's sticker set: the bear's
-/// when the bear is picked, the fox's otherwise. Getters, like the
+/// Screen illustrations in the chosen companion's sticker set (fox, bear or
+/// rabbit; the penguin borrows the fox's). Getters, like the
 /// `AppColors` accent, so they can't appear in `const` expressions;
 /// `ArdKidsApp` rebuilds the tree when [appAvatar] changes.
 abstract final class Stickers {

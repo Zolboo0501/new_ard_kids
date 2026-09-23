@@ -1800,10 +1800,6 @@ abstract final class Mascots {
   static const pandaKey = '$_d/mascot_panda_key.png';
 
   // Each picker companion's set for Home and Profile (see `AppAvatar`).
-  static const bunnyPortrait = '$_d/mascot_bunny_portrait.jpg';
-  static const bunnyPiggy = '$_d/mascot_bunny_piggy.jpg';
-  static const bunnyGrow = '$_d/mascot_bunny_grow.jpg';
-  static const bunnyTrophy = '$_d/mascot_bunny_trophy.jpg';
   static const penguinPortrait = '$_d/mascot_penguin_portrait.jpg';
   static const penguinPiggy = '$_d/mascot_penguin_piggy.jpg';
   static const penguinGrow = '$_d/mascot_penguin_grow.jpg';
@@ -1867,4 +1863,33 @@ abstract final class BearStickers {
   static const shield = '$_d/bear/bear_shield.png';
   static const success = '$_d/bear/bear_success.png';
   static const transfer = '$_d/bear/bear_transfer.png';
+}
+
+/// The rabbit (bunny) companion's sticker set, drawn to match
+/// [FoxStickers] (same names, same poses).
+abstract final class RabbitStickers {
+  static const _d = 'assets/images';
+  static const addFriend = '$_d/rabbit/rabbit_add_friend.png';
+  static const avatar = '$_d/rabbit/rabbit_avatar.png';
+  static const calculator = '$_d/rabbit/rabbit_calculator.png';
+  static const card = '$_d/rabbit/rabbit_card.png';
+  static const coin = '$_d/rabbit/rabbit_coin.png';
+  static const coins = '$_d/rabbit/rabbit_coins.png';
+  static const contacts = '$_d/rabbit/rabbit_contacts.png';
+  static const edit = '$_d/rabbit/rabbit_edit.png';
+  static const family = '$_d/rabbit/rabbit_family.png';
+  static const friends = '$_d/rabbit/rabbit_friends.png';
+  static const gift = '$_d/rabbit/rabbit_gift.png';
+  static const goal = '$_d/rabbit/rabbit_goal.png';
+  static const growth = '$_d/rabbit/rabbit_growth.png';
+  static const home = '$_d/rabbit/rabbit_home.png';
+  static const jar = '$_d/rabbit/rabbit_jar.png';
+  static const notification = '$_d/rabbit/rabbit_notification.png';
+  static const piggy = '$_d/rabbit/rabbit_piggy.png';
+  static const profile = '$_d/rabbit/rabbit_profile.png';
+  static const receive = '$_d/rabbit/rabbit_receive.png';
+  static const report = '$_d/rabbit/rabbit_report.png';
+  static const shield = '$_d/rabbit/rabbit_shield.png';
+  static const success = '$_d/rabbit/rabbit_success.png';
+  static const transfer = '$_d/rabbit/rabbit_transfer.png';
 }

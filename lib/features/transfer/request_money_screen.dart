@@ -23,12 +23,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
     ('Ээж', 'Голомт • 1605******', Mascots.catHeart, AppColors.pink50),
     ('Аав', 'Хаан • 5042******', Mascots.owlBook, Color(0xFFEFF6FF)),
   ];
-  static const _types = [
+  static List<(String, String)> get _types => [
     (Mascots.bearBooks, 'Ном дэвтэр'),
     (Mascots.puppyGamepad, 'Тоглоом'),
     (Mascots.pandaMilk, 'Өдрийн хоол'),
     (Mascots.catNotes, 'Дугуйлан'),
-    (Mascots.fox, 'Бусад'),
+    (Stickers.avatar, 'Бусад'),
   ];
 
   final _amount = TextEditingController(text: '20,000');
