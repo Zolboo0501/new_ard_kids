@@ -30,12 +30,13 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hideBalance = false;
   bool _bannerVisible = true;
 
-  /// The balance cards, each shown with the chosen companion's image for it.
-  static List<(String, int, String)> _cards(AppAvatar a) => [
-    (Accounts.main, 567930, a.pick),
-    (Accounts.savings, 1280000, a.savings),
-    (Accounts.stocks, 142500, a.stocks),
-    (Accounts.rewards, 35000, a.rewards),
+  /// The balance cards, each shown with its label and the chosen
+  /// companion's image for it.
+  static List<(String, String, int, String)> _cards(AppAvatar a) => [
+    ('Харилцах данс', Accounts.main, 567930, a.pick),
+    ('Хадгаламж данс', Accounts.savings, 1280000, a.savings),
+    ('Урамшууллын данс', Accounts.rewards, 35000, a.rewards),
+    ('Ард койн данс', Accounts.coin, 50000, Stickers.coins),
   ];
 
   @override
@@ -54,6 +55,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _go(String route) => context.push(route);
+
+  /// The buttons along the bottom of [account]'s balance card; the last is
+  /// the primary one.
+  List<(String, String, VoidCallback)> _actions(String account) =>
+      switch (account) {
+        Accounts.savings => [
+          ('Орлого', Stickers.receive, () => _go(AppRoutes.savingsDeposit)),
+          ('Дэлгэрэнгүй', Stickers.piggy, () => _go(AppRoutes.savingsAccount)),
+        ],
+        Accounts.rewards => [
+          ('Найз урих', Stickers.addFriend, () => _go(AppRoutes.inviteFriends)),
+          ('Дэлгэрэнгүй', Stickers.gift, () => _go(AppRoutes.rewardsAccount)),
+        ],
+        Accounts.coin => [
+          ('Дэлгэрэнгүй', Stickers.coin, () => _go(AppRoutes.coinAccount)),
+        ],
+        _ => [
+          ('Гүйлгээ', Stickers.transfer, () => _go(AppRoutes.transfer)),
+          ('Цэнэглэх', Stickers.receive, () => _go(AppRoutes.requestMoney)),
+        ],
+      };
 
   /// How far card [i] sits from the centre of the carousel, in pages:
   /// 0 when it's showing, ±1 one swipe away. Before the PageView has a size
@@ -122,9 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   horizontal: 2,
                                 ),
                                 child: _BalanceCard(
-                                  account: linked ? cards[i].$1 : Accounts.main,
-                                  balance: linked ? cards[i].$2 : 20000,
-                                  mascot: cards[i].$3,
+                                  label: cards[i].$1,
+                                  account: linked ? cards[i].$2 : Accounts.main,
+                                  balance: linked ? cards[i].$3 : 20000,
+                                  mascot: cards[i].$4,
                                   mascotName: avatar.name,
                                   mascotShift: offset,
                                   hidden: _hideBalance,
@@ -132,8 +155,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onToggleHidden: () => setState(
                                     () => _hideBalance = !_hideBalance,
                                   ),
-                                  onTransfer: () => _go(AppRoutes.transfer),
-                                  onTopUp: () => _go(AppRoutes.requestMoney),
+                                  actions: _actions(
+                                    linked ? cards[i].$2 : Accounts.main,
+                                  ),
                                 ),
                               ),
                             ),
@@ -316,6 +340,7 @@ class _PageDots extends StatelessWidget {
 
 class _BalanceCard extends StatelessWidget {
   const _BalanceCard({
+    required this.label,
     required this.account,
     required this.balance,
     required this.mascot,
@@ -324,10 +349,10 @@ class _BalanceCard extends StatelessWidget {
     required this.hidden,
     required this.limited,
     required this.onToggleHidden,
-    required this.onTransfer,
-    required this.onTopUp,
+    required this.actions,
   });
 
+  final String label;
   final String account;
   final int balance;
   final String mascot;
@@ -340,8 +365,10 @@ class _BalanceCard extends StatelessWidget {
   final bool hidden;
   final bool limited;
   final VoidCallback onToggleHidden;
-  final VoidCallback onTransfer;
-  final VoidCallback onTopUp;
+
+  /// The buttons along the bottom as (label, sticker, onTap), sharing the
+  /// width; the last is the primary one.
+  final List<(String, String, VoidCallback)> actions;
 
   static TextStyle get _ibanStyle =>
       moneyStyle(size: 12, weight: FontWeight.w600, color: AppColors.slate400);
@@ -385,6 +412,29 @@ class _BalanceCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: AppText(
+                      label.toUpperCase(),
+                      size: 13,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate400,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                  // Hides the account number and the balance together. Sits
+                  // in the card's right corner so it doesn't move with the
+                  // number's width.
+                  EyeToggle(
+                    hidden: hidden,
+                    onTap: onToggleHidden,
+                    size: 18,
+                    highlighted: true,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
               Row(
                 children: [
                   Container(
@@ -439,16 +489,6 @@ class _BalanceCard extends StatelessWidget {
                       showAppSnack(context, 'Дансны дугаар хуулагдлаа');
                     },
                   ),
-                  const Spacer(),
-                  // Hides the account number and the balance together. Sits
-                  // in the card's right corner so it doesn't move with the
-                  // number's width.
-                  EyeToggle(
-                    hidden: hidden,
-                    onTap: onToggleHidden,
-                    size: 18,
-                    highlighted: true,
-                  ),
                 ],
               ),
               const SizedBox(height: 10),
@@ -479,31 +519,22 @@ class _BalanceCard extends StatelessWidget {
               const Spacer(),
               Row(
                 children: [
-                  Expanded(
-                    child: _SwipeIn(
-                      shift: mascotShift,
-                      delay: 0,
-                      child: _CardAction(
-                        label: 'Гүйлгээ',
-                        mascot: Stickers.transfer,
-                        primary: false,
-                        onTap: onTransfer,
+                  for (final (i, (label, sticker, onTap))
+                      in actions.indexed) ...[
+                    if (i > 0) const SizedBox(width: 10),
+                    Expanded(
+                      child: _SwipeIn(
+                        shift: mascotShift,
+                        delay: 0.3 * i,
+                        child: _CardAction(
+                          label: label,
+                          mascot: sticker,
+                          primary: i == actions.length - 1,
+                          onTap: onTap,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _SwipeIn(
-                      shift: mascotShift,
-                      delay: 0.3,
-                      child: _CardAction(
-                        label: 'Цэнэглэх',
-                        mascot: Stickers.receive,
-                        primary: true,
-                        onTap: onTopUp,
-                      ),
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ],
@@ -1148,6 +1179,7 @@ class _CardsPane extends StatelessWidget {
           child: AppCard(
             radius: 18,
             padding: const EdgeInsets.all(16),
+            onTap: () => onOpen(AppRoutes.card),
             child: Row(
               children: [
                 _IconTile(
@@ -1160,6 +1192,12 @@ class _CardsPane extends StatelessWidget {
                   child: _TwoLine(title: 'Junior Card', subtitle: '•••• 5521'),
                 ),
                 const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
+                const SizedBox(width: 4),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: AppColors.slate400,
+                ),
               ],
             ),
           ),

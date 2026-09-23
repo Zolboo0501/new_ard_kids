@@ -270,9 +270,13 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
 /// The kids' card, drawn from [asset] (a white card with a chip and
 /// emblem), with the holder's name printed on it.
 class KidsCardPreview extends StatelessWidget {
-  const KidsCardPreview({super.key, required this.holder});
+  const KidsCardPreview({super.key, required this.holder, this.number});
 
   final String holder;
+
+  /// The card number printed above the holder, e.g. `•••• •••• •••• 5521`;
+  /// a card still being ordered has none.
+  final String? number;
 
   static const asset = 'assets/svg/card-white.svg';
 
@@ -319,6 +323,18 @@ class KidsCardPreview extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (number != null) ...[
+                          Text(
+                            number!,
+                            style: moneyStyle(
+                              size: 11 * scale,
+                              weight: FontWeight.w700,
+                              color: AppColors.slate700,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                          SizedBox(height: 8 * scale),
+                        ],
                         AppText(
                           'ЭЗЭМШИГЧ',
                           size: 9,

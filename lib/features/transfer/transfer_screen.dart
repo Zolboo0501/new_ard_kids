@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -57,21 +59,27 @@ class _TransferScreenState extends State<TransferScreen> {
   int _purpose = 0;
 
   final _recipient = TextEditingController(text: '5049 8219 02');
+
+  /// The Дансаар tab's account number, as an IBAN; the search sheet fills it.
+  final _iban = TextEditingController();
   final _phone = TextEditingController(text: '9911 2345');
   final _amount = TextEditingController(text: '15,000');
   final _note = TextEditingController(text: 'Ном авсан');
 
+  /// Who holds the account the kid picked in the search sheet.
+  String? _accountHolder;
+
   @override
   void initState() {
     super.initState();
-    for (final c in [_recipient, _phone, _amount]) {
+    for (final c in [_recipient, _phone, _amount, _iban]) {
       c.addListener(() => setState(() {}));
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_recipient, _phone, _amount, _note]) {
+    for (final c in [_recipient, _phone, _amount, _note, _iban]) {
       c.dispose();
     }
     super.dispose();
@@ -88,9 +96,34 @@ class _TransferScreenState extends State<TransferScreen> {
     );
   }
 
+  /// Opens the sheet that finds an account by its plain number; the one the
+  /// kid picks there fills the IBAN field and becomes the recipient.
+  Future<void> _searchAccount() async {
+    FocusScope.of(context).unfocus();
+    final account = await showModalBottomSheet<_KnownAccount>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => const _AccountSearchSheet(),
+    );
+    if (account == null || !mounted) return;
+    _iban.text = account.iban;
+    setState(() {
+      _accountHolder = account.holder;
+      final bank = _banks.indexOf(account.bank);
+      if (bank >= 0) _bank = bank;
+    });
+  }
+
+  /// A new number or bank needs a new search.
+  void _clearAccount() => setState(() => _accountHolder = null);
+
   String get _recipientName => switch (_mode) {
     TransferMode.friends => _friends[_friend].$1,
-    TransferMode.account => 'Б. Сүхбат',
+    TransferMode.account => _accountHolder ?? '',
     TransferMode.phone => _phones[_phonePick].$4,
   };
 
@@ -100,7 +133,9 @@ class _TransferScreenState extends State<TransferScreen> {
     return switch (_mode) {
       TransferMode.phone =>
         _phone.text.replaceAll(RegExp(r'\D'), '').length == 8,
-      _ => _recipient.text.replaceAll(RegExp(r'\D'), '').length == 10,
+      TransferMode.account => _accountHolder != null,
+      TransferMode.friends =>
+        _recipient.text.replaceAll(RegExp(r'\D'), '').length == 10,
     };
   }
 
@@ -128,9 +163,11 @@ class _TransferScreenState extends State<TransferScreen> {
       amount: _amountValue,
       recipient: _recipientName,
       bank: _mode == TransferMode.account ? _banks[_bank] : 'Хаан банк',
-      destination: _mode == TransferMode.phone
-          ? '${_phone.text} / 5049 8219 02'
-          : _recipient.text,
+      destination: switch (_mode) {
+        TransferMode.friends => _recipient.text,
+        TransferMode.account => _iban.text,
+        TransferMode.phone => '${_phone.text} / 5049 8219 02',
+      },
       note: _note.text.trim().isEmpty ? '—' : _note.text.trim(),
       balanceAfter: _balance - _amountValue,
       time: DateTime.now(),
@@ -330,25 +367,45 @@ class _TransferScreenState extends State<TransferScreen> {
     return [
       _Label(label),
       AppTextField(
-        controller: _recipient,
-        hint: '10 оронтой дансны дугаар оруулна уу',
+        controller: showBanksBelow ? _recipient : _iban,
+        hint: showBanksBelow
+            ? '10 оронтой дансны дугаар оруулна уу'
+            : 'MN00 0000 0000 0000 0000',
         keyboardType: TextInputType.number,
         inputFormatters: [
-          _GroupFormatter(const [4, 4, 2]),
+          showBanksBelow ? _GroupFormatter(const [4, 4, 2]) : _IbanFormatter(),
         ],
-        suffix: Icon(
-          Icons.contacts_outlined,
-          size: 20,
-          color: AppColors.sky600,
-        ),
+        // The IBAN is 24 characters, so it drops a size to fit next to Хайх.
+        textStyle: showBanksBelow
+            ? null
+            : moneyStyle(
+                size: 13,
+                weight: FontWeight.w600,
+                color: AppColors.slate900,
+              ),
+        onChanged: showBanksBelow ? null : (_) => _clearAccount(),
+        // The Дансаар tab looks the number up; the friends tab keeps the
+        // contacts icon.
+        suffix: showBanksBelow
+            ? Icon(Icons.contacts_outlined, size: 20, color: AppColors.sky600)
+            : _SearchButton(onTap: _searchAccount),
       ),
       if (showBanksBelow) ...[
         const SizedBox(height: 10),
         _buildBankChips(),
-      ] else
+      ] else if (_accountHolder != null)
         _VerifiedName(
-          name: 'Б. Сүхбат',
-          detail: '(Хүлээн авагч баталгаажсан ✔)',
+          name: _accountHolder!,
+          detail: '(Хүлээн авагч баталгаажсан)',
+        )
+      else
+        Padding(
+          padding: const EdgeInsets.only(top: 6, left: 4),
+          child: AppText(
+            'Хайх дарж дансны дугаараар хүлээн авагчаа олно уу',
+            size: 11,
+            color: AppColors.slate400,
+          ),
         ),
     ];
   }
@@ -407,7 +464,10 @@ class _TransferScreenState extends State<TransferScreen> {
           label: _banks[i],
           selected: _bank == i,
           dot: _bank == i,
-          onTap: () => setState(() => _bank = i),
+          onTap: () {
+            setState(() => _bank = i);
+            if (_mode == TransferMode.account) _clearAccount();
+          },
         ),
       ),
     );
@@ -845,6 +905,304 @@ class _VerifiedName extends StatelessWidget {
   }
 }
 
+/// The Хайх pill at the end of the account number field.
+class _SearchButton extends StatelessWidget {
+  const _SearchButton({required this.onTap, this.loading = false});
+
+  final bool loading;
+
+  /// Null while the search can't run yet (too few digits).
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Данс хайх',
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: loading || onTap == null ? null : withHaptic(onTap!),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          height: 34,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: onTap == null ? AppColors.slate300 : AppColors.sky500,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (loading)
+                const SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              else
+                const Icon(Icons.search_rounded, size: 16, color: Colors.white),
+              const SizedBox(width: 4),
+              AppText(
+                'Хайх',
+                size: 12,
+                weight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// An account the search sheet can find.
+class _KnownAccount {
+  const _KnownAccount({
+    required this.holder,
+    required this.bank,
+    required this.iban,
+  });
+
+  final String holder;
+  final String bank;
+
+  /// Grouped for display: `MN24 0005 0050 4982 1902`.
+  final String iban;
+}
+
+/// The bottom sheet Хайх opens: the kid types a plain account number (no
+/// IBAN), searches, and sees whose account it is. Pops the account on Сонгох.
+class _AccountSearchSheet extends StatefulWidget {
+  const _AccountSearchSheet();
+
+  /// Accounts by their 10-digit number, standing in for the lookup API.
+  static const accounts = {
+    '5049821902': _KnownAccount(
+      holder: 'Б. Сүхбат',
+      bank: 'Хаан банк',
+      iban: 'MN24 0005 0050 4982 1902',
+    ),
+    '5049771245': _KnownAccount(
+      holder: 'Г. Энхжин',
+      bank: 'Хаан банк',
+      iban: 'MN63 0005 0050 4977 1245',
+    ),
+    '5049110233': _KnownAccount(
+      holder: 'Д. Мөнхбат',
+      bank: 'Хаан банк',
+      iban: 'MN66 0005 0050 4911 0233',
+    ),
+    '5752028915': _KnownAccount(
+      holder: 'Н. Отгонбаяр',
+      bank: 'Хаан банк',
+      iban: 'MN21 0005 0057 5202 8915',
+    ),
+  };
+
+  @override
+  State<_AccountSearchSheet> createState() => _AccountSearchSheetState();
+}
+
+class _AccountSearchSheetState extends State<_AccountSearchSheet> {
+  final _number = TextEditingController();
+  Timer? _timer;
+  bool _searching = false;
+  _KnownAccount? _found;
+  bool _notFound = false;
+
+  String get _digits => _number.text.replaceAll(RegExp(r'\D'), '');
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _number.dispose();
+    super.dispose();
+  }
+
+  void _search() {
+    FocusScope.of(context).unfocus();
+    final number = _digits;
+    setState(() {
+      _searching = true;
+      _found = null;
+      _notFound = false;
+    });
+    // TODO: look the account up with the backend.
+    _timer = Timer(const Duration(milliseconds: 500), () {
+      final account = _AccountSearchSheet.accounts[number];
+      setState(() {
+        _searching = false;
+        _found = account;
+        _notFound = account == null;
+      });
+    });
+  }
+
+  /// Editing the number drops the last result.
+  void _reset() {
+    _timer?.cancel();
+    setState(() {
+      _searching = false;
+      _found = null;
+      _notFound = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final found = _found;
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.slate200,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+              Center(
+                child: AppText('Данс хайх', size: 16, weight: FontWeight.w700),
+              ),
+              const SizedBox(height: 4),
+              Center(
+                child: AppText(
+                  'IBAN-гүй дансны дугаараа оруулна уу',
+                  size: 12,
+                  color: AppColors.slate400,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const _Label('Дансны дугаар'),
+              AppTextField(
+                controller: _number,
+                hint: '10 оронтой дансны дугаар',
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  _GroupFormatter(const [4, 4, 2]),
+                ],
+                onChanged: (_) => _reset(),
+                suffix: _SearchButton(
+                  loading: _searching,
+                  onTap: _digits.length == 10 ? _search : null,
+                ),
+              ),
+              if (_notFound)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 4),
+                  child: AppText(
+                    'Данс олдсонгүй. Дугаараа шалгана уу.',
+                    size: 11,
+                    weight: FontWeight.w600,
+                    color: AppColors.rose500,
+                  ),
+                ),
+              if (found != null) ...[
+                const SizedBox(height: 14),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.emerald50,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.emerald200),
+                  ),
+                  child: Column(
+                    children: [
+                      _SheetRow(label: 'Хүлээн авагч', value: found.holder),
+                      const Divider(height: 1, color: AppColors.emerald100),
+                      _SheetRow(label: 'Банк', value: found.bank),
+                      const Divider(height: 1, color: AppColors.emerald100),
+                      _SheetRow(label: 'IBAN', value: found.iban, money: true),
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: SoftButton(
+                      label: 'Буцах',
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: PrimaryButton(
+                      label: 'Сонгох',
+                      height: 48,
+                      onPressed: found == null
+                          ? null
+                          : () => Navigator.of(context).pop(found),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetRow extends StatelessWidget {
+  const _SheetRow({
+    required this.label,
+    required this.value,
+    this.money = false,
+  });
+
+  final String label;
+  final String value;
+  final bool money;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      child: Row(
+        children: [
+          AppText(label, size: 12, color: AppColors.slate500),
+          const SizedBox(width: 12),
+          Expanded(
+            child: money
+                ? Text(
+                    value,
+                    textAlign: TextAlign.end,
+                    style: moneyStyle(size: 13, color: AppColors.slate900),
+                  )
+                : AppText(
+                    value,
+                    size: 13,
+                    weight: FontWeight.w700,
+                    color: AppColors.slate900,
+                    textAlign: TextAlign.end,
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ClearButton extends StatelessWidget {
   const _ClearButton({required this.onTap});
 
@@ -980,6 +1338,39 @@ class _ThousandsFormatter extends TextInputFormatter {
     final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
     if (digits.isEmpty) return const TextEditingValue();
     final text = formatMnt(int.parse(digits)).substring(1);
+    return TextEditingValue(
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
+    );
+  }
+}
+
+/// Keeps an IBAN as `MN` plus up to 18 digits in blocks of four
+/// (`MN24 0005 0050 4982 1902`). Typing a digit first adds the `MN`, and a
+/// pasted IBAN with or without spaces lands the same way.
+class _IbanFormatter extends TextInputFormatter {
+  static String _digits(String text) {
+    final compact = text.toUpperCase().replaceAll(RegExp(r'[^0-9A-Z]'), '');
+    final body = compact.startsWith('MN') ? compact.substring(2) : compact;
+    return body.replaceAll(RegExp(r'\D'), '');
+  }
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final oldDigits = _digits(oldValue.text);
+    var digits = _digits(newValue.text);
+    // Deleting a separator space removes the digit before it.
+    if (newValue.text.length < oldValue.text.length &&
+        digits == oldDigits &&
+        digits.isNotEmpty) {
+      digits = digits.substring(0, digits.length - 1);
+    }
+    if (digits.isEmpty) return const TextEditingValue();
+    if (digits.length > 18) digits = digits.substring(0, 18);
+    final text = formatIban('MN$digits');
     return TextEditingValue(
       text: text,
       selection: TextSelection.collapsed(offset: text.length),

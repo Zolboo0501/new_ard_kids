@@ -3,8 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../app/avatar.dart';
 import '../theme/app_theme.dart';
 import 'app_text.dart';
+import 'common.dart';
 import 'numeric_keypad.dart';
 import 'ui.dart';
 
@@ -129,20 +131,13 @@ class _PinCodeSheetState extends State<PinCodeSheet>
               ),
             ),
             const SizedBox(height: 18),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.sky50,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(
-                Icons.lock_outline_rounded,
-                size: 24,
-                color: AppColors.sky600,
-              ),
+            MascotImage(
+              asset: Stickers.lock,
+              size: 80,
+              background: Colors.white,
+              semanticLabel: 'ПИН кодын маскот',
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             AppText(widget.title, size: 16, weight: FontWeight.w700),
             const SizedBox(height: 6),
             AppText(

@@ -136,6 +136,7 @@ abstract final class Stickers {
   static String get books => _path('books');
   static String get dad => _path('dad');
   static String get lesson => _path('lesson');
+  static String get lock => _path('lock');
   static String get love => _path('love');
   static String get mom => _path('mom');
   static String get payment => _path('payment');

@@ -3,6 +3,7 @@ import 'package:new_ard_kids/features/auth/presentation/screens/auth_screen.dart
 import 'package:new_ard_kids/features/auth/presentation/screens/friend_code_screen.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
 
+import '../features/accounts/card_screen.dart';
 import '../features/accounts/card_order_screen.dart';
 
 import '../features/accounts/reward_opportunities_screen.dart';
@@ -75,6 +76,7 @@ abstract final class AppRoutes {
   static const rewardsAccount = '/accounts/rewards';
   static const rewardOpportunities = '/accounts/rewards/opportunities';
   static const stocks = '/accounts/stocks';
+  static const card = '/card';
   static const cardOrder = '/card/order';
   // static const cart = '/cart';
 
@@ -112,6 +114,7 @@ abstract final class AppRoutes {
     rewardsAccount: (_, _) => const RewardsAccountScreen(),
     rewardOpportunities: (_, _) => const RewardOpportunitiesScreen(),
     stocks: (_, _) => const StocksScreen(),
+    card: (_, _) => const CardScreen(),
     cardOrder: (_, _) => const CardOrderScreen(),
     // cart: (_, _) => const CartScreen(),
     addFriend: (_, _) => const AddFriendScreen(),
