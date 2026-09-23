@@ -375,7 +375,7 @@ class _BalanceCard extends StatelessWidget {
               widthFactor: 1,
               child: MascotImage(
                 asset: mascot,
-                size: 100,
+                size: 90,
                 background: Colors.white,
                 semanticLabel: mascotName,
               ),

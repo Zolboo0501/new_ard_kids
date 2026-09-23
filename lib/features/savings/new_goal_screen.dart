@@ -18,16 +18,16 @@ class NewGoalScreen extends StatefulWidget {
 
 class _NewGoalScreenState extends State<NewGoalScreen> {
   static const _topics = [
-    (Mascots.puppyGamepad, 'Тоглоом & Зугаа'),
-    (Mascots.foxJump, 'Спорт & Хөдөлгөөн'),
-    (Mascots.bearBooks, 'Хичээл & Ном'),
-    (Mascots.catNotes, 'Урлаг & Хобби'),
-    (Mascots.foxWave, 'Аялал & Зуслан'),
+    (Mascots.puppyGamepad, 'Тоглоом'),
+    (Mascots.foxJump, 'Спорт'),
+    (Mascots.bearBooks, 'Хичээл'),
+    (Mascots.catNotes, 'Урлаг'),
+    (Mascots.foxWave, 'Аялал'),
   ];
   static List<(String, String)> get _icons => [
     ('Тоглоом', Mascots.puppyGamepad),
-    ('Мөнгө', Stickers.piggy),
-    ('Ухаалаг', Mascots.owlBook),
+    ('Хуритмлал', Stickers.piggy),
+    ('Аялал', Mascots.owlBook),
     ('Мөрөөдөл', Stickers.goal),
   ];
 
