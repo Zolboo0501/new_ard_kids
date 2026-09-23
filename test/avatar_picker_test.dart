@@ -172,9 +172,9 @@ void main() {
     expect(_showsAsset(tester, RabbitStickers.piggy), isTrue);
     expect(_showsAsset(tester, BearStickers.piggy), isFalse);
 
-    // Companions without their own sheet fall back to the fox's.
     appAvatar.value = AppAvatar.penguin;
     await tester.pumpAndSettle();
-    expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+    expect(_showsAsset(tester, PenguinStickers.piggy), isTrue);
+    expect(_showsAsset(tester, RabbitStickers.piggy), isFalse);
   });
 }

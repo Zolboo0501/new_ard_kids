@@ -47,16 +47,16 @@ enum AppAvatar {
   ),
   penguin(
     id: 'penguin',
-    stickerSet: 'fox',
+    stickerSet: 'penguin',
     name: 'Шувуухай',
     role: 'Хяналтын нярав',
     description: 'Зарцуулалт ба тайлангаа нямбай тэмдэглэнэ!',
     tone: BadgeTone.slate,
-    pick: Mascots.penguinChecklist,
-    portrait: Mascots.penguinPortrait,
-    savings: Mascots.penguinPiggy,
-    stocks: Mascots.penguinGrow,
-    rewards: Mascots.penguinTrophy,
+    pick: PenguinStickers.report,
+    portrait: PenguinStickers.avatar,
+    savings: PenguinStickers.piggy,
+    stocks: PenguinStickers.growth,
+    rewards: PenguinStickers.gift,
   );
 
   const AppAvatar({
@@ -78,7 +78,6 @@ enum AppAvatar {
   final String id;
 
   /// Folder of the sticker sheet the screens draw from (see [Stickers]).
-  /// Companions without their own sheet yet borrow the fox's.
   final String stickerSet;
 
   final String name;
@@ -99,8 +98,7 @@ enum AppAvatar {
   final String rewards;
 }
 
-/// Screen illustrations in the chosen companion's sticker set (fox, bear or
-/// rabbit; the penguin borrows the fox's). Getters, like the
+/// Screen illustrations in the chosen companion's sticker set. Getters, like the
 /// `AppColors` accent, so they can't appear in `const` expressions;
 /// `ArdKidsApp` rebuilds the tree when [appAvatar] changes.
 abstract final class Stickers {

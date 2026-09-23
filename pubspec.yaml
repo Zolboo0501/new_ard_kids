@@ -65,6 +65,7 @@ flutter:
     - assets/images/fox/
     - assets/images/bear/
     - assets/images/rabbit/
+    - assets/images/penguin/
     - assets/svg/
     - shorebird.yaml
 

@@ -1798,12 +1798,6 @@ abstract final class Mascots {
   /// [redPanda] cut out onto a transparent background.
   static const redPandaCutout = '$_d/mascot_red_panda_cutout.png';
   static const pandaKey = '$_d/mascot_panda_key.png';
-
-  // Each picker companion's set for Home and Profile (see `AppAvatar`).
-  static const penguinPortrait = '$_d/mascot_penguin_portrait.jpg';
-  static const penguinPiggy = '$_d/mascot_penguin_piggy.jpg';
-  static const penguinGrow = '$_d/mascot_penguin_grow.jpg';
-  static const penguinTrophy = '$_d/mascot_penguin_trophy.jpg';
 }
 
 /// The fox companion's sticker set, cut from one sheet onto a transparent
@@ -1892,4 +1886,33 @@ abstract final class RabbitStickers {
   static const shield = '$_d/rabbit/rabbit_shield.png';
   static const success = '$_d/rabbit/rabbit_success.png';
   static const transfer = '$_d/rabbit/rabbit_transfer.png';
+}
+
+/// The penguin companion's sticker set, drawn to match [FoxStickers]
+/// (same names, same poses).
+abstract final class PenguinStickers {
+  static const _d = 'assets/images';
+  static const addFriend = '$_d/penguin/penguin_add_friend.png';
+  static const avatar = '$_d/penguin/penguin_avatar.png';
+  static const calculator = '$_d/penguin/penguin_calculator.png';
+  static const card = '$_d/penguin/penguin_card.png';
+  static const coin = '$_d/penguin/penguin_coin.png';
+  static const coins = '$_d/penguin/penguin_coins.png';
+  static const contacts = '$_d/penguin/penguin_contacts.png';
+  static const edit = '$_d/penguin/penguin_edit.png';
+  static const family = '$_d/penguin/penguin_family.png';
+  static const friends = '$_d/penguin/penguin_friends.png';
+  static const gift = '$_d/penguin/penguin_gift.png';
+  static const goal = '$_d/penguin/penguin_goal.png';
+  static const growth = '$_d/penguin/penguin_growth.png';
+  static const home = '$_d/penguin/penguin_home.png';
+  static const jar = '$_d/penguin/penguin_jar.png';
+  static const notification = '$_d/penguin/penguin_notification.png';
+  static const piggy = '$_d/penguin/penguin_piggy.png';
+  static const profile = '$_d/penguin/penguin_profile.png';
+  static const receive = '$_d/penguin/penguin_receive.png';
+  static const report = '$_d/penguin/penguin_report.png';
+  static const shield = '$_d/penguin/penguin_shield.png';
+  static const success = '$_d/penguin/penguin_success.png';
+  static const transfer = '$_d/penguin/penguin_transfer.png';
 }
