@@ -7,6 +7,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// Savings goal shown on the savings screens.
 class SavingsGoal {
@@ -105,8 +106,8 @@ class SavingsAccountScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const MascotImage(
-                        asset: FoxStickers.piggy,
+                      MascotImage(
+                        asset: Stickers.piggy,
                         size: 80,
                         background: Colors.white,
                         semanticLabel: 'Гахайн сантай үнэг',
@@ -129,19 +130,19 @@ class SavingsAccountScreen extends StatelessWidget {
               children: [
                 _Shortcut(
                   label: 'Орлого хийх',
-                  asset: FoxStickers.jar,
+                  asset: Stickers.jar,
                   onTap: () => go(AppRoutes.savingsDeposit),
                 ),
                 const SizedBox(width: 10),
                 _Shortcut(
                   label: 'Тооцоолуур',
-                  asset: FoxStickers.calculator,
+                  asset: Stickers.calculator,
                   onTap: () => go(AppRoutes.savingsCalculator),
                 ),
                 const SizedBox(width: 10),
                 _Shortcut(
                   label: 'Дэлгэрэнгүй',
-                  asset: FoxStickers.report,
+                  asset: Stickers.report,
                   onTap: () => go(AppRoutes.savingsHistory),
                 ),
               ],

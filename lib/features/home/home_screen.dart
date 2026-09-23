@@ -252,7 +252,7 @@ class _Header extends StatelessWidget {
                           color: AppColors.slate500,
                         ),
                         const SizedBox(width: 4),
-                        const MascotIcon(FoxStickers.avatar, size: 16),
+                        const MascotIcon(Mascots.foxWave, size: 16),
                       ],
                     ),
                     AppText(
@@ -453,7 +453,7 @@ class _BalanceCard extends StatelessWidget {
                       delay: 0,
                       child: _CardAction(
                         label: 'Гүйлгээ',
-                        mascot: FoxStickers.transfer,
+                        mascot: Stickers.transfer,
                         primary: false,
                         onTap: onTransfer,
                       ),
@@ -466,7 +466,7 @@ class _BalanceCard extends StatelessWidget {
                       delay: 0.3,
                       child: _CardAction(
                         label: 'Цэнэглэх',
-                        mascot: FoxStickers.receive,
+                        mascot: Stickers.receive,
                         primary: true,
                         onTap: onTopUp,
                       ),
@@ -902,7 +902,7 @@ class _LockedAccountsPane extends StatelessWidget {
           child: _AccountRow(
             title: 'Койны данс',
             subtitle: formatIban(Accounts.coin),
-            mascot: FoxStickers.coins,
+            mascot: Stickers.coins,
             tileColor: AppColors.amber50,
             locked: true,
             trailing: linkButton(),

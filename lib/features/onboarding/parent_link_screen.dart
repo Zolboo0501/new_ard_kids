@@ -10,6 +10,7 @@ import '../../widgets/app_text.dart';
 import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 class ParentLinkScreen extends StatefulWidget {
@@ -155,9 +156,9 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              const Center(
+              Center(
                 child: MascotImage(
-                  asset: FoxStickers.family,
+                  asset: Stickers.family,
                   size: 140,
                   background: AppColors.dsSurface,
                   semanticLabel: 'Ээж, хүүхэд үнэг',

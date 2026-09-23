@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 enum NotificationKind { transaction, request, goal }
 
@@ -55,7 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       time: '10 минутын өмнө',
       title: 'Ээж ₮ 20,000 халаасны мөнгө шилжүүллээ!',
       body: const TextSpan(text: '«Сайн сураарай миний хүү!»'),
-      asset: FoxStickers.receive,
+      asset: Stickers.receive,
       tint: AppColors.amber50,
       unread: true,
       action: ('Үлдэгдэл шалгах →', AppRoutes.home),
@@ -72,7 +73,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           const TextSpan(text: ' шилжүүлэв.'),
         ],
       ),
-      asset: FoxStickers.success,
+      asset: Stickers.success,
       tint: AppColors.emerald50,
       unread: true,
     ),
@@ -84,7 +85,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: const TextSpan(
         text: 'Та зорилгынхоо талыг хуримтлуулж чадлаа, мундаг байна!',
       ),
-      asset: FoxStickers.goal,
+      asset: Stickers.goal,
       tint: const Color(0xFFEFF6FF),
       unread: true,
       progress: 0.5,
@@ -98,7 +99,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         text: '₮ 5,600 зарцууллаа. Үлдэгдэл: ',
         children: [TextSpan(text: '₮ 567,930', style: _bold)],
       ),
-      asset: FoxStickers.card,
+      asset: Stickers.card,
       tint: AppColors.slate50,
       today: false,
     ),
@@ -110,7 +111,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: const TextSpan(
         text: 'Аав өдрийн зарцуулалтын лимитийг ₮ 100,000 болгон тохирууллаа.',
       ),
-      asset: FoxStickers.shield,
+      asset: Stickers.shield,
       tint: AppColors.indigo50,
       today: false,
     ),
@@ -126,7 +127,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           const TextSpan(text: ' амжилттай нэмэгдлээ.'),
         ],
       ),
-      asset: FoxStickers.coin,
+      asset: Stickers.coin,
       tint: AppColors.rose50,
       today: false,
     ),

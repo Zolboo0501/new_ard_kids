@@ -7,6 +7,7 @@ import '../../widgets/entrance.dart';
 import '../../widgets/numeric_keypad.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
+import '../../app/avatar.dart';
 
 /// "Хадгаламжид орлого хийх - Keypad UI": deposit into savings.
 class SavingsDepositScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
     showAppSnack(
       context,
       '${formatMnt(_amount)} хадгаламжид орлоо',
-      mascot: FoxStickers.success,
+      mascot: Stickers.success,
     );
     context.pop();
   }
@@ -85,8 +86,8 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                   child: Column(
                     children: EntranceItem.list([
-                      const MascotImage(
-                        asset: FoxStickers.jar,
+                      MascotImage(
+                        asset: Stickers.jar,
                         size: 96,
                         background: bg,
                         semanticLabel: 'Зоосны лонхтой үнэг',

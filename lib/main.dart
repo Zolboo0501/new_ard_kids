@@ -26,13 +26,15 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
   @override
   void initState() {
     super.initState();
-    appThemeChoice.addListener(_onThemeChanged);
+    appThemeChoice.addListener(_rebuildAll);
+    appAvatar.addListener(_rebuildAll);
   }
 
-  /// `AppColors` accent tokens are read during build, so every element has
-  /// to rebuild (const subtrees and routes under the stack included) to pick
-  /// up the new palette. Navigation and screen state are kept.
-  void _onThemeChanged() {
+  /// `AppColors` accent tokens and `Stickers` are read during build, so every
+  /// element has to rebuild (const subtrees and routes under the stack
+  /// included) to pick up a new palette or companion. Navigation and screen
+  /// state are kept.
+  void _rebuildAll() {
     setState(() {});
     void rebuild(Element element) {
       element.markNeedsBuild();
@@ -44,7 +46,8 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
 
   @override
   void dispose() {
-    appThemeChoice.removeListener(_onThemeChanged);
+    appThemeChoice.removeListener(_rebuildAll);
+    appAvatar.removeListener(_rebuildAll);
     _router.dispose();
     super.dispose();
   }

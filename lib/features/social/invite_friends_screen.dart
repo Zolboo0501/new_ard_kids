@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Найз урих - Урамшуулал": share an invite code and track invitees.
 class InviteFriendsScreen extends StatelessWidget {
@@ -45,8 +46,8 @@ class InviteFriendsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  const MascotImage(
-                    asset: FoxStickers.friends,
+                  MascotImage(
+                    asset: Stickers.friends,
                     size: 128,
                     background: Colors.white,
                     semanticLabel: 'Найз урих урамшууллын зураг',

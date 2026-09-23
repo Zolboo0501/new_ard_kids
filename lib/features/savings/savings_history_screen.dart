@@ -6,6 +6,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Хадгаламжийн данс - Гүйлгээний түүх": savings activity grouped by month.
 class SavingsHistoryScreen extends StatefulWidget {
@@ -26,7 +27,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           'Сар бүрийн хүү бодогдов',
           'Хүүхдийн өсөлтийн хүү • 9 сарын 10',
           14400,
-          FoxStickers.growth,
+          Stickers.growth,
           AppColors.amber50,
           AppColors.emerald600,
         ),
@@ -34,7 +35,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           'Ааваас хадгаламжид нэмэв',
           'PlayStation 5 зорилго • 9 сарын 05',
           50000,
-          FoxStickers.jar,
+          Stickers.jar,
           AppColors.sky50,
           AppColors.sky600,
         ),
@@ -42,7 +43,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           'Зорилго биелэлтийн урамшуулал',
           'Ээжийн 50% урамшуулал • 9 сарын 02',
           25000,
-          FoxStickers.gift,
+          Stickers.gift,
           AppColors.rose50,
           AppColors.amber600,
         ),
@@ -56,7 +57,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           'Сар бүрийн хүү бодогдов',
           'Хүүхдийн өсөлтийн хүү • 8 сарын 10',
           13850,
-          FoxStickers.growth,
+          Stickers.growth,
           AppColors.amber50,
           AppColors.emerald600,
         ),
@@ -64,7 +65,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           'Зуны амралтын шагнал',
           'Өвөө, эмээгээс дугуйн сан руу • 8 сарын 01',
           100000,
-          FoxStickers.gift,
+          Stickers.gift,
           AppColors.pink50,
           AppColors.emerald600,
         ),

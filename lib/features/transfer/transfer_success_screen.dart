@@ -6,6 +6,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// Result of a completed transfer shown on the receipt screen.
 class TransferReceipt {
@@ -88,8 +89,8 @@ class TransferSuccessScreen extends StatelessWidget {
               borderColor: AppColors.slate100,
               child: Column(
                 children: [
-                  const MascotImage(
-                    asset: FoxStickers.success,
+                  MascotImage(
+                    asset: Stickers.success,
                     size: 128,
                     background: Colors.white,
                     semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',

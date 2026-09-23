@@ -7,6 +7,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Урамшуулал авах боломжууд": ways to earn reward points.
 class RewardOpportunitiesScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
     final tasks = [
       (
         'Найзаа урих',
-        FoxStickers.addFriend,
+        Stickers.addFriend,
         5000,
         AppColors.amber600,
         ('Хялбар', BadgeTone.amber),
@@ -37,7 +38,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
       ),
       (
         'Хадгаламжийн зорилгодоо хүрэх',
-        FoxStickers.goal,
+        Stickers.goal,
         15000,
         AppColors.sky600,
         ('Тусгай', BadgeTone.sky),
@@ -106,8 +107,8 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                           height: 1.35,
                         ),
                       ),
-                      const MascotImage(
-                        asset: FoxStickers.gift,
+                      MascotImage(
+                        asset: Stickers.gift,
                         size: 112,
                         background: Colors.white,
                         semanticLabel: 'Бэлэг барьсан үнэг',
@@ -177,7 +178,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                       showAppSnack(
                         context,
                         '+₮1,000 оноо авлаа',
-                        mascot: FoxStickers.success,
+                        mascot: Stickers.success,
                       );
                     },
             ),

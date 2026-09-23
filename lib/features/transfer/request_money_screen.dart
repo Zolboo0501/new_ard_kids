@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Мөнгө хүсэх": ask a parent to top up the account.
 class RequestMoneyScreen extends StatefulWidget {
@@ -106,8 +107,8 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                       ],
                     ),
                   ),
-                  const MascotImage(
-                    asset: FoxStickers.family,
+                  MascotImage(
+                    asset: Stickers.family,
                     size: 96,
                     background: Colors.white,
                     semanticLabel: 'Аав ээжтэйгээ үнэг',
@@ -219,10 +220,10 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const InfoNote(
+            InfoNote(
               tone: BadgeTone.amber,
               icon: Icons.mark_email_unread_outlined,
-              mascot: FoxStickers.notification,
+              mascot: Stickers.notification,
               text:
                   'Таны хүсэлт аав ээжийн утсанд мэдэгдэл болон очно. Зөвшөөрснөөр таны дансанд шууд орно!',
             ),

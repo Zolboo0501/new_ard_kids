@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/main.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/common.dart';
+import 'package:new_ard_kids/widgets/ui.dart';
 
 Widget _wrap({bool disableAnimations = false}) => MediaQuery(
   data: MediaQueryData(disableAnimations: disableAnimations),
@@ -145,4 +148,29 @@ void main() {
     expect(_showsAsset(tester, AppAvatar.bear.savings), isTrue);
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });
+
+  testWidgets(
+    'Avatar: picking the bear swaps screen stickers to the bear set',
+    (tester) async {
+      _usePhoneViewport(tester);
+      await tester.pumpWidget(const ArdKidsApp());
+      await tester.pumpAndSettle();
+      GoRouter.of(
+        tester.element(find.byType(Scaffold).first),
+      ).go(AppRoutes.savingsAccount);
+      await tester.pumpAndSettle();
+      expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+
+      // Already-open screens follow the change, not only newly opened ones.
+      appAvatar.value = AppAvatar.bear;
+      await tester.pumpAndSettle();
+      expect(_showsAsset(tester, BearStickers.piggy), isTrue);
+      expect(_showsAsset(tester, FoxStickers.piggy), isFalse);
+
+      // Companions without their own sheet fall back to the fox's.
+      appAvatar.value = AppAvatar.bunny;
+      await tester.pumpAndSettle();
+      expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+    },
+  );
 }

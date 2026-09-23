@@ -7,6 +7,7 @@ import '../../widgets/ui.dart';
 import 'account_widgets.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Хувьцаа & Хөрөнгө оруулалт": kid's investment portfolio.
 class StocksScreen extends StatefulWidget {
@@ -119,8 +120,8 @@ class _StocksScreenState extends State<StocksScreen> {
                           ],
                         ),
                       ),
-                      const MascotImage(
-                        asset: FoxStickers.growth,
+                      MascotImage(
+                        asset: Stickers.growth,
                         size: 80,
                         background: Colors.white,
                         semanticLabel: 'Өсөлтийн графиктай үнэг',

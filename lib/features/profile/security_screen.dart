@@ -5,6 +5,7 @@ import '../../widgets/numeric_keypad.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Аюулгүй байдал & ПИН код": PIN, biometrics and device settings.
 class SecurityScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
       showAppSnack(
         context,
         'ПИН код амжилттай шинэчлэгдлээ',
-        mascot: FoxStickers.shield,
+        mascot: Stickers.shield,
       );
     }
   }

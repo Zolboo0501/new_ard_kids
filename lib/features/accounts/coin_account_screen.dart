@@ -8,6 +8,7 @@ import 'account_widgets.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Койны данс - Дэлгэрэнгүй": coin balance and transactions. It is the
 /// "Койн" tab of [RewardsAccountScreen], so it lays out as a [Column] inside
@@ -60,7 +61,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
       subtitle: 'Найзын бэлэг',
       when: '09.05',
       amount: 10000,
-      asset: FoxStickers.gift,
+      asset: Stickers.gift,
       tint: AppColors.orange50,
       badge: 'Амжилттай',
     ),
@@ -150,8 +151,8 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                       ],
                     ),
                   ),
-                  const MascotImage(
-                    asset: FoxStickers.coin,
+                  MascotImage(
+                    asset: Stickers.coin,
                     size: 104,
                     background: Colors.white,
                     semanticLabel: 'Зоос барьсан үнэг',
@@ -163,7 +164,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                 children: [
                   Expanded(
                     child: _MiniStat(
-                      asset: FoxStickers.receive,
+                      asset: Stickers.receive,
                       label: 'Нийт орлого',
                       value: income,
                       color: AppColors.emerald700,
@@ -172,7 +173,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: _MiniStat(
-                      asset: FoxStickers.transfer,
+                      asset: Stickers.transfer,
                       label: 'Нийт зарцуулалт',
                       value: -spent,
                       color: AppColors.rose600,
@@ -239,9 +240,9 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
           ),
         ),
         const SizedBox(height: 16),
-        const SectionHeader(
+        SectionHeader(
           title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: FoxStickers.report,
+          mascot: Stickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
         for (final (i, item) in visible.indexed) ...[

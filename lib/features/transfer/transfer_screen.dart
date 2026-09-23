@@ -12,6 +12,7 @@ import 'transfer_success_screen.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
 import '../../widgets/value_switcher.dart';
+import '../../app/avatar.dart';
 
 enum TransferMode { friends, account, phone }
 
@@ -40,11 +41,11 @@ class _TransferScreenState extends State<TransferScreen> {
     ('Аав (9909****)', Mascots.owlBook, '9909 1188', 'Д. Ганбаатар'),
     ('Тэмүүлэн (8822****)', Mascots.bearSitting, '8822 4411', 'Т. Тэмүүлэн'),
   ];
-  static const _purposes = [
+  static List<(String, String, String)> get _purposes => [
     (Mascots.bearBooks, 'Ном дэвтэр', 'Ном авсан'),
     (Mascots.pandaMilk, 'Амттан', 'Амттан'),
     (Mascots.puppyGamepad, 'Тоглоом', 'Тоглоом'),
-    (FoxStickers.coin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
+    (Stickers.coin, 'Халаасны мөнгө', 'Халаасны мөнгө'),
   ];
 
   late TransferMode _mode = widget.initialMode;

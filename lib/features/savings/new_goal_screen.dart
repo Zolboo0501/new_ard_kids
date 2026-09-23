@@ -6,6 +6,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Шинэ зорилго үүсгэх": create a savings goal.
 class NewGoalScreen extends StatefulWidget {
@@ -23,11 +24,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
     (Mascots.catNotes, 'Урлаг & Хобби'),
     (Mascots.foxWave, 'Аялал & Зуслан'),
   ];
-  static const _icons = [
+  static List<(String, String)> get _icons => [
     ('Тоглоом', Mascots.puppyGamepad),
-    ('Мөнгө', FoxStickers.piggy),
+    ('Мөнгө', Stickers.piggy),
     ('Ухаалаг', Mascots.owlBook),
-    ('Мөрөөдөл', FoxStickers.goal),
+    ('Мөрөөдөл', Stickers.goal),
   ];
 
   final _name = TextEditingController(text: 'PlayStation 5 тоглоом');
@@ -88,7 +89,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
               child: Row(
                 children: [
                   MascotImage(
-                    asset: FoxStickers.goal,
+                    asset: Stickers.goal,
                     size: 80,
                     background: AppColors.sky50,
                     semanticLabel: 'Зорилгодоо онилсон үнэг',
@@ -278,7 +279,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const MascotIcon(FoxStickers.calculator, size: 22),
+                      MascotIcon(Stickers.calculator, size: 22),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text.rich(

@@ -7,6 +7,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 enum _Status { pending, approved, declined }
 
@@ -140,8 +141,8 @@ class _RequestListScreenState extends State<RequestListScreen> {
                           ],
                         ),
                       ),
-                      const MascotImage(
-                        asset: FoxStickers.contacts,
+                      MascotImage(
+                        asset: Stickers.contacts,
                         size: 80,
                         background: Colors.white,
                         semanticLabel: 'Хүсэлтийн жагсаалттай үнэг',
@@ -224,7 +225,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                   onNudge: () => showAppSnack(
                     context,
                     '${r.fromDative} сануулга илгээлээ',
-                    mascot: FoxStickers.notification,
+                    mascot: Stickers.notification,
                   ),
                   onCancel: () => setState(() => _requests.remove(r)),
                 ),

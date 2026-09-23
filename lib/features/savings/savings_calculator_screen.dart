@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// Projected savings with monthly compounding at [annualRate].
 ({int total, int deposited, int interest}) projectSavings({
@@ -101,7 +102,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
               child: Row(
                 children: [
                   MascotTile(
-                    asset: FoxStickers.calculator,
+                    asset: Stickers.calculator,
                     size: 64,
                     background: AppColors.sky50,
                     label: 'Тооцоолуур барьсан үнэг',

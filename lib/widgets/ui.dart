@@ -1800,10 +1800,6 @@ abstract final class Mascots {
   static const pandaKey = '$_d/mascot_panda_key.png';
 
   // Each picker companion's set for Home and Profile (see `AppAvatar`).
-  static const bearPortrait = '$_d/mascot_bear_portrait.jpg';
-  static const bearPiggy = '$_d/mascot_bear_piggy.jpg';
-  static const bearGrow = '$_d/mascot_bear_grow.jpg';
-  static const bearTrophy = '$_d/mascot_bear_trophy.jpg';
   static const bunnyPortrait = '$_d/mascot_bunny_portrait.jpg';
   static const bunnyPiggy = '$_d/mascot_bunny_piggy.jpg';
   static const bunnyGrow = '$_d/mascot_bunny_grow.jpg';
@@ -1842,4 +1838,33 @@ abstract final class FoxStickers {
   static const shield = '$_d/fox/fox_shield.png';
   static const success = '$_d/fox/fox_success.png';
   static const transfer = '$_d/fox/fox_transfer.png';
+}
+
+/// The bear companion's sticker set, cut from a sheet drawn to match
+/// [FoxStickers] (same names, same poses).
+abstract final class BearStickers {
+  static const _d = 'assets/images';
+  static const addFriend = '$_d/bear/bear_add_friend.png';
+  static const avatar = '$_d/bear/bear_avatar.png';
+  static const calculator = '$_d/bear/bear_calculator.png';
+  static const card = '$_d/bear/bear_card.png';
+  static const coin = '$_d/bear/bear_coin.png';
+  static const coins = '$_d/bear/bear_coins.png';
+  static const contacts = '$_d/bear/bear_contacts.png';
+  static const edit = '$_d/bear/bear_edit.png';
+  static const family = '$_d/bear/bear_family.png';
+  static const friends = '$_d/bear/bear_friends.png';
+  static const gift = '$_d/bear/bear_gift.png';
+  static const goal = '$_d/bear/bear_goal.png';
+  static const growth = '$_d/bear/bear_growth.png';
+  static const home = '$_d/bear/bear_home.png';
+  static const jar = '$_d/bear/bear_jar.png';
+  static const notification = '$_d/bear/bear_notification.png';
+  static const piggy = '$_d/bear/bear_piggy.png';
+  static const profile = '$_d/bear/bear_profile.png';
+  static const receive = '$_d/bear/bear_receive.png';
+  static const report = '$_d/bear/bear_report.png';
+  static const shield = '$_d/bear/bear_shield.png';
+  static const success = '$_d/bear/bear_success.png';
+  static const transfer = '$_d/bear/bear_transfer.png';
 }

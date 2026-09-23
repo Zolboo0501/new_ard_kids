@@ -8,6 +8,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Найз нэмэх": save a friend or family member for quick transfers.
 class AddFriendScreen extends StatefulWidget {
@@ -19,9 +20,9 @@ class AddFriendScreen extends StatefulWidget {
 
 class _AddFriendScreenState extends State<AddFriendScreen> {
   static List<(String, String, Color)> get _relations => [
-    ('Найз', FoxStickers.friends, AppColors.sky50),
+    ('Найз', Stickers.friends, AppColors.sky50),
     ('Дүү / Ах', Mascots.bunnyBattery, AppColors.amber50),
-    ('Аав / Ээж', FoxStickers.family, AppColors.pink50),
+    ('Аав / Ээж', Stickers.family, AppColors.pink50),
     ('Ангийн', Mascots.penguinChecklist, AppColors.emerald50),
   ];
   static const _banks = ['Хаан банк', 'Голомт банк', 'ХХБ', 'Төрийн банк'];
@@ -70,7 +71,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
     showAppSnack(
       context,
       '${_nickname.text.trim()} найзаар нэмэгдлээ',
-      mascot: FoxStickers.success,
+      mascot: Stickers.success,
     );
     context.pop();
   }
@@ -119,8 +120,8 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       ],
                     ),
                   ),
-                  const MascotImage(
-                    asset: FoxStickers.addFriend,
+                  MascotImage(
+                    asset: Stickers.addFriend,
                     size: 96,
                     background: Colors.white,
                     semanticLabel: 'Найз нэмж буй үнэг',

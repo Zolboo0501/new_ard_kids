@@ -6,6 +6,7 @@ import '../../widgets/common.dart';
 import '../../widgets/ui.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Өнгөний тохиргоо": choose the app color theme.
 class ThemeSettingsScreen extends StatefulWidget {
@@ -77,8 +78,8 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                       color: Colors.white.withValues(alpha: 0.7),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    child: const MascotImage(
-                      asset: FoxStickers.edit,
+                    child: MascotImage(
+                      asset: Stickers.edit,
                       size: 88,
                       background: Colors.white,
                       semanticLabel: 'Үнэг маскот',

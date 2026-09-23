@@ -11,6 +11,7 @@ import 'coin_account_screen.dart';
 import '../../widgets/app_tabs.dart';
 import '../../widgets/app_text.dart';
 import '../../widgets/entrance.dart';
+import '../../app/avatar.dart';
 
 /// "Урамшууллын данс - Минимал": rewards balance and history, with the coin
 /// account ([CoinAccountPane]) as a second tab. [initialTab] 1 opens straight
@@ -119,7 +120,7 @@ class _RewardsPane extends StatelessWidget {
       subtitle: 'Урамшуулал',
       when: '05.12',
       amount: 5000,
-      asset: FoxStickers.gift,
+      asset: Stickers.gift,
       tint: AppColors.orange50,
       badge: 'Амжилттай',
       badgeTone: BadgeTone.amber,
@@ -222,8 +223,8 @@ class _RewardsPane extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const MascotImage(
-                    asset: FoxStickers.gift,
+                  MascotImage(
+                    asset: Stickers.gift,
                     size: 100,
                     background: Color(0xFFFFFCF2),
                     semanticLabel: 'Урамшуулал маскот',
@@ -280,7 +281,7 @@ class _RewardsPane extends StatelessWidget {
             children: [
               Expanded(
                 child: _Shortcut(
-                  asset: FoxStickers.addFriend,
+                  asset: Stickers.addFriend,
                   tint: AppColors.orange50,
                   title: 'Найз урих',
                   subtitle: '5,000 оноо',
@@ -291,7 +292,7 @@ class _RewardsPane extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _Shortcut(
-                  asset: FoxStickers.goal,
+                  asset: Stickers.goal,
                   tint: AppColors.amber50,
                   title: 'Урамшуулал авах',
                   subtitle: 'Даалгаврууд',
@@ -303,9 +304,9 @@ class _RewardsPane extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const SectionHeader(
+        SectionHeader(
           title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: FoxStickers.report,
+          mascot: Stickers.report,
           padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
         ),
         for (final (i, item) in items.indexed) ...[
