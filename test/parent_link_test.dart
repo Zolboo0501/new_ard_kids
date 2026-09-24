@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/features/onboarding/presentation/widgets/success_sheet.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 Widget _wrap() => MaterialApp.router(
@@ -9,9 +10,10 @@ Widget _wrap() => MaterialApp.router(
   routerConfig: AppRoutes.createRouter(initialLocation: AppRoutes.parentLink),
 );
 
-// The form has exactly two fields, in this order.
-Finder get _phoneField => find.byType(TextField).at(0);
-Finder get _registerField => find.byType(TextField).at(1);
+// The register number's digits (its letters are boxes that open a sheet,
+// not text fields), then the parent's phone.
+Finder get _registerDigitsField => find.byType(TextField).at(0);
+Finder get _phoneField => find.byType(TextField).at(1);
 
 String _textOf(WidgetTester tester, Finder field) =>
     tester.widget<TextField>(field).controller!.text;
@@ -37,6 +39,19 @@ Future<void> _submit(WidgetTester tester) async {
   await tester.pump();
   await tester.tap(button);
   await tester.pump(const Duration(milliseconds: 300));
+}
+
+/// Opens the letter sheet from the first box and picks [a] then [b].
+Future<void> _pickLetters(WidgetTester tester, String a, String b) async {
+  final box = find.bySemanticsLabel('Регистрийн 1-р үсэг');
+  await tester.ensureVisible(box);
+  await tester.pumpAndSettle();
+  await tester.tap(box);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(a).last);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(b).last);
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -66,20 +81,27 @@ void main() {
     expect(find.text('Утасны дугаар 8 оронтой байх ёстой.'), findsNothing);
   });
 
-  testWidgets('Parent link: a wrongly shaped register is rejected', (
+  testWidgets('Parent link: a register without letters is rejected', (
     tester,
   ) async {
     await _pumpScreen(tester);
 
     await tester.enterText(_phoneField, '99112345');
-    // Right length, wrong shape: digits where the two letters belong.
-    await tester.enterText(_registerField, '1234567890');
+    await tester.enterText(_registerDigitsField, '12345678');
     await _submit(tester);
 
-    expect(
-      find.text('Регистрийн дугаар 2 үсэг, 8 тооноос бүрдэнэ.'),
-      findsOneWidget,
-    );
+    expect(find.text('Регистрийн 2 үсгээ сонгоно уу.'), findsOneWidget);
+  });
+
+  testWidgets('Parent link: a full register sends the request', (tester) async {
+    await _pumpScreen(tester);
+
+    await tester.enterText(_phoneField, '99112345');
+    await _pickLetters(tester, 'У', 'Х');
+    await tester.enterText(_registerDigitsField, '12345678');
+    await _submit(tester);
+
+    expect(find.byType(SuccessSheet), findsOneWidget);
   });
 
   testWidgets('Parent link: fields filter and cap their input', (tester) async {
@@ -89,9 +111,9 @@ void main() {
     await tester.pump();
     expect(_textOf(tester, _phoneField), '99123456');
 
-    // The register field upper-cases as you type and caps at 10.
-    await tester.enterText(_registerField, 'ух12345678999');
+    // The register digits keep numbers only, capped at 8.
+    await tester.enterText(_registerDigitsField, '12a345-678999');
     await tester.pump();
-    expect(_textOf(tester, _registerField), 'УХ12345678');
+    expect(_textOf(tester, _registerDigitsField), '12345678');
   });
 }

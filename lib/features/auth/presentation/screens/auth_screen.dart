@@ -11,6 +11,7 @@ import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
+import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/auth_mascot.dart';
 import '../widgets/helper_note.dart';
@@ -46,8 +47,13 @@ class _AuthScreenState extends State<AuthScreen>
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _registerDigitsController = TextEditingController();
   final _nameFocus = FocusNode();
   final _phoneFocus = FocusNode();
+  final _registerDigitsFocus = FocusNode();
+
+  /// The two register-number letters, picked from the letter sheet.
+  List<String?> _registerLetters = [null, null];
 
   /// Drives the one-shot entrance: each element fades and rises over its own
   /// slice of this controller (see [Entrance]).
@@ -75,7 +81,15 @@ class _AuthScreenState extends State<AuthScreen>
   /// value becomes valid again.
   String? _nameError;
   String? _phoneError;
+  String? _registerError;
 
+  bool get _registerLettersValid => !_registerLetters.contains(null);
+  bool get _registerValid =>
+      RegisterNumberField.validate(
+        _registerLetters,
+        _registerDigitsController.text,
+      ) ==
+      null;
   bool get _phoneValid => _phoneController.text.length == _phoneLength;
   bool get _nameValid => _validateName() == null;
 
@@ -103,6 +117,11 @@ class _AuthScreenState extends State<AuthScreen>
     _phoneController.addListener(() {
       setState(() {
         if (_phoneValid) _phoneError = null;
+      });
+    });
+    _registerDigitsController.addListener(() {
+      setState(() {
+        if (_registerValid) _registerError = null;
       });
     });
     _mascotIn = _stagger.slice(0);
@@ -150,28 +169,43 @@ class _AuthScreenState extends State<AuthScreen>
     _entrance.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _registerDigitsController.dispose();
     _nameFocus.dispose();
     _phoneFocus.dispose();
+    _registerDigitsFocus.dispose();
     super.dispose();
   }
 
   void _submit() {
     if (_submitState != SubmitState.idle) return;
 
-    // Validate both fields so every problem is shown at once, then focus the
-    // topmost offender.
+    // Validate every field so every problem is shown at once, then focus the
+    // topmost offender. The register number is only asked for on Бүртгүүлэх.
     final nameError = _validateName();
     final phoneError = _phoneValid
         ? null
         : _phoneController.text.isEmpty
         ? 'Гар утасны дугаараа оруулна уу.'
         : 'Утасны дугаар $_phoneLength оронтой байх ёстой.';
+    final registerError = _mode == AuthMode.login
+        ? null
+        : RegisterNumberField.validate(
+            _registerLetters,
+            _registerDigitsController.text,
+          );
 
     setState(() {
       _nameError = nameError;
       _phoneError = phoneError;
+      _registerError = registerError;
     });
 
+    if (registerError != null) {
+      // The letters open a sheet rather than take focus, so only the digit
+      // field is focused.
+      if (_registerLettersValid) _registerDigitsFocus.requestFocus();
+      return;
+    }
     if (nameError != null) {
       _nameFocus.requestFocus();
       return;
@@ -356,6 +390,24 @@ class _AuthScreenState extends State<AuthScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (!isLogin) ...[
+          const AppFieldLabel('Регистрийн дугаар'),
+          const SizedBox(height: 6),
+          RegisterNumberField(
+            letters: _registerLetters,
+            onLettersChanged: (letters) => setState(() {
+              _registerLetters = letters;
+              if (_registerValid) _registerError = null;
+            }),
+            digitsController: _registerDigitsController,
+            digitsFocus: _registerDigitsFocus,
+            hasError: _registerError != null,
+            textInputAction: TextInputAction.next,
+            onSubmitted: (_) => _nameFocus.requestFocus(),
+          ),
+          AppFieldError(message: _registerError),
+          const SizedBox(height: 14),
+        ],
         const AppFieldLabel('Нэвтрэх нэр'),
         const SizedBox(height: 6),
         AppInputShell(

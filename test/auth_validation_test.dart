@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
+import 'package:new_ard_kids/widgets/register_letter_sheet.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 /// Starts the real router at [location] so navigation behaves as in the app.
@@ -11,9 +12,13 @@ Widget _wrap(String location) => MaterialApp.router(
   routerConfig: AppRoutes.createRouter(initialLocation: location),
 );
 
-// The card has exactly two fields, in this order.
-Finder get _nameField => find.byType(TextField).at(0);
-Finder get _phoneField => find.byType(TextField).at(1);
+// Found by hint, since Бүртгүүлэх puts the register number above the others.
+Finder _fieldWithHint(String hint) => find.byWidgetPredicate(
+  (w) => w is TextField && w.decoration?.hintText == hint,
+);
+Finder get _nameField => _fieldWithHint('Тэмүүлэн, Мишээл...');
+Finder get _phoneField => _fieldWithHint('8800 2345');
+Finder get _registerDigitsField => _fieldWithHint('12345678');
 
 String _textOf(WidgetTester tester, Finder field) =>
     tester.widget<TextField>(field).controller!.text;
@@ -31,6 +36,22 @@ Future<void> _fillValid(WidgetTester tester) async {
   await tester.enterText(_nameField, 'Тэмүүлэн');
   await tester.enterText(_phoneField, '99112345');
   await tester.pump();
+}
+
+/// Switches the card to Бүртгүүлэх and waits for its fields to settle.
+Future<void> _openRegister(WidgetTester tester) async {
+  await tester.tap(find.text('Бүртгүүлэх'));
+  await tester.pumpAndSettle();
+}
+
+/// Opens the letter sheet from the first box and picks [a] then [b].
+Future<void> _pickLetters(WidgetTester tester, String a, String b) async {
+  await tester.tap(find.bySemanticsLabel('Регистрийн 1-р үсэг'));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(a).last);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(b).last);
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -164,6 +185,86 @@ void main() {
     });
   });
 
+  group('Регистрийн дугаар', () {
+    testWidgets('only shows on Бүртгүүлэх, above the other fields', (
+      tester,
+    ) async {
+      _usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.auth));
+
+      expect(find.text('Регистрийн дугаар'), findsNothing);
+      await _openRegister(tester);
+      expect(find.text('Регистрийн дугаар'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Регистрийн дугаар')).dy,
+        lessThan(tester.getTopLeft(find.text('Нэвтрэх нэр')).dy),
+      );
+    });
+
+    testWidgets('the letter sheet fills both boxes, then closes', (
+      tester,
+    ) async {
+      _usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.auth));
+      await _openRegister(tester);
+
+      await tester.tap(find.bySemanticsLabel('Регистрийн 1-р үсэг'));
+      await tester.pumpAndSettle();
+      expect(find.byType(RegisterLetterSheet), findsOneWidget);
+      // The whole alphabet is on offer, Ө and Ү included.
+      for (final l in mongolianLetters) {
+        expect(find.text(l), findsWidgets);
+      }
+
+      await tester.tap(find.text('У').last);
+      await tester.pumpAndSettle();
+      expect(find.byType(RegisterLetterSheet), findsOneWidget);
+      await tester.tap(find.text('Б').last);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(RegisterLetterSheet), findsNothing);
+      expect(find.text('У'), findsOneWidget);
+      expect(find.text('Б'), findsOneWidget);
+    });
+
+    testWidgets('the digit field keeps 8 digits only', (tester) async {
+      _usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.auth));
+      await _openRegister(tester);
+
+      await tester.enterText(_registerDigitsField, '12a34-5678 99');
+      await tester.pump();
+
+      expect(_textOf(tester, _registerDigitsField), '12345678');
+    });
+
+    testWidgets('missing letters or digits block Код авах', (tester) async {
+      _usePhoneViewport(tester);
+      await tester.pumpWidget(_wrap(AppRoutes.auth));
+      await _openRegister(tester);
+
+      await _fillValid(tester);
+      await tester.tap(find.text('Код авах'));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Регистрийн дугаараа оруулна уу.'), findsOneWidget);
+
+      await tester.enterText(_registerDigitsField, '12345678');
+      await tester.tap(find.text('Код авах'));
+      await tester.pumpAndSettle();
+      expect(find.text('Регистрийн 2 үсгээ сонгоно уу.'), findsOneWidget);
+
+      await _pickLetters(tester, 'У', 'Б');
+      await tester.enterText(_registerDigitsField, '1234');
+      await tester.tap(find.text('Код авах'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Регистрийн 8 оронтой тоог оруулна уу.'),
+        findsOneWidget,
+      );
+      expect(find.byType(OtpScreen), findsNothing);
+    });
+  });
+
   testWidgets('Auth: an empty form reports both fields at once', (
     tester,
   ) async {
@@ -206,9 +307,11 @@ void main() {
     _usePhoneViewport(tester);
     await tester.pumpWidget(_wrap(AppRoutes.auth));
 
-    await tester.tap(find.text('Бүртгүүлэх'));
-    await tester.pumpAndSettle();
+    await _openRegister(tester);
     await _fillValid(tester);
+    await _pickLetters(tester, 'У', 'Б');
+    await tester.enterText(_registerDigitsField, '12345678');
+    await tester.pump();
     await tester.tap(find.text('Код авах'));
 
     // Simulated send: 900ms to "sent", then 700ms before pushing OTP.

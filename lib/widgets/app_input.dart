@@ -26,26 +26,32 @@ class AppFieldLabel extends StatelessWidget {
   }
 }
 
-/// Rounded input container with a white badge on the left; highlights with a
-/// sky border and halo while the inner field has focus, rose when [hasError].
+/// Rounded input container with an optional white badge on the left;
+/// highlights with a sky border and halo while the inner field has focus,
+/// rose when [hasError]. A [valid] field keeps a sky border without the halo.
 ///
 /// Shakes once each time it newly becomes invalid, so a failed submit draws
 /// the eye to the field that needs fixing.
 class AppInputShell extends StatefulWidget {
   const AppInputShell({
     super.key,
-    required this.leading,
     required this.child,
+    this.leading,
     this.trailing,
     this.hasError = false,
+    this.valid = false,
   });
 
-  final Widget leading;
+  final Widget? leading;
   final Widget child;
   final Widget? trailing;
 
   /// Paints the border and halo red instead of sky, and triggers the shake.
   final bool hasError;
+
+  /// Keeps a white fill and sky border once the value is complete, so it
+  /// reads as done.
+  final bool valid;
 
   @override
   State<AppInputShell> createState() => _AppInputShellState();
@@ -104,12 +110,12 @@ class _AppInputShellState extends State<AppInputShell>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: _focused ? Colors.white : AppColors.surface,
+          color: _focused || widget.valid ? Colors.white : AppColors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.hasError
                 ? AppColors.rose400
-                : _focused
+                : _focused || widget.valid
                 ? AppColors.sky400
                 : AppColors.slate200,
           ),
@@ -126,23 +132,29 @@ class _AppInputShellState extends State<AppInputShell>
         ),
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.slate100),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    offset: const Offset(0, 1),
-                    blurRadius: 2,
-                  ),
-                ],
+            if (widget.leading case final leading?) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.slate100),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      offset: const Offset(0, 1),
+                      blurRadius: 2,
+                    ),
+                  ],
+                ),
+                child: leading,
               ),
-              child: widget.leading,
-            ),
-            const SizedBox(width: 8),
+              const SizedBox(width: 8),
+            ] else
+              const SizedBox(width: 6),
             Expanded(child: widget.child),
             ?widget.trailing,
           ],

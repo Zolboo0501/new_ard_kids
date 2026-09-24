@@ -9,12 +9,12 @@ import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
+import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/limit_card.dart';
 import '../widgets/role_button.dart';
 import '../widgets/success_sheet.dart';
-import '../widgets/upper_case_formatter.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 ///
@@ -31,15 +31,14 @@ class ParentLinkScreen extends StatefulWidget {
 
 class _ParentLinkScreenState extends State<ParentLinkScreen> {
   static const _phoneLength = 8;
-  static const _registerLength = 10;
-
-  /// Mongolian register numbers are two Cyrillic letters then eight digits.
-  static final _registerShape = RegExp(r'^[А-ЯЁӨҮ]{2}[0-9]{8}$');
 
   final _phone = TextEditingController();
-  final _register = TextEditingController();
+  final _registerDigits = TextEditingController();
   final _phoneFocus = FocusNode();
-  final _registerFocus = FocusNode();
+  final _registerDigitsFocus = FocusNode();
+
+  /// The two register-number letters, picked from the letter sheet.
+  List<String?> _registerLetters = [null, null];
   int _role = 0;
 
   /// Shown under their field after a failed submit; cleared as soon as the
@@ -60,7 +59,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
         if (_phoneValid) _phoneError = null;
       });
     });
-    _register.addListener(() {
+    _registerDigits.addListener(() {
       setState(() {
         if (_registerValid) _registerError = null;
       });
@@ -70,9 +69,9 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
   @override
   void dispose() {
     _phone.dispose();
-    _register.dispose();
+    _registerDigits.dispose();
     _phoneFocus.dispose();
-    _registerFocus.dispose();
+    _registerDigitsFocus.dispose();
     super.dispose();
   }
 
@@ -89,17 +88,11 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
     return null;
   }
 
-  String? _validateRegister() {
-    final v = _register.text;
-    if (v.isEmpty) return 'Өөрийн регистрийн дугаарыг оруулна уу.';
-    if (v.length != _registerLength) {
-      return 'Регистрийн дугаар $_registerLength тэмдэгт байх ёстой.';
-    }
-    if (!_registerShape.hasMatch(v)) {
-      return 'Регистрийн дугаар 2 үсэг, 8 тооноос бүрдэнэ.';
-    }
-    return null;
-  }
+  String? _validateRegister() => RegisterNumberField.validate(
+    _registerLetters,
+    _registerDigits.text,
+    empty: 'Өөрийн регистрийн дугаарыг оруулна уу.',
+  );
 
   void _goHome({required bool linked}) {
     context.go(linked ? AppRoutes.home : AppRoutes.homeUnlinked);
@@ -114,12 +107,16 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
       _phoneError = phoneError;
       _registerError = registerError;
     });
-    if (phoneError != null) {
-      _phoneFocus.requestFocus();
+    if (registerError != null) {
+      // The letters open a sheet rather than take focus, so only the digit
+      // field is focused.
+      if (!_registerLetters.contains(null)) {
+        _registerDigitsFocus.requestFocus();
+      }
       return;
     }
-    if (registerError != null) {
-      _registerFocus.requestFocus();
+    if (phoneError != null) {
+      _phoneFocus.requestFocus();
       return;
     }
 
@@ -308,6 +305,22 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
+                    const AppFieldLabel('Өөрийн регистрийн дугаар'),
+                    const SizedBox(height: 6),
+                    RegisterNumberField(
+                      letters: _registerLetters,
+                      onLettersChanged: (letters) => setState(() {
+                        _registerLetters = letters;
+                        if (_registerValid) _registerError = null;
+                      }),
+                      digitsController: _registerDigits,
+                      digitsFocus: _registerDigitsFocus,
+                      hasError: _registerError != null,
+                      textInputAction: TextInputAction.next,
+                      onSubmitted: (_) => _phoneFocus.requestFocus(),
+                    ),
+                    AppFieldError(message: _registerError),
+                    const SizedBox(height: 14),
                     const AppFieldLabel('Эцэг / Эхийн утасны дугаар'),
                     const SizedBox(height: 6),
                     AppInputShell(
@@ -324,8 +337,8 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                         onTapOutside: dismissKeyboard,
                         focusNode: _phoneFocus,
                         keyboardType: TextInputType.phone,
-                        textInputAction: TextInputAction.next,
-                        onSubmitted: (_) => _registerFocus.requestFocus(),
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _submit(),
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
                           LengthLimitingTextInputFormatter(_phoneLength),
@@ -335,35 +348,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                       ),
                     ),
                     AppFieldError(message: _phoneError),
-                    const SizedBox(height: 14),
-                    const AppFieldLabel('Өөрийн регистрийн дугаар'),
-                    const SizedBox(height: 6),
-                    AppInputShell(
-                      hasError: _registerError != null,
-                      leading: AppText(
-                        'РД',
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.sky700,
-                      ),
-                      trailing: AppFieldTick(visible: _registerValid),
-                      child: TextField(
-                        controller: _register,
-                        onTapOutside: dismissKeyboard,
-                        focusNode: _registerFocus,
-                        textInputAction: TextInputAction.done,
-                        autocorrect: false,
-                        enableSuggestions: false,
-                        onSubmitted: (_) => _submit(),
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(_registerLength),
-                          UpperCaseFormatter(),
-                        ],
-                        style: appInputStyle(letterSpacing: 0.8),
-                        decoration: appInputDecoration('УХ12345678'),
-                      ),
-                    ),
-                    AppFieldError(message: _registerError),
                     const SizedBox(height: 14),
                     const InfoNote(
                       tone: BadgeTone.slate,
