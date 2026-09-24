@@ -175,16 +175,21 @@ class AppSwitch extends StatelessWidget {
   const AppSwitch({super.key, required this.value, required this.onChanged});
 
   final bool value;
-  final ValueChanged<bool> onChanged;
+
+  /// Null disables the switch.
+  final ValueChanged<bool>? onChanged;
 
   @override
   Widget build(BuildContext context) {
+    final onChanged = this.onChanged;
     return Switch.adaptive(
       value: value,
-      onChanged: (v) {
-        HapticFeedback.selectionClick();
-        onChanged(v);
-      },
+      onChanged: onChanged == null
+          ? null
+          : (v) {
+              HapticFeedback.selectionClick();
+              onChanged(v);
+            },
       activeTrackColor: AppColors.sky500,
       activeThumbColor: Colors.white,
       inactiveTrackColor: AppColors.slate200,

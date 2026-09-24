@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/avatar.dart';
+import '../../../../app/biometrics.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
@@ -19,9 +20,76 @@ class SecurityScreen extends StatefulWidget {
 }
 
 class _SecurityScreenState extends State<SecurityScreen> {
-  bool _faceId = true;
-  bool _fingerprint = true;
   bool _parentApproval = true;
+
+  /// The device's enrolled biometric, or null while checking or when there
+  /// is none. [_hasSensor] tells "set one up in Settings" from "unsupported".
+  BiometricKind? _biometric;
+  bool _hasSensor = false;
+  bool _biometricChecked = false;
+  bool _biometricBusy = false;
+
+  /// Re-checks when the app comes back, so a face or finger enrolled in the
+  /// phone's settings meanwhile shows up without reopening the screen.
+  late final AppLifecycleListener _lifecycle = AppLifecycleListener(
+    onResume: _checkBiometric,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle;
+    _checkBiometric();
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkBiometric() async {
+    final biometrics = Biometrics.instance;
+    final (kind, hasSensor) = await (
+      biometrics.available(),
+      biometrics.hasSensor(),
+    ).wait;
+    if (!mounted) return;
+    setState(() {
+      _biometric = kind;
+      _hasSensor = kind != null || hasSensor;
+      _biometricChecked = true;
+    });
+  }
+
+  /// Turning biometric sign-in on needs one successful scan first, so it is
+  /// only enabled for a finger or face the device actually recognises.
+  Future<void> _setBiometric(bool enabled) async {
+    if (!enabled) {
+      BiometricStore.save(false);
+      setState(() {});
+      return;
+    }
+    setState(() => _biometricBusy = true);
+    final result = await Biometrics.instance.authenticate(
+      'Биометрээр нэвтрэхийг идэвхжүүлэх',
+    );
+    if (!mounted) return;
+    if (result == BiometricResult.success) BiometricStore.save(true);
+    setState(() => _biometricBusy = false);
+    // A face or finger may have been enrolled since the last check.
+    if (result == BiometricResult.notEnrolled) _checkBiometric();
+    final message = result == BiometricResult.success
+        ? '${(_biometric ?? BiometricKind.fingerprint).loginLabel} идэвхжлээ'
+        : result.message;
+    if (message != null) {
+      showAppSnack(
+        context,
+        message,
+        mascot: result == BiometricResult.success ? Stickers.shield : null,
+      );
+    }
+  }
 
   Future<void> _changePin() async {
     final changed = await showModalBottomSheet<bool>(
@@ -116,30 +184,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
             const SizedBox(height: 18),
             const GroupLabel('БИОМЕТРИК НЭВТРЭЛТ'),
-            SecurityGroup(
-              children: [
-                SettingTile(
-                  icon: Icons.face_retouching_natural_rounded,
-                  tone: BadgeTone.sky,
-                  title: 'Face ID нэвтрэх',
-                  subtitle: 'Царай таньж шууд нэвтрэх',
-                  trailing: AppSwitch(
-                    value: _faceId,
-                    onChanged: (v) => setState(() => _faceId = v),
-                  ),
-                ),
-                SettingTile(
-                  icon: Icons.fingerprint_rounded,
-                  tone: BadgeTone.emerald,
-                  title: 'Хурууны хээ ашиглах',
-                  subtitle: 'Түргэн баталгаажуулалт',
-                  trailing: AppSwitch(
-                    value: _fingerprint,
-                    onChanged: (v) => setState(() => _fingerprint = v),
-                  ),
-                ),
-              ],
-            ),
+            SecurityGroup(children: [_buildBiometricTile()]),
             const SizedBox(height: 18),
             const GroupLabel('ЭЦЭГ ЭХИЙН БАТАЛГААЖУУЛАЛТ'),
             SecurityGroup(
@@ -186,6 +231,28 @@ class _SecurityScreenState extends State<SecurityScreen> {
             ),
           ]),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBiometricTile() {
+    final kind = _biometric;
+    return SettingTile(
+      icon: kind?.icon ?? Icons.fingerprint_rounded,
+      tone: BadgeTone.sky,
+      title: kind?.loginLabel ?? 'Биометрээр нэвтрэх',
+      subtitle:
+          kind?.description ??
+          switch ((_biometricChecked, _hasSensor)) {
+            (false, _) => 'Төхөөрөмжийг шалгаж байна…',
+            (true, true) => 'Эхлээд утасныхаа тохиргооноос бүртгүүлнэ үү',
+            (true, false) => 'Энэ төхөөрөмж дэмжихгүй байна',
+          },
+      trailing: AppSwitch(
+        value: kind != null && appBiometricLogin.value,
+        // With a sensor but nothing enrolled the switch stays live: the scan
+        // it asks for explains how to enrol.
+        onChanged: !_hasSensor || _biometricBusy ? null : _setBiometric,
       ),
     );
   }

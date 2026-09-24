@@ -14,6 +14,7 @@ import '../features/home/presentation/screens/home_shell.dart';
 import '../features/home/presentation/screens/invoice_history_screen.dart';
 import '../features/notifications/presentation/screens/notifications_screen.dart';
 import '../features/onboarding/presentation/screens/avatar_picker_screen.dart';
+import '../features/onboarding/presentation/screens/biometric_setup_screen.dart';
 import '../features/onboarding/presentation/screens/parent_link_screen.dart';
 import '../features/profile/presentation/screens/edit_personal_info_screen.dart';
 import '../features/profile/presentation/screens/personal_info_screen.dart';
@@ -53,6 +54,10 @@ abstract final class AppRoutes {
   static const homeUnlinked = '/home?linked=false';
   static const avatarPicker = '/onboarding/avatar';
   static const parentLink = '/onboarding/parent';
+
+  /// Offers biometric sign-in during registration, between the avatar and
+  /// the parent link. Skipped when the device has no biometric sensor.
+  static const biometricSetup = '/onboarding/biometric';
 
   /// Avatar picker opened from Profile: saves and returns instead of
   /// continuing onboarding.
@@ -102,6 +107,7 @@ abstract final class AppRoutes {
     avatarPicker: (_, state) => AvatarPickerScreen(
       editing: state.uri.queryParameters['edit'] == 'true',
     ),
+    biometricSetup: (_, _) => const BiometricSetupScreen(),
     parentLink: (_, state) => ParentLinkScreen(
       onboarding: state.uri.queryParameters['onboarding'] == 'true',
     ),
@@ -155,7 +161,7 @@ abstract final class AppRoutes {
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: home,
+      initialLocation: initialLocation,
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

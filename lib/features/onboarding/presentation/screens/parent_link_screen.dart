@@ -146,7 +146,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: EntranceItem.list([
               Header(
-                step: widget.onboarding ? 'Алхам 4/4' : null,
+                step: widget.onboarding ? 'Алхам 6/6' : null,
                 trailing: GestureDetector(
                   onTap: withHaptic(() => _goHome(linked: false)),
                   child: Container(

@@ -171,7 +171,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
       children: [
         Entrance(
           t: _headerIn,
-          child: const Header(step: 'Алхам 3/4'),
+          child: const Header(step: 'Алхам 3/6'),
         ),
         const SizedBox(height: 4),
         Entrance(t: _heroIn, child: _buildHeroRow()),

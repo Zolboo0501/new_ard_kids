@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app/app_loader.dart';
 import 'app/avatar.dart';
+import 'app/biometrics.dart';
 import 'app/routes.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_store.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Before the first frame, so a saved pink theme doesn't flash blue.
-  await Future.wait([ThemeStore.load(), AvatarStore.load()]);
-  runApp(const ArdKidsApp());
+  // The loading screen shows while the saved choices are read; the app is
+  // built only after, so a saved pink theme doesn't flash blue.
+  runApp(
+    AppLoader(
+      load: () => Future.wait([
+        ThemeStore.load(),
+        AvatarStore.load(),
+        BiometricStore.load(),
+      ]),
+      builder: (_) => const ArdKidsApp(),
+    ),
+  );
 }
 
 class ArdKidsApp extends StatefulWidget {

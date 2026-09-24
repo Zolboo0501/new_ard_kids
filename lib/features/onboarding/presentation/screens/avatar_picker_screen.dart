@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/avatar.dart';
+import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
@@ -11,7 +12,7 @@ import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/avatar_card.dart';
 import '../widgets/avatar_picker_blob.dart';
 
-/// "Аватар сонгох" (onboarding step 3/3): pick a mascot companion.
+/// "Аватар сонгох" (onboarding step 4/6): pick a mascot companion.
 ///
 /// With [editing] (opened from Profile) there is no step indicator or skip,
 /// and confirming returns to the previous screen.
@@ -78,13 +79,23 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     super.dispose();
   }
 
-  void _next() => context.push(AppRoutes.parentLinkOnboarding);
+  /// Offers biometric sign-in next, unless the phone has no sensor for it.
+  Future<void> _next() async {
+    final hasSensor = await Biometrics.instance.hasSensor();
+    if (!mounted) return;
+    context.push(
+      hasSensor ? AppRoutes.biometricSetup : AppRoutes.parentLinkOnboarding,
+    );
+  }
 
   void _confirm() {
     final avatar = _avatars[_selected];
     appAvatar.value = avatar;
     AvatarStore.save(avatar);
-    if (!widget.editing) return _next();
+    if (!widget.editing) {
+      _next();
+      return;
+    }
     showAppSnack(
       context,
       '${avatar.name} таны шинэ найз боллоо',
@@ -120,7 +131,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _headerIn,
                           child: Header(
-                            step: widget.editing ? null : 'Алхам 3/4',
+                            step: widget.editing ? null : 'Алхам 4/6',
                           ),
                         ),
                         const SizedBox(height: 18),

@@ -39,6 +39,7 @@ dependencies:
   flutter_svg: ^2.2.3
   flutter_secure_storage: ^11.2.0
   calendar_date_picker2: ^3.0.0
+  local_auth: ^3.0.2
 
 dev_dependencies:
   flutter_test:

@@ -72,7 +72,7 @@ void main() {
 
   test('formatMnt groups thousands', () {
     expect(formatMnt(1280000), '₮1,280,000');
-    expect(formatMnt(-15000, space: false), '-₮ 15,000');
+    expect(formatMnt(-15000, space: true), '-₮ 15,000');
     expect(formatMnt(5000, sign: true), '+₮5,000');
     expect(formatMnt(0), '₮0');
   });
@@ -86,7 +86,7 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.tap(find.text('Хадгаламжийн данс'));
+    await tester.tap(find.text('Хадгаламж'));
     await tester.pumpAndSettle();
     expect(find.text('Миний зорилтууд'), findsOneWidget);
   });

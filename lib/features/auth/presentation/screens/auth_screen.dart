@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_input.dart';
@@ -22,6 +23,11 @@ enum AuthMode { login, register }
 /// "Нэвтрэх & Бүртгүүлэх" screen from the Stitch project.
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
+
+  /// Whether the biometric prompt has opened by itself this launch. Only the
+  /// first sign-in screen prompts; after a logout the kid taps the button.
+  @visibleForTesting
+  static bool biometricPrompted = false;
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -59,6 +65,10 @@ class _AuthScreenState extends State<AuthScreen>
 
   AuthMode _mode = AuthMode.login;
   SubmitState _submitState = SubmitState.idle;
+
+  /// Set when biometric sign-in is on (Security screen) and the device has an
+  /// enrolled biometric; shows the biometric button under Нэвтрэх.
+  BiometricKind? _biometric;
   final List<Timer> _timers = [];
 
   /// Shown under their field after a failed submit; cleared as soon as the
@@ -100,6 +110,28 @@ class _AuthScreenState extends State<AuthScreen>
     _subtitleIn = _stagger.slice(0.16);
     _cardIn = _stagger.slice(0.24);
     _entrance.forward();
+    if (appBiometricLogin.value) _checkBiometric();
+  }
+
+  Future<void> _checkBiometric() async {
+    final kind = await Biometrics.instance.available();
+    if (!mounted || kind == null) return;
+    setState(() => _biometric = kind);
+    if (!AuthScreen.biometricPrompted) {
+      AuthScreen.biometricPrompted = true;
+      _biometricLogin();
+    }
+  }
+
+  Future<void> _biometricLogin() async {
+    if (_submitState != SubmitState.idle) return;
+    final result = await Biometrics.instance.authenticate(
+      'Ard KIDS руу нэвтрэх',
+    );
+    if (!mounted) return;
+    // TODO: restore the saved session instead of signing straight in.
+    if (result == BiometricResult.success) return context.go(AppRoutes.home);
+    if (result.message case final message?) showAppSnack(context, message);
   }
 
   @override
@@ -394,6 +426,14 @@ class _AuthScreenState extends State<AuthScreen>
           label: isLogin ? 'Үргэлжлүүлэх' : 'Код авах',
           onPressed: _submit,
         ),
+        if (_biometric case final kind? when isLogin) ...[
+          const SizedBox(height: 10),
+          SoftButton(
+            label: kind.loginLabel,
+            icon: kind.icon,
+            onPressed: _biometricLogin,
+          ),
+        ],
       ],
     );
   }

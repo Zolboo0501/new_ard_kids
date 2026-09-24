@@ -134,7 +134,7 @@ class _OtpScreenState extends State<OtpScreen>
         // screens.
         child: Column(
           children: [
-            const Header(step: 'Алхам 2/4'),
+            const Header(step: 'Алхам 2/6'),
             Expanded(
               // Give the scrolling child a minimum height of the viewport so
               // the content can be centred in the space left above the

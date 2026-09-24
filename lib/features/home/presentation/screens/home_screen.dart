@@ -125,7 +125,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 14),
                   ],
                   SizedBox(
-                    height: 232,
+                    // Unlinked cards add the "Хязгаарлагдмал" line.
+                    height: linked ? 232 : 246,
                     child: PageView.builder(
                       controller: _pages,
                       itemCount: linked ? cards.length : 1,

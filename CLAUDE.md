@@ -20,7 +20,7 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
 
 ## Architecture
 
-- `lib/main.dart`: `ArdKidsApp` builds `MaterialApp.router` with the router from `AppRoutes.createRouter()`.
+- `lib/main.dart`: `ArdKidsApp` builds `MaterialApp.router` with the router from `AppRoutes.createRouter()`. `runApp` starts with `AppLoader` (`lib/app/app_loader.dart`). It shows `AppLoadingScreen` (the native splash's white background and logo, plus a spinner that only appears after 400 ms) while `ThemeStore`, `AvatarStore` and `BiometricStore` load, then fades to `ArdKidsApp`. The loading screen is drawn before the theme is known, so it uses only fixed colors.
 - `lib/app/routes.dart`: `AppRoutes` holds every path and `createRouter({initialLocation, extra})`.
   - The signed-in bottom nav is a `StatefulShellRoute.indexedStack` with two branches, `/home` and `/profile`, rendered by `HomeShell`. Each tab keeps its own state. Switch tabs with `navigationShell.goBranch` or `context.go`.
   - Every other screen is a flat top-level `GoRoute` (sign-in at `/`). Pushing one covers the nav bar.
@@ -35,11 +35,12 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
   - `AppAvatar` holds each companion's own images (`pick`, `portrait`, `savings`, `stocks`, `rewards`) for Home and Profile, which listen to the `appAvatar` notifier. `AvatarStore` saves the choice in secure storage under `app_avatar`, and `main()` loads it before `runApp`, next to `ThemeStore`.
   - `Stickers` gives screen illustrations (`Stickers.piggy`, `Stickers.success`, …) from the chosen companion's sticker set, picked by `AppAvatar.stickerSet`. Use it for any picture that stands for the kid or an app action. Pictures of other people and of shop items stay on `Mascots`.
   - Like the theme accent, `Stickers.*` are getters, so they can't appear in `const` expressions or `static const` lists (use a `static get` list). `ArdKidsApp` rebuilds the whole tree when `appAvatar` changes, so open screens switch too.
+- `lib/app/biometrics.dart`: biometric sign-in. `appBiometricLogin` is the Security screen toggle; `BiometricStore` saves it under `biometric_login` and `main()` loads it before `runApp`. `Biometrics.instance` wraps `local_auth` (tests swap in a fake). Turning the toggle on needs one successful scan. When it is on, `AuthScreen` shows a Face ID / Хурууны хээ button under Нэвтрэх and prompts by itself once per launch (`AuthScreen.biometricPrompted`, which tests reset). Android needs `FlutterFragmentActivity`, and iOS needs `NSFaceIDUsageDescription`.
 - `lib/features/<feature>/`: the screens, ported from the Stitch project "Kids Finance & Allowance App" (`projects/13411384382310318082`). Every feature has the same layout:
   - `presentation/screens/`: one file per screen, holding only the screen widget, its `State` and any enum that is part of its API (`AuthMode`, `TransferMode`). Screens are `StatefulWidget`s with local state.
   - `presentation/widgets/`: one public widget per file (named after it, with a `super.key`). A helper used by only one widget stays private in that widget's file. Give generic names a screen prefix (`CardOrderSection`, `TransferSuccessRow`) so they don't clash with Flutter or each other.
   - `data/`: models, mock data and pure logic (`Invoice`/`mockInvoices`, `SavingsGoal`, `TransferReceipt`, `MoneyRequest`, `projectSavings`).
-  - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `ParentLinkScreen` → `HomeShell` (`/home`, or `AppRoutes.homeUnlinked` when the parent link is skipped).
+  - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `BiometricSetupScreen` (`/onboarding/biometric`, skipped when the phone has no biometric sensor) → `ParentLinkScreen` → `HomeShell` (`/home`, or `AppRoutes.homeUnlinked` when the parent link is skipped).
   - `home/presentation/screens/home_shell.dart` with `widgets/floating_nav_bar.dart`. The center QR button pushes `/qr`.
   - `home/data/invoice.dart` (`Invoice`, `mockInvoices`) and `home/presentation/widgets/invoice_card.dart`, shared by Home's Нэхэмжлэх tab (the newest three) and `InvoiceHistoryScreen` (`/invoices/history`, opened by Хуулга харах: every invoice with the date filter).
   - Other folders: `transfer` (transfer, receipt, QR, money requests), `savings`, `accounts` (coin, rewards, stocks, card order, cart), `social`, `notifications`, `profile`, `onboarding`.
