@@ -57,6 +57,10 @@ abstract final class AppRoutes {
   /// continuing onboarding.
   static const avatarPickerEdit = '$avatarPicker?edit=true';
 
+  /// Parent link as the last registration step: shows the step pill. Opened
+  /// from Home or Profile ([parentLink]) it has no step.
+  static const parentLinkOnboarding = '$parentLink?onboarding=true';
+
   static const transfer = '/transfer';
 
   /// `extra`: a [TransferReceipt]; a sample receipt is shown without one.
@@ -97,7 +101,9 @@ abstract final class AppRoutes {
     avatarPicker: (_, state) => AvatarPickerScreen(
       editing: state.uri.queryParameters['edit'] == 'true',
     ),
-    parentLink: (_, _) => const ParentLinkScreen(),
+    parentLink: (_, state) => ParentLinkScreen(
+      onboarding: state.uri.queryParameters['onboarding'] == 'true',
+    ),
     transfer: (_, _) => const TransferScreen(),
     transferSuccess: (_, state) =>
         TransferSuccessScreen(receipt: state.extra as TransferReceipt?),
@@ -141,6 +147,7 @@ abstract final class AppRoutes {
     ..._builders.keys,
     home,
     homeUnlinked,
+    parentLinkOnboarding,
     profile,
   ];
 

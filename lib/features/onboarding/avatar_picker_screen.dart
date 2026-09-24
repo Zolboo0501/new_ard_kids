@@ -78,7 +78,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     super.dispose();
   }
 
-  void _next() => context.push(AppRoutes.parentLink);
+  void _next() => context.push(AppRoutes.parentLinkOnboarding);
 
   void _confirm() {
     final avatar = _avatars[_selected];
@@ -119,7 +119,9 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                       children: [
                         Entrance(
                           t: _headerIn,
-                          child: const Header(step: 'Алхам 3/4'),
+                          child: Header(
+                            step: widget.editing ? null : 'Алхам 3/4',
+                          ),
                         ),
                         const SizedBox(height: 18),
                         Entrance(

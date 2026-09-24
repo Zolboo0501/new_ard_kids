@@ -13,8 +13,13 @@ import '../../widgets/entrance.dart';
 import '../../app/avatar.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
+///
+/// With [onboarding] (the last registration step) the header shows the step
+/// pill; opened later from Home or Profile it has none.
 class ParentLinkScreen extends StatefulWidget {
-  const ParentLinkScreen({super.key});
+  const ParentLinkScreen({super.key, this.onboarding = false});
+
+  final bool onboarding;
 
   @override
   State<ParentLinkScreen> createState() => _ParentLinkScreenState();
@@ -137,7 +142,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: EntranceItem.list([
               Header(
-                step: 'Алхам 4/4',
+                step: widget.onboarding ? 'Алхам 4/4' : null,
                 trailing: GestureDetector(
                   onTap: withHaptic(() => _goHome(linked: false)),
                   child: Container(

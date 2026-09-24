@@ -4,9 +4,11 @@ import 'package:new_ard_kids/widgets/common.dart';
 import '../../../../widgets/app_text.dart';
 
 class Header extends StatelessWidget {
-  const Header({super.key, required this.step, this.trailing});
+  const Header({super.key, this.step, this.trailing});
 
-  final String step;
+  /// The registration step pill ("Алхам 2/4"). Leave it null outside the
+  /// sign-up flow and only the back button (and [trailing]) show.
+  final String? step;
 
   /// Optional action pinned to the right of the step pill, for screens that
   /// offer something alongside going back (a skip, for instance).
@@ -25,29 +27,30 @@ class Header extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: CircleBackButton(),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.sky50,
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: AppColors.sky100.withValues(alpha: 0.8),
+          if (step case final step?)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.sky50,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: AppColors.sky100.withValues(alpha: 0.8),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const PulsingDot(),
+                  const SizedBox(width: 6),
+                  AppText(
+                    step,
+                    size: 12,
+                    weight: FontWeight.w700,
+                    color: AppColors.sky600,
+                  ),
+                ],
               ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const PulsingDot(),
-                const SizedBox(width: 6),
-                AppText(
-                  step,
-                  size: 12,
-                  weight: FontWeight.w700,
-                  color: AppColors.sky600,
-                ),
-              ],
-            ),
-          ),
           if (trailing != null)
             Align(alignment: Alignment.centerRight, child: trailing),
         ],
