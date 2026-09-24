@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
-import 'package:new_ard_kids/features/accounts/card_screen.dart';
+import 'package:new_ard_kids/features/accounts/presentation/screens/card_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 void main() {

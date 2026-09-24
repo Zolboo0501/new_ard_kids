@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Ard KIDS: a Flutter mobile app (Android/iOS) for kids, a youth fintech product. The UI text is in **Mongolian (Cyrillic)**. Keep new user-facing strings and semantic labels in Mongolian, and match them exactly in tests. Routing uses `go_router`. There is no backend or state-management library. All data is mock data kept inside each screen, and API calls are `TODO`s.
+Ard KIDS: a Flutter mobile app (Android/iOS) for kids, a youth fintech product. The UI text is in **Mongolian (Cyrillic)**. Keep new user-facing strings and semantic labels in Mongolian, and match them exactly in tests. Routing uses `go_router`. There is no backend or state-management library. All data is mock data, kept in each feature's `data/` folder or the screen's state, and API calls are `TODO`s.
 
 ## Commands
 
@@ -35,15 +35,19 @@ flutter test test/screens_smoke_test.dart --plain-name "renders /transfer withou
   - `AppAvatar` holds each companion's own images (`pick`, `portrait`, `savings`, `stocks`, `rewards`) for Home and Profile, which listen to the `appAvatar` notifier. `AvatarStore` saves the choice in secure storage under `app_avatar`, and `main()` loads it before `runApp`, next to `ThemeStore`.
   - `Stickers` gives screen illustrations (`Stickers.piggy`, `Stickers.success`, …) from the chosen companion's sticker set, picked by `AppAvatar.stickerSet`. Use it for any picture that stands for the kid or an app action. Pictures of other people and of shop items stay on `Mascots`.
   - Like the theme accent, `Stickers.*` are getters, so they can't appear in `const` expressions or `static const` lists (use a `static get` list). `ArdKidsApp` rebuilds the whole tree when `appAvatar` changes, so open screens switch too.
-- `lib/features/<feature>/`: one file per screen, ported from the Stitch project "Kids Finance & Allowance App" (`projects/13411384382310318082`). Screens are `StatefulWidget`s with local state, and each file keeps its small subwidgets private.
-  - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `ParentLinkScreen` → `HomeShell` (`/home`, or `AppRoutes.homeUnlinked` when the parent link is skipped). The auth screens live in `auth/presentation/screens/`.
-  - `home/home_shell.dart`: the `FloatingNavBar` for the shell. The center QR button pushes `/qr`.
-  - `home/invoices.dart`: `Invoice`, `mockInvoices` and `InvoiceCard`, shared by Home's Нэхэмжлэх tab (the newest three) and `InvoiceHistoryScreen` (`/invoices/history`, opened by Хуулга харах: every invoice with the date filter).
+- `lib/features/<feature>/`: the screens, ported from the Stitch project "Kids Finance & Allowance App" (`projects/13411384382310318082`). Every feature has the same layout:
+  - `presentation/screens/`: one file per screen, holding only the screen widget, its `State` and any enum that is part of its API (`AuthMode`, `TransferMode`). Screens are `StatefulWidget`s with local state.
+  - `presentation/widgets/`: one public widget per file (named after it, with a `super.key`). A helper used by only one widget stays private in that widget's file. Give generic names a screen prefix (`CardOrderSection`, `TransferSuccessRow`) so they don't clash with Flutter or each other.
+  - `data/`: models, mock data and pure logic (`Invoice`/`mockInvoices`, `SavingsGoal`, `TransferReceipt`, `MoneyRequest`, `projectSavings`).
+  - Flow: `AuthScreen` → `OtpScreen` → `FriendCodeScreen` → `AvatarPickerScreen` → `ParentLinkScreen` → `HomeShell` (`/home`, or `AppRoutes.homeUnlinked` when the parent link is skipped).
+  - `home/presentation/screens/home_shell.dart` with `widgets/floating_nav_bar.dart`. The center QR button pushes `/qr`.
+  - `home/data/invoice.dart` (`Invoice`, `mockInvoices`) and `home/presentation/widgets/invoice_card.dart`, shared by Home's Нэхэмжлэх tab (the newest three) and `InvoiceHistoryScreen` (`/invoices/history`, opened by Хуулга харах: every invoice with the date filter).
   - Other folders: `transfer` (transfer, receipt, QR, money requests), `savings`, `accounts` (coin, rewards, stocks, card order, cart), `social`, `notifications`, `profile`, `onboarding`.
   - The `auth` screens simulate network calls with `Timer`s and cancel them in `dispose`.
   - `ThemeSettingsScreen` switches the app theme (blue/pink) through `appThemeChoice`. `ThemeStore` (`lib/theme/theme_store.dart`) saves it in `flutter_secure_storage` under `app_theme`, and `main()` loads it before `runApp`. Tests fake the storage with `FlutterSecureStorage.setMockInitialValues`.
 - `lib/widgets/`: widgets shared across screens.
-  - `ui.dart`: the shared kit: `AppCard`, `PrimaryButton`/`SoftButton`, `SubPageHeader`, `StatusBadge`/`BadgeTone`, `AppTextField`, `MascotTile`, `ProgressTrack`, `formatMnt` (₮ formatting), `moneyStyle`, `Mascots` (asset paths), and the per-companion sticker paths `FoxStickers`/`BearStickers`/`RabbitStickers`/`PenguinStickers`. Use these instead of re-styling.
+  - `ui.dart`: the shared kit: `AppCard`, `PrimaryButton`/`SoftButton`, `SubPageHeader`, `StatusBadge`/`BadgeTone`, `AppTextField`, `MascotTile`, `ProgressTrack`, `formatMnt` (₮ formatting), `moneyStyle`, `Mascots` (asset paths), and the per-companion sticker paths `FoxStickers`/`BearStickers`/`RabbitStickers`/`PenguinStickers`. Use these instead of re-styling. `ui.dart` is a barrel: import it, but add new kit widgets to the matching file in `lib/widgets/ui/` (`money`, `surfaces`, `headers`, `chips`, `form_fields`, `mascots`, `feedback`, `interaction`).
+  - `input_formatters.dart`: `ThousandsFormatter`, `IbanFormatter` and `DigitGroupFormatter` for amount and account-number fields.
   - `app_text.dart`: `AppText`, a `Text` that is always Inter. Use it instead of `Text(..., style: inter(...))`; reach for `inter()` directly only where a `TextStyle` is needed (inside a `TextSpan`, a `hintStyle`, a `TextField.style`).
   - `app_tabs.dart`: `AppTabs`/`AppTab`, the segmented control with a pill that slides between tabs, and `AppTabView` for its content pane (a Material 3 shared-axis transition: offset fades, directional slide, eased height). Used by the sign-in, home and QR screens. The behaviour is shared but the look is not: pass `AppTabsStyle.pill` (sign-in, the default), `.card` (home) or `.solid` (QR), each of which keeps that screen's original chrome. The scrollable filter chips in the request/notification lists are a different affordance and are not this.
   - `app_input.dart`: `AppInputShell`, `AppFieldLabel`, `AppFieldError`, `AppFieldTick`, plus `appInputStyle()`/`appInputDecoration()` — the form-field look, including the shake when a field newly becomes invalid.

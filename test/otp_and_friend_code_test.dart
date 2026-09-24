@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/friend_code_screen.dart';
-import 'package:new_ard_kids/features/onboarding/avatar_picker_screen.dart';
+import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 /// Starts the real router at [location] so navigation behaves as in the app.

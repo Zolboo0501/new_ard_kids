@@ -3,8 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
-import 'package:new_ard_kids/features/home/home_shell.dart';
-import 'package:new_ard_kids/features/onboarding/avatar_picker_screen.dart';
+import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar.dart';
+import 'package:new_ard_kids/features/home/presentation/screens/home_shell.dart';
+import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/common.dart';
 

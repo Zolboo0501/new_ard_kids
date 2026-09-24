@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:new_ard_kids/features/accounts/account_widgets.dart';
+import 'package:new_ard_kids/features/accounts/presentation/widgets/copy_account_number.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
 String _shown(WidgetTester tester) =>

@@ -67,10 +67,7 @@ void main() {
 
     expect(appThemeChoice.value, AppThemeChoice.pink);
     expect(AppColors.sky500, AppPalette.pink.c500);
-    expect(
-      await const FlutterSecureStorage().read(key: 'app_theme'),
-      'pink',
-    );
+    expect(await const FlutterSecureStorage().read(key: 'app_theme'), 'pink');
   });
 
   test('The saved theme is restored on launch', () async {

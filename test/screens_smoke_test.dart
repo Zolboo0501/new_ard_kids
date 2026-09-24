@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
-import 'package:new_ard_kids/features/transfer/transfer_success_screen.dart';
+import 'package:new_ard_kids/features/transfer/presentation/screens/transfer_success_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/pin_code_sheet.dart';
 import 'package:new_ard_kids/widgets/ui.dart';

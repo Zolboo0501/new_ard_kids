@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
@@ -11,11 +11,13 @@ import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../../../../widgets/value_switcher.dart';
+import '../widgets/auth_mascot.dart';
+import '../widgets/helper_note.dart';
+import '../widgets/mode_switch.dart';
+import '../widgets/submit_button.dart';
+import '../widgets/top_bar.dart';
 
 enum AuthMode { login, register }
-
-enum _SubmitState { idle, sending, sent }
 
 /// "Нэвтрэх & Бүртгүүлэх" screen from the Stitch project.
 class AuthScreen extends StatefulWidget {
@@ -56,7 +58,7 @@ class _AuthScreenState extends State<AuthScreen>
   late final Animation<double> _cardIn;
 
   AuthMode _mode = AuthMode.login;
-  _SubmitState _submitState = _SubmitState.idle;
+  SubmitState _submitState = SubmitState.idle;
   final List<Timer> _timers = [];
 
   /// Shown under their field after a failed submit; cleared as soon as the
@@ -122,7 +124,7 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   void _submit() {
-    if (_submitState != _SubmitState.idle) return;
+    if (_submitState != SubmitState.idle) return;
 
     // Validate both fields so every problem is shown at once, then focus the
     // topmost offender.
@@ -148,7 +150,7 @@ class _AuthScreenState extends State<AuthScreen>
     }
 
     FocusScope.of(context).unfocus();
-    setState(() => _submitState = _SubmitState.sending);
+    setState(() => _submitState = SubmitState.sending);
 
     // Нэвтрэх signs straight in; Бүртгүүлэх goes on to verify the phone.
     if (_mode == AuthMode.login) {
@@ -165,7 +167,7 @@ class _AuthScreenState extends State<AuthScreen>
     // TODO: replace the simulated delays with the real OTP request.
     _timers.add(
       Timer(const Duration(milliseconds: 900), () {
-        setState(() => _submitState = _SubmitState.sent);
+        setState(() => _submitState = SubmitState.sent);
         _timers.add(Timer(const Duration(milliseconds: 700), _openOtp));
       }),
     );
@@ -173,7 +175,7 @@ class _AuthScreenState extends State<AuthScreen>
 
   Future<void> _openOtp() async {
     await context.push(AppRoutes.otp, extra: _phoneController.text);
-    if (mounted) setState(() => _submitState = _SubmitState.idle);
+    if (mounted) setState(() => _submitState = SubmitState.idle);
   }
 
   @override
@@ -189,7 +191,7 @@ class _AuthScreenState extends State<AuthScreen>
           onTap: () => FocusScope.of(context).unfocus(),
           child: Column(
             children: [
-              const _TopBar(),
+              const TopBar(),
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(20, compact ? 0 : 8, 20, 24),
@@ -205,7 +207,7 @@ class _AuthScreenState extends State<AuthScreen>
                             // The mascot leads, and grows in slightly
                             // rather than just sliding.
                             scaleFrom: 0.94,
-                            child: _Mascot(size: compact ? 110 : 156),
+                            child: AuthMascot(size: compact ? 110 : 156),
                           ),
                           SizedBox(height: compact ? 12 : 18),
                           Entrance(
@@ -306,7 +308,7 @@ class _AuthScreenState extends State<AuthScreen>
             onChanged: (i) => setState(() => _mode = AuthMode.values[i]),
           ),
           const SizedBox(height: 18),
-          _ModeSwitch(
+          ModeSwitch(
             index: _mode.index,
             builder: (shown) => _buildFields(AuthMode.values[shown]),
           ),
@@ -316,7 +318,7 @@ class _AuthScreenState extends State<AuthScreen>
   }
 
   /// Everything under the tabs; [mode] is the one currently shown, which
-  /// trails [_mode] by half a switch (see [_ModeSwitch]).
+  /// trails [_mode] by half a switch (see [ModeSwitch]).
   Widget _buildFields(AuthMode mode) {
     final isLogin = mode == AuthMode.login;
     return Column(
@@ -381,314 +383,18 @@ class _AuthScreenState extends State<AuthScreen>
         ),
         AppFieldError(message: _phoneError),
         const SizedBox(height: 12),
-        _HelperNote(
+        HelperNote(
           text: isLogin
               ? 'Таны утсанд 4 оронтой баталгаажуулах нууц код очно.'
               : 'Шинэ бүртгэл үүсгэхэд таны утасны дугаарт баталгаажуулах код илгээнэ.',
         ),
         const SizedBox(height: 16),
-        _SubmitButton(
+        SubmitButton(
           state: _submitState,
           label: isLogin ? 'Үргэлжлүүлэх' : 'Код авах',
           onPressed: _submit,
         ),
       ],
-    );
-  }
-}
-
-/// Shared-axis switch for the form under the tabs. [AppTabView] can't be
-/// used here: it holds the outgoing and incoming panes at once, and the text
-/// fields' focus nodes can only be attached to one of them. Instead the one
-/// form slides and fades out, swaps to the new [index] at the midpoint (so
-/// the fields keep their text and focus), then slides and fades back in.
-class _ModeSwitch extends StatefulWidget {
-  const _ModeSwitch({required this.index, required this.builder});
-
-  final int index;
-
-  /// Builds the form for the index currently shown.
-  final Widget Function(int shown) builder;
-
-  @override
-  State<_ModeSwitch> createState() => _ModeSwitchState();
-}
-
-class _ModeSwitchState extends State<_ModeSwitch>
-    with SingleTickerProviderStateMixin {
-  /// Fraction of the switch spent leaving; the rest is arriving.
-  static const _outEnd = 0.35;
-  static const _travel = 24.0;
-
-  late final AnimationController _controller = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 320),
-    value: 1,
-  )..addListener(_swapAtMidpoint);
-
-  late int _shown = widget.index;
-
-  /// 1 when moving to a later tab (content travels left), -1 for earlier.
-  double _sign = 1;
-
-  void _swapAtMidpoint() {
-    if (_controller.value >= _outEnd && _shown != widget.index) {
-      setState(() => _shown = widget.index);
-    }
-  }
-
-  @override
-  void didUpdateWidget(_ModeSwitch old) {
-    super.didUpdateWidget(old);
-    if (old.index == widget.index) return;
-    if (MediaQuery.disableAnimationsOf(context)) {
-      _shown = widget.index;
-      _controller.value = 1;
-      return;
-    }
-    _sign = widget.index > old.index ? 1 : -1;
-    // Tapped again while arriving: leave from the current opacity instead of
-    // snapping back to fully visible.
-    final v = _controller.value;
-    final start = v <= _outEnd
-        ? v
-        : _outEnd * (1 - (v - _outEnd) / (1 - _outEnd));
-    _controller.forward(from: start);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      child: widget.builder(_shown),
-      builder: (context, child) {
-        final v = _controller.value;
-        final double opacity;
-        final double dx;
-        if (v < _outEnd) {
-          final t = appEmphasizedAccelerate.transform(v / _outEnd);
-          opacity = 1 - t;
-          dx = -_sign * _travel * t;
-        } else {
-          final t = appEmphasizedDecelerate.transform(
-            (v - _outEnd) / (1 - _outEnd),
-          );
-          opacity = t;
-          dx = _sign * _travel * (1 - t);
-        }
-        return Opacity(
-          opacity: opacity,
-          child: Transform.translate(offset: Offset(dx, 0), child: child),
-        );
-      },
-    );
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  const _TopBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 44,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      alignment: Alignment.centerRight,
-      child: Image.asset(
-        'assets/images/ard_logo.png',
-        width: 36,
-        height: 36,
-        fit: BoxFit.contain,
-        semanticLabel: 'Ard',
-      ),
-    );
-  }
-}
-
-/// The red panda sticker, cut out onto a transparent background so it sits
-/// straight on the page.
-class _Mascot extends StatelessWidget {
-  const _Mascot({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Image.asset(
-      Mascots.redPandaCutout,
-      height: size,
-      fit: BoxFit.contain,
-      semanticLabel: 'Ard KIDS улаан панда',
-    );
-  }
-}
-
-class _HelperNote extends StatelessWidget {
-  const _HelperNote({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColors.sky50,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.sms_outlined, size: 14, color: AppColors.sky600),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            // The copy changes with the mode, so cross-fade it instead of
-            // snapping to the new sentence.
-            child: Padding(
-              padding: const EdgeInsets.only(top: 3),
-              child: AnimatedSize(
-                duration: const Duration(milliseconds: 240),
-                curve: appEmphasizedDecelerate,
-                alignment: Alignment.topCenter,
-                child: ValueSwitcher(
-                  value: text,
-                  duration: const Duration(milliseconds: 240),
-                  switchInCurve: appEmphasizedDecelerate,
-                  switchOutCurve: appEmphasizedAccelerate,
-                  child: AppText(
-                    text,
-                    size: 12,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate500,
-                    height: 1.4,
-                    key: ValueKey(text),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SubmitButton extends StatefulWidget {
-  const _SubmitButton({
-    required this.state,
-    required this.label,
-    required this.onPressed,
-  });
-
-  final _SubmitState state;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  State<_SubmitButton> createState() => _SubmitButtonState();
-}
-
-class _SubmitButtonState extends State<_SubmitButton> {
-  bool _pressed = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final busy = widget.state != _SubmitState.idle;
-    final textStyle = inter(
-      size: 14,
-      weight: FontWeight.w700,
-      color: Colors.white,
-    );
-
-    final Widget content = switch (widget.state) {
-      _SubmitState.idle => Row(
-        // Keyed by the label too, so switching mode cross-fades the caption
-        // rather than swapping it in place.
-        key: ValueKey('idle-${widget.label}'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(widget.label, style: textStyle),
-          const SizedBox(width: 8),
-          const Icon(
-            Icons.arrow_forward_rounded,
-            size: 20,
-            color: Colors.white,
-          ),
-        ],
-      ),
-      _SubmitState.sending => Row(
-        key: const ValueKey('sending'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(
-            width: 18,
-            height: 18,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.2,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text('Илгээж байна...', style: textStyle),
-        ],
-      ),
-      _SubmitState.sent => Row(
-        key: const ValueKey('sent'),
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.check_rounded, size: 20, color: Colors.white),
-          const SizedBox(width: 8),
-          Text('Код илгээгдлээ!', style: textStyle),
-        ],
-      ),
-    };
-
-    return GestureDetector(
-      onTapDown: busy ? null : (_) => setState(() => _pressed = true),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTapUp: busy ? null : (_) => setState(() => _pressed = false),
-      onTap: withHaptic(busy ? null : widget.onPressed),
-      child: AnimatedScale(
-        scale: _pressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: AnimatedOpacity(
-          opacity: busy ? 0.8 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            height: 52,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              gradient: LinearGradient(
-                colors: [AppColors.sky500, AppColors.sky600],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.sky500.withValues(alpha: 0.3),
-                  offset: const Offset(0, 8),
-                  blurRadius: 18,
-                  spreadRadius: -2,
-                ),
-              ],
-            ),
-            alignment: Alignment.center,
-            child: ValueSwitcher(
-              value: busy ? widget.state : widget.label,
-              duration: const Duration(milliseconds: 180),
-              child: content,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

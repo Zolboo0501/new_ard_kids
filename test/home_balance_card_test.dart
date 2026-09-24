@@ -12,9 +12,8 @@ Finder _shown(String text, {required bool hidden}) => find.byWidgetPredicate(
 );
 
 /// The pill's content box: the [Stack] holding the switcher's texts.
-Rect _pill(WidgetTester tester, Finder text) => tester.getRect(
-  find.ancestor(of: text, matching: find.byType(Stack)).first,
-);
+Rect _pill(WidgetTester tester, Finder text) =>
+    tester.getRect(find.ancestor(of: text, matching: find.byType(Stack)).first);
 
 void main() {
   testWidgets(
