@@ -109,26 +109,46 @@ void main() {
     testWidgets('phones use the full width', (tester) async {
       await _pump(tester, AppRoutes.transfer, _proMax);
       final button = await _submitButton(tester);
-      // Only the screen's own 20pt gutters.
-      expect(button.width, 440 - 40);
+      // Only the screen's own 20pt gutters, drawn at the Pro Max scale.
+      expect(button.width, closeTo(440 - 40 * 440 / 390, 0.5));
     });
   });
 
   group('scale', () {
-    test('only tablets are scaled up', () {
-      expect(AppScale.factorFor(const Size(440, 956)), 1);
+    test('standard phones keep their size, larger screens scale up', () {
       expect(AppScale.factorFor(const Size(375, 667)), 1);
+      expect(AppScale.factorFor(const Size(390, 844)), 1);
+      expect(AppScale.factorFor(const Size(402, 874)), 1);
+      // Plus and Pro Max show the 390pt design, drawn bigger.
+      expect(AppScale.factorFor(const Size(428, 926)), 428 / 390);
+      expect(AppScale.factorFor(_proMax), 440 / 390);
       expect(AppScale.factorFor(_ipadPortrait), 1.2);
       expect(AppScale.factorFor(_ipadLandscape), 1.2);
       expect(AppScale.factorFor(const Size(1032, 1376)), 1.3);
     });
 
-    testWidgets('text is drawn bigger on iPad than on a phone', (tester) async {
-      await _pump(tester, AppRoutes.home, _proMax);
-      final phone = tester.getRect(find.text('Тэмүүлэн!')).height;
-      await _pump(tester, AppRoutes.home, _ipadPortrait);
-      final ipad = tester.getRect(find.text('Тэмүүлэн!')).height;
+    /// The on-screen height of the Home greeting on a [size] screen.
+    Future<double> greetingHeight(WidgetTester tester, Size size) async {
+      await _pump(tester, AppRoutes.home, size);
+      return tester.getRect(find.text('Тэмүүлэн!')).height;
+    }
+
+    testWidgets('text is drawn bigger on a Pro Max and on iPad', (
+      tester,
+    ) async {
+      final phone = await greetingHeight(tester, const Size(390, 844));
+      final proMax = await greetingHeight(tester, _proMax);
+      final ipad = await greetingHeight(tester, _ipadPortrait);
+      expect(proMax, closeTo(phone * 440 / 390, 0.5));
       expect(ipad, closeTo(phone * 1.2, 0.5));
+    });
+
+    testWidgets('buttons are bigger on a Pro Max', (tester) async {
+      await _pump(tester, AppRoutes.transfer, const Size(390, 844));
+      final phone = (await _submitButton(tester)).height;
+      await _pump(tester, AppRoutes.transfer, _proMax);
+      final proMax = (await _submitButton(tester)).height;
+      expect(proMax, closeTo(phone * 440 / 390, 0.5));
     });
   });
 

@@ -61,15 +61,15 @@ abstract final class AppLayout {
   }
 }
 
-/// Makes the whole interface bigger on tablets.
+/// Makes the whole interface bigger on large phones and tablets.
 ///
-/// The screens are drawn for a phone held close; an iPad sits further away,
-/// so at the same point sizes its text and controls read small. Under this
-/// widget the app lays out in a smaller logical window (the real one divided
-/// by [factorFor]) and is drawn scaled up to fill the screen. Text, icons,
-/// spacing and touch targets all grow together, and every layout rule
-/// ([AppLayout]) sees the scaled size. Phones get a factor of 1 and are left
-/// alone.
+/// The screens are designed for a 390pt-wide phone. On a wider one, or an
+/// iPad that sits further from the eye, the same point sizes read small and
+/// leave the extra width to stretch. Under this widget the app lays out in a
+/// smaller logical window (the real one divided by [factorFor]) and is drawn
+/// scaled up to fill the screen. Text, buttons, icons, spacing and touch
+/// targets all grow together, and every layout rule ([AppLayout]) sees the
+/// scaled size.
 ///
 /// Used as `MaterialApp.router(builder: AppScale.builder)`, so it wraps the
 /// navigator and with it every route, sheet and dialog.
@@ -81,12 +81,24 @@ class AppScale extends StatelessWidget {
   static Widget builder(BuildContext context, Widget? child) =>
       AppScale(child: child ?? const SizedBox.shrink());
 
-  /// How much bigger the interface is drawn in a window of [size]: 1 on
-  /// phones, 1.2 on iPad and tablets, 1.3 on the largest (iPad Pro 13").
+  /// The phone width the screens are designed for.
+  static const designWidth = 390.0;
+
+  /// Narrowest phone that is scaled up: the Plus and Pro Max class (414pt
+  /// and wider). Standard phones keep their true size.
+  static const largePhoneMin = 414.0;
+
+  /// How much bigger the interface is drawn in a window of [size]:
+  ///
+  /// * standard phones: 1;
+  /// * Plus / Pro Max phones: their width over [designWidth] (1.06 to 1.13),
+  ///   so they show the designed 390pt layout, just bigger;
+  /// * iPad and tablets: 1.2, and 1.3 on the largest (iPad Pro 13").
   static double factorFor(Size size) {
     final side = size.shortestSide;
-    if (side < AppLayout.tabletMin) return 1;
-    return side >= 1000 ? 1.3 : 1.2;
+    if (side >= AppLayout.tabletMin) return side >= 1000 ? 1.3 : 1.2;
+    if (side >= largePhoneMin) return side / designWidth;
+    return 1;
   }
 
   @override
