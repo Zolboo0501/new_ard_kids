@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -157,7 +158,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
                 ),
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                child: Center(child: _buildContent()),
+                child: AdaptiveCenter(child: _buildContent()),
               ),
             ),
           ),

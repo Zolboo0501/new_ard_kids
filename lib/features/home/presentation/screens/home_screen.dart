@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -106,15 +107,17 @@ class _HomeScreenState extends State<HomeScreen> {
             onNotifications: () => _go(AppRoutes.notifications),
           ),
           Expanded(
+            // Split on wide windows: the balance carousel stays on the left
+            // while the accounts, invoices and cards scroll on the right.
             child: EntranceScope(
-              child: ListView(
+              child: AdaptiveSplit(
                 padding: EdgeInsets.fromLTRB(
                   16,
                   14,
                   16,
-                  120 + MediaQuery.paddingOf(context).bottom,
+                  AppLayout.navClearance(context),
                 ),
-                children: EntranceItem.list([
+                leading: [
                   PageDots(count: linked ? cards.length : 4, index: _page),
                   const SizedBox(height: 12),
                   if (!linked && _bannerVisible) ...[
@@ -170,7 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                ],
+                trailing: [
                   AppTabs(
                     tabs: const [
                       AppTab('Данс'),
@@ -201,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _ => CardsPane(onOpen: _go),
                     },
                   ),
-                ]),
+                ],
               ),
             ),
           ),

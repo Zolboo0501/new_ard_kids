@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/numeric_keypad.dart';
@@ -151,7 +152,10 @@ class _OtpScreenState extends State<OtpScreen>
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 448),
+                          // Full width on iPad, like every other screen.
+                          constraints: const BoxConstraints(
+                            maxWidth: AppLayout.contentMax,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -225,7 +229,8 @@ class _OtpScreenState extends State<OtpScreen>
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 448),
+          // Full width on iPad, like every other screen.
+          constraints: const BoxConstraints(maxWidth: AppLayout.contentMax),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(

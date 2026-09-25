@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'app/app_loader.dart';
@@ -7,9 +8,18 @@ import 'app/biometrics.dart';
 import 'app/routes.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_store.dart';
+import 'widgets/adaptive.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+  final binding = WidgetsFlutterBinding.ensureInitialized();
+  // Phones stay upright: the keypad screens need a portrait height. Tablets
+  // rotate freely, and their layouts restructure for the width instead.
+  final view = binding.platformDispatcher.implicitView;
+  if (view != null &&
+      (view.physicalSize / view.devicePixelRatio).shortestSide <
+          AppLayout.tabletMin) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
   // The loading screen shows while the saved choices are read; the app is
   // built only after, so a saved pink theme doesn't flash blue.
   runApp(
@@ -70,6 +80,7 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       routerConfig: _router,
+      builder: AppScale.builder,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/date_range_filter.dart';
@@ -144,7 +145,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
         ),
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
             12,

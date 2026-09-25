@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
@@ -289,7 +290,10 @@ class _AuthScreenState extends State<AuthScreen>
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 448),
+                          // Full width on iPad, like every other screen.
+                          constraints: const BoxConstraints(
+                            maxWidth: AppLayout.contentMax,
+                          ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [

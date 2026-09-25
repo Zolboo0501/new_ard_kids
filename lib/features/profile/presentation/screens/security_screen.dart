@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/biometrics.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -134,7 +135,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         ),
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             20,
             12,

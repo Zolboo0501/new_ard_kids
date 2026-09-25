@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/routes.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -46,7 +47,7 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
             : null,
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
             12,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -26,14 +27,16 @@ class SavingsAccountScreen extends StatelessWidget {
       backgroundColor: bg,
       appBar: const SubPageHeader(title: 'Хадгаламжийн данс', background: bg),
       body: EntranceScope(
-        child: ListView(
+        // Split on wide windows: the balance and actions beside the goals.
+        child: AdaptiveSplit(
           padding: EdgeInsets.fromLTRB(
             16,
             12,
             16,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
-          children: EntranceItem.list([
+          gap: 16,
+          leading: [
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(20),
@@ -103,7 +106,8 @@ class SavingsAccountScreen extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+          ],
+          trailing: [
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
@@ -142,7 +146,7 @@ class SavingsAccountScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ]),
+          ],
         ),
       ),
     );

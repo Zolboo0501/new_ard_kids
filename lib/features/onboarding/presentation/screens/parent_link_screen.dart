@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
@@ -105,7 +106,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
       body: SafeArea(
         bottom: false,
         child: EntranceScope(
-          child: ListView(
+          child: AdaptiveListView(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: EntranceItem.list([
               Header(

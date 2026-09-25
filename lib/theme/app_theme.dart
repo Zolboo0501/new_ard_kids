@@ -203,5 +203,8 @@ ThemeData buildAppTheme() {
       primary: AppColors.sky600,
       surface: AppColors.surface,
     ),
+    // Sheets span the full width on iPad too, like the pages, instead of
+    // Material's 640 cap.
+    bottomSheetTheme: const BottomSheetThemeData(constraints: BoxConstraints()),
   );
 }

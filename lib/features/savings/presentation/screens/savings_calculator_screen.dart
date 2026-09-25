@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../data/savings_projection.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
@@ -76,7 +77,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
         ),
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
             16,

@@ -8,6 +8,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
@@ -116,7 +117,7 @@ class _QrScanScreenState extends State<QrScanScreen>
             : null,
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
             12,

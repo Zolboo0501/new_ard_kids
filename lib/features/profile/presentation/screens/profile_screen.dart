@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -66,12 +67,16 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final bg = AppColors.pageBackgroundMuted;
     void go(String r) => context.push(r);
-    final bottom = MediaQuery.paddingOf(context).bottom + (embedded ? 110 : 24);
+    final bottom = embedded
+        ? AppLayout.navClearance(context) - 10
+        : MediaQuery.paddingOf(context).bottom + 24;
 
+    // Split on wide windows: who the kid is on the left, settings on the right.
     final body = EntranceScope(
-      child: ListView(
+      child: AdaptiveSplit(
         padding: EdgeInsets.fromLTRB(20, 12, 20, bottom),
-        children: EntranceItem.list([
+        gap: 18,
+        leading: [
           AppCard(
             radius: 24,
             padding: const EdgeInsets.all(20),
@@ -249,7 +254,8 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 18),
+        ],
+        trailing: [
           Padding(
             padding: const EdgeInsets.only(left: 4, bottom: 8),
             child: AppText(
@@ -318,7 +324,7 @@ class ProfileScreen extends StatelessWidget {
             border: AppColors.rose100,
             onPressed: () => _logout(context),
           ),
-        ]),
+        ],
       ),
     );
 

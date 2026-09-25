@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/theme_store.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -53,7 +54,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
       backgroundColor: bg,
       appBar: const SubPageHeader(title: 'Өнгөний тохиргоо', background: bg),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             20,
             12,

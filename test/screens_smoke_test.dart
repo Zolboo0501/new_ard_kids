@@ -5,11 +5,31 @@ import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/transfer/presentation/screens/transfer_success_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/pin_code_sheet.dart';
+import 'package:new_ard_kids/widgets/adaptive.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
-/// Pumps the app with a fresh router starting at [route] on a phone viewport.
-Future<void> _pumpApp(WidgetTester tester, String route) async {
-  tester.view.physicalSize = const Size(390 * 3, 844 * 3);
+/// The phone viewport most tests use.
+const _phone = Size(390, 844);
+
+/// Other windows every screen must fit: the smallest supported iPhone, the
+/// Plus / Pro Max phones, and iPads, where the layouts restructure.
+const _devices = {
+  'iPhone SE': Size(375, 667),
+  'iPhone Plus': Size(428, 926),
+  'iPhone Pro Max': Size(440, 956),
+  'iPad mini portrait': Size(744, 1133),
+  'iPad portrait': Size(820, 1180),
+  'iPad landscape': Size(1180, 820),
+  'iPad Pro 13 landscape': Size(1376, 1032),
+};
+
+/// Pumps the app with a fresh router starting at [route] on a [size] viewport.
+Future<void> _pumpApp(
+  WidgetTester tester,
+  String route, {
+  Size size = _phone,
+}) async {
+  tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
   addTearDown(tester.view.reset);
 
@@ -17,6 +37,7 @@ Future<void> _pumpApp(WidgetTester tester, String route) async {
     MaterialApp.router(
       theme: buildAppTheme(),
       routerConfig: AppRoutes.createRouter(initialLocation: route),
+      builder: AppScale.builder,
     ),
   );
   await tester.pump(const Duration(milliseconds: 500));
@@ -24,8 +45,12 @@ Future<void> _pumpApp(WidgetTester tester, String route) async {
 
 /// Pumps [route] on a phone-sized viewport and scrolls through it so layout
 /// overflows and build errors anywhere on the page fail the test.
-Future<void> _pumpRoute(WidgetTester tester, String route) async {
-  await _pumpApp(tester, route);
+Future<void> _pumpRoute(
+  WidgetTester tester,
+  String route, {
+  Size size = _phone,
+}) async {
+  await _pumpApp(tester, route, size: size);
 
   final scrollables = find.byType(Scrollable);
   if (scrollables.evaluate().isNotEmpty) {
@@ -41,6 +66,16 @@ void main() {
   for (final route in AppRoutes.paths) {
     testWidgets('renders $route without errors', (tester) async {
       await _pumpRoute(tester, route);
+    });
+  }
+
+  for (final MapEntry(key: device, value: size) in _devices.entries) {
+    group('on $device', () {
+      for (final route in AppRoutes.paths) {
+        testWidgets('renders $route without errors', (tester) async {
+          await _pumpRoute(tester, route, size: size);
+        });
+      }
     });
   }
 

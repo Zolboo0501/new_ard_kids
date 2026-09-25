@@ -34,9 +34,15 @@ class HelperNote extends StatelessWidget {
               child: AnimatedSize(
                 duration: const Duration(milliseconds: 240),
                 curve: appEmphasizedDecelerate,
-                alignment: Alignment.topCenter,
+                alignment: Alignment.topLeft,
                 child: ValueSwitcher(
                   value: text,
+                  // Start-aligned beside the icon; the default centres a
+                  // sentence shorter than the row (iPad's full width).
+                  layoutBuilder: (current, previous) => Stack(
+                    alignment: AlignmentDirectional.topStart,
+                    children: [...previous, ?current],
+                  ),
                   duration: const Duration(milliseconds: 240),
                   switchInCurve: appEmphasizedDecelerate,
                   switchOutCurve: appEmphasizedAccelerate,

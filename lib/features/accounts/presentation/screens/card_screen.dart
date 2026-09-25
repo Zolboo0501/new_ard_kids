@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -83,14 +84,16 @@ class _CardScreenState extends State<CardScreen> {
       backgroundColor: kPageBackground,
       appBar: const SubPageHeader(title: 'Миний карт'),
       body: EntranceScope(
-        child: ListView(
+        // Split on wide windows: the card and its actions beside the details.
+        child: AdaptiveSplit(
           padding: EdgeInsets.fromLTRB(
             16,
             12,
             16,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
-          children: EntranceItem.list([
+          gap: 16,
+          leading: [
             FrozenCard(
               frozen: _frozen,
               child: KidsCardPreview(holder: _holder, number: _printedNumber),
@@ -133,7 +136,8 @@ class _CardScreenState extends State<CardScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+          ],
+          trailing: [
             CardSection(
               title: 'Картын мэдээлэл',
               children: [
@@ -189,7 +193,7 @@ class _CardScreenState extends State<CardScreen> {
               TransactionTile(item: item),
               const SizedBox(height: 8),
             ],
-          ]),
+          ],
         ),
       ),
     );

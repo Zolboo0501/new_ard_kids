@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -72,14 +73,16 @@ class _StocksScreenState extends State<StocksScreen> {
         background: AppColors.slate50,
       ),
       body: EntranceScope(
-        child: ListView(
+        // Split on wide windows: the portfolio total beside the holdings.
+        child: AdaptiveSplit(
           padding: EdgeInsets.fromLTRB(
             16,
             16,
             16,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
-          children: EntranceItem.list([
+          gap: 18,
+          leading: [
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(22),
@@ -142,7 +145,8 @@ class _StocksScreenState extends State<StocksScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 18),
+          ],
+          trailing: [
             SectionHeader(
               title: 'Миний хувьцаанууд (${_holdings.length})',
               action: _showAll ? 'Хураах' : 'Бүгдийг харах',
@@ -236,7 +240,7 @@ class _StocksScreenState extends State<StocksScreen> {
               const SizedBox(height: 10),
             ],
             const SizedBox(height: 6),
-          ]),
+          ],
         ),
       ),
     );

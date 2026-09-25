@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -79,7 +80,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         ),
       ),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             20,
             12,

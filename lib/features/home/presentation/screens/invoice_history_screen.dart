@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/date_range_filter.dart';
 import '../../../../widgets/date_range_sheet.dart';
 import '../../../../widgets/entrance.dart';
@@ -37,7 +38,7 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
       backgroundColor: kPageBackground,
       appBar: const SubPageHeader(title: 'Нэхэмжлэхийн хуулга'),
       body: EntranceScope(
-        child: ListView(
+        child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
             12,

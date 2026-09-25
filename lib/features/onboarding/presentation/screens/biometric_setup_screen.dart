@@ -5,6 +5,7 @@ import '../../../../app/avatar.dart';
 import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
@@ -77,7 +78,7 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
           children: [
             Expanded(
               child: EntranceScope(
-                child: ListView(
+                child: AdaptiveListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
                   children: EntranceItem.list([
                     Header(
@@ -174,31 +175,33 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-              child: Column(
-                children: [
-                  PrimaryButton(
-                    label: enabled ? 'Үргэлжлүүлэх' : '$name идэвхжүүлэх',
-                    leadingIcon: enabled
-                        ? null
-                        : kind?.icon ?? Icons.fingerprint_rounded,
-                    height: 56,
-                    onPressed: _busy ? null : _enable,
-                  ),
-                  if (!enabled) ...[
-                    const SizedBox(height: 4),
-                    TextButton(
-                      onPressed: _busy ? null : _next,
-                      child: AppText(
-                        'Дараа болъё',
-                        size: 13,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate500,
-                      ),
+            AdaptiveCenter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                child: Column(
+                  children: [
+                    PrimaryButton(
+                      label: enabled ? 'Үргэлжлүүлэх' : '$name идэвхжүүлэх',
+                      leadingIcon: enabled
+                          ? null
+                          : kind?.icon ?? Icons.fingerprint_rounded,
+                      height: 56,
+                      onPressed: _busy ? null : _enable,
                     ),
+                    if (!enabled) ...[
+                      const SizedBox(height: 4),
+                      TextButton(
+                        onPressed: _busy ? null : _next,
+                        child: AppText(
+                          'Дараа болъё',
+                          size: 13,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate500,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
