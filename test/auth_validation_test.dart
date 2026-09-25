@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/features/auth/data/sign_up_draft.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
 import 'package:new_ard_kids/widgets/register_letter_sheet.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
@@ -55,6 +56,8 @@ Future<void> _pickLetters(WidgetTester tester, String a, String b) async {
 }
 
 void main() {
+  tearDown(() => SignUpDraft.registerNumber = null);
+
   group('Нэвтрэх нэр', () {
     testWidgets('keeps letters, digits and _, dropping spaces and symbols', (
       tester,
@@ -325,5 +328,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.byType(OtpScreen), findsOneWidget);
+    // Kept for the parent-link step to prefill.
+    expect(SignUpDraft.registerNumber?.letters, ['У', 'Б']);
+    expect(SignUpDraft.registerNumber?.digits, '12345678');
   });
 }

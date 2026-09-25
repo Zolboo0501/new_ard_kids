@@ -161,6 +161,7 @@ class _StatBox extends StatelessWidget {
     size: 14,
     weight: FontWeight.w500,
     color: color,
+    decimals: false,
   );
 
   static TextStyle _textStyle(Color color) =>

@@ -27,7 +27,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       backgroundColor: bg,
       appBar: SubPageHeader(
         title: 'Хувийн мэдээлэл',
-        subtitle: 'Сурагчийн бүртгэл ба тохиргоо',
         background: bg,
         trailing: CircleIconButton(
           icon: Icons.edit_outlined,

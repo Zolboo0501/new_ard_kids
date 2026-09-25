@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class TopBar extends StatelessWidget {
   const TopBar({super.key});
 
+  static const double height = 44;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44,
+      height: height,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       alignment: Alignment.centerRight,
       child: Image.asset(

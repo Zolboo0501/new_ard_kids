@@ -57,11 +57,6 @@ class StudentHeaderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const StatusBadge(
-                  label: 'Сурагчийн карт',
-                  icon: Icons.school_outlined,
-                ),
-                const SizedBox(height: 6),
                 AppText('Бат-Ирээдүй Т.', size: 16, weight: FontWeight.w700),
                 const SizedBox(height: 2),
                 AppText(

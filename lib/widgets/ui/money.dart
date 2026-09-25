@@ -41,7 +41,8 @@ TextStyle moneyStyle({
 
 /// A balance amount in [moneyStyle], formatted with [formatMnt] plus two
 /// decimal places: `BalanceText(1280000, size: 32)` → `₮1,280,000.00`.
-/// Pass `decimals: false` for whole tugriks only (`₮1,280,000`).
+/// Pass `decimals: false` for whole tugriks only (`₮1,280,000`); an amount
+/// with cents (`20000.94`) still shows them, so they're never rounded away.
 ///
 /// The `₮` (and any `+`/`-` sign) is the same size as the digits; its
 /// weight and color can differ with [currencyWeight] and [currencyColor].
@@ -72,7 +73,7 @@ class BalanceText extends StatelessWidget {
     this.color = AppColors.slate800,
     this.sign = false,
     this.space = false,
-    this.decimals = true,
+    this.decimals = false,
     this.currencyWeight,
     this.currencyColor,
     this.height,
@@ -96,8 +97,15 @@ class BalanceText extends StatelessWidget {
   final bool sign;
   final bool space;
 
-  /// Appends the two-digit fraction (`.00`) after the whole amount.
+  /// Appends the two-digit fraction (`.00`) after the whole amount. Only
+  /// honoured as `false` for whole amounts: cents are always shown.
   final bool decimals;
+
+  /// Whether [value] has cents once rounded to them, e.g. `20000.94` but not
+  /// `20000` or `9.999` (which reads `₮10.00`).
+  static bool hasCents(num value) => (value.abs() * 100).round() % 100 != 0;
+
+  bool get _decimals => decimals || hasCents(amount);
 
   /// Style of the `₮` span; `null` uses [weight] / [color].
   final FontWeight? currencyWeight;
@@ -184,7 +192,7 @@ class BalanceText extends StatelessWidget {
   Widget _build(num value) {
     final text = _format(value);
     final split = text.indexOf('₮') + 1;
-    final point = decimals ? text.lastIndexOf('.') : -1;
+    final point = _decimals ? text.lastIndexOf('.') : -1;
     return Text.rich(
       TextSpan(
         children: [
@@ -205,7 +213,7 @@ class BalanceText extends StatelessWidget {
     );
   }
 
-  String _format(num value) => decimals
+  String _format(num value) => _decimals
       ? _withDecimals(value)
       : formatMnt(value, sign: sign, space: space);
 

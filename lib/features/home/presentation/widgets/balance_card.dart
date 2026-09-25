@@ -176,6 +176,7 @@ class BalanceCard extends StatelessWidget {
                     letterSpacing: 0.1,
                     currencyWeight: FontWeight.w600,
                     currencyColor: AppColors.slate700,
+                    decimals: true,
                   ),
                 ),
               ),

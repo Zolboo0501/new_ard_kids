@@ -9,7 +9,6 @@ import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
-import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/limit_card.dart';
@@ -33,18 +32,12 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
   static const _phoneLength = 8;
 
   final _phone = TextEditingController();
-  final _registerDigits = TextEditingController();
   final _phoneFocus = FocusNode();
-  final _registerDigitsFocus = FocusNode();
-
-  /// The two register-number letters, picked from the letter sheet.
-  List<String?> _registerLetters = [null, null];
   int _role = 0;
 
-  /// Shown under their field after a failed submit; cleared as soon as the
+  /// Shown under the field after a failed submit; cleared as soon as the
   /// value becomes valid again.
   String? _phoneError;
-  String? _registerError;
 
   static List<(String, String)> get _roles => [
     ('Ээж', Stickers.mom),
@@ -59,25 +52,16 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
         if (_phoneValid) _phoneError = null;
       });
     });
-    _registerDigits.addListener(() {
-      setState(() {
-        if (_registerValid) _registerError = null;
-      });
-    });
   }
 
   @override
   void dispose() {
     _phone.dispose();
-    _registerDigits.dispose();
     _phoneFocus.dispose();
-    _registerDigitsFocus.dispose();
     super.dispose();
   }
 
   bool get _phoneValid => _validatePhone() == null;
-  bool get _registerValid => _validateRegister() == null;
-  bool get _valid => _phoneValid && _registerValid;
 
   String? _validatePhone() {
     final v = _phone.text;
@@ -88,40 +72,22 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
     return null;
   }
 
-  String? _validateRegister() => RegisterNumberField.validate(
-    _registerLetters,
-    _registerDigits.text,
-    empty: 'Өөрийн регистрийн дугаарыг оруулна уу.',
-  );
-
   void _goHome({required bool linked}) {
     context.go(linked ? AppRoutes.home : AppRoutes.homeUnlinked);
   }
 
   Future<void> _submit() async {
-    // Validate both fields so every problem shows at once, then focus the
-    // topmost offender.
     final phoneError = _validatePhone();
-    final registerError = _validateRegister();
-    setState(() {
-      _phoneError = phoneError;
-      _registerError = registerError;
-    });
-    if (registerError != null) {
-      // The letters open a sheet rather than take focus, so only the digit
-      // field is focused.
-      if (!_registerLetters.contains(null)) {
-        _registerDigitsFocus.requestFocus();
-      }
-      return;
-    }
+    setState(() => _phoneError = phoneError);
     if (phoneError != null) {
       _phoneFocus.requestFocus();
       return;
     }
 
     FocusScope.of(context).unfocus();
-    // TODO: send the link request to the backend.
+    // TODO: send the link request to the backend. The kid's register number
+    // comes from their account (SignUpDraft.registerNumber for now), so the
+    // screen doesn't ask for it.
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
@@ -304,22 +270,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const AppFieldLabel('Өөрийн регистрийн дугаар'),
-                    const SizedBox(height: 6),
-                    RegisterNumberField(
-                      letters: _registerLetters,
-                      onLettersChanged: (letters) => setState(() {
-                        _registerLetters = letters;
-                        if (_registerValid) _registerError = null;
-                      }),
-                      digitsController: _registerDigits,
-                      digitsFocus: _registerDigitsFocus,
-                      hasError: _registerError != null,
-                      textInputAction: TextInputAction.next,
-                      onSubmitted: (_) => _phoneFocus.requestFocus(),
-                    ),
-                    AppFieldError(message: _registerError),
                     const SizedBox(height: 14),
                     const AppFieldLabel('Эцэг / Эхийн утасны дугаар'),
                     const SizedBox(height: 6),
@@ -362,7 +312,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               // Always tappable: pressing it with a bad field is how the user
               // finds out what is wrong, so gating it would hide the message.
               AnimatedOpacity(
-                opacity: _valid ? 1 : 0.6,
+                opacity: _phoneValid ? 1 : 0.6,
                 duration: const Duration(milliseconds: 200),
                 child: PrimaryButton(
                   label: 'Эцэг эх рүү хүсэлт илгээх',

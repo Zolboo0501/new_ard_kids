@@ -13,6 +13,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/sign_up_draft.dart';
 import '../widgets/auth_mascot.dart';
 import '../widgets/helper_note.dart';
 import '../widgets/mode_switch.dart';
@@ -230,6 +231,12 @@ class _AuthScreenState extends State<AuthScreen>
       return;
     }
 
+    // Kept so the parent-link step can prefill the same register number.
+    SignUpDraft.registerNumber = RegisterNumber(
+      _registerLetters.cast<String>(),
+      _registerDigitsController.text,
+    );
+
     // TODO: replace the simulated delays with the real OTP request.
     _timers.add(
       Timer(const Duration(milliseconds: 900), () {
@@ -246,9 +253,18 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Short phones (SE, small Androids) shrink the hero so the submit button
-    // stays above the fold.
-    final compact = MediaQuery.sizeOf(context).height < 720;
+    // Size the hero from the screen height (ignoring the keyboard, so the
+    // layout doesn't jump while it opens). Бүртгүүлэх has an extra field, so
+    // the mascot shrinks there to keep the whole form on screen.
+    final padding = MediaQuery.paddingOf(context);
+    final viewport =
+        MediaQuery.sizeOf(context).height - padding.top - TopBar.height;
+    final compact = viewport < 640;
+    final mascotShare = _mode == AuthMode.login ? 0.2 : 0.11;
+    final mascotSize = (viewport * mascotShare).clamp(64.0, 180.0);
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final topGap = compact ? 0.0 : 8.0;
+    final bottomGap = 24 + padding.bottom;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -259,77 +275,99 @@ class _AuthScreenState extends State<AuthScreen>
             children: [
               const TopBar(),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(20, compact ? 0 : 8, 20, 24),
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  child: Center(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(20, topGap, 20, bottomGap),
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 448),
-                      child: Column(
-                        children: [
-                          Entrance(
-                            t: _mascotIn,
-                            // The mascot leads, and grows in slightly
-                            // rather than just sliding.
-                            scaleFrom: 0.94,
-                            child: AuthMascot(size: compact ? 110 : 156),
-                          ),
-                          SizedBox(height: compact ? 12 : 18),
-                          Entrance(
-                            t: _titleIn,
-                            child: Text.rich(
-                              TextSpan(
-                                text: 'Ard ',
-                                children: [
+                      // At least the visible height, so a short form sits
+                      // centered instead of hugging the top on tall screens.
+                      constraints: BoxConstraints(
+                        minHeight: (constraints.maxHeight - topGap - bottomGap)
+                            .clamp(0.0, double.infinity),
+                      ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 448),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Entrance(
+                                t: _mascotIn,
+                                // The mascot leads, and grows in slightly
+                                // rather than just sliding.
+                                scaleFrom: 0.94,
+                                child: TweenAnimationBuilder<double>(
+                                  tween: Tween(end: mascotSize),
+                                  duration: reduceMotion
+                                      ? Duration.zero
+                                      : const Duration(milliseconds: 320),
+                                  curve: Curves.easeOutCubic,
+                                  builder: (context, size, _) =>
+                                      AuthMascot(size: size),
+                                ),
+                              ),
+                              SizedBox(height: compact ? 12 : 18),
+                              Entrance(
+                                t: _titleIn,
+                                child: Text.rich(
                                   TextSpan(
-                                    text: 'KIDS',
-                                    style: inter(
-                                      size: compact ? 24 : 28,
-                                      weight: FontWeight.w800,
-                                      color: AppColors.sky500,
-                                      height: 1.15,
-                                      letterSpacing: -0.6,
-                                    ),
+                                    text: 'Ard ',
+                                    children: [
+                                      TextSpan(
+                                        text: 'KIDS',
+                                        style: inter(
+                                          size: compact ? 24 : 28,
+                                          weight: FontWeight.w800,
+                                          color: AppColors.sky500,
+                                          height: 1.15,
+                                          letterSpacing: -0.6,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                  textAlign: TextAlign.center,
+                                  style: inter(
+                                    size: compact ? 24 : 28,
+                                    weight: FontWeight.w800,
+                                    color: AppColors.slate800,
+                                    height: 1.15,
+                                    letterSpacing: -0.6,
+                                  ),
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                              style: inter(
-                                size: compact ? 24 : 28,
-                                weight: FontWeight.w800,
-                                color: AppColors.slate800,
-                                height: 1.15,
-                                letterSpacing: -0.6,
+                              const SizedBox(height: 6),
+                              Entrance(
+                                t: _subtitleIn,
+                                // Narrow enough that the sentence breaks
+                                // into two even lines, not a lone last word.
+                                child: ConstrainedBox(
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 240,
+                                  ),
+                                  child: AppText(
+                                    'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
+                                    size: 13,
+                                    weight: FontWeight.w500,
+                                    color: AppColors.slate500,
+                                    height: 1.5,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Entrance(
-                            t: _subtitleIn,
-                            // Narrow enough that the sentence breaks
-                            // into two even lines, not a lone last word.
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 240),
-                              child: AppText(
-                                'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
-                                size: 13,
-                                weight: FontWeight.w500,
-                                color: AppColors.slate500,
-                                height: 1.5,
-                                textAlign: TextAlign.center,
+                              SizedBox(height: compact ? 16 : 24),
+                              Entrance(
+                                t: _cardIn,
+                                // Travels a little further, so the card
+                                // reads as settling into place under the
+                                // heading.
+                                offsetY: 24,
+                                child: _buildFormCard(),
                               ),
-                            ),
+                            ],
                           ),
-                          SizedBox(height: compact ? 16 : 24),
-                          Entrance(
-                            t: _cardIn,
-                            // Travels a little further, so the card reads
-                            // as settling into place under the heading.
-                            offsetY: 24,
-                            child: _buildFormCard(),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

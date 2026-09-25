@@ -14,6 +14,27 @@ Finder _labelled(String label) => find.byWidgetPredicate(
 Widget _app(Widget child) => MaterialApp(home: Center(child: child));
 
 void main() {
+  testWidgets('decimals: false still shows cents the amount has', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(const BalanceText(20000.94, decimals: false, size: 20)),
+    );
+    expect(_shown(tester), '₮20,000.94');
+
+    await tester.pumpWidget(
+      _app(const BalanceText(20000, decimals: false, size: 20)),
+    );
+    expect(_shown(tester), '₮20,000');
+  });
+
+  test('hasCents only counts cents left after rounding', () {
+    expect(BalanceText.hasCents(20000.94), isTrue);
+    expect(BalanceText.hasCents(-0.5), isTrue);
+    expect(BalanceText.hasCents(20000), isFalse);
+    expect(BalanceText.hasCents(9.999), isFalse);
+  });
+
   testWidgets('animateFrom rolls the digits in and lands on the amount', (
     tester,
   ) async {
