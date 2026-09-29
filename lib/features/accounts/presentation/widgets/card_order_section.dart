@@ -4,6 +4,7 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// A titled card on "Карт захиалга".
 class CardOrderSection extends StatelessWidget {
   const CardOrderSection({
     super.key,
@@ -19,7 +20,6 @@ class CardOrderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      radius: 24,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -29,7 +29,7 @@ class CardOrderSection extends StatelessWidget {
               Expanded(
                 child: AppText(
                   title,
-                  size: 14,
+                  size: 16,
                   weight: FontWeight.w700,
                   color: AppColors.slate900,
                 ),
@@ -37,7 +37,7 @@ class CardOrderSection extends StatelessWidget {
               ?trailing,
             ],
           ),
-          const Divider(height: 22, color: AppColors.slate100),
+          const SizedBox(height: 12),
           ...children,
         ],
       ),

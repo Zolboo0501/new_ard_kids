@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/routes.dart';
+import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import 'invoice_card.dart';
 import '../../data/invoice.dart';
-import 'dashed_action.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/app_text.dart';
+import 'invoice_card.dart';
 
+/// Home's Нэхэмжлэх tab: the newest invoices with status chips, then the
+/// full statement and a new request.
 class InvoicesPane extends StatelessWidget {
   const InvoicesPane({
     super.key,
@@ -37,14 +37,14 @@ class InvoicesPane extends StatelessWidget {
           runSpacing: 6,
           children: [
             for (final (i, (label, test)) in invoiceFilters.indexed)
-              _NightChip(
+              FilterChipPill(
                 label: '$label (${recent.where(test).length})',
                 selected: filter == i,
                 onTap: () => onFilter(i),
               ),
           ],
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         for (final (i, inv) in visible.indexed) ...[
           ListItemEntrance(
             always: true,
@@ -52,83 +52,51 @@ class InvoicesPane extends StatelessWidget {
             id: inv.title,
             index: i,
             group: filter,
-            child: InvoiceCard(invoice: inv, dark: true),
+            child: InvoiceCard(invoice: inv),
           ),
           const SizedBox(height: 10),
         ],
         ListItemEntrance(
-          id: #invoiceHistory,
+          id: #invoiceActions,
           index: visible.length,
           group: filter,
           always: true,
           delay: AppTabView.incomingDelay,
-          child: SoftButton(
-            label: 'Хуулга харах',
-            leading: LineIcon(
-              LineGlyph.receipt,
-              size: 18,
-              color: AppColors.sky500,
-            ),
-            background: Night.surface,
-            foreground: Night.text,
-            border: Night.line,
-            onPressed: () => onOpen(AppRoutes.invoiceHistory),
-          ),
-        ),
-        const SizedBox(height: 10),
-        ListItemEntrance(
-          id: #newInvoice,
-          index: visible.length + 1,
-          group: filter,
-          always: true,
-          delay: AppTabView.incomingDelay,
-          child: DashedAction(
-            icon: LineGlyph.plusCircle,
-            label: 'Шинэ нэхэмжлэх / хүсэлт үүсгэх',
-            onTap: () => onOpen(AppRoutes.requestMoney),
+          child: Row(
+            children: [
+              Expanded(
+                child: SoftButton(
+                  label: 'Хуулга харах',
+                  leading: LineIcon(
+                    LineGlyph.receipt,
+                    size: 18,
+                    color: AppColors.slate900,
+                  ),
+                  background: AppColors.card,
+                  foreground: AppColors.slate900,
+                  border: AppColors.line,
+                  onPressed: () => onOpen(AppRoutes.invoiceHistory),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: SoftButton(
+                  label: 'Хүсэлт үүсгэх',
+                  leading: LineIcon(
+                    LineGlyph.plus,
+                    size: 18,
+                    color: AppColors.slate900,
+                  ),
+                  background: AppColors.card,
+                  foreground: AppColors.slate900,
+                  border: AppColors.line,
+                  onPressed: () => onOpen(AppRoutes.requestMoney),
+                ),
+              ),
+            ],
           ),
         ),
       ],
-    );
-  }
-}
-
-/// A filter chip on the night surface: white when selected, outlined
-/// otherwise.
-class _NightChip extends StatelessWidget {
-  const _NightChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: GestureDetector(
-        onTap: withHaptic(onTap),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: selected ? Colors.white : Night.line),
-          ),
-          child: AppText(
-            label,
-            size: 11.5,
-            weight: FontWeight.w600,
-            color: selected ? Night.bg : Night.text2,
-          ),
-        ),
-      ),
     );
   }
 }

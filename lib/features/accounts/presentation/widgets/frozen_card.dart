@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/ui.dart';
 
 /// Greys the card out and stamps it "Түр хаасан" while it's frozen.
 class FrozenCard extends StatelessWidget {
@@ -44,24 +45,24 @@ class FrozenCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Night.bg.withValues(alpha: 0.85),
-                  border: Border.all(color: Night.line),
+                  color: AppColors.surface.withValues(alpha: 0.85),
+                  border: Border.all(color: AppColors.line),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.ac_unit_rounded,
+                    LineIcon(
+                      LineGlyph.snowflake,
                       size: 16,
-                      color: Night.text,
+                      color: AppColors.slate900,
                     ),
                     const SizedBox(width: 6),
                     AppText(
                       'Түр хаасан',
                       size: 12,
-                      weight: FontWeight.w700,
-                      color: Night.text,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate900,
                     ),
                   ],
                 ),

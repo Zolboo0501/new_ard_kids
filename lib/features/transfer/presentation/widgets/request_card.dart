@@ -5,6 +5,8 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/money_request.dart';
 
+/// One money request: its category tile, who it went to, the amount and
+/// its status, with Сануулах / Цуцлах while it is pending.
 class RequestCard extends StatelessWidget {
   const RequestCard({
     super.key,
@@ -20,25 +22,26 @@ class RequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = request;
-    final tint = switch (r.status) {
-      RequestStatus.pending => AppColors.amber50,
-      RequestStatus.approved => AppColors.emerald50,
-      RequestStatus.declined => AppColors.rose50,
-    };
+    final declined = r.status == RequestStatus.declined;
     return AppCard(
-      radius: 18,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Opacity(
-                opacity: r.status == RequestStatus.declined ? 0.8 : 1,
-                child: MascotTile(
-                  asset: r.asset,
-                  background: tint,
-                  label: r.title,
+              Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: AppColors.slate50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: LineIcon(
+                  r.glyph,
+                  size: 22,
+                  color: declined ? AppColors.slate500 : AppColors.slate800,
                 ),
               ),
               const SizedBox(width: 12),
@@ -46,59 +49,42 @@ class RequestCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text.rich(
-                      TextSpan(
-                        text: '${r.from}  •  ',
-                        children: [
-                          TextSpan(
-                            text: r.when,
-                            style: inter(size: 10, color: AppColors.slate400),
-                          ),
-                        ],
-                      ),
-                      style: inter(
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate500,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
                     AppText(
                       r.title,
-                      size: 12,
-                      weight: FontWeight.w700,
-                      color: AppColors.dsOnSurface,
+                      size: 14,
+                      weight: FontWeight.w600,
+                      color: declined ? AppColors.slate500 : AppColors.slate900,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (r.tag != null) ...[
-                      const SizedBox(height: 4),
-                      StatusBadge(label: r.tag!, tone: BadgeTone.slate),
-                    ],
+                    const SizedBox(height: 2),
+                    AppText(
+                      '${r.from} · ${r.when}',
+                      size: 12,
+                      color: AppColors.slate500,
+                    ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
+              // A declined amount is muted, not struck through: a line
+              // through a price reads like a discount.
               BalanceText(
                 r.amount,
-                sign: true,
-                space: false,
-                size: 14,
-                weight: FontWeight.w500,
+                size: 15,
+                weight: FontWeight.w600,
                 color: switch (r.status) {
-                  RequestStatus.pending => AppColors.sky600,
+                  RequestStatus.pending => AppColors.slate900,
                   RequestStatus.approved => AppColors.emerald600,
                   RequestStatus.declined => AppColors.slate400,
                 },
-                decoration: r.status == RequestStatus.declined
-                    ? TextDecoration.lineThrough
-                    : null,
               ),
             ],
           ),
-          const Divider(height: 20, color: AppColors.slate100),
+          const SizedBox(height: 12),
           switch (r.status) {
             RequestStatus.pending => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Row(
                   children: [
@@ -107,83 +93,78 @@ class RequestCard extends StatelessWidget {
                       tone: BadgeTone.amber,
                       dot: true,
                     ),
-                    const Spacer(),
-                    AppText(
-                      '${r.fromGenitive} зөвшөөрөл хүлээж байна',
-                      size: 10,
-                      color: AppColors.amber700,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AppText(
+                        '${r.fromGenitive} хариуг хүлээж байна',
+                        size: 12,
+                        color: AppColors.slate500,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: SoftButton(
                         label: 'Сануулах',
-                        icon: Icons.notifications_active_outlined,
-                        height: 34,
-                        background: AppColors.sky500,
-                        foreground: AppColors.onAccent,
+                        leading: LineIcon(
+                          LineGlyph.bell,
+                          size: 18,
+                          color: AppColors.slate900,
+                        ),
+                        height: 44,
+                        background: AppColors.slate50,
+                        foreground: AppColors.slate900,
                         border: Colors.transparent,
                         onPressed: onNudge,
                       ),
                     ),
                     const SizedBox(width: 8),
-                    SoftButton(
-                      label: 'Цуцлах',
-                      height: 34,
-                      background: AppColors.rose50,
-                      foreground: AppColors.rose600,
-                      border: Colors.transparent,
-                      onPressed: onCancel,
+                    Expanded(
+                      child: SoftButton(
+                        label: 'Цуцлах',
+                        height: 44,
+                        background: AppColors.slate50,
+                        foreground: AppColors.rose600,
+                        border: Colors.transparent,
+                        onPressed: onCancel,
+                      ),
                     ),
                   ],
                 ),
               ],
             ),
             RequestStatus.approved => Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: StatusBadge(
-                    label: r.reply != null
-                        ? '✓ Зөвшөөрсөн • Дансанд орсон'
-                        : 'Зөвшөөрсөн',
-                    tone: BadgeTone.emerald,
-                  ),
+                StatusBadge(
+                  label: r.reply != null
+                      ? 'Зөвшөөрсөн · Дансанд орсон'
+                      : 'Зөвшөөрсөн',
+                  tone: BadgeTone.emerald,
                 ),
                 if (r.reply != null) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
-                      vertical: 8,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.dsSurfaceContainerLow,
+                      color: AppColors.slate50,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline_rounded,
-                          size: 14,
-                          color: AppColors.sky600,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: AppText(
-                            r.reply!,
-                            size: 11,
-                            weight: FontWeight.w500,
-                            color: AppColors.dsOnSurface,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                    child: AppText(
+                      r.reply!,
+                      size: 13,
+                      color: AppColors.slate700,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -191,9 +172,17 @@ class RequestCard extends StatelessWidget {
             ),
             RequestStatus.declined => Row(
               children: [
-                const StatusBadge(label: '✕ Татгалзсан', tone: BadgeTone.rose),
-                const Spacer(),
-                AppText(r.reason ?? '', size: 10, color: AppColors.rose600),
+                const StatusBadge(label: 'Татгалзсан', tone: BadgeTone.rose),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: AppText(
+                    r.reason ?? '',
+                    size: 12,
+                    color: AppColors.slate500,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           },

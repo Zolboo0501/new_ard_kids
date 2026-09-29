@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/cart_item.dart';
-import '../widgets/account_hero_panel.dart';
+import '../widgets/account_glyph_tile.dart';
+import '../widgets/account_section_title.dart';
 import '../widgets/cart_tile.dart';
+import '../widgets/price_row.dart';
+import '../widgets/total_box.dart';
 
-/// "Миний сагс - Авсаархан загвар": shopping cart pending parent approval.
+/// "Миний сагс": shopping cart pending parent approval.
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -20,38 +23,33 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  static const _balance = 567930;
-  static const _deliveryFee = 3000;
+  static const _balance = Balances.main;
 
   final _items = [
     CartItem(
-      title: 'Зургийн дэвтэр, будгийн хэрэгсэл',
-      store: 'ИНТЕРНОМ',
+      title: 'Зургийн дэвтэр, будаг',
+      store: 'Интерном',
       price: 18500,
-      asset: Mascots.catNotes,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.book,
     ),
     CartItem(
-      title: 'Өдрийн амттан, сүү жимс',
+      title: 'Сүү, жимс',
       store: 'CU дэлгүүр',
       price: 2800,
       quantity: 2,
-      asset: Mascots.pandaMilk,
-      tint: AppColors.emerald50,
+      glyph: LineGlyph.food,
     ),
     CartItem(
-      title: 'Хадгаламжийн зоосны хайрцаг',
+      title: 'Зоосны хайрцаг',
       store: 'Хадгаламж & Хобби',
       price: 12000,
-      asset: Mascots.hedgehogPiggy,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.piggy,
     ),
     CartItem(
-      title: 'Тоглоомын эрхийн карт (PS)',
-      store: 'Дижитал зугаа',
+      title: 'PlayStation эрхийн карт',
+      store: 'Дижитал дэлгүүр',
       price: 25000,
-      asset: Mascots.puppyGamepad,
-      tint: AppColors.indigo50,
+      glyph: LineGlyph.gamepad,
     ),
   ];
 
@@ -65,9 +63,8 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bg = kPageBackground;
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: kPageBackground,
       appBar: SubPageHeader(
         title: 'Миний сагс',
         subtitle: '${_items.length} бараа сонгогдсон',
@@ -89,77 +86,18 @@ class _CartScreenState extends State<CartScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AccountHeroPanel(
-              accent: AppColors.sky500,
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  MascotImage(
-                    asset: Mascots.pandaPiggy,
-                    size: 56,
-                    background: AppColors.card,
-                    semanticLabel: 'Хөөрхөн панда сагстай дэлгүүр хэсэж буй',
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const StatusBadge(
-                          label: 'Аав ээжийн зөвшөөрөлтэй',
-                          icon: Icons.verified_user_outlined,
-                        ),
-                        const SizedBox(height: 4),
-                        AppText(
-                          'Захиалгаа шалгаарай',
-                          size: 12,
-                          weight: FontWeight.w700,
-                        ),
-                        AppText(
-                          'Сагсанд буй барааг шалгаад баталгаажуулаарай!',
-                          size: 10,
-                          color: AppColors.slate600,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: AppText(
-                      'СОНГОСОН БҮТЭЭГДЭХҮҮНҮҮД',
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.slate600,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                  if (_items.isNotEmpty) const StatusBadge(label: 'Бүгд бэлэн'),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
+            const AccountSectionTitle('Бараа'),
             if (_items.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: Column(
                   children: [
-                    MascotImage(
-                      asset: Mascots.sleepingCat,
-                      size: 120,
-                      background: bg,
-                      semanticLabel: '',
-                    ),
+                    AccountGlyphTile(LineGlyph.bag, size: 56),
+                    const SizedBox(height: 12),
                     AppText(
                       'Сагс хоосон байна',
-                      size: 14,
-                      weight: FontWeight.w700,
+                      size: 15,
+                      weight: FontWeight.w600,
                     ),
                   ],
                 ),
@@ -178,133 +116,42 @@ class _CartScreenState extends State<CartScreen> {
             ],
             const SizedBox(height: 6),
             AppCard(
-              radius: 18,
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          'Төлбөрийн задаргаа',
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
-                        ),
+                  AppText(
+                    'Төлбөрийн задаргаа',
+                    size: 16,
+                    weight: FontWeight.w700,
+                  ),
+                  const SizedBox(height: 12),
+                  PriceRow('Барааны нийт дүн', _subtotal),
+                  const PriceRow('Хүргэлтийн төлбөр', 'Үнэгүй'),
+                  PriceRow('Боломжит үлдэгдэл', _balance),
+                  if (_subtotal > _balance) ...[
+                    const SizedBox(height: 4),
+                    const Align(
+                      alignment: Alignment.centerRight,
+                      child: StatusBadge(
+                        label: 'Үлдэгдэл хүрэлцэхгүй',
+                        tone: BadgeTone.rose,
                       ),
-                      const StatusBadge(
-                        label: 'Хүргэлт үнэгүй',
-                        tone: BadgeTone.emerald,
-                        dot: true,
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 20, color: AppColors.slate100),
-                  _row(
-                    'Барааны нийт дүн',
-                    BalanceText(
-                      _subtotal,
-                      animate: true,
-                      space: false,
-                      size: 11,
-                      weight: FontWeight.w600,
                     ),
-                  ),
-                  _row(
-                    'Хүргэлтийн төлбөр',
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        BalanceText(
-                          _deliveryFee,
-                          space: false,
-                          size: 10,
-                          weight: FontWeight.w400,
-                          color: AppColors.slate400,
-                          decoration: TextDecoration.lineThrough,
-                        ),
-                        const SizedBox(width: 4),
-                        AppText(
-                          'ҮНЭГҮЙ',
-                          size: 11,
-                          weight: FontWeight.w700,
-                          color: AppColors.emerald600,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 14, color: AppColors.slate100),
-                  _row(
-                    'Боломжит үлдэгдэл',
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        BalanceText(
-                          _balance,
-                          space: false,
-                          size: 11,
-                          color: AppColors.slate700,
-                        ),
-                        const SizedBox(width: 4),
-                        StatusBadge(
-                          label: _subtotal <= _balance
-                              ? 'Хүрэлцээтэй ✓'
-                              : 'Хүрэлцэхгүй',
-                          tone: _subtotal <= _balance
-                              ? BadgeTone.sky
-                              : BadgeTone.rose,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.sky50.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                'Нийт төлөх дүн',
-                                size: 10,
-                                weight: FontWeight.w500,
-                                color: AppColors.sky900,
-                              ),
-                              AppText(
-                                'НӨАТ орсон дүн',
-                                size: 9,
-                                color: AppColors.sky600,
-                              ),
-                            ],
-                          ),
-                        ),
-                        BalanceText(
-                          _subtotal,
-                          animate: true,
-                          space: false,
-                          size: 16,
-                          weight: FontWeight.w800,
-                          color: AppColors.sky700,
-                        ),
-                      ],
-                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  TotalBox(
+                    label: 'Нийт төлөх дүн',
+                    sub: 'НӨАТ орсон',
+                    total: _subtotal,
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 10),
             const InfoNote(
-              tone: BadgeTone.amber,
-              icon: Icons.family_restroom_rounded,
-              title: 'Эцэг эхийн баталгаажуулалт:',
               text:
-                  'Таны захиалга аав ээжийн зөвшөөрлөөр данснаас суутгагдана.',
+                  'Аав ээж зөвшөөрсний дараа төлбөр халаасны данснаас суутгагдана.',
             ),
             const SizedBox(height: 18),
             PrimaryButton(
@@ -315,18 +162,6 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ]),
         ),
-      ),
-    );
-  }
-
-  Widget _row(String label, Widget value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Expanded(child: AppText(label, size: 11, color: AppColors.slate600)),
-          value,
-        ],
       ),
     );
   }

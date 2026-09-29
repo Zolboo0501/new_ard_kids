@@ -12,7 +12,6 @@ import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/header.dart';
 import '../widgets/otp_box.dart';
-import '../widgets/panda_hero.dart';
 import '../widgets/verify_button.dart';
 
 /// "OTP Баталгаажуулалт" screen: enter the 4-digit code sent by SMS.
@@ -128,7 +127,7 @@ class _OtpScreenState extends State<OtpScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.dsSurface,
+      backgroundColor: AppColors.surface,
       body: SafeArea(
         // The keypad is pinned to the bottom and never scrolls; only the
         // content above it scrolls, so the keys stay reachable on short
@@ -137,55 +136,38 @@ class _OtpScreenState extends State<OtpScreen>
           children: [
             const Header(step: 'Алхам 2/6'),
             Expanded(
-              // Give the scrolling child a minimum height of the viewport so
-              // the content can be centred in the space left above the
-              // keypad; it still scrolls when it grows past that.
               child: LayoutBuilder(
-                builder: (context, constraints) {
-                  const padding = EdgeInsets.fromLTRB(16, 8, 16, 16);
-                  return SingleChildScrollView(
-                    padding: padding,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: (constraints.maxHeight - padding.vertical)
-                            .clamp(0.0, double.infinity),
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: AppLayout.centered(
+                    const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    constraints.maxWidth,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Entrance(t: _heroIn, child: _buildIntro()),
+                      const SizedBox(height: 24),
+                      Entrance(
+                        t: _cardIn,
+                        offsetY: 22,
+                        child: _buildCodeCard(),
                       ),
-                      child: Center(
-                        child: ConstrainedBox(
-                          // Full width on iPad, like every other screen.
-                          constraints: const BoxConstraints(
-                            maxWidth: AppLayout.contentMax,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Entrance(t: _heroIn, child: _buildHeroRow()),
-                              const SizedBox(height: 16),
-                              Entrance(
-                                t: _cardIn,
-                                offsetY: 22,
-                                child: _buildCodeCard(),
-                              ),
-                              const SizedBox(height: 16),
-                              Entrance(
-                                t: _buttonIn,
-                                offsetY: 22,
-                                child: AnimatedScale(
-                                  scale: _completePulse ? 1.05 : 1,
-                                  duration: const Duration(milliseconds: 150),
-                                  child: VerifyButton(
-                                    enabled: _complete,
-                                    onPressed: _verify,
-                                  ),
-                                ),
-                              ),
-                            ],
+                      const SizedBox(height: 16),
+                      Entrance(
+                        t: _buttonIn,
+                        offsetY: 22,
+                        child: AnimatedScale(
+                          scale: _completePulse ? 1.02 : 1,
+                          duration: const Duration(milliseconds: 150),
+                          child: VerifyButton(
+                            enabled: _complete,
+                            onPressed: _verify,
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               ),
             ),
             Entrance(t: _keypadIn, offsetY: 28, child: _buildKeypad()),
@@ -195,30 +177,53 @@ class _OtpScreenState extends State<OtpScreen>
     );
   }
 
-  /// Title and instructions on the left, mascot on the right.
-  Widget _buildHeroRow() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
+  /// Title, where the code went, and a way back to fix the number.
+  Widget _buildIntro() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(
-                'Код баталгаажуулах',
-                size: 22,
-                weight: FontWeight.w700,
-                color: AppColors.dsOnSurface,
-                height: 1.3,
-                letterSpacing: -0.6,
-              ),
-              const SizedBox(height: 8),
-              _buildInstructions(),
-            ],
-          ),
+        AppText(
+          'Код баталгаажуулах',
+          size: 28,
+          weight: FontWeight.w700,
+          color: AppColors.slate900,
+          height: 1.2,
+          letterSpacing: -0.6,
         ),
-        const SizedBox(width: 8),
-        const PandaHero(size: 128),
+        const SizedBox(height: 8),
+        AppText(
+          '4 оронтой кодыг дараах дугаар руу илгээлээ.',
+          size: 15,
+          color: AppColors.slate500,
+          height: 1.45,
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Text(
+              _formattedPhone,
+              style: moneyStyle(
+                size: 15,
+                weight: FontWeight.w600,
+                color: AppColors.slate900,
+              ),
+            ),
+            const SizedBox(width: 4),
+            TextButton(
+              onPressed: withHaptic(() => Navigator.of(context).maybePop()),
+              style: TextButton.styleFrom(
+                minimumSize: const Size(44, 44),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+              ),
+              child: AppText(
+                'Өөрчлөх',
+                size: 15,
+                weight: FontWeight.w600,
+                color: AppColors.sky600,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -235,16 +240,16 @@ class _OtpScreenState extends State<OtpScreen>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: AppColors.card,
-              borderRadius: BorderRadius.circular(40),
+              borderRadius: BorderRadius.circular(20),
             ),
             child: NumericKeypad(
-              style: const KeypadStyle(
+              style: KeypadStyle(
                 keyHeight: 56,
-                radius: 32,
+                radius: 12,
                 gap: 4,
-                fontSize: 18,
-                textColor: AppColors.dsOnSurface,
-                pressedColor: AppColors.dsSurfaceContainerHigh,
+                fontSize: 20,
+                textColor: AppColors.slate900,
+                pressedColor: AppColors.slate50,
               ),
               onDigit: _onDigit,
               onBackspace: _onBackspace,
@@ -255,70 +260,21 @@ class _OtpScreenState extends State<OtpScreen>
     );
   }
 
-  Widget _buildInstructions() {
-    final base = inter(
-      size: 14,
-      weight: FontWeight.w500,
-      color: AppColors.dsOnSurfaceVariant,
-      height: 1.625,
-    );
-    return Text.rich(
-      TextSpan(
-        style: base,
-        children: [
-          TextSpan(
-            text: _formattedPhone,
-            style: base.copyWith(
-              fontWeight: FontWeight.w700,
-              fontVariations: const [FontVariation.weight(700)],
-              color: AppColors.dsOnSurface,
-            ),
-          ),
-          const TextSpan(
-            text: ' дугаарт ирсэн 4 оронтой нууц кодыг оруулна уу. ',
-          ),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: GestureDetector(
-              onTap: withHaptic(() => Navigator.of(context).maybePop()),
-              child: Text(
-                'Өөрчлөх',
-                style: base.copyWith(
-                  fontWeight: FontWeight.w700,
-                  fontVariations: const [FontVariation.weight(700)],
-                  color: AppColors.dsPrimary,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      textAlign: TextAlign.start,
-    );
-  }
-
   Widget _buildCodeCard() {
     final counting = _secondsLeft > 0;
-    final label = inter(
-      size: 12,
-      weight: FontWeight.w500,
-      color: AppColors.dsOnSurfaceVariant,
-      letterSpacing: 0.24,
-    );
+    final label = inter(size: 13, color: AppColors.slate500);
     final accent = inter(
-      size: 12,
-      weight: FontWeight.w700,
-      color: AppColors.dsPrimary,
-      letterSpacing: 0.24,
+      size: 13,
+      weight: FontWeight.w600,
+      color: AppColors.sky600,
     );
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
@@ -338,32 +294,31 @@ class _OtpScreenState extends State<OtpScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.schedule_rounded,
-                size: 18,
-                color: AppColors.dsPrimary,
-              ),
-              const SizedBox(width: 4),
+              LineIcon(LineGlyph.clock, size: 16, color: AppColors.slate500),
+              const SizedBox(width: 6),
               Text('Дахин код авах:', style: label),
               const SizedBox(width: 4),
               if (counting)
-                Text(
-                  _formatSeconds(_secondsLeft),
-                  style: accent.copyWith(
-                    fontFeatures: const [FontFeature.tabularFigures()],
+                SizedBox(
+                  height: 44,
+                  child: Center(
+                    child: Text(
+                      _formatSeconds(_secondsLeft),
+                      style: accent.copyWith(
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
                   ),
                 )
-              else ...[
-                Text(
-                  '•',
-                  style: label.copyWith(color: AppColors.dsOutlineVariant),
-                ),
-                const SizedBox(width: 4),
-                GestureDetector(
-                  onTap: withHaptic(_resend),
+              else
+                TextButton(
+                  onPressed: withHaptic(_resend),
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(44, 44),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                  ),
                   child: Text('Дахин илгээх', style: accent),
                 ),
-              ],
             ],
           ),
         ],

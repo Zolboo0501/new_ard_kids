@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/ui.dart';
 import '../../../../widgets/value_switcher.dart';
 
 class HelperNote extends StatelessWidget {
@@ -16,21 +17,20 @@ class HelperNote extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColors.sky50,
-              shape: BoxShape.circle,
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: LineIcon(
+              LineGlyph.mail,
+              size: 18,
+              color: AppColors.slate500,
             ),
-            child: Icon(Icons.sms_outlined, size: 14, color: AppColors.sky600),
           ),
           const SizedBox(width: 10),
           Expanded(
             // The copy changes with the mode, so cross-fade it instead of
             // snapping to the new sentence.
             child: Padding(
-              padding: const EdgeInsets.only(top: 3),
+              padding: const EdgeInsets.only(top: 1),
               child: AnimatedSize(
                 duration: const Duration(milliseconds: 240),
                 curve: appEmphasizedDecelerate,
@@ -48,8 +48,7 @@ class HelperNote extends StatelessWidget {
                   switchOutCurve: appEmphasizedAccelerate,
                   child: AppText(
                     text,
-                    size: 12,
-                    weight: FontWeight.w500,
+                    size: 13,
                     color: AppColors.slate500,
                     height: 1.4,
                     key: ValueKey(text),

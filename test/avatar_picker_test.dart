@@ -39,7 +39,7 @@ double _entranceOpacity(WidgetTester tester, Finder of) {
   return opacity.opacity;
 }
 
-Finder get _title => find.text('Найзаа сонгоорой!');
+Finder get _title => find.text('Аватараа сонго');
 
 /// The pop applied to the card showing [name]'s mascot.
 double _mascotScale(WidgetTester tester, String name) {
@@ -94,7 +94,7 @@ void main() {
     expect(_entranceOpacity(tester, _title), 1);
   });
 
-  testWidgets('Avatar: picking a new companion pops its mascot and ticks it', (
+  testWidgets('Avatar: picking a new avatar pops its portrait and ticks it', (
     tester,
   ) async {
     _usePhoneViewport(tester);
@@ -114,8 +114,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     expect(_mascotScale(tester, 'Бамбарууш'), 1);
 
-    // Exactly one card carries the tick.
-    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    // Exactly one avatar carries the tick.
+    expect(
+      find.byWidgetPredicate(
+        (w) => w is LineIcon && w.glyph == LineGlyph.check,
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Avatar: saving a companion swaps the Home and Profile images', (
@@ -147,74 +152,44 @@ void main() {
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });
 
-  testWidgets('Avatar: screen stickers follow the chosen companion', (
+  testWidgets('Avatar: the Home header follows the chosen companion', (
     tester,
   ) async {
     _usePhoneViewport(tester);
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
-    GoRouter.of(
-      tester.element(find.byType(Scaffold).first),
-    ).go(AppRoutes.savingsAccount);
+    GoRouter.of(tester.element(find.byType(Scaffold).first)).go(AppRoutes.home);
     await tester.pumpAndSettle();
-    expect(_showsAsset(tester, FoxStickers.piggy), isTrue);
+    expect(_showsAsset(tester, AppAvatar.fox.portrait), isTrue);
 
     // Already-open screens follow the change, not only newly opened ones.
-    appAvatar.value = AppAvatar.bear;
-    await tester.pumpAndSettle();
-    expect(_showsAsset(tester, BearStickers.piggy), isTrue);
-    expect(_showsAsset(tester, FoxStickers.piggy), isFalse);
-
-    appAvatar.value = AppAvatar.bunny;
-    await tester.pumpAndSettle();
-    expect(_showsAsset(tester, RabbitStickers.piggy), isTrue);
-    expect(_showsAsset(tester, BearStickers.piggy), isFalse);
-
-    appAvatar.value = AppAvatar.penguin;
-    await tester.pumpAndSettle();
-    expect(_showsAsset(tester, PenguinStickers.piggy), isTrue);
-    expect(_showsAsset(tester, RabbitStickers.piggy), isFalse);
+    for (final (previous, next) in [
+      (AppAvatar.fox, AppAvatar.bear),
+      (AppAvatar.bear, AppAvatar.bunny),
+      (AppAvatar.bunny, AppAvatar.penguin),
+    ]) {
+      appAvatar.value = next;
+      await tester.pumpAndSettle();
+      expect(_showsAsset(tester, next.portrait), isTrue);
+      expect(_showsAsset(tester, previous.portrait), isFalse);
+    }
   });
 
-  testWidgets('Avatar: the transfer screen swaps to each companion', (
-    tester,
-  ) async {
+  testWidgets('Avatar: task screens show no companion art', (tester) async {
     _usePhoneViewport(tester);
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
-    GoRouter.of(
-      tester.element(find.byType(Scaffold).first),
-    ).go(AppRoutes.transfer);
-    await tester.pumpAndSettle();
-
-    String sticker(String set, String name) =>
-        'assets/images/$set/${set}_$name.png';
-    for (final (avatar, set, games) in [
-      (AppAvatar.fox, 'fox', 'games'),
-      (AppAvatar.bear, 'bear', 'sports'),
-      (AppAvatar.bunny, 'rabbit', 'sports'),
-      (AppAvatar.penguin, 'penguin', 'games'),
-    ]) {
-      appAvatar.value = avatar;
+    for (final route in [AppRoutes.transfer, AppRoutes.savingsAccount]) {
+      GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
       await tester.pumpAndSettle();
-      // Balance card, saved friends and the purpose chips.
-      for (final name in [
-        'payment',
-        'siblings',
-        'mom',
-        'dad',
-        'books',
-        games,
-      ]) {
-        expect(
-          _showsAsset(tester, sticker(set, name)),
-          isTrue,
-          reason: '$set $name',
-        );
-      }
-      if (set != 'fox') {
-        expect(_showsAsset(tester, sticker('fox', 'payment')), isFalse);
-      }
+      final companionArt = tester
+          .widgetList<Image>(find.byType(Image))
+          .map((i) => i.image)
+          .whereType<AssetImage>()
+          .where(
+            (a) => RegExp(r'/(fox|bear|rabbit|penguin)/').hasMatch(a.assetName),
+          );
+      expect(companionArt, isEmpty, reason: route);
     }
   });
 }

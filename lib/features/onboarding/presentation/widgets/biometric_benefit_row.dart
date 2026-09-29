@@ -8,41 +8,45 @@ import '../../../../widgets/ui.dart';
 class BiometricBenefitRow extends StatelessWidget {
   const BiometricBenefitRow({
     super.key,
-    required this.icon,
-    required this.tone,
+    required this.glyph,
     required this.title,
     required this.subtitle,
   });
 
-  final IconData icon;
-  final BadgeTone tone;
+  final LineGlyph glyph;
   final String title;
   final String subtitle;
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, _) = tone.colors;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 40,
           height: 40,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: bg,
-            borderRadius: BorderRadius.circular(14),
+            color: AppColors.slate50,
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, size: 20, color: fg),
+          child: LineIcon(glyph, size: 20, color: AppColors.slate800),
         ),
-        const SizedBox(width: 12),
+        const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText(title, size: 13, weight: FontWeight.w700),
+              AppText(
+                title,
+                size: 15,
+                weight: FontWeight.w600,
+                color: AppColors.slate900,
+              ),
               const SizedBox(height: 2),
               AppText(
                 subtitle,
-                size: 11,
+                size: 13,
                 color: AppColors.slate500,
                 height: 1.4,
               ),

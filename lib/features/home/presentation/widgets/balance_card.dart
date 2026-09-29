@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../app/accounts.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
@@ -23,23 +24,30 @@ class HomeBalance extends StatelessWidget {
   final String account;
   final int balance;
   final bool hidden;
+
+  /// Set before a parent is linked: shows the lower daily limit.
   final bool limited;
   final VoidCallback onToggleHidden;
 
   static TextStyle get _ibanStyle => inter(
     size: 12,
     weight: FontWeight.w500,
-    color: Night.text2,
+    color: AppColors.slate500,
   ).copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppText(label, size: 14, weight: FontWeight.w500, color: Night.text2),
+        AppText(
+          label,
+          size: 15,
+          weight: FontWeight.w600,
+          color: AppColors.slate700,
+        ),
         const SizedBox(height: 4),
         SizedBox(
-          height: 64,
+          height: 56,
           child: Center(
             child: FittedBox(
               child: HideableBalance(
@@ -47,10 +55,11 @@ class HomeBalance extends StatelessWidget {
                 balance: BalanceText(
                   balance,
                   animate: true,
-                  size: 52,
+                  size: 44,
                   weight: FontWeight.w700,
-                  letterSpacing: -1.6,
-                  color: Colors.white,
+                  letterSpacing: -1.2,
+                  color: AppColors.slate900,
+                  currencyColor: AppColors.slate900,
                   decimals: true,
                 ),
               ),
@@ -59,12 +68,12 @@ class HomeBalance extends StatelessWidget {
         ),
         if (limited)
           Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.only(bottom: 6),
             child: AppText(
-              'Хязгаарлагдмал горимын үлдэгдэл',
-              size: 11,
+              'Өдрийн хязгаар ${formatMnt(Limits.unlinkedDaily)}',
+              size: 12,
               weight: FontWeight.w600,
-              color: Night.amber,
+              color: AppColors.amber600,
             ),
           ),
         Row(
@@ -73,9 +82,9 @@ class HomeBalance extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: Night.surface,
+                color: AppColors.card,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Night.line),
+                border: Border.all(color: AppColors.line),
               ),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 220),
@@ -115,7 +124,7 @@ class HomeBalance extends StatelessWidget {
               hidden: hidden,
               onTap: onToggleHidden,
               size: 18,
-              lineColor: Night.text2,
+              lineColor: AppColors.slate500,
             ),
           ],
         ),
@@ -143,17 +152,21 @@ class _IconHit extends StatelessWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: withHaptic(onTap),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: LineIcon(icon, size: 17, color: Night.text2),
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Center(
+            child: LineIcon(icon, size: 18, color: AppColors.slate500),
+          ),
         ),
       ),
     );
   }
 }
 
-/// The account's actions as two big buttons: mint for the first, white
-/// for the second. A single action takes the full width in mint.
+/// The account's actions as two big buttons: the accent fill for the
+/// first, a quiet card for the second. A single action takes the full
+/// width in the accent.
 class HomeActions extends StatelessWidget {
   const HomeActions({super.key, required this.actions});
 
@@ -170,7 +183,7 @@ class HomeActions extends StatelessWidget {
             child: _BigAction(
               label: label,
               icon: icon,
-              mint: i == 0,
+              primary: i == 0,
               onTap: onTap,
             ),
           ),
@@ -184,18 +197,18 @@ class _BigAction extends StatelessWidget {
   const _BigAction({
     required this.label,
     required this.icon,
-    required this.mint,
+    required this.primary,
     required this.onTap,
   });
 
   final String label;
   final LineGlyph icon;
-  final bool mint;
+  final bool primary;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final fg = mint ? AppColors.onAccent : Night.bg;
+    final fg = primary ? AppColors.onAccent : AppColors.slate900;
     return Semantics(
       button: true,
       label: label,
@@ -204,10 +217,13 @@ class _BigAction extends StatelessWidget {
         onTap: onTap,
         scale: 0.96,
         child: Container(
-          height: 72,
+          height: 64,
           decoration: BoxDecoration(
-            color: mint ? AppColors.sky500 : Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            color: primary ? AppColors.sky500 : AppColors.card,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: primary ? AppColors.sky500 : AppColors.line,
+            ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -216,8 +232,8 @@ class _BigAction extends StatelessWidget {
               const SizedBox(height: 4),
               AppText(
                 label,
-                size: 13,
-                weight: FontWeight.w700,
+                size: 14,
+                weight: FontWeight.w600,
                 color: fg,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,

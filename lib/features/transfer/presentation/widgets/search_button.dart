@@ -26,7 +26,7 @@ class SearchButton extends StatelessWidget {
         onTap: loading || onTap == null ? null : withHaptic(onTap!),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          height: 34,
+          height: 36,
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: onTap == null ? AppColors.slate100 : AppColors.sky500,
@@ -42,9 +42,9 @@ class SearchButton extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2, color: ink),
                 )
               else
-                Icon(Icons.search_rounded, size: 16, color: ink),
+                LineIcon(LineGlyph.search, size: 16, color: ink),
               const SizedBox(width: 4),
-              AppText('Хайх', size: 12, weight: FontWeight.w700, color: ink),
+              AppText('Хайх', size: 13, weight: FontWeight.w600, color: ink),
             ],
           ),
         ),

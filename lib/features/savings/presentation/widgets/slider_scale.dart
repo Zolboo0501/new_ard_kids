@@ -18,8 +18,8 @@ class SliderScale extends StatelessWidget {
           for (final l in labels)
             AppText(
               l,
-              size: 10,
-              weight: FontWeight.w600,
+              size: 12,
+              weight: FontWeight.w500,
               color: AppColors.slate400,
             ),
         ],

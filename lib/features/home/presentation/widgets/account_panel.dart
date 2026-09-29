@@ -35,9 +35,9 @@ class HomeAccountPanel extends StatelessWidget {
       aspectRatio: 1.586,
       child: Container(
         decoration: BoxDecoration(
-          color: Night.surface,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: Night.line),
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.line),
         ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
@@ -69,7 +69,7 @@ class HomeAccountPanel extends StatelessWidget {
                         height: 44,
                         decoration: BoxDecoration(
                           color: accent.withValues(alpha: 0.14),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
                         child: image != null
@@ -83,23 +83,6 @@ class HomeAccountPanel extends StatelessWidget {
                               )
                             : LineIcon(icon, size: 22, color: accent),
                       ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Night.surface2,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: const AppText(
-                          'Данс',
-                          size: 11,
-                          weight: FontWeight.w600,
-                          color: Night.text2,
-                        ),
-                      ),
                     ],
                   ),
                   const Spacer(),
@@ -107,7 +90,7 @@ class HomeAccountPanel extends StatelessWidget {
                     label,
                     size: 17,
                     weight: FontWeight.w700,
-                    color: Night.text,
+                    color: AppColors.slate900,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -116,7 +99,7 @@ class HomeAccountPanel extends StatelessWidget {
                     subtitle,
                     size: 12,
                     weight: FontWeight.w500,
-                    color: Night.text2,
+                    color: AppColors.slate500,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -129,7 +112,7 @@ class HomeAccountPanel extends StatelessWidget {
                         inter(
                           size: 13,
                           weight: FontWeight.w600,
-                          color: Night.text,
+                          color: AppColors.slate900,
                           letterSpacing: 0.6,
                         ).copyWith(
                           fontFeatures: const [FontFeature.tabularFigures()],

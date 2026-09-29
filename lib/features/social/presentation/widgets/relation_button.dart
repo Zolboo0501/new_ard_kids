@@ -4,19 +4,19 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// One relationship choice on the add-friend screen: a line icon over a
+/// label, outlined in the accent when selected.
 class RelationButton extends StatelessWidget {
   const RelationButton({
     super.key,
     required this.label,
-    required this.asset,
-    required this.tint,
+    required this.glyph,
     required this.selected,
     required this.onTap,
   });
 
   final String label;
-  final String asset;
-  final Color tint;
+  final LineGlyph glyph;
   final bool selected;
   final VoidCallback onTap;
 
@@ -25,38 +25,34 @@ class RelationButton extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
+      label: label,
+      excludeSemantics: true,
       child: Pressable(
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.fromLTRB(4, 12, 4, 10),
           decoration: BoxDecoration(
             color: selected ? AppColors.sky50 : AppColors.card,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.card,
+              color: selected ? AppColors.sky500 : AppColors.line,
               width: 1.5,
             ),
           ),
           child: Column(
             children: [
-              // The whole sticker, not cropped to a circle.
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: tint,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                padding: const EdgeInsets.all(3),
-                child: Image.asset(asset, fit: BoxFit.contain),
+              LineIcon(
+                glyph,
+                size: 24,
+                color: selected ? AppColors.sky600 : AppColors.slate800,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               AppText(
                 label,
-                size: 11,
-                weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? AppColors.sky700 : AppColors.slate600,
+                size: 13,
+                weight: FontWeight.w600,
+                color: selected ? AppColors.sky700 : AppColors.slate700,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

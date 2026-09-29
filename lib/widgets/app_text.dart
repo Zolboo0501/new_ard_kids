@@ -21,7 +21,7 @@ class AppText extends StatelessWidget {
     super.key,
     required this.size,
     this.weight = FontWeight.w400,
-    this.color = AppColors.slate800,
+    this.color,
     this.height,
     this.letterSpacing,
     this.fontStyle,
@@ -39,7 +39,7 @@ class AppText extends StatelessWidget {
   // Type: forwarded to [inter].
   final double size;
   final FontWeight weight;
-  final Color color;
+  final Color? color;
   final double? height;
   final double? letterSpacing;
 

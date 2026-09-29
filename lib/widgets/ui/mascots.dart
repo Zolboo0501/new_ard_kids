@@ -23,7 +23,7 @@ class MascotIcon extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.slate50,
         shape: BoxShape.circle,
       ),
@@ -45,7 +45,7 @@ class MascotTile extends StatelessWidget {
     super.key,
     required this.asset,
     this.size = 48,
-    this.background = AppColors.slate50,
+    this.background,
     this.radius = 16,
     this.border,
     this.label = '',
@@ -53,13 +53,14 @@ class MascotTile extends StatelessWidget {
 
   final String asset;
   final double size;
-  final Color background;
+  final Color? background;
   final double radius;
   final Color? border;
   final String label;
 
   @override
   Widget build(BuildContext context) {
+    final background = this.background ?? AppColors.slate50;
     return Container(
       width: size,
       height: size,

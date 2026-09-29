@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 
 import '../theme/app_theme.dart';
 
-/// Round white back button used in the auth flow headers.
+/// Round back button used in every header: a 44pt disc on the card
+/// surface, so it is a full-size touch target.
 class CircleBackButton extends StatelessWidget {
   const CircleBackButton({super.key, this.onPressed});
 
@@ -20,13 +21,13 @@ class CircleBackButton extends StatelessWidget {
           (onPressed ?? () => Navigator.of(context).maybePop())();
         },
         child: Container(
-          width: 40,
-          height: 40,
+          width: 44,
+          height: 44,
           decoration: BoxDecoration(
             color: AppColors.card,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.chevron_left_rounded,
             size: 26,
             color: AppColors.slate700,

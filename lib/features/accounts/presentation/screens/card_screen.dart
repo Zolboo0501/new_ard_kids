@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/transaction_tile.dart';
 import '../../data/tx_item.dart';
-import '../widgets/kids_card_preview.dart';
-import '../widgets/action_tile.dart';
+import '../widgets/account_section_title.dart';
+import '../widgets/ard_card_preview.dart';
+import '../widgets/card_action_tile.dart';
 import '../widgets/card_section.dart';
 import '../widgets/card_summary.dart';
 import '../widgets/frozen_card.dart';
 import '../widgets/info_row.dart';
+import '../widgets/transaction_list.dart';
 
-/// "Миний карт": the kid's active Junior Card, opened from Home's Карт tab.
-/// Shows the card, its details and daily limit, lets the kid freeze it, and
-/// lists recent card payments.
+/// "Миний карт": the teen's active Ard Card, opened from Home's Карт tab.
+/// Shows the card, its details and limits, lets them freeze it, and lists
+/// recent card payments.
 class CardScreen extends StatefulWidget {
   const CardScreen({super.key});
 
@@ -30,34 +31,32 @@ class CardScreen extends StatefulWidget {
 class _CardScreenState extends State<CardScreen> {
   // Mock card until it comes from the API.
   static const _number = '4000123456785521';
-  static const _holder = 'ТЭМҮҮЛЭН Б.';
+  static const _holder = Kid.cardName;
   static const _expiry = '08/28';
-  static const _spentToday = 35000;
-  static const _dailyLimit = 100000;
 
   static List<TxItem> get _payments {
     final today = DateTime.now();
     return [
       TxItem(
-        title: 'Номын дэлгүүр',
-        subtitle: 'Картаар',
+        title: 'Интерном',
+        subtitle: 'Бусад',
         date: today,
         amount: -12000,
-        asset: Stickers.books,
+        glyph: LineGlyph.book,
       ),
       TxItem(
-        title: 'Амттан',
-        subtitle: 'Контактгүй',
+        title: 'CU дэлгүүр',
+        subtitle: 'Хоол · Контактгүй',
         date: today.subtract(const Duration(days: 1)),
         amount: -4500,
-        asset: Stickers.snack,
+        glyph: LineGlyph.food,
       ),
       TxItem(
         title: 'Тоглоомын төв',
-        subtitle: 'Картаар',
+        subtitle: 'Тоглоом/Апп',
         date: today.subtract(const Duration(days: 3)),
         amount: -18500,
-        asset: Stickers.games,
+        glyph: LineGlyph.gamepad,
       ),
     ];
   }
@@ -96,7 +95,7 @@ class _CardScreenState extends State<CardScreen> {
           leading: [
             FrozenCard(
               frozen: _frozen,
-              child: KidsCardPreview(holder: _holder, number: _printedNumber),
+              child: ArdCardPreview(holder: _holder, number: _printedNumber),
             ),
             const SizedBox(height: 16),
             CardSummary(frozen: _frozen),
@@ -104,20 +103,16 @@ class _CardScreenState extends State<CardScreen> {
             Row(
               children: [
                 Expanded(
-                  child: ActionTile(
-                    icon: _showNumber
-                        ? Icons.visibility_off_rounded
-                        : Icons.visibility_rounded,
+                  child: CardActionTile(
+                    glyph: _showNumber ? LineGlyph.eyeOff : LineGlyph.eye,
                     label: _showNumber ? 'Дугаар нуух' : 'Дугаар харах',
                     onTap: () => setState(() => _showNumber = !_showNumber),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ActionTile(
-                    icon: _frozen
-                        ? Icons.lock_open_rounded
-                        : Icons.ac_unit_rounded,
+                  child: CardActionTile(
+                    glyph: _frozen ? LineGlyph.lock : LineGlyph.snowflake,
                     label: _frozen ? 'Карт нээх' : 'Түр хаах',
                     highlighted: _frozen,
                     onTap: _toggleFrozen,
@@ -125,8 +120,8 @@ class _CardScreenState extends State<CardScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: ActionTile(
-                    icon: Icons.content_copy_rounded,
+                  child: CardActionTile(
+                    glyph: LineGlyph.copy,
                     label: 'Дугаар хуулах',
                     onTap: () {
                       Clipboard.setData(const ClipboardData(text: _number));
@@ -156,43 +151,48 @@ class _CardScreenState extends State<CardScreen> {
               title: 'Өдрийн лимит',
               trailing: AppText(
                 'Аав ээж тохируулсан',
-                size: 10,
-                weight: FontWeight.w600,
-                color: AppColors.slate400,
+                size: 12,
+                color: AppColors.slate500,
               ),
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
                     BalanceText(
-                      _spentToday,
-                      size: 18,
-                      weight: FontWeight.w700,
-                      decimals: false,
+                      Limits.spentToday,
+                      size: 20,
+                      weight: FontWeight.w600,
                     ),
                     AppText(
-                      ' / ${formatMnt(_dailyLimit)}',
-                      size: 12,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
+                      ' / ${formatMnt(Limits.dailyTransfer)}',
+                      size: 13,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                const ProgressTrack(value: _spentToday / _dailyLimit),
+                const ProgressTrack(
+                  value: Limits.spentToday / Limits.dailyTransfer,
+                ),
                 const SizedBox(height: 8),
                 AppText(
-                  'Өнөөдөр ${formatMnt(_dailyLimit - _spentToday)} зарцуулах боломжтой',
-                  size: 11,
+                  'Өнөөдөр ${formatMnt(Limits.leftToday)} зарцуулах боломжтой',
+                  size: 13,
                   color: AppColors.slate500,
+                ),
+                const SizedBox(height: 4),
+                InfoRow(
+                  label: 'Сарын лимит',
+                  value: formatMnt(Limits.monthlyCard),
+                  last: true,
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            const SectionHeader(title: 'Сүүлийн гүйлгээ'),
-            for (final item in _payments) ...[
-              TransactionTile(item: item),
-              const SizedBox(height: 8),
-            ],
+            const SizedBox(height: 20),
+            const AccountSectionTitle('Сүүлийн гүйлгээ'),
+            TransactionList(items: _payments),
           ],
         ),
       ),

@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
-import '../../../../app/routes.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/share_button.dart';
+import '../widgets/social_initials_avatar.dart';
 
-/// "Найз урих - Урамшуулал": share an invite code and track invitees.
+/// "Найз урих": share an invite code and track invitees.
 class InviteFriendsScreen extends StatelessWidget {
   const InviteFriendsScreen({super.key});
 
-  static const _code = 'ANAR26';
+  static const _code = 'TEMU26';
 
-  static List<(String, String, bool, Color)> get _invited => [
-    ('Anar B.', '2025.02.14-нд нэгдсэн', true, AppColors.sky50),
-    ('Misheel T.', '2025.02.10-нд нэгдсэн', true, AppColors.amber50),
-    ('Temuulen E.', 'Урилга илгээсэн', false, AppColors.slate100),
+  /// (name, status line, joined)
+  static const _invited = [
+    ('Anar B.', '2026.09.14-нд нэгдсэн', true),
+    ('Misheel T.', '2026.08.30-нд нэгдсэн', true),
+    ('Tergel E.', 'Урилга илгээсэн', false),
   ];
 
   void _copy(BuildContext context) {
@@ -29,223 +27,129 @@ class InviteFriendsScreen extends StatelessWidget {
     showAppSnack(context, 'Урилгын код хуулагдлаа');
   }
 
+  Widget _title(String text, {Widget? trailing}) => Row(
+    children: [
+      Expanded(
+        child: AppText(
+          text,
+          size: 16,
+          weight: FontWeight.w700,
+          color: AppColors.slate900,
+        ),
+      ),
+      ?trailing,
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
+    final bonus = formatMnt(Limits.inviteBonus, space: false);
+    final steps = [
+      ('Кодоо найздаа илгээнэ', 'Кодыг хуулж эсвэл шууд хуваалцана.'),
+      ('Найз тань бүртгүүлнэ', 'Таны кодоор апп-д бүртгүүлж данс нээнэ.'),
+      (
+        'Урамшуулал орно',
+        'Танд болон найзад тань $bonus урамшууллын дансанд орно.',
+      ),
+    ];
+
     return Scaffold(
-      backgroundColor: kPageBackground,
-      appBar: const SubPageHeader(title: 'Найз урих'),
+      backgroundColor: AppColors.surface,
+      appBar: SubPageHeader(title: 'Найз урих', background: AppColors.surface),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             16,
-            16,
+            12,
             16,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
             AppCard(
-              radius: 24,
               padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  MascotImage(
-                    asset: Stickers.friends,
-                    size: 128,
-                    background: AppColors.card,
-                    semanticLabel: 'Найз урих урамшууллын зураг',
+                  AppText(
+                    'Урьсан найз бүрт',
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate500,
                   ),
-                  const SizedBox(height: 6),
-                  Text.rich(
-                    TextSpan(
-                      text: 'Найзаа уриад ',
-                      children: [
-                        TextSpan(
-                          text: '₮5,000',
-                          style: inter(
-                            size: 20,
-                            weight: FontWeight.w800,
-                            color: AppColors.sky600,
-                          ),
-                        ),
-                        const TextSpan(text: ' урамшуулал аваарай!'),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    style: inter(
-                      size: 20,
-                      weight: FontWeight.w800,
-                      height: 1.35,
-                    ),
+                  const SizedBox(height: 4),
+                  BalanceText(
+                    Limits.inviteBonus,
+                    size: 40,
+                    weight: FontWeight.w600,
+                    space: false,
+                    color: AppColors.slate900,
                   ),
                   const SizedBox(height: 8),
-                  Text.rich(
-                    TextSpan(
-                      text:
-                          'Таны хуваалцсан урилгын кодоор найз тань бүртгүүлж дансаа нээхэд та хоёрт хоёуланд нь урамшууллын ',
-                      children: [
-                        TextSpan(
-                          text: '5,000 оноо',
-                          style: inter(
-                            size: 12,
-                            weight: FontWeight.w700,
-                            color: AppColors.slate700,
-                          ),
-                        ),
-                        const TextSpan(text: ' дансанд орно.'),
-                      ],
-                    ),
-                    textAlign: TextAlign.center,
-                    style: inter(
-                      size: 12,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
-                      height: 1.6,
+                  AppText(
+                    'Найз тань таны кодоор бүртгүүлж данс нээхэд та хоёрт '
+                    'тус бүр $bonus урамшуулал олгоно.',
+                    size: 14,
+                    color: AppColors.slate600,
+                    height: 1.5,
+                  ),
+                  Divider(height: 32, color: AppColors.line),
+                  _title(
+                    'Таны урилгын код',
+                    trailing: const StatusBadge(
+                      label: 'Идэвхтэй',
+                      tone: BadgeTone.emerald,
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.pin_outlined,
-                        size: 16,
-                        color: AppColors.sky600,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: AppText(
-                          'Таны урилгын код',
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate700,
-                        ),
-                      ),
-                      const StatusBadge(
-                        label: 'Идэвхтэй',
-                        tone: BadgeTone.emerald,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
+                    padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
                     decoration: BoxDecoration(
-                      color: AppColors.sky50.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.sky100),
+                      color: AppColors.slate50,
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                'УРИЛГЫН КОД',
-                                size: 10,
-                                weight: FontWeight.w600,
-                                color: AppColors.slate400,
-                              ),
-                              const SizedBox(height: 2),
-                              FittedBox(
-                                child: Text(
-                                  _code,
-                                  style: moneyStyle(
-                                    size: 18,
-                                    weight: FontWeight.w800,
-                                    color: AppColors.sky600,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
+                          child: SelectableText(
+                            _code,
+                            style: moneyStyle(
+                              size: 20,
+                              weight: FontWeight.w600,
+                              color: AppColors.slate900,
+                              letterSpacing: 2,
+                            ),
                           ),
                         ),
-                        const SizedBox(width: 8),
                         SoftButton(
                           label: 'Хуулах',
-                          icon: Icons.content_copy_rounded,
-                          height: 36,
-                          background: AppColors.sky500,
-                          foreground: AppColors.onAccent,
+                          leading: LineIcon(
+                            LineGlyph.copy,
+                            size: 18,
+                            color: AppColors.sky600,
+                          ),
+                          height: 44,
                           border: Colors.transparent,
                           onPressed: () => _copy(context),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      for (final (i, s) in [
-                        (Icons.share_rounded, 'Хуваалцах'),
-                        (Icons.chat_outlined, 'Мессенжер'),
-                        (Icons.sms_outlined, 'SMS'),
-                        (Icons.qr_code_2_rounded, 'QR код'),
-                      ].indexed) ...[
-                        if (i > 0) const SizedBox(width: 8),
-                        Expanded(
-                          child: ShareButton(
-                            icon: s.$1,
-                            label: s.$2,
-                            onTap: () => i == 3
-                                ? context.push(AppRoutes.qrScan)
-                                : _copy(context),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
             AppCard(
-              radius: 24,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.lightbulb_outline_rounded,
-                        size: 16,
-                        color: AppColors.amber500,
-                      ),
-                      const SizedBox(width: 6),
-                      AppText(
-                        'Яаж ажилладаг вэ? (Алхам алхмаар)',
-                        size: 13,
-                        weight: FontWeight.w700,
-                      ),
-                    ],
-                  ),
+                  _title('Яаж ажилладаг вэ?'),
                   const SizedBox(height: 12),
-                  for (final (i, step) in [
-                    (
-                      'Урилгын кодоо найздаа илгээх',
-                      'Код эсвэл шууд линкийг найзууддаа хуваалцаарай.',
-                    ),
-                    (
-                      'Найз тань апп-д бүртгүүлэх',
-                      'Таны кодоор шинэ данс нээж баталгаажуулна.',
-                    ),
-                    (
-                      'Хоёулаа шууд ₮ 5,000 урамшуулал авах!',
-                      'Бэлэг автоматаар таны урамшууллын дансанд орно.',
-                    ),
-                  ].indexed)
+                  for (final (i, step) in steps.indexed)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(
+                        bottom: i == steps.length - 1 ? 0 : 14,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -255,17 +159,13 @@ class InviteFriendsScreen extends StatelessWidget {
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: i == 2
-                                  ? AppColors.emerald100
-                                  : AppColors.sky100,
+                              color: AppColors.slate100,
                             ),
                             child: AppText(
                               '${i + 1}',
-                              size: 12,
-                              weight: FontWeight.w700,
-                              color: i == 2
-                                  ? AppColors.emerald600
-                                  : AppColors.sky600,
+                              size: 13,
+                              weight: FontWeight.w600,
+                              color: AppColors.slate700,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -275,14 +175,16 @@ class InviteFriendsScreen extends StatelessWidget {
                               children: [
                                 AppText(
                                   step.$1,
-                                  size: 12,
-                                  weight: FontWeight.w700,
+                                  size: 14,
+                                  weight: FontWeight.w600,
+                                  color: AppColors.slate900,
                                 ),
                                 const SizedBox(height: 2),
                                 AppText(
                                   step.$2,
-                                  size: 11,
-                                  color: AppColors.slate400,
+                                  size: 13,
+                                  color: AppColors.slate500,
+                                  height: 1.4,
                                 ),
                               ],
                             ),
@@ -293,78 +195,89 @@ class InviteFriendsScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 18),
-            SectionHeader(
-              title: 'Урьсан найзууд',
-              icon: Icons.group_add_outlined,
-              action: '${_invited.length} найз',
+            const SizedBox(height: 24),
+            Padding(
               padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+              child: _title(
+                'Урьсан найзууд',
+                trailing: AppText(
+                  '${_invited.length}',
+                  size: 13,
+                  weight: FontWeight.w600,
+                  color: AppColors.slate500,
+                ),
+              ),
             ),
-            for (final (i, f) in _invited.indexed) ...[
-              ListItemEntrance(
-                id: f,
-                index: i,
-                child: AppCard(
-                  radius: 18,
-                  padding: const EdgeInsets.all(12),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: f.$4,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.sky100),
-                        ),
-                        child: AppText(
-                          f.$1.split(' ').map((w) => w[0]).join(),
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate600,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+            AppCard(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: [
+                  for (final (i, f) in _invited.indexed) ...[
+                    if (i > 0) Divider(height: 1, color: AppColors.line),
+                    ListItemEntrance(
+                      id: f,
+                      index: i,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Row(
                           children: [
-                            AppText(f.$1, size: 13, weight: FontWeight.w700),
-                            AppText(f.$2, size: 11, color: AppColors.slate400),
+                            SocialInitialsAvatar(name: f.$1),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(
+                                    f.$1,
+                                    size: 14,
+                                    weight: FontWeight.w600,
+                                    color: AppColors.slate900,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  AppText(
+                                    f.$2,
+                                    size: 13,
+                                    color: AppColors.slate500,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                BalanceText(
+                                  Limits.inviteBonus,
+                                  sign: f.$3,
+                                  space: false,
+                                  size: 14,
+                                  weight: FontWeight.w600,
+                                  color: f.$3
+                                      ? AppColors.emerald600
+                                      : AppColors.slate400,
+                                ),
+                                const SizedBox(height: 4),
+                                StatusBadge(
+                                  label: f.$3
+                                      ? 'Баталгаажсан'
+                                      : 'Хүлээгдэж буй',
+                                  tone: f.$3
+                                      ? BadgeTone.emerald
+                                      : BadgeTone.amber,
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          BalanceText(
-                            5000,
-                            sign: f.$3,
-                            space: false,
-                            size: 13,
-                            weight: FontWeight.w500,
-                            color: f.$3
-                                ? AppColors.emerald600
-                                : AppColors.slate400,
-                          ),
-                          const SizedBox(height: 2),
-                          StatusBadge(
-                            label: f.$3 ? 'Баталгаажсан' : 'Хүлээгдэж буй',
-                            tone: f.$3 ? BadgeTone.emerald : BadgeTone.amber,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  ],
+                ],
               ),
-              const SizedBox(height: 8),
-            ],
-            const SizedBox(height: 10),
+            ),
+            const SizedBox(height: 20),
             PrimaryButton(
-              label: 'Найзуудтайгаа хуваалцах',
-              leadingIcon: Icons.rocket_launch_outlined,
+              label: 'Урилга хуваалцах',
               onPressed: () => _copy(context),
             ),
           ]),

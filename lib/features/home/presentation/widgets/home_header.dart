@@ -3,22 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
-/// Home's top bar on the night canvas: the companion portrait (opens
-/// Profile) with the greeting, and the bell and settings on the right.
+/// Home's top bar: the teen's avatar (opens Profile) with the greeting,
+/// and the bell and settings on the right.
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
-    required this.linked,
     required this.avatar,
     required this.onNotifications,
     required this.onSettings,
   });
 
-  final bool linked;
   final AppAvatar avatar;
   final VoidCallback onNotifications;
   final VoidCallback onSettings;
@@ -26,7 +25,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Night.bg,
+      color: AppColors.surface,
       padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
       child: SizedBox(
         height: 68,
@@ -34,26 +33,31 @@ class HomeHeader extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
           child: Row(
             children: [
-              GestureDetector(
-                // Switch to the Profile tab (branch 1) like the nav bar does,
-                // so the bar's selection follows instead of a page on top.
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  StatefulNavigationShell.of(context).goBranch(1);
-                },
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: Night.surface2,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Night.line),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image.asset(
-                    avatar.portrait,
-                    fit: BoxFit.cover,
-                    semanticLabel: 'Тэмүүлэн',
+              Semantics(
+                button: true,
+                label: 'Профайл',
+                excludeSemantics: true,
+                child: GestureDetector(
+                  // Switch to the Profile tab (branch 1) like the nav bar does,
+                  // so the bar's selection follows instead of a page on top.
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    StatefulNavigationShell.of(context).goBranch(1);
+                  },
+                  child: Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.slate50,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.line),
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.asset(
+                      avatar.portrait,
+                      fit: BoxFit.cover,
+                      semanticLabel: Kid.firstName,
+                    ),
                   ),
                 ),
               ),
@@ -63,29 +67,14 @@ class HomeHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    AppText('Сайн уу,', size: 13, color: AppColors.slate500),
                     AppText(
-                      'Сайн уу,',
-                      size: 12,
-                      weight: FontWeight.w500,
-                      color: Night.text2,
-                    ),
-                    AppText(
-                      'Тэмүүлэн!',
+                      Kid.firstName,
                       size: 17,
                       weight: FontWeight.w700,
-                      color: Night.text,
+                      color: AppColors.slate900,
                       letterSpacing: -0.3,
                     ),
-                    if (!linked)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: AppText(
-                          'Эцэг эх холбогдоогүй',
-                          size: 10.5,
-                          weight: FontWeight.w600,
-                          color: Night.amber,
-                        ),
-                      ),
                   ],
                 ),
               ),
@@ -108,7 +97,7 @@ class HomeHeader extends StatelessWidget {
   }
 }
 
-/// A bare white icon with a 44pt hit area, as on the reference.
+/// A bare line icon with a 44pt hit area.
 class _HeaderIcon extends StatelessWidget {
   const _HeaderIcon({
     required this.icon,
@@ -136,7 +125,7 @@ class _HeaderIcon extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              LineIcon(icon, size: 24, color: Night.text),
+              LineIcon(icon, size: 24, color: AppColors.slate900),
               if (badge)
                 Positioned(
                   top: 11,

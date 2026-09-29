@@ -8,7 +8,9 @@ import '../app_text.dart';
 import 'chips.dart';
 import 'mascots.dart';
 
-/// Soft informational note with a leading icon.
+/// A quiet note with a leading icon: a flat raised surface, the icon in the
+/// [tone] colour. Colour is kept for the icon so warnings still read as
+/// warnings without every screen carrying a pastel box.
 class InfoNote extends StatelessWidget {
   const InfoNote({
     super.key,
@@ -29,14 +31,13 @@ class InfoNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, border) = tone.colors;
+    final (_, fg, _) = tone.colors;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: bg.withValues(alpha: 0.8),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
+        color: AppColors.slate50,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +46,7 @@ class InfoNote extends StatelessWidget {
             MascotIcon(mascot!, size: 24)
           else
             Icon(icon, size: 18, color: fg),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,17 +56,17 @@ class InfoNote extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 2),
                     child: AppText(
                       title!,
-                      size: 12,
+                      size: 13,
                       weight: FontWeight.w700,
-                      color: fg,
+                      color: AppColors.slate900,
                     ),
                   ),
                 AppText(
                   text,
-                  size: 11,
+                  size: 12,
                   weight: FontWeight.w500,
                   color: AppColors.slate600,
-                  height: 1.5,
+                  height: 1.45,
                 ),
               ],
             ),
@@ -83,7 +84,7 @@ class ProgressTrack extends StatelessWidget {
     required this.value,
     this.height = 8,
     this.color,
-    this.track = AppColors.slate100,
+    this.track,
   });
 
   final double value;
@@ -91,7 +92,7 @@ class ProgressTrack extends StatelessWidget {
 
   /// Defaults to the theme accent (`AppColors.sky500`).
   final Color? color;
-  final Color track;
+  final Color? track;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +102,9 @@ class ProgressTrack extends StatelessWidget {
         height: height,
         child: Stack(
           children: [
-            Positioned.fill(child: ColoredBox(color: track)),
+            Positioned.fill(
+              child: ColoredBox(color: track ?? AppColors.slate100),
+            ),
             FractionallySizedBox(
               widthFactor: value.clamp(0.0, 1.0),
               child: DecoratedBox(
@@ -129,16 +132,20 @@ void showAppSnack(BuildContext context, String message, {String? mascot}) {
     ..showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Night.surface2,
+        backgroundColor: AppColors.slate50,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: mascot == null
-            ? AppText(message, size: 13, color: Night.text)
+            ? AppText(message, size: 13, color: AppColors.slate900)
             : Row(
                 children: [
                   MascotIcon(mascot, size: 28),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: AppText(message, size: 13, color: Night.text),
+                    child: AppText(
+                      message,
+                      size: 13,
+                      color: AppColors.slate900,
+                    ),
                   ),
                 ],
               ),

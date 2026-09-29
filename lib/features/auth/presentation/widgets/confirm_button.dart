@@ -50,7 +50,7 @@ class _ConfirmButtonState extends State<ConfirmButton> {
             curve: appEmphasizedDecelerate,
             height: 52,
             decoration: BoxDecoration(
-              color: widget.dimmed ? AppColors.slate50 : AppColors.sky500,
+              color: widget.dimmed ? AppColors.slate100 : AppColors.sky500,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
@@ -58,12 +58,10 @@ class _ConfirmButtonState extends State<ConfirmButton> {
               children: [
                 AppText(
                   'Хүсэлт илгээх',
-                  size: 16,
-                  weight: FontWeight.w700,
+                  size: 15,
+                  weight: FontWeight.w600,
                   color: ink,
                 ),
-                const SizedBox(width: 8),
-                Icon(Icons.arrow_forward_rounded, size: 18, color: ink),
               ],
             ),
           ),

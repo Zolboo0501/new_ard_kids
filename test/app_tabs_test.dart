@@ -254,15 +254,17 @@ void main() {
       expect((pill.borderRadius! as BorderRadius).topLeft.x, 999);
     });
 
-    testWidgets('card keeps the home look: raised pill on a dark track', (
+    testWidgets('card keeps the home look: raised pill in a quiet track', (
       tester,
     ) async {
+      appBrightness.value = AppBrightness.light;
+      addTearDown(() => appBrightness.value = AppBrightness.system);
       await pumpStyled(tester, AppTabsStyle.card);
       final (track, pill) = chrome(tester);
 
       expect((track.borderRadius! as BorderRadius).topLeft.x, 16);
-      expect(track.color, Night.surface);
-      expect(pill.color, Night.surface2);
+      expect(track.color, AppColors.slate100);
+      expect(pill.color, AppColors.card);
       expect((pill.borderRadius! as BorderRadius).topLeft.x, 12);
     });
 

@@ -14,18 +14,25 @@ class ClearButton extends StatelessWidget {
       button: true,
       label: 'Арилгах',
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: withHaptic(onTap),
-        child: Container(
-          width: 24,
-          height: 24,
-          decoration: const BoxDecoration(
-            color: AppColors.slate200,
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.close_rounded,
-            size: 14,
-            color: AppColors.slate500,
+        // A 24pt dot in a 44pt hit area.
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: AppColors.slate200,
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: LineIcon(
+              LineGlyph.close,
+              size: 14,
+              stroke: 2,
+              color: AppColors.slate600,
+            ),
           ),
         ),
       ),

@@ -25,20 +25,20 @@ class TermButton extends StatelessWidget {
         onTap: withHaptic(onTap),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: selected ? AppColors.sky50 : AppColors.slate50,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: selected ? AppColors.sky500 : AppColors.slate50,
-              width: selected ? 2 : 1,
+              width: 1.5,
             ),
           ),
           child: AppText(
             label,
-            size: 12,
-            weight: selected ? FontWeight.w700 : FontWeight.w600,
+            size: 13,
+            weight: FontWeight.w600,
             color: selected ? AppColors.sky700 : AppColors.slate700,
           ),
         ),

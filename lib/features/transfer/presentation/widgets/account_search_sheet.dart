@@ -142,9 +142,9 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
                   padding: const EdgeInsets.only(top: 6, left: 4),
                   child: AppText(
                     'Данс олдсонгүй. Дугаараа шалгана уу.',
-                    size: 11,
+                    size: 12,
                     weight: FontWeight.w600,
-                    color: AppColors.rose500,
+                    color: AppColors.rose600,
                   ),
                 ),
               if (found != null) ...[
@@ -155,16 +155,16 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.emerald50,
+                    color: AppColors.slate50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.emerald200),
+                    border: Border.all(color: AppColors.line),
                   ),
                   child: Column(
                     children: [
                       _SheetRow(label: 'Хүлээн авагч', value: found.holder),
-                      const Divider(height: 1, color: AppColors.emerald100),
+                      Divider(height: 1, color: AppColors.line),
                       _SheetRow(label: 'Банк', value: found.bank),
-                      const Divider(height: 1, color: AppColors.emerald100),
+                      Divider(height: 1, color: AppColors.line),
                       _SheetRow(label: 'IBAN', value: found.iban, money: true),
                     ],
                   ),

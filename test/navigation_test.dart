@@ -43,7 +43,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Карт'));
     await tester.pumpAndSettle();
-    expect(find.text('Junior Card'), findsOneWidget);
+    expect(find.text('•••• 5521'), findsOneWidget);
 
     await tester.tap(find.text('Профайл'));
     await tester.pumpAndSettle();
@@ -53,7 +53,7 @@ void main() {
     await tester.tap(find.text('Нүүр'));
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.home);
-    expect(find.text('Junior Card'), findsOneWidget);
+    expect(find.text('•••• 5521'), findsOneWidget);
   });
 
   testWidgets('pushed screens cover the nav bar and pop back to the tab', (

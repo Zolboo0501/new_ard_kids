@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 
-/// The balance card at the top of the rewards and coin tabs: a flat night
-/// panel with a faint wash of the account's [accent] from the top-left
-/// corner, like Home's account panels.
+/// The balance panel at the top of the rewards and coin tabs: a flat card
+/// with one faint wash of the account's [accent] from the top-left corner,
+/// like Home's account panels.
 class AccountHeroPanel extends StatelessWidget {
   const AccountHeroPanel({
     super.key,
@@ -22,12 +22,12 @@ class AccountHeroPanel extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
         gradient: RadialGradient(
           center: const Alignment(-1, -1),
           radius: 1.2,
           colors: [
-            Color.alphaBlend(accent.withValues(alpha: 0.16), AppColors.card),
+            Color.alphaBlend(accent.withValues(alpha: 0.10), AppColors.card),
             AppColors.card,
           ],
         ),

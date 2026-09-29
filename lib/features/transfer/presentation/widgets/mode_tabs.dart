@@ -14,7 +14,7 @@ class ModeTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const labels = ['Найзууд', 'Дансаар', 'Утсаар'];
+    const labels = ['Хадгалсан', 'Дансаар', 'Утсаар'];
     final count = TransferMode.values.length;
     final duration = MediaQuery.disableAnimationsOf(context)
         ? Duration.zero
@@ -57,16 +57,16 @@ class ModeTabs extends StatelessWidget {
                       behavior: HitTestBehavior.opaque,
                       onTap: withHaptic(() => onChanged(m)),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 9),
+                        padding: const EdgeInsets.symmetric(vertical: 13),
                         child: Center(
                           child: AnimatedDefaultTextStyle(
                             duration: duration,
                             curve: appEmphasizedDecelerate,
                             style: inter(
-                              size: 12,
+                              size: 13,
                               weight: m == mode
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                               color: m == mode
                                   ? AppColors.onAccent
                                   : AppColors.slate500,

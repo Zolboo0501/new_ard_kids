@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -153,7 +155,7 @@ class _QrScanScreenState extends State<QrScanScreen>
       AspectRatio(
         aspectRatio: 0.82,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -191,10 +193,11 @@ class _QrScanScreenState extends State<QrScanScreen>
         ),
       ),
       const SizedBox(height: 16),
-      const InfoNote(
+      InfoNote(
         icon: Icons.shield_outlined,
         text:
-            'Энэ гүйлгээ нь аав ээжийн тохируулсан өдрийн ₮100,000 лимитийн хүрээнд хамгаалагдсан байна.',
+            'Өдрийн шилжүүлгийн эрх ${formatMnt(Limits.dailyTransfer)}. '
+            'Өнөөдөр ${formatMnt(Limits.leftToday)} үлдсэн.',
       ),
     ];
   }
@@ -202,7 +205,6 @@ class _QrScanScreenState extends State<QrScanScreen>
   List<Widget> _buildMyQr() {
     return [
       AppCard(
-        radius: 28,
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
@@ -224,7 +226,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                       child: Image.asset(
                         appAvatar.value.portrait,
                         fit: BoxFit.cover,
-                        semanticLabel: 'Тэмүүлэн',
+                        semanticLabel: Kid.shortName,
                       ),
                     ),
                   ),
@@ -240,9 +242,11 @@ class _QrScanScreenState extends State<QrScanScreen>
                       shape: BoxShape.circle,
                       border: Border.all(color: AppColors.card, width: 2),
                     ),
-                    child: const Icon(
-                      Icons.check_rounded,
+                    alignment: Alignment.center,
+                    child: LineIcon(
+                      LineGlyph.check,
                       size: 12,
+                      stroke: 2.5,
                       color: AppColors.onBright,
                     ),
                   ),
@@ -250,10 +254,10 @@ class _QrScanScreenState extends State<QrScanScreen>
               ],
             ),
             const SizedBox(height: 12),
-            AppText('Тэмүүлэн (Таны QR)', size: 20, weight: FontWeight.w700),
+            AppText(Kid.shortName, size: 20, weight: FontWeight.w700),
             const SizedBox(height: 2),
             AppText(
-              'Данс: 5041092831',
+              formatIban(Accounts.main),
               size: 13,
               color: AppColors.dsOnSurfaceVariant,
             ),
@@ -272,7 +276,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 children: [
                   const Positioned.fill(
                     child: CustomPaint(
-                      painter: FakeQrPainter(seed: 5041092831),
+                      painter: FakeQrPainter(seed: 5049821900),
                     ),
                   ),
                   Container(

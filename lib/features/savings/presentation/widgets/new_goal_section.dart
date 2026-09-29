@@ -4,17 +4,17 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// One card of the new-goal form: a title, an optional trailing note or
+/// widget, then the section's fields.
 class NewGoalSection extends StatelessWidget {
   const NewGoalSection({
     super.key,
-    required this.dot,
     required this.title,
     required this.children,
     this.trailing,
     this.trailingWidget,
   });
 
-  final Color dot;
   final String title;
   final String? trailing;
   final Widget? trailingWidget;
@@ -23,37 +23,24 @@ class NewGoalSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      radius: 24,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
             children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 6),
               Expanded(
                 child: AppText(
-                  title.toUpperCase(),
-                  size: 12,
+                  title,
+                  size: 16,
                   weight: FontWeight.w700,
-                  color: AppColors.slate800,
-                  letterSpacing: 0.4,
+                  color: AppColors.slate900,
                 ),
               ),
               if (trailingWidget != null)
                 trailingWidget!
               else if (trailing != null)
-                AppText(
-                  trailing!,
-                  size: 11,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate400,
-                ),
+                AppText(trailing!, size: 13, color: AppColors.slate500),
             ],
           ),
           const SizedBox(height: 12),

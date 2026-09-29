@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
 /// The friend's username. Highlights sky while focused, rose when the last
@@ -33,7 +34,7 @@ class _UsernameFieldState extends State<UsernameField> {
 
   @override
   Widget build(BuildContext context) {
-    final accent = widget.hasError ? AppColors.rose400 : AppColors.sky500;
+    final accent = widget.hasError ? AppColors.rose600 : AppColors.slate500;
 
     return Focus(
       canRequestFocus: false,
@@ -45,7 +46,7 @@ class _UsernameFieldState extends State<UsernameField> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         decoration: BoxDecoration(
           color: AppColors.slate50,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: widget.hasError
                 ? AppColors.rose400
@@ -57,7 +58,7 @@ class _UsernameFieldState extends State<UsernameField> {
         ),
         child: Row(
           children: [
-            Icon(Icons.alternate_email_rounded, size: 18, color: accent),
+            AppText('@', size: 16, weight: FontWeight.w600, color: accent),
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
@@ -75,8 +76,8 @@ class _UsernameFieldState extends State<UsernameField> {
                 ],
                 style: inter(
                   size: 16,
-                  weight: FontWeight.w700,
-                  color: Night.text,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate900,
                 ),
                 decoration: InputDecoration(
                   isDense: true,

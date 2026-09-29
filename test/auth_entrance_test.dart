@@ -37,7 +37,7 @@ double _entranceOpacity(WidgetTester tester, Finder of) {
   return opacity.opacity;
 }
 
-Finder get _title => find.text('Ard KIDS');
+Finder get _title => find.text('Тавтай морил');
 
 void main() {
   testWidgets('Auth: content is hidden at the start of the entrance', (

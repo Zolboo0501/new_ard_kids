@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../widgets/date_range_sheet.dart';
 import '../../../widgets/ui.dart';
@@ -11,8 +10,9 @@ class TxItem {
     required this.subtitle,
     required this.date,
     required this.amount,
-    required this.asset,
+    required this.glyph,
     this.tint,
+    this.ink,
     this.badge,
     this.badgeTone = BadgeTone.emerald,
     this.amountColor,
@@ -24,10 +24,16 @@ class TxItem {
   /// When it happened; lists filter on it with [rangeContains].
   final DateTime date;
   final int amount;
-  final String asset;
 
-  /// Defaults to the theme accent (`AppColors.sky50`).
+  /// The category glyph drawn in the row's tile.
+  final LineGlyph glyph;
+
+  /// The tile's fill and glyph colour; default `AppColors.slate50` and
+  /// `AppColors.slate800`.
   final Color? tint;
+  final Color? ink;
+
+  /// A real status only (e.g. Хүлээгдэж буй), never a restatement of the sign.
   final String? badge;
   final BadgeTone badgeTone;
   final Color? amountColor;

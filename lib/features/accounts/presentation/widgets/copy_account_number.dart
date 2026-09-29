@@ -33,7 +33,7 @@ class CopyAccountNumber extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // In a tight spot (beside a mascot) the number scales down a little
+        // In a tight spot the number scales down a little
         // rather than pushing the buttons off the card.
         Flexible(
           child: FittedBox(
@@ -51,9 +51,9 @@ class CopyAccountNumber extends StatelessWidget {
                 style:
                     style ??
                     moneyStyle(
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
+                      size: 13,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
               ),
             ),
@@ -63,6 +63,7 @@ class CopyAccountNumber extends StatelessWidget {
           button: true,
           label: 'Данс хуулах',
           child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               HapticFeedback.selectionClick();
               Clipboard.setData(
@@ -70,18 +71,25 @@ class CopyAccountNumber extends StatelessWidget {
               );
               showAppSnack(context, 'Дансны дугаар хуулагдлаа');
             },
-            child: const Padding(
-              padding: EdgeInsets.all(6),
-              child: Icon(
-                Icons.content_copy_rounded,
-                size: 14,
-                color: AppColors.slate400,
+            child: SizedBox.square(
+              dimension: 44,
+              child: Center(
+                child: LineIcon(
+                  LineGlyph.copy,
+                  size: 16,
+                  color: AppColors.slate500,
+                ),
               ),
             ),
           ),
         ),
         if (onToggleHidden != null)
-          EyeToggle(hidden: hidden, onTap: onToggleHidden!),
+          EyeToggle(
+            hidden: hidden,
+            onTap: onToggleHidden!,
+            size: 18,
+            lineColor: AppColors.slate500,
+          ),
       ],
     );
   }

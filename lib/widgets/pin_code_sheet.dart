@@ -3,10 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../app/avatar.dart';
 import '../theme/app_theme.dart';
 import 'app_text.dart';
-import 'common.dart';
 import 'numeric_keypad.dart';
 import 'ui.dart';
 
@@ -44,7 +42,10 @@ Future<bool?> showPinCodeSheet(
 
 /// Bottom-sheet PIN entry: dots, an optional [summary] of what is being
 /// confirmed, and a [NumericKeypad]. Verifies as soon as [length] digits are
-/// in; a wrong PIN shakes the dots and clears them.
+/// in; a wrong PIN shakes the dots, clears them and says how many tries are
+/// left. After [maxAttempts] wrong PINs in a row the keypad locks for
+/// [lockout], across every PIN sheet in the app, so closing and reopening
+/// the sheet doesn't reset the count.
 class PinCodeSheet extends StatefulWidget {
   const PinCodeSheet({
     super.key,
@@ -62,6 +63,28 @@ class PinCodeSheet extends StatefulWidget {
   final Widget? summary;
   final int length;
   final VoidCallback? onForgot;
+
+  static const maxAttempts = 3;
+  static const lockout = Duration(minutes: 5);
+
+  static int _failures = 0;
+  static DateTime? _lockedUntil;
+
+  /// Clears the wrong-PIN count and any lock. For tests.
+  @visibleForTesting
+  static void resetLockout() {
+    _failures = 0;
+    _lockedUntil = null;
+  }
+
+  static bool get _locked {
+    final until = _lockedUntil;
+    if (until == null) return false;
+    if (DateTime.now().isBefore(until)) return true;
+    _lockedUntil = null;
+    _failures = 0;
+    return false;
+  }
 
   @override
   State<PinCodeSheet> createState() => _PinCodeSheetState();
@@ -85,6 +108,7 @@ class _PinCodeSheetState extends State<PinCodeSheet>
   }
 
   Future<void> _digit(String d) async {
+    if (PinCodeSheet._locked) return setState(() {});
     if (_checking || _pin.length == widget.length) return;
     setState(() {
       _error = false;
@@ -96,11 +120,15 @@ class _PinCodeSheetState extends State<PinCodeSheet>
     final ok = await widget.onVerify(_pin);
     if (!mounted) return;
     if (ok) {
+      PinCodeSheet._failures = 0;
       HapticFeedback.lightImpact();
       Navigator.of(context).pop(true);
       return;
     }
     HapticFeedback.heavyImpact();
+    if (++PinCodeSheet._failures >= PinCodeSheet.maxAttempts) {
+      PinCodeSheet._lockedUntil = DateTime.now().add(PinCodeSheet.lockout);
+    }
     if (!MediaQuery.disableAnimationsOf(context)) _shake.forward(from: 0);
     setState(() {
       _checking = false;
@@ -114,8 +142,20 @@ class _PinCodeSheetState extends State<PinCodeSheet>
     setState(() => _pin = _pin.substring(0, _pin.length - 1));
   }
 
+  String get _message {
+    if (PinCodeSheet._locked) {
+      return 'ПИН код ${PinCodeSheet.maxAttempts} удаа буруу орсон тул '
+          '${PinCodeSheet.lockout.inMinutes} минут түгжигдлээ. Мартсан бол '
+          'эцэг эхээсээ сэргээлгэнэ үү.';
+    }
+    if (!_error) return widget.subtitle;
+    final left = PinCodeSheet.maxAttempts - PinCodeSheet._failures;
+    return 'ПИН код буруу байна. $left оролдлого үлдлээ.';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final locked = PinCodeSheet._locked;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
@@ -131,21 +171,29 @@ class _PinCodeSheetState extends State<PinCodeSheet>
               ),
             ),
             const SizedBox(height: 18),
-            MascotImage(
-              asset: Stickers.lock,
-              size: 80,
-              background: AppColors.card,
-              semanticLabel: 'ПИН кодын маскот',
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: locked ? AppColors.rose50 : AppColors.slate50,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              alignment: Alignment.center,
+              child: LineIcon(
+                LineGlyph.lock,
+                size: 26,
+                color: locked ? AppColors.rose500 : AppColors.slate800,
+              ),
             ),
-            const SizedBox(height: 8),
-            AppText(widget.title, size: 16, weight: FontWeight.w700),
+            const SizedBox(height: 14),
+            AppText(widget.title, size: 18, weight: FontWeight.w700),
             const SizedBox(height: 6),
             AppText(
-              _error
-                  ? 'ПИН код буруу байна. Дахин оролдоно уу.'
-                  : widget.subtitle,
-              size: 12,
-              color: _error ? AppColors.rose500 : AppColors.slate400,
+              _message,
+              size: 13,
+              color: _error || locked ? AppColors.rose500 : AppColors.slate500,
+              textAlign: TextAlign.center,
+              height: 1.4,
             ),
             if (widget.summary != null) ...[
               const SizedBox(height: 14),
@@ -177,16 +225,23 @@ class _PinCodeSheetState extends State<PinCodeSheet>
               ),
             ),
             const SizedBox(height: 22),
-            NumericKeypad(
-              style: const KeypadStyle(
-                keyHeight: 60,
-                radius: 30,
-                gap: 12,
-                fontSize: 24,
-                border: AppColors.slate100,
+            IgnorePointer(
+              ignoring: locked,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: locked ? 0.35 : 1,
+                child: NumericKeypad(
+                  style: KeypadStyle(
+                    keyHeight: 60,
+                    radius: 30,
+                    gap: 12,
+                    fontSize: 24,
+                    border: AppColors.slate100,
+                  ),
+                  onDigit: _digit,
+                  onBackspace: _backspace,
+                ),
               ),
-              onDigit: _digit,
-              onBackspace: _backspace,
             ),
             if (widget.onForgot != null) ...[
               const SizedBox(height: 8),
@@ -194,7 +249,7 @@ class _PinCodeSheetState extends State<PinCodeSheet>
                 onPressed: withHaptic(widget.onForgot),
                 child: AppText(
                   'ПИН кодоо мартсан уу?',
-                  size: 12,
+                  size: 13,
                   weight: FontWeight.w700,
                   color: AppColors.sky600,
                 ),

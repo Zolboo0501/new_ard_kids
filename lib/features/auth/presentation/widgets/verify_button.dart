@@ -29,7 +29,7 @@ class VerifyButton extends StatelessWidget {
           curve: appEmphasizedDecelerate,
           height: 52,
           decoration: BoxDecoration(
-            color: enabled ? AppColors.dsPrimaryContainer : AppColors.slate50,
+            color: enabled ? AppColors.sky500 : AppColors.slate100,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -37,13 +37,10 @@ class VerifyButton extends StatelessWidget {
             children: [
               AppText(
                 'Баталгаажуулах',
-                size: 14,
-                weight: FontWeight.w700,
+                size: 15,
+                weight: FontWeight.w600,
                 color: ink,
-                letterSpacing: 0.14,
               ),
-              const SizedBox(width: 4),
-              Icon(Icons.auto_awesome_rounded, size: 18, color: ink),
             ],
           ),
         ),

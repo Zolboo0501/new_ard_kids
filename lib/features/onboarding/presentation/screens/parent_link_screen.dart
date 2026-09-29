@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
-import '../widgets/limit_card.dart';
+import '../../../auth/presentation/widgets/header_skip_button.dart';
+import '../widgets/parent_link_access_row.dart';
+import '../widgets/parent_link_limit_row.dart';
 import '../widgets/role_button.dart';
 import '../widgets/success_sheet.dart';
 
@@ -40,10 +41,8 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
   /// value becomes valid again.
   String? _phoneError;
 
-  static List<(String, String)> get _roles => [
-    ('Ээж', Stickers.mom),
-    ('Аав', Stickers.dad),
-  ];
+  /// The choice and the possessive form used in the phone field's label.
+  static const _roles = [('Ээж', 'Ээжийн'), ('Аав', 'Аавын')];
 
   @override
   void initState() {
@@ -99,159 +98,49 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final roleLabel = _roles[_role].$2;
     return Scaffold(
-      backgroundColor: AppColors.dsSurface,
+      backgroundColor: AppColors.surface,
       // No appBar: the shared onboarding Header scrolls with the content, the
       // way it does on the other steps.
       body: SafeArea(
         bottom: false,
         child: EntranceScope(
           child: AdaptiveListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             children: EntranceItem.list([
               Header(
                 step: widget.onboarding ? 'Алхам 6/6' : null,
-                trailing: GestureDetector(
-                  onTap: withHaptic(() => _goHome(linked: false)),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.slate100,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: const AppText(
-                      'Алгасах',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: MascotImage(
-                  asset: Stickers.family,
-                  size: 140,
-                  background: AppColors.dsSurface,
-                  semanticLabel: 'Гэр бүлийн маскот',
-                ),
-              ),
-              const SizedBox(height: 6),
-
-              Text.rich(
-                TextSpan(
-                  text: 'Эцэг эхтэйгээ холбогдоод эрхээ ',
-                  children: [
-                    TextSpan(
-                      text: '5 дахин',
-                      style:
-                          inter(
-                            size: 20,
-                            weight: FontWeight.w800,
-                            color: AppColors.sky500,
-                          ).copyWith(
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.sky300,
-                            decorationThickness: 2,
-                          ),
-                    ),
-                    const TextSpan(text: ' нэмэгдүүлээрэй!'),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-                style: inter(size: 20, weight: FontWeight.w800, height: 1.4),
-              ),
-              const SizedBox(height: 16),
-              LimitCard(
-                icon: Icons.lock_outline_rounded,
-                title: 'Одоогийн эрх',
-                subtitle: 'Холбогдоогүй',
-                badge: const StatusBadge(
-                  label: 'Хязгаарлагдмал',
-                  tone: BadgeTone.slate,
-                  dot: true,
-                ),
-                muted: true,
-                stats: const [
-                  ('Өдрийн зарцуулалт', 20000, null),
-                  ('Өдрийн гүйлгээ', '2 удаа', null),
-                ],
-                footer: Row(
-                  children: [
-                    const Icon(
-                      Icons.info_outline_rounded,
-                      size: 14,
-                      color: AppColors.slate500,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: AppText(
-                        'Зөвхөн бэлэн мөнгө зарцуулах анхан шатны эрхтэй',
-                        size: 11,
-                        color: AppColors.slate500,
-                      ),
-                    ),
-                  ],
+                trailing: HeaderSkipButton(
+                  onPressed: () => _goHome(linked: false),
                 ),
               ),
               const SizedBox(height: 12),
-              LimitCard(
-                icon: Icons.verified_sharp,
-                title: 'Эцэг эх холбогдсоны дараа',
-                subtitle: 'Бүрэн боломж нээгдэнэ',
-                badge: const StatusBadge(
-                  label: 'Бүрэн эрх',
-                  tone: BadgeTone.emerald,
-                ),
-                muted: false,
-                stats: const [
-                  ('Өдрийн зарцуулалт', (100000, '+'), BadgeTone.sky),
-                  ('Өдрийн гүйлгээ', 'Хязгааргүй', BadgeTone.emerald),
-                ],
-                footer: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppColors.amber50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.redeem_outlined,
-                        color: AppColors.amber800,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AppText(
-                          'Хүүхдийн хадгаламж, койн, урамшуулал авах боломжтой болно!',
-                          size: 11,
-                          weight: FontWeight.w600,
-                          color: AppColors.amber800,
-                          height: 1.4,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              AppText(
+                'Эцэг эхтэйгээ холбох',
+                size: 28,
+                weight: FontWeight.w700,
+                color: AppColors.slate900,
+                height: 1.2,
+                letterSpacing: -0.6,
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 8),
+              AppText(
+                'Холбосны дараа өдрийн гүйлгээний эрх '
+                '${formatMnt(Limits.unlinkedDaily)}-с '
+                '${formatMnt(Limits.dailyTransfer)} болно.',
+                size: 15,
+                color: AppColors.slate500,
+                height: 1.45,
+              ),
+              const SizedBox(height: 24),
               AppCard(
-                radius: 20,
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AppText(
-                      'Холбогдох асран хамгаалагчаа сонгоно уу',
-                      size: 13,
-                      weight: FontWeight.w700,
-                    ),
-                    const SizedBox(height: 10),
+                    const AppFieldLabel('Хэнтэй холбох вэ'),
+                    const SizedBox(height: 8),
                     Row(
                       children: [
                         for (final (i, r) in _roles.indexed) ...[
@@ -259,7 +148,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                           Expanded(
                             child: RoleButton(
                               label: r.$1,
-                              asset: r.$2,
                               selected: _role == i,
                               onTap: () => setState(() => _role = i),
                             ),
@@ -267,16 +155,16 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 14),
-                    const AppFieldLabel('Эцэг / Эхийн утасны дугаар'),
+                    const SizedBox(height: 16),
+                    AppFieldLabel('$roleLabel утасны дугаар'),
                     const SizedBox(height: 6),
                     AppInputShell(
                       hasError: _phoneError != null,
                       leading: AppText(
                         '+976',
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.sky700,
+                        size: 14,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate600,
                       ),
                       trailing: AppFieldTick(visible: _phoneValid),
                       child: TextField(
@@ -295,17 +183,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                       ),
                     ),
                     AppFieldError(message: _phoneError),
-                    const SizedBox(height: 14),
-                    const InfoNote(
-                      tone: BadgeTone.slate,
-                      icon: Icons.notifications_active_outlined,
-                      text:
-                          'Таны хүсэлт аав, ээжийн апп дээр очих бөгөөд зөвшөөрснөөр дансны эрх автоматаар нэмэгдэнэ.',
-                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               // Always tappable: pressing it with a bad field is how the user
               // finds out what is wrong, so gating it would hide the message.
               // Until the phone is valid it wears the flat "not ready" colours
@@ -318,19 +199,49 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 onPressed: _submit,
               ),
               const SizedBox(height: 10),
-              TextButton.icon(
-                onPressed: () => _goHome(linked: false),
-                icon: const Icon(
-                  Icons.schedule_rounded,
-                  size: 16,
-                  color: AppColors.slate500,
-                ),
-                label: AppText(
-                  'Дараа холбох (Хязгаарлагдмал эрхээр орох)',
-                  size: 12,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate500,
-                ),
+              AppText(
+                'Хүсэлт эцэг эхийн апп руу очно. Зөвшөөрмөгц эрх шууд нэмэгдэнэ.',
+                size: 13,
+                color: AppColors.slate500,
+                height: 1.4,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
+              const AppText(
+                'Эрх хэрхэн өөрчлөгдөх вэ',
+                size: 16,
+                weight: FontWeight.w700,
+              ),
+              const SizedBox(height: 4),
+              ParentLinkLimitRow(
+                label: 'Өдрийн гүйлгээний эрх',
+                before: formatMnt(Limits.unlinkedDaily),
+                after: formatMnt(Limits.dailyTransfer),
+              ),
+              Divider(height: 1, thickness: 1, color: AppColors.line),
+              const ParentLinkLimitRow(
+                label: 'Өдрийн гүйлгээний тоо',
+                before: '2 удаа',
+                after: 'Хязгааргүй',
+              ),
+              const SizedBox(height: 28),
+              const AppText(
+                'Эцэг эх чинь юу харах вэ',
+                size: 16,
+                weight: FontWeight.w700,
+              ),
+              const SizedBox(height: 8),
+              const ParentLinkAccessRow(
+                text: 'Дансны үлдэгдэл, гүйлгээний түүх',
+                visible: true,
+              ),
+              const ParentLinkAccessRow(
+                text: 'Чиний мөнгөний хүсэлтийг зөвшөөрөх, татгалзах',
+                visible: true,
+              ),
+              const ParentLinkAccessRow(
+                text: 'Нууц код, нэвтрэх мэдээлэл чинь харагдахгүй',
+                visible: false,
               ),
             ]),
           ),

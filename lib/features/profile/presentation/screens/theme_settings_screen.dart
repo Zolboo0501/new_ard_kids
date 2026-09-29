@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../theme/theme_store.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/theme_card.dart';
+import '../widgets/accent_swatch.dart';
+import '../widgets/theme_mode_tile.dart';
 
-/// "Өнгөний тохиргоо": choose the app color theme.
+/// "Харагдац": light / dark / system canvas and the accent colour. Every
+/// choice applies at once and is saved, like the phone's own settings.
 class ThemeSettingsScreen extends StatefulWidget {
   const ThemeSettingsScreen({super.key});
 
@@ -19,141 +19,154 @@ class ThemeSettingsScreen extends StatefulWidget {
 }
 
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
-  static const _themes = [
-    (
-      AppThemeChoice.blue,
-      'Тэнгэрийн цэнхэр (Playful Blue)',
-      'Эрч хүчтэй, цэлмэг цэнхэр өнгө төрх',
-      'Хүү болон ерөнхий сэдэв',
-      AppPalette.blue,
-      Icons.water_drop_outlined,
-    ),
-    (
-      AppThemeChoice.pink,
-      'Сарнайн ягаан (Pastel Bloom)',
-      'Зөөлөн дулаахан, ягаан өнгө төрх',
-      'Охидын сэдэв',
-      AppPalette.pink,
-      Icons.local_florist_outlined,
-    ),
+  static const _modes = [
+    (AppBrightness.system, 'Систем'),
+    (AppBrightness.light, 'Гэрэл'),
+    (AppBrightness.dark, 'Харанхуй'),
   ];
 
-  late AppThemeChoice _selected = appThemeChoice.value;
+  static const _accents = [
+    (AppThemeChoice.blue, 'Цэнхэр'),
+    (AppThemeChoice.violet, 'Нил ягаан'),
+    (AppThemeChoice.pink, 'Ягаан'),
+    (AppThemeChoice.mono, 'Монохром'),
+  ];
 
-  void _save() {
-    appThemeChoice.value = _selected;
-    ThemeStore.save(_selected);
-    final tag = _themes.firstWhere((t) => t.$1 == _selected).$4;
-    showAppSnack(context, '"$tag" өнгө хадгалагдлаа');
+  void _setMode(AppBrightness mode) {
+    if (appBrightness.value == mode) return;
+    appBrightness.value = mode;
+    ThemeStore.saveBrightness(mode);
   }
+
+  void _setAccent(AppThemeChoice choice) {
+    if (appThemeChoice.value == choice) return;
+    appThemeChoice.value = choice;
+    ThemeStore.save(choice);
+  }
+
+  Widget _heading(String title, String note) => Padding(
+    padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(title, size: 16, weight: FontWeight.w700),
+        const SizedBox(height: 4),
+        AppText(note, size: 13, color: AppColors.slate500, height: 1.4),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
-      appBar: const SubPageHeader(title: 'Өнгөний тохиргоо', background: bg),
+      appBar: SubPageHeader(title: 'Харагдац', background: bg),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
             20,
-            12,
+            16,
             20,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            Container(
-              padding: const EdgeInsets.all(16),
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: AppColors.card,
-                borderRadius: BorderRadius.circular(22),
-                // A faint wash of the theme accent from the top-left corner.
-                gradient: RadialGradient(
-                  center: const Alignment(-1, -1),
-                  radius: 1.4,
-                  colors: [
-                    Color.alphaBlend(
-                      AppColors.sky500.withValues(alpha: 0.14),
-                      AppColors.card,
-                    ),
-                    AppColors.card,
-                  ],
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      color: Night.surface2,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: MascotImage(
-                      asset: Stickers.edit,
-                      size: 88,
-                      background: Night.surface2,
-                      semanticLabel: 'Үнэг маскот',
-                    ),
-                  ),
-                  const SizedBox(width: 14),
+            _heading('Горим', 'Системийг сонговол утасныхаа тохиргоог дагана.'),
+            Row(
+              children: [
+                for (final (i, (mode, label)) in _modes.indexed) ...[
+                  if (i > 0) const SizedBox(width: 12),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const StatusBadge(
-                          label: 'Өөрийн хэв маяг',
-                          icon: Icons.auto_awesome_rounded,
-                        ),
-                        const SizedBox(height: 6),
-                        AppText(
-                          'Аппын өнгийг өөрт таалагдсан өнгөөрөө ашиглаарай!',
-                          size: 13,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate600,
-                          height: 1.5,
-                        ),
-                      ],
+                    child: ThemeModeTile(
+                      mode: mode,
+                      label: label,
+                      selected: appBrightness.value == mode,
+                      onTap: () => _setMode(mode),
                     ),
                   ),
                 ],
+              ],
+            ),
+            const SizedBox(height: 32),
+            _heading('Өнгө', 'Товч, сонголт болон тэмдэглэгээний өнгө.'),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  for (final (choice, label) in _accents)
+                    AccentSwatch(
+                      choice: choice,
+                      label: label,
+                      selected: appThemeChoice.value == choice,
+                      onTap: () => _setAccent(choice),
+                    ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 12),
-              child: AppText(
-                'ҮНДСЭН СЭДВҮҮД',
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.slate400,
-                letterSpacing: 0.6,
-              ),
-            ),
-            for (final t in _themes) ...[
-              ThemeCard(
-                title: t.$2,
-                description: t.$3,
-                tag: t.$4,
-                palette: t.$5,
-                icon: t.$6,
-                selected: _selected == t.$1,
-                active: appThemeChoice.value == t.$1,
-                onTap: () => setState(() => _selected = t.$1),
-              ),
-              const SizedBox(height: 16),
-            ],
-            const SizedBox(height: 4),
-            PrimaryButton(
-              label: 'Сонгосон өнгийг хадгалах',
-              leadingIcon: Icons.check_rounded,
-              color: AppPalette.of(_selected).c500,
-              foreground: AppPalette.of(_selected).onAccent,
-              onPressed: _selected == appThemeChoice.value ? null : _save,
-            ),
+            const SizedBox(height: 32),
+            _heading('Урьдчилан харах', 'Сонголт тань шууд хэрэгжинэ.'),
+            const _Preview(),
           ]),
         ),
+      ),
+    );
+  }
+}
+
+/// A slice of Home drawn with the live tokens, so the choice is visible
+/// before leaving the screen.
+class _Preview extends StatelessWidget {
+  const _Preview();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.sky50,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: LineIcon(
+                  LineGlyph.pocket,
+                  size: 20,
+                  color: AppColors.sky600,
+                ),
+              ),
+              const SizedBox(width: 12),
+              AppText(
+                'Харилцах данс',
+                size: 14,
+                weight: FontWeight.w600,
+                color: AppColors.slate600,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            formatMnt(567930),
+            style: moneyStyle(size: 30, weight: FontWeight.w700),
+          ),
+          const SizedBox(height: 16),
+          PrimaryButton(label: 'Шилжүүлэх', height: 48, onPressed: () {}),
+        ],
       ),
     );
   }

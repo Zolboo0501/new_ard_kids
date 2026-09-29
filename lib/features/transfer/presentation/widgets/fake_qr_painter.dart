@@ -2,8 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../../theme/app_theme.dart';
-
 /// Decorative QR-like pattern (not a scannable code).
 class FakeQrPainter extends CustomPainter {
   const FakeQrPainter({required this.seed});
@@ -14,7 +12,9 @@ class FakeQrPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     const n = 25;
     final cell = size.width / n;
-    final paint = Paint()..color = AppColors.slate800;
+    // Printed-code ink on the code's own white quiet zone, the same in
+    // light and dark so the code keeps its contrast.
+    final paint = Paint()..color = Colors.black;
     final rnd = math.Random(seed);
 
     bool inFinder(int x, int y) {
@@ -47,7 +47,7 @@ class FakeQrPainter extends CustomPainter {
           Radius.circular(cell * 1.4),
         ),
         Paint()
-          ..color = AppColors.slate800
+          ..color = Colors.black
           ..style = PaintingStyle.stroke
           ..strokeWidth = cell,
       );

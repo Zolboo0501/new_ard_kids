@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/limit_row.dart';
-import '../widgets/menu_tile.dart';
-import '../widgets/profile_avatar.dart';
+import '../widgets/group_label.dart';
+import '../widgets/profile_identity_card.dart';
+import '../widgets/profile_parent_card.dart';
+import '../widgets/setting_tile.dart';
+import '../widgets/settings_group.dart';
 
-/// "Профайл": kid profile, parent link summary and settings entry points.
+/// "Профайл": who the teen is, the parent link and the settings entry points.
 ///
 /// With [embedded] it is shown as a tab inside the home shell (no back button
 /// and extra bottom padding for the floating nav bar).
@@ -26,15 +28,15 @@ class ProfileScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.card,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: AppText(
           'Системээс гарах уу?',
-          size: 16,
+          size: 17,
           weight: FontWeight.w700,
         ),
         content: AppText(
           'Дахин нэвтрэхэд утасны дугаар болон код шаардлагатай.',
-          size: 13,
+          size: 14,
           color: AppColors.slate500,
         ),
         actions: [
@@ -42,17 +44,17 @@ class ProfileScreen extends StatelessWidget {
             onPressed: withHaptic(() => Navigator.of(context).pop(false)),
             child: AppText(
               'Болих',
-              size: 13,
-              weight: FontWeight.w700,
-              color: AppColors.slate500,
+              size: 14,
+              weight: FontWeight.w600,
+              color: AppColors.slate600,
             ),
           ),
           TextButton(
             onPressed: withHaptic(() => Navigator.of(context).pop(true)),
             child: AppText(
               'Гарах',
-              size: 13,
-              weight: FontWeight.w700,
+              size: 14,
+              weight: FontWeight.w600,
               color: AppColors.rose600,
             ),
           ),
@@ -71,254 +73,82 @@ class ProfileScreen extends StatelessWidget {
         ? AppLayout.navClearance(context) - 10
         : MediaQuery.paddingOf(context).bottom + 24;
 
-    // Split on wide windows: who the kid is on the left, settings on the right.
+    // Split on wide windows: who the teen is on the left, settings on the
+    // right.
     final body = EntranceScope(
       child: AdaptiveSplit(
         padding: EdgeInsets.fromLTRB(20, 12, 20, bottom),
         gap: 18,
         leading: [
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Semantics(
-                      button: true,
-                      label: 'Аватар солих',
-                      child: GestureDetector(
-                        onTap: withHaptic(
-                          () => context.push(AppRoutes.avatarPickerEdit),
-                        ),
-                        child: ProfileAvatar(
-                          size: 80,
-                          badge: Container(
-                            width: 26,
-                            height: 26,
-                            decoration: BoxDecoration(
-                              color: AppColors.sky500,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.card, width: 2),
-                            ),
-                            child: Icon(
-                              Icons.edit_rounded,
-                              size: 13,
-                              color: AppColors.onAccent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 6),
-                          AppText(
-                            'Бат-Ирээдүй Т.',
-                            size: 20,
-                            weight: FontWeight.w700,
-                          ),
-                          const SizedBox(height: 2),
-                          AppText(
-                            '12 настай • @bat_ireedui',
-                            size: 12,
-                            color: AppColors.slate400,
-                          ),
-                          AppText(
-                            'ID: 889201',
-                            size: 11,
-                            color: AppColors.slate400,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 28, color: AppColors.slate100),
-                Row(
-                  children: [
-                    AppText(
-                      'Дараагийн түвшин',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate500,
-                    ),
-                    const Spacer(),
-                    AppText(
-                      '120 / 200 XP',
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky600,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                const ProgressTrack(value: 0.6, height: 10),
-              ],
-            ),
+          ProfileIdentityCard(
+            name: Kid.shortName,
+            subtitle: Kid.handle,
+            status: 'Баталгаажсан · Эцэг эх холбогдсон',
+            onAvatarTap: () => go(AppRoutes.avatarPickerEdit),
           ),
-          const SizedBox(height: 16),
-          AppCard(
-            radius: 24,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        'ЭЦЭГ ЭХИЙН ХОЛБОЛТ',
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate700,
-                        letterSpacing: 0.6,
-                      ),
-                    ),
-                    const StatusBadge(
-                      label: '✓ Идэвхтэй',
-                      tone: BadgeTone.emerald,
-                    ),
-                  ],
-                ),
-                const Divider(height: 24, color: AppColors.slate100),
-                Row(
-                  children: [
-                    MascotTile(
-                      asset: Stickers.mom,
-                      background: AppColors.pink50,
-                      label: 'Ээж (Б. Саруул)',
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            'Ээж (Б. Саруул)',
-                            size: 12,
-                            weight: FontWeight.w700,
-                          ),
-                          const SizedBox(height: 2),
-                          AppText(
-                            'Голомт банк • Баталгаажсан',
-                            size: 11,
-                            color: AppColors.slate400,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    SoftButton(
-                      label: 'Хянах',
-                      icon: Icons.tune_rounded,
-                      height: 40,
-                      onPressed: () => go(AppRoutes.parentLink),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.slate50,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    children: [
-                      LimitRow(
-                        label: 'Өдрийн зарцуулалтын хязгаар:',
-                        value: 50000,
-                        color: AppColors.slate800,
-                      ),
-                      const SizedBox(height: 6),
-                      LimitRow(
-                        label: 'Өнөөдөр үлдсэн:',
-                        value: 31300,
-                        color: AppColors.emerald600,
-                      ),
-                      const SizedBox(height: 8),
-                      const ProgressTrack(
-                        value: 31300 / 50000,
-                        height: 6,
-                        color: AppColors.emerald500,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 24),
+          const GroupLabel('Эцэг эхийн холболт'),
+          ProfileParentCard(onManage: () => go(AppRoutes.parentLink)),
         ],
         trailing: [
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
-            child: AppText(
-              'ТОХИРГОО БА ҮЙЛЧИЛГЭЭ',
-              size: 12,
-              weight: FontWeight.w700,
-              color: AppColors.slate500,
-              letterSpacing: 0.6,
-            ),
+          const GroupLabel('Тохиргоо'),
+          SettingsGroup(
+            children: [
+              SettingTile(
+                glyph: LineGlyph.profile,
+                title: 'Хувийн мэдээлэл',
+                subtitle: 'Нэр, сургууль, утасны дугаар',
+                onTap: () => go(AppRoutes.personalInfo),
+              ),
+              SettingTile(
+                glyph: LineGlyph.camera,
+                title: 'Аватар',
+                subtitle: 'Профайл зургаа солих',
+                onTap: () => go(AppRoutes.avatarPickerEdit),
+              ),
+              SettingTile(
+                glyph: LineGlyph.shield,
+                title: 'Аюулгүй байдал',
+                subtitle: 'ПИН код, биометр, төхөөрөмж',
+                onTap: () => go(AppRoutes.security),
+              ),
+              SettingTile(
+                glyph: LineGlyph.palette,
+                title: 'Харагдац',
+                subtitle: 'Гэрэл, харанхуй, өнгө',
+                onTap: () => go(AppRoutes.themeSettings),
+              ),
+              SettingTile(
+                glyph: LineGlyph.bell,
+                title: 'Мэдэгдэл',
+                subtitle: 'Гүйлгээ, хүсэлт, зорилго',
+                onTap: () => go(AppRoutes.notifications),
+              ),
+            ],
           ),
-          AppCard(
-            radius: 24,
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                MenuTile(
-                  icon: Icons.person_outline_rounded,
-                  tone: BadgeTone.sky,
-                  title: 'Хувийн мэдээлэл',
-                  subtitle: 'Төрсөн огноо, сургууль, анги',
-                  onTap: () => go(AppRoutes.personalInfo),
-                ),
-                const Divider(height: 1, indent: 64, color: AppColors.slate100),
-                MenuTile(
-                  icon: Icons.pets_rounded,
-                  tone: BadgeTone.slate,
-                  title: 'Аватар',
-                  subtitle: 'Бяцхан туслах найзаа солих',
-                  onTap: () => go(AppRoutes.avatarPickerEdit),
-                ),
-                const Divider(height: 1, indent: 64, color: AppColors.slate100),
-                MenuTile(
-                  icon: Icons.shield_outlined,
-                  tone: BadgeTone.emerald,
-                  title: 'Аюулгүй байдал & ПИН код',
-                  subtitle: 'Face ID, 4 оронтой нууц код',
-                  onTap: () => go(AppRoutes.security),
-                ),
-                const Divider(height: 1, indent: 64, color: AppColors.slate100),
-                MenuTile(
-                  icon: Icons.palette_outlined,
-                  tone: BadgeTone.amber,
-                  title: 'Өнгөний тохиргоо',
-                  subtitle: 'Цэнхэр, ягаан сэдэв сонгох',
-                  onTap: () => go(AppRoutes.themeSettings),
-                ),
-                const Divider(height: 1, indent: 64, color: AppColors.slate100),
-                MenuTile(
-                  icon: Icons.card_giftcard_rounded,
-                  tone: BadgeTone.rose,
-                  title: 'Найз урих',
-                  subtitle: 'Хоёулаа ₮5,000 урамшуулал аваарай',
-                  onTap: () => go(AppRoutes.inviteFriends),
-                ),
-              ],
-            ),
+          const SizedBox(height: 16),
+          SettingsGroup(
+            children: [
+              SettingTile(
+                glyph: LineGlyph.gift,
+                title: 'Найз урих',
+                subtitle:
+                    'Урилгаар бүртгүүлбэл та хоёр тус бүр '
+                    '${formatMnt(Limits.inviteBonus)} авна',
+                onTap: () => go(AppRoutes.inviteFriends),
+              ),
+            ],
           ),
-          const SizedBox(height: 18),
-          SoftButton(
-            label: 'Системээс гарах',
-            icon: Icons.logout_rounded,
-            height: 52,
-            background: AppColors.rose50,
-            foreground: AppColors.rose600,
-            border: AppColors.rose100,
-            onPressed: () => _logout(context),
+          const SizedBox(height: 16),
+          SettingsGroup(
+            children: [
+              SettingTile(
+                glyph: LineGlyph.logout,
+                title: 'Системээс гарах',
+                destructive: true,
+                onTap: () => _logout(context),
+              ),
+            ],
           ),
         ],
       ),
@@ -341,15 +171,7 @@ class ProfileScreen extends StatelessWidget {
     }
     return Scaffold(
       backgroundColor: bg,
-      appBar: SubPageHeader(
-        title: 'Миний профайл',
-        background: bg,
-        trailing: CircleIconButton(
-          icon: Icons.settings_outlined,
-          label: 'Тохиргоо',
-          onPressed: () => go(AppRoutes.security),
-        ),
-      ),
+      appBar: SubPageHeader(title: 'Миний профайл', background: bg),
       body: body,
     );
   }

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/money_request.dart';
@@ -24,40 +22,39 @@ class RequestListScreen extends StatefulWidget {
 
 class _RequestListScreenState extends State<RequestListScreen> {
   final _requests = [
-    MoneyRequest(
+    const MoneyRequest(
       from: 'Ээж',
       when: 'Өнөөдөр, 14:20',
-      title: 'Зургийн дэвтэр, усан будаг, багс авах',
+      title: 'Сургуулийн аялал',
       amount: 20000,
-      sticker: () => Stickers.art,
+      glyph: LineGlyph.bus,
       status: RequestStatus.pending,
-      tag: 'Хичээл',
     ),
-    MoneyRequest(
+    const MoneyRequest(
       from: 'Аав',
       when: 'Өчигдөр, 18:45',
-      title: 'PlayStation тоглоом, эрхийн карт',
-      amount: 25000,
-      sticker: () => Stickers.games,
+      title: 'Чихэвч',
+      amount: 45000,
+      glyph: LineGlyph.bag,
       status: RequestStatus.approved,
-      reply: 'Аав: "Хичээлээ сайн хийгээрэй миний хүү!"',
+      reply: 'Аав: "Хадгалж хэрэглээрэй"',
     ),
-    MoneyRequest(
+    const MoneyRequest(
       from: 'Ээж',
       when: '2026.09.09',
-      title: 'Өдрийн хоол, амттан, сүү',
+      title: 'Долоо хоногийн өдрийн хоол',
       amount: 10000,
-      sticker: () => Stickers.snack,
+      glyph: LineGlyph.food,
       status: RequestStatus.approved,
     ),
-    MoneyRequest(
+    const MoneyRequest(
       from: 'Аав',
       when: '2026.09.05',
-      title: 'Шинэ лего тоглоом',
-      amount: 40000,
-      sticker: () => Stickers.gift,
+      title: 'Шинэ пүүз',
+      amount: 80000,
+      glyph: LineGlyph.shirt,
       status: RequestStatus.declined,
-      reason: 'Хязгаар хүрсэн',
+      reason: 'Энэ сарын төсөв хүрэхгүй',
     ),
   ];
 
@@ -77,155 +74,115 @@ class _RequestListScreenState extends State<RequestListScreen> {
     final total = _requests.fold(0, (a, r) => a + r.amount);
     return Scaffold(
       backgroundColor: AppColors.dsSurface,
-      appBar: const SubPageHeader(
+      appBar: SubPageHeader(
         title: 'Хүсэлтийн жагсаалт',
         background: AppColors.dsSurface,
       ),
-      body: EntranceScope(
-        child: AdaptiveListView(
-          padding: EdgeInsets.fromLTRB(
-            16,
-            12,
-            16,
-            24 + MediaQuery.paddingOf(context).bottom,
-          ),
-          children: EntranceItem.list([
-            AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              'Хүсэлтийн нэгдсэн тойм',
-                              size: 14,
-                              weight: FontWeight.w700,
-                            ),
-                            const SizedBox(height: 2),
-                            AppText(
-                              'Нийт шийдвэрлэгдсэн болон хүлээгдэж буй',
-                              size: 11,
-                              color: AppColors.dsOnSurfaceVariant,
-                            ),
-                          ],
-                        ),
+      body: Column(
+        children: [
+          Expanded(
+            child: EntranceScope(
+              child: AdaptiveListView(
+                padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+                children: EntranceItem.list([
+                  AppCard(
+                    padding: const EdgeInsets.all(16),
+                    child: IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          RequestListSummary(
+                            label: 'Нийт хүссэн',
+                            value: total,
+                          ),
+                          VerticalDivider(width: 24, color: AppColors.line),
+                          RequestListSummary(
+                            label: 'Зөвшөөрсөн',
+                            value: '${_count(RequestStatus.approved)}',
+                          ),
+                          VerticalDivider(width: 24, color: AppColors.line),
+                          RequestListSummary(
+                            label: 'Хүлээгдэж буй',
+                            value: '${_count(RequestStatus.pending)}',
+                          ),
+                        ],
                       ),
-                      MascotImage(
-                        asset: Stickers.contacts,
-                        size: 80,
-                        background: AppColors.card,
-                        semanticLabel: 'Хүсэлтийн жагсаалттай маскот',
-                      ),
-                    ],
+                    ),
                   ),
-                  const Divider(height: 24, color: AppColors.slate100),
-                  Row(
-                    children: [
-                      RequestListSummary(
-                        label: 'Нийт хүссэн',
-                        value: total,
-                        background: AppColors.dsSurfaceContainerLow,
-                        color: AppColors.sky600,
-                      ),
-                      const SizedBox(width: 8),
-                      RequestListSummary(
-                        label: 'Зөвшөөрсөн',
-                        value: '${_count(RequestStatus.approved)} хүсэлт',
-                        background: AppColors.emerald50,
-                        color: AppColors.emerald700,
-                        dot: AppColors.emerald500,
-                      ),
-                      const SizedBox(width: 8),
-                      RequestListSummary(
-                        label: 'Хүлээгдэж буй',
-                        value: '${_count(RequestStatus.pending)} хүсэлт',
-                        background: AppColors.amber50,
-                        color: AppColors.amber700,
-                        dot: AppColors.amber500,
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 44,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (final (i, f) in [
+                          ('Бүгд', null),
+                          ('Хүлээгдэж буй', _count(RequestStatus.pending)),
+                          ('Зөвшөөрсөн', _count(RequestStatus.approved)),
+                          ('Татгалзсан', _count(RequestStatus.declined)),
+                        ].indexed)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: FilterTab(
+                              label: f.$1,
+                              count: f.$2,
+                              selected: _filter == i,
+                              onTap: () => setState(() => _filter = i),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-            SizedBox(
-              height: 36,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (final (i, f) in [
-                    ('Бүгд', null, null),
-                    (
-                      'Хүлээгдэж буй',
-                      _count(RequestStatus.pending),
-                      BadgeTone.amber,
-                    ),
-                    (
-                      'Зөвшөөрсөн',
-                      _count(RequestStatus.approved),
-                      BadgeTone.emerald,
-                    ),
-                    (
-                      'Татгалзсан',
-                      _count(RequestStatus.declined),
-                      BadgeTone.rose,
-                    ),
-                  ].indexed)
+                  const SizedBox(height: 12),
+                  if (_visible.isEmpty)
                     Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: FilterTab(
-                        label: f.$1,
-                        count: f.$2,
-                        tone: f.$3,
-                        selected: _filter == i,
-                        onTap: () => setState(() => _filter = i),
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: AppText(
+                        'Энд хүсэлт алга',
+                        size: 13,
+                        color: AppColors.slate500,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                ],
+                  for (final (i, r) in _visible.indexed) ...[
+                    ListItemEntrance(
+                      id: r,
+                      index: i,
+                      group: _filter,
+                      child: RequestCard(
+                        request: r,
+                        onNudge: () => showAppSnack(
+                          context,
+                          '${r.fromDative} сануулга илгээлээ',
+                        ),
+                        onCancel: () => setState(() => _requests.remove(r)),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ]),
               ),
             ),
-            const SizedBox(height: 14),
-            if (_visible.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: AppText(
-                  'Хүсэлт алга байна',
-                  size: 13,
-                  color: AppColors.slate400,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            for (final (i, r) in _visible.indexed) ...[
-              ListItemEntrance(
-                id: r,
-                index: i,
-                group: _filter,
-                child: RequestCard(
-                  request: r,
-                  onNudge: () => showAppSnack(
-                    context,
-                    '${r.fromDative} сануулга илгээлээ',
-                    mascot: Stickers.notification,
-                  ),
-                  onCancel: () => setState(() => _requests.remove(r)),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-            const SizedBox(height: 6),
-            PrimaryButton(
-              label: 'Шинэ хүсэлт илгээх',
-              leadingIcon: Icons.add_rounded,
-              onPressed: () => context.pushReplacement(AppRoutes.requestMoney),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.dsSurface,
+              border: Border(top: BorderSide(color: AppColors.line)),
             ),
-          ]),
-        ),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              12,
+              20,
+              12 + MediaQuery.paddingOf(context).bottom,
+            ),
+            child: AdaptiveCenter(
+              child: PrimaryButton(
+                label: 'Шинэ хүсэлт',
+                onPressed: () =>
+                    context.pushReplacement(AppRoutes.requestMoney),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

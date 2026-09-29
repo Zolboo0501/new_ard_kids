@@ -19,7 +19,7 @@ class ScanResultSheet extends StatelessWidget {
         20,
         20 + MediaQuery.paddingOf(context).bottom,
       ),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -47,7 +47,7 @@ class ScanResultSheet extends StatelessWidget {
                   color: AppColors.emerald50,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.qr_code_2_rounded,
                   color: AppColors.emerald600,
                 ),

@@ -11,9 +11,8 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/avatar_card.dart';
-import '../widgets/avatar_picker_blob.dart';
 
-/// "Аватар сонгох" (onboarding step 4/6): pick a mascot companion.
+/// "Аватараа сонго" (onboarding step 4/6): pick a profile avatar.
 ///
 /// With [editing] (opened from Profile) there is no step indicator or skip,
 /// and confirming returns to the previous screen.
@@ -30,7 +29,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     with SingleTickerProviderStateMixin {
   static const _avatars = AppAvatar.values;
 
-  /// Starts on the current companion, so editing shows what's in use.
+  /// Starts on the current avatar, so editing shows what's in use.
   late int _selected = appAvatar.value.index;
 
   /// Drives the one-shot entrance: each element fades and rises over its own
@@ -41,10 +40,8 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
   );
   late final EntranceStagger _stagger = EntranceStagger(_entrance);
   late final Animation<double> _headerIn;
-  late final Animation<double> _badgeIn;
   late final Animation<double> _titleIn;
   late final Animation<double> _subtitleIn;
-  late final Animation<double> _noteIn;
   late final Animation<double> _buttonIn;
 
   /// One slice per card, so the grid deals itself out rather than appearing
@@ -55,14 +52,12 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
   void initState() {
     super.initState();
     _headerIn = _stagger.slice(0);
-    _badgeIn = _stagger.slice(0.06);
     _titleIn = _stagger.slice(0.1);
     _subtitleIn = _stagger.slice(0.14);
     _cardsIn = [
       for (var i = 0; i < _avatars.length; i++) _stagger.slice(0.18 + i * 0.04),
     ];
-    _noteIn = _stagger.slice(0.34);
-    _buttonIn = _stagger.slice(0.38);
+    _buttonIn = _stagger.slice(0.34);
     _entrance.forward();
   }
 
@@ -97,214 +92,105 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
       _next();
       return;
     }
-    showAppSnack(
-      context,
-      '${avatar.name} таны шинэ найз боллоо',
-      mascot: avatar.pick,
-    );
+    showAppSnack(context, 'Аватар солигдлоо', mascot: avatar.portrait);
     context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.dsSurface,
-      body: Stack(
-        children: [
-          // Faint accent light from the top-left, as on Home's hero panel.
-          Positioned(
-            top: -96,
-            left: -80,
-            child: AvatarPickerBlob(
-              size: 288,
-              color: AppColors.sky500.withValues(alpha: 0.12),
-            ),
-          ),
-          Positioned(
-            top: 192,
-            right: -80,
-            child: AvatarPickerBlob(
-              size: 256,
-              color: Night.amber.withValues(alpha: 0.06),
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      // All four companions in one row once there is room
-                      // (iPad, tablets), two by two on phones.
-                      final columns = constraints.maxWidth >= 640 ? 4 : 2;
-                      return SingleChildScrollView(
-                        padding: AppLayout.centered(
-                          const EdgeInsets.fromLTRB(16, 8, 16, 12),
-                          constraints.maxWidth,
+      backgroundColor: AppColors.surface,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // All four in one row once there is room (iPad, tablets),
+                  // two by two on phones.
+                  final columns = constraints.maxWidth >= 640 ? 4 : 2;
+                  return SingleChildScrollView(
+                    padding: AppLayout.centered(
+                      const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      constraints.maxWidth,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Entrance(
+                          t: _headerIn,
+                          child: Header(
+                            step: widget.editing ? null : 'Алхам 4/6',
+                          ),
                         ),
-                        child: Column(
+                        const SizedBox(height: 12),
+                        Entrance(
+                          t: _titleIn,
+                          child: AppText(
+                            'Аватараа сонго',
+                            size: 28,
+                            weight: FontWeight.w700,
+                            color: AppColors.slate900,
+                            height: 1.2,
+                            letterSpacing: -0.6,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Entrance(
+                          t: _subtitleIn,
+                          child: AppText(
+                            'Дараа нь Профайл хэсгээс солих боломжтой.',
+                            size: 15,
+                            color: AppColors.slate500,
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        GridView.count(
+                          crossAxisCount: columns,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          mainAxisSpacing: 24,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 0.82,
                           children: [
-                            Entrance(
-                              t: _headerIn,
-                              child: Header(
-                                step: widget.editing ? null : 'Алхам 4/6',
-                              ),
-                            ),
-                            const SizedBox(height: 18),
-                            Entrance(
-                              t: _badgeIn,
-                              child: const StatusBadge(
-                                label: 'Өөрийн бяцхан туслахыг сонгоорой',
-                                tone: BadgeTone.amber,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Entrance(
-                              t: _titleIn,
-                              // The animal next to the title is whichever friend
-                              // is currently picked.
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const AppText(
-                                    'Найзаа сонгоорой!',
-                                    size: 24,
-                                    weight: FontWeight.w700,
-                                    letterSpacing: -0.5,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  MascotIcon(
-                                    _avatars[_selected].pick,
-                                    size: 30,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Entrance(
-                              t: _subtitleIn,
-                              child: ConstrainedBox(
-                                constraints: const BoxConstraints(
-                                  maxWidth: 280,
-                                ),
-                                child: const AppText(
-                                  'Энэхүү бяцхан амьтан таны хуримтлал, гүйлгээ бүрт хамт байж урам өгөх болно.',
-                                  size: 12,
-                                  color: AppColors.slate500,
-                                  height: 1.6,
-                                  textAlign: TextAlign.center,
+                            for (final (i, a) in _avatars.indexed)
+                              Entrance(
+                                t: _cardsIn[i],
+                                offsetY: 16,
+                                child: AvatarCard(
+                                  name: a.name,
+                                  asset: a.portrait,
+                                  selected: _selected == i,
+                                  onTap: () => setState(() => _selected = i),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                            GridView.count(
-                              crossAxisCount: columns,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              mainAxisSpacing: 12,
-                              crossAxisSpacing: 12,
-                              childAspectRatio: 0.82,
-                              children: [
-                                for (final (i, a) in _avatars.indexed)
-                                  Entrance(
-                                    t: _cardsIn[i],
-                                    offsetY: 20,
-                                    scaleFrom: 0.94,
-                                    child: AvatarCard(
-                                      name: a.name,
-                                      role: a.role,
-                                      description: a.description,
-                                      asset: a.pick,
-                                      tone: a.tone,
-                                      selected: _selected == i,
-                                      onTap: () =>
-                                          setState(() => _selected = i),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Entrance(
-                              t: _noteIn,
-                              child: Container(
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: AppColors.card,
-                                  borderRadius: BorderRadius.circular(18),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 36,
-                                      height: 36,
-                                      decoration: BoxDecoration(
-                                        color: AppColors.sky50,
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Icon(
-                                        Icons.info_outline_rounded,
-                                        size: 20,
-                                        color: AppColors.sky600,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Text.rich(
-                                        TextSpan(
-                                          text:
-                                              'Санаа зоволтгүй ээ! Та сонгосон аватараа дараа нь ',
-                                          children: [
-                                            TextSpan(
-                                              text: 'Профайл',
-                                              style: inter(
-                                                size: 11,
-                                                weight: FontWeight.w700,
-                                                color: AppColors.sky600,
-                                              ),
-                                            ),
-                                            const TextSpan(
-                                              text:
-                                                  ' цэснээс хүссэн үедээ сольж болно.',
-                                            ),
-                                          ],
-                                        ),
-                                        style: inter(
-                                          size: 11,
-                                          color: AppColors.slate500,
-                                          height: 1.4,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                ),
-                Entrance(
-                  t: _buttonIn,
-                  offsetY: 24,
-                  child: AdaptiveCenter(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                      child: PrimaryButton(
-                        label: widget.editing
-                            ? 'Аватараа хадгалах'
-                            : 'Сонгосон найзаа батлах ',
-                        height: 56,
-                        onPressed: _confirm,
-                      ),
+                      ],
                     ),
+                  );
+                },
+              ),
+            ),
+            Entrance(
+              t: _buttonIn,
+              offsetY: 24,
+              child: AdaptiveCenter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                  child: PrimaryButton(
+                    label: widget.editing
+                        ? 'Аватараа хадгалах'
+                        : 'Үргэлжлүүлэх',
+                    height: 56,
+                    onPressed: _confirm,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

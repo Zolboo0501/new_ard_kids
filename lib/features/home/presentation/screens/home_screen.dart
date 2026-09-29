@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -14,11 +15,8 @@ import '../widgets/account_panel.dart';
 import '../widgets/accounts_pane.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/cards_pane.dart';
-import '../../../savings/data/savings_goal.dart';
 import '../widgets/home_header.dart';
-import '../widgets/home_hero.dart';
 import '../widgets/invoices_pane.dart';
-import '../widgets/link_parent_banner.dart';
 import '../widgets/locked_accounts_pane.dart';
 import '../widgets/page_dots.dart';
 
@@ -37,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   int _tab = 0;
   int _invoiceFilter = 0;
   bool _hideBalance = false;
-  bool _bannerVisible = true;
 
   /// Every account in the carousel: label, number, balance, the colour
   /// its panel glows in, its glyph, a short line about what it is for and
@@ -47,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
     (
       'Харилцах данс',
       Accounts.main,
-      567930,
+      Balances.main,
       AppColors.sky500,
       LineGlyph.pocket,
       'Өдөр тутмын зарлага',
@@ -56,17 +53,17 @@ class _HomeScreenState extends State<HomeScreen> {
     (
       'Хадгаламж данс',
       Accounts.savings,
-      1280000,
-      Night.violet,
+      Balances.savings,
+      AppColors.violet500,
       LineGlyph.piggy,
-      'Хуримтлал үүсгээрэй',
+      'Хуримтлал',
       null,
     ),
     (
       'Миний өв',
       Accounts.stocks,
-      142500,
-      Night.lime,
+      Balances.stocks,
+      AppColors.lime500,
       LineGlyph.sprout,
       'Хөрөнгө оруулалт',
       null,
@@ -74,8 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
     (
       'Урамшууллын данс',
       Accounts.rewards,
-      35000,
-      Night.pink,
+      Balances.rewards,
+      AppColors.pink500,
       LineGlyph.gift,
       'Оноо, урамшуулал',
       null,
@@ -83,8 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
     (
       'Ард койн данс',
       Accounts.coin,
-      50000,
-      Night.amber,
+      Balances.coins,
+      AppColors.amber500,
       LineGlyph.ardCoin,
       '1 Койн = 1₮',
       Mascots.ardCoin3d,
@@ -108,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _go(String route) => context.push(route);
 
-  /// The selected account's buttons; the first is the mint one.
+  /// The selected account's buttons; the first is the accent one.
   List<(String, LineGlyph, VoidCallback)> _actions(
     String account,
   ) => switch (account) {
@@ -136,7 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
     _ => [
       ('Гүйлгээ', LineGlyph.paperPlane, () => _go(AppRoutes.transfer)),
-      ('Цэнэглэх', LineGlyph.charge, () => _go(AppRoutes.requestMoney)),
+      (
+        'Мөнгө хүсэх',
+        LineGlyph.arrowDownLeft,
+        () => _go(AppRoutes.requestMoney),
+      ),
     ],
   };
 
@@ -158,13 +159,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final count = linked ? _cards.length : 1;
     final current = _cards[linked ? _page : 0];
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: AppColors.isDark
+          ? SystemUiOverlayStyle.light
+          : SystemUiOverlayStyle.dark,
       child: ColoredBox(
-        color: Night.bg,
+        color: AppColors.surface,
         child: Column(
           children: [
             HomeHeader(
-              linked: linked,
               avatar: avatar,
               onNotifications: () => _go(AppRoutes.notifications),
               onSettings: () => _go(AppRoutes.security),
@@ -182,13 +184,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   leading: [
                     _carousel(count, linked),
-                    const SizedBox(height: 10),
-                    PageDots(count: _cards.length, index: _page),
+                    if (linked) ...[
+                      const SizedBox(height: 10),
+                      PageDots(count: count, index: _page),
+                    ],
                     const SizedBox(height: 18),
                     HomeBalance(
                       label: current.$1,
                       account: linked ? current.$2 : Accounts.main,
-                      balance: linked ? current.$3 : 20000,
+                      balance: linked ? current.$3 : Balances.main,
                       hidden: _hideBalance,
                       limited: !linked,
                       onToggleHidden: () =>
@@ -217,9 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: switch (_tab) {
                         0 =>
                           linked
-                              ? AccountsPane(avatar: avatar, onOpen: _go)
+                              ? AccountsPane(onOpen: _go)
                               : LockedAccountsPane(
-                                  avatar: avatar,
                                   onLink: () => _go(AppRoutes.parentLink),
                                 ),
                         1 => InvoicesPane(
@@ -237,22 +240,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  /// The mascot with the kid's streak and nearest savings goal. Unlinked
-  /// kids have no savings yet, so they're invited to set their first goal.
-  Widget _hero(bool linked) {
-    if (!linked) {
-      return HomeHero(streakDays: 1, onTap: () => _go(AppRoutes.newGoal));
-    }
-    final goal = kSampleGoals.first;
-    return HomeHero(
-      streakDays: 7,
-      goal: goal.title,
-      saved: goal.saved,
-      target: goal.target,
-      onTap: () => _go(AppRoutes.savingsAccount),
     );
   }
 
@@ -297,8 +284,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             center: const Alignment(-0.04, 0),
                             radius: 0.5,
                             colors: [
-                              (c ?? glow).withValues(alpha: 0.5),
-                              (c ?? glow).withValues(alpha: 0.2),
+                              (c ?? glow).withValues(alpha: 0.28),
+                              (c ?? glow).withValues(alpha: 0.1),
                               (c ?? glow).withValues(alpha: 0),
                             ],
                             stops: const [0.35, 0.7, 1],
@@ -317,11 +304,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   animation: _pages,
                   builder: (context, child) {
                     final t = _pageOffset(i).abs().clamp(0.0, 1.0);
-                    // Dimmed toward the black canvas with a colour filter
+                    // Dimmed toward the canvas with a colour filter
                     // rather than Opacity, which the shell's fade test reads.
                     return ColorFiltered(
                       colorFilter: ColorFilter.mode(
-                        Night.bg.withValues(alpha: 0.55 * t),
+                        AppColors.surface.withValues(alpha: 0.55 * t),
                         BlendMode.srcATop,
                       ),
                       child: Transform.scale(scale: 1 - 0.1 * t, child: child),

@@ -130,6 +130,7 @@ void main() {
   });
 
   testWidgets('transfer submits and shows receipt', (tester) async {
+    PinCodeSheet.resetLockout();
     await _pumpApp(tester, AppRoutes.transfer);
     final button = find.widgetWithText(PrimaryButton, 'Гүйлгээ хийх');
     await tester.scrollUntilVisible(
@@ -149,7 +150,7 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(
-      find.text('ПИН код буруу байна. Дахин оролдоно уу.'),
+      find.text('ПИН код буруу байна. 2 оролдлого үлдлээ.'),
       findsOneWidget,
     );
     expect(find.byType(TransferSuccessScreen), findsNothing);
@@ -160,7 +161,7 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(find.byType(TransferSuccessScreen), findsOneWidget);
-    expect(find.text('Гүйлгээ амжилттай!'), findsOneWidget);
+    expect(find.text('Гүйлгээ амжилттай'), findsOneWidget);
     expect(find.text('Анар (Дүү)'), findsOneWidget);
   });
 }

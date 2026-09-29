@@ -9,7 +9,7 @@ import '../../../../widgets/ui.dart';
 import 'coin_account_screen.dart';
 import '../widgets/rewards_pane.dart';
 
-/// "Урамшууллын данс - Минимал": rewards balance and history, with the coin
+/// "Урамшууллын данс": reward points balance and history, with the coin
 /// account ([CoinAccountPane]) as a second tab. [initialTab] 1 opens straight
 /// on coins, which is what [AppRoutes.coinAccount] does.
 class RewardsAccountScreen extends StatefulWidget {
@@ -38,13 +38,6 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
       appBar: SubPageHeader(
         // The title names the account the selected tab shows.
         title: coins ? 'Койны данс' : 'Урамшууллын данс',
-        trailing: coins
-            ? CircleIconButton(
-                icon: Icons.calendar_month_outlined,
-                label: 'Огноо шүүлтүүр',
-                onPressed: () => showAppSnack(context, 'Огноо сонгох'),
-              )
-            : null,
       ),
       body: EntranceScope(
         child: AdaptiveListView(

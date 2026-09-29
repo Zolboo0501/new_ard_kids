@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/ui.dart';
 import '../../../../widgets/value_switcher.dart';
 
 /// Validation message under the field. Collapses to nothing when [message] is
@@ -42,17 +43,17 @@ class FieldError extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.error_outline_rounded,
-                      size: 15,
-                      color: AppColors.rose500,
+                    LineIcon(
+                      LineGlyph.alert,
+                      size: 16,
+                      color: AppColors.rose600,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: AppText(
                         message!,
-                        size: 11,
-                        weight: FontWeight.w600,
+                        size: 12,
+                        weight: FontWeight.w500,
                         color: AppColors.rose600,
                         height: 1.35,
                       ),

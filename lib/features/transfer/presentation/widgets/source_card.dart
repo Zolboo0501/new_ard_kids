@@ -1,72 +1,54 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/ui.dart';
-import 'transfer_collapse.dart';
+import 'limit_note.dart';
 
+/// The account money leaves from: its available balance, the screen's
+/// largest figure, and today's limit against the [amount] being sent.
 class SourceCard extends StatelessWidget {
-  const SourceCard({super.key, required this.showAccount});
+  const SourceCard({super.key, required this.amount});
 
-  final bool showAccount;
+  final int amount;
 
   @override
   Widget build(BuildContext context) {
+    final iban = Accounts.main;
     return AppCard(
-      radius: 26,
       padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  'ШИЛЖҮҮЛЭХ ДАНС',
-                  size: 11,
-                  weight: FontWeight.w600,
-                  color: AppColors.slate400,
-                  letterSpacing: 0.6,
-                ),
-                const SizedBox(height: 10),
-                AppText(
+          Row(
+            children: [
+              Expanded(
+                child: AppText(
                   'Боломжит үлдэгдэл',
-                  size: 11,
+                  size: 13,
+                  weight: FontWeight.w500,
                   color: AppColors.slate500,
                 ),
-                const SizedBox(height: 2),
-                const BalanceText(
-                  567930,
-                  size: 30,
-                  color: AppColors.slate900,
-                  weight: FontWeight.w600,
-                  currencyWeight: FontWeight.w600,
-                ),
-                TransferCollapse(
-                  visible: showAccount,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: AppText(
-                      'Хаан банк · ${formatIban(Accounts.khanBank)}',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate400,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              AppText(
+                'Үндсэн данс ••${iban.substring(iban.length - 4)}',
+                size: 12,
+                color: AppColors.slate500,
+              ),
+            ],
           ),
-          MascotImage(
-            asset: Stickers.payment,
-            size: 110,
-            background: AppColors.card,
-            semanticLabel: 'Гүйлгээ хийж буй маскот',
+          const SizedBox(height: 4),
+          BalanceText(
+            Balances.main,
+            size: 36,
+            color: AppColors.slate900,
+            weight: FontWeight.w600,
+            currencyWeight: FontWeight.w600,
           ),
+          Divider(height: 28, color: AppColors.line),
+          LimitNote(amount: amount),
         ],
       ),
     );

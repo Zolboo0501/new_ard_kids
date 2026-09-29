@@ -18,23 +18,18 @@ class CardSummary extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText('Junior Card', size: 18, weight: FontWeight.w700),
+              AppText('Ard Card', size: 20, weight: FontWeight.w700),
               const SizedBox(height: 2),
               AppText(
-                'Халаасны үндсэн данс',
-                size: 11,
-                weight: FontWeight.w500,
+                'Халаасны данснаас зарцуулна',
+                size: 13,
                 color: AppColors.slate500,
               ),
             ],
           ),
         ),
         frozen
-            ? const StatusBadge(
-                label: 'Түр хаасан',
-                tone: BadgeTone.amber,
-                icon: Icons.ac_unit_rounded,
-              )
+            ? const StatusBadge(label: 'Түр хаасан', tone: BadgeTone.amber)
             : const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
       ],
     );

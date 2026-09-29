@@ -37,7 +37,7 @@ class QuickButton extends StatelessWidget {
           child: AnimatedContainer(
             duration: duration,
             curve: appEmphasizedDecelerate,
-            padding: const EdgeInsets.symmetric(vertical: 9),
+            height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: selected ? AppColors.sky50 : AppColors.slate50,
@@ -51,8 +51,8 @@ class QuickButton extends StatelessWidget {
               duration: duration,
               curve: appEmphasizedDecelerate,
               style: inter(
-                size: 12,
-                weight: FontWeight.w700,
+                size: 13,
+                weight: FontWeight.w600,
                 color: selected ? AppColors.sky700 : AppColors.slate700,
               ),
               child: Text(label),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
@@ -8,11 +9,11 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/card_order_section.dart';
 import '../widgets/delivery_option.dart';
-import '../widgets/kids_card_preview.dart';
+import '../widgets/ard_card_preview.dart';
 import '../widgets/price_row.dart';
 import '../widgets/total_box.dart';
 
-/// "Карт захиалга": order a physical kids' card.
+/// "Карт захиалга": order a physical Ard Card.
 class CardOrderScreen extends StatefulWidget {
   const CardOrderScreen({super.key});
 
@@ -23,9 +24,9 @@ class CardOrderScreen extends StatefulWidget {
 class _CardOrderScreenState extends State<CardOrderScreen> {
   static const _printFee = 10000;
   static const _deliveryFee = 5000;
-  static const _balance = 567930;
+  static const _balance = Balances.main;
 
-  final _name = TextEditingController(text: 'АНАР Б.');
+  final _name = TextEditingController(text: Kid.cardName);
   final _address = TextEditingController(
     text: 'Улаанбаатар, СБД, 1-р хороо, 24-р байр',
   );
@@ -71,9 +72,9 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            KidsCardPreview(
+            ArdCardPreview(
               holder: _name.text.trim().isEmpty
-                  ? 'АНАР БАТБАЯР'
+                  ? Kid.cardName
                   : _name.text.trim().toUpperCase(),
             ),
             const SizedBox(height: 16),
@@ -84,85 +85,52 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                 AppTextField(
                   controller: _name,
                   textStyle: inter(
-                    size: 13,
-                    weight: FontWeight.w700,
+                    size: 15,
+                    weight: FontWeight.w600,
                     letterSpacing: 1,
                   ),
                   suffix: _name.text.trim().isEmpty
                       ? null
-                      : const Icon(
-                          Icons.check_circle_rounded,
+                      : LineIcon(
+                          LineGlyph.check,
                           size: 18,
-                          color: AppColors.emerald500,
+                          color: AppColors.emerald600,
                         ),
                 ),
                 const SizedBox(height: 6),
                 AppText(
-                  'Картын нүүрэн талд энэ нэр сийлэгдэж хэвлэгдэнэ.',
-                  size: 10,
-                  color: AppColors.slate400,
+                  'Картын нүүрэн талд энэ нэр хэвлэгдэнэ.',
+                  size: 12,
+                  color: AppColors.slate500,
                 ),
                 const SizedBox(height: 14),
                 const FieldLabel('Холбогдох данс'),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: AppColors.slate50,
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: AppColors.sky500.withValues(alpha: 0.14),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.account_balance_wallet_outlined,
-                          size: 18,
-                          color: AppColors.sky600,
-                        ),
+                      LineIcon(
+                        LineGlyph.pocket,
+                        size: 22,
+                        color: AppColors.slate800,
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 12),
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              'Үндсэн халаасны данс',
-                              size: 12,
-                              weight: FontWeight.w700,
-                            ),
-                            Row(
-                              children: [
-                                BalanceText(
-                                  _balance,
-                                  space: false,
-                                  size: 10,
-                                  weight: FontWeight.w500,
-                                  color: AppColors.sky500,
-                                ),
-                                Flexible(
-                                  child: AppText(
-                                    ' (Хүрэлцээтэй)',
-                                    size: 10,
-                                    weight: FontWeight.w600,
-                                    color: AppColors.sky600,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        child: AppText(
+                          'Халаасны данс',
+                          size: 14,
+                          weight: FontWeight.w600,
                         ),
                       ),
-                      AppText(
-                        'Сонгосон ✓',
-                        size: 11,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate400,
+                      BalanceText(
+                        _balance,
+                        size: 14,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate600,
                       ),
                     ],
                   ),
@@ -174,8 +142,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
               title: 'Хүргэлтийн хэлбэр',
               trailing: AppText(
                 '2-3 хоногт',
-                size: 10,
-                weight: FontWeight.w600,
+                size: 12,
                 color: AppColors.slate500,
               ),
               children: [
@@ -185,7 +152,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                       child: DeliveryOption(
                         title: 'Салбараас',
                         subtitle: 'Төв салбар дээр очиж авах',
-                        price: 'ҮНЭГҮЙ',
+                        price: 'Үнэгүй',
                         selected: !_homeDelivery,
                         onTap: () => setState(() => _homeDelivery = false),
                       ),
@@ -207,9 +174,8 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                   const FieldLabel('Хүргэлтийн хаяг'),
                   AppTextField(
                     controller: _address,
-                    hint: 'Дүүрэг, хороо, байр, орцны дугаар...',
-                    prefixIcon: Icons.location_on_outlined,
-                    textStyle: inter(size: 12, weight: FontWeight.w500),
+                    hint: 'Дүүрэг, хороо, байр, орц',
+                                        textStyle: inter(size: 14, weight: FontWeight.w500),
                   ),
                 ],
               ],
@@ -217,41 +183,17 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
             const SizedBox(height: 14),
             CardOrderSection(
               title: 'Төлбөрийн мэдээлэл',
-              trailing: const StatusBadge(
-                label: 'Данснаас суутгана',
-                tone: BadgeTone.emerald,
-                dot: true,
-              ),
               children: [
                 PriceRow('Карт хэвлэх хураамж', _printFee),
                 PriceRow(
                   'Хүргэлтийн төлбөр',
-                  _homeDelivery ? _deliveryFee : 'ҮНЭГҮЙ',
+                  _homeDelivery ? _deliveryFee : 'Үнэгүй',
                 ),
-                const Divider(height: 16, color: AppColors.slate100),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppText(
-                        'Боломжит үлдэгдэл',
-                        size: 12,
-                        color: AppColors.slate500,
-                      ),
-                    ),
-                    BalanceText(
-                      _balance,
-                      space: false,
-                      size: 12,
-                      color: AppColors.slate700,
-                    ),
-                    const SizedBox(width: 6),
-                    const StatusBadge(label: 'Хүрэлцээтэй ✓'),
-                  ],
-                ),
+                PriceRow('Боломжит үлдэгдэл', _balance),
                 const SizedBox(height: 12),
                 TotalBox(
                   label: 'Нийт төлөх дүн',
-                  sub: 'Карт + Хүргэлт',
+                  sub: 'Халаасны данснаас суутгана',
                   total: _total,
                 ),
               ],

@@ -9,7 +9,7 @@ void main() {
   ) async {
     await tester.pumpWidget(const ArdKidsApp());
 
-    expect(find.text('Ard KIDS'), findsOneWidget);
+    expect(find.text('Тавтай морил'), findsOneWidget);
     expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
 
     await tester.tap(find.text('Бүртгүүлэх'));

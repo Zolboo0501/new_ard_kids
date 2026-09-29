@@ -1,17 +1,18 @@
+import '../../../widgets/ui.dart';
+
 enum RequestStatus { pending, approved, declined }
 
 class MoneyRequest {
-  MoneyRequest({
+  const MoneyRequest({
     required this.from,
     required this.when,
     required this.title,
     required this.amount,
-    required String Function() sticker,
+    required this.glyph,
     required this.status,
-    this.tag,
     this.reply,
     this.reason,
-  }) : _sticker = sticker;
+  });
 
   final String from;
   final String when;
@@ -19,11 +20,8 @@ class MoneyRequest {
   final int amount;
   final RequestStatus status;
 
-  /// Read on each build, so the picture follows the chosen companion while
-  /// the list (kept in state, since requests can be cancelled) stays put.
-  final String Function() _sticker;
-  String get asset => _sticker();
-  final String? tag;
+  /// The request's category, drawn in the row's tile.
+  final LineGlyph glyph;
   final String? reply;
   final String? reason;
 

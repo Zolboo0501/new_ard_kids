@@ -6,23 +6,19 @@ import '../../../../widgets/common.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/value_switcher.dart';
 
+/// One choice in the avatar grid: the portrait in a circle, the name under
+/// it, and an accent ring with a tick while it is the selected one.
 class AvatarCard extends StatefulWidget {
   const AvatarCard({
     super.key,
     required this.name,
-    required this.role,
-    required this.description,
     required this.asset,
-    required this.tone,
     required this.selected,
     required this.onTap,
   });
 
   final String name;
-  final String role;
-  final String description;
   final String asset;
-  final BadgeTone tone;
   final bool selected;
   final VoidCallback onTap;
 
@@ -32,18 +28,17 @@ class AvatarCard extends StatefulWidget {
 
 class _AvatarCardState extends State<AvatarCard>
     with SingleTickerProviderStateMixin {
-  /// Plays once each time this card becomes the chosen one.
+  /// Plays once each time this avatar becomes the chosen one.
   late final AnimationController _pick = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 420),
+    duration: const Duration(milliseconds: 360),
   );
 
-  /// A quick squash-and-stretch on the mascot so picking feels like the
-  /// character reacting, not just a border changing colour.
+  /// A small settle on the portrait so the change registers without
+  /// turning into a performance.
   late final Animation<double> _pop = TweenSequence<double>([
-    TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.14), weight: 35),
-    TweenSequenceItem(tween: Tween(begin: 1.14, end: 0.97), weight: 30),
-    TweenSequenceItem(tween: Tween(begin: 0.97, end: 1.0), weight: 35),
+    TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.06), weight: 40),
+    TweenSequenceItem(tween: Tween(begin: 1.06, end: 1.0), weight: 60),
   ]).animate(CurvedAnimation(parent: _pick, curve: Curves.easeOut));
 
   @override
@@ -64,124 +59,114 @@ class _AvatarCardState extends State<AvatarCard>
 
   @override
   Widget build(BuildContext context) {
-    final name = widget.name;
-    final role = widget.role;
-    final description = widget.description;
-    final asset = widget.asset;
-    final tone = widget.tone;
     final selected = widget.selected;
-    final onTap = widget.onTap;
-    final (bg, fg, _) = tone.colors;
     return Semantics(
       button: true,
       selected: selected,
-      label: '$name - $role',
+      label: widget.name,
+      excludeSemantics: true,
       child: Pressable(
-        onTap: onTap,
-        // The chosen card sits a touch proud of the others.
-        child: AnimatedScale(
-          scale: selected ? 1.03 : 1,
-          duration: const Duration(milliseconds: 240),
-          curve: appEmphasizedDecelerate,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 240),
-            curve: appEmphasizedDecelerate,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(
-                color: selected ? AppColors.sky500 : Colors.transparent,
-                width: 2,
-              ),
-            ),
-            child: Stack(
+        onTap: widget.onTap,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final side = (constraints.maxWidth - 8).clamp(64.0, 132.0);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 240),
-                    curve: appEmphasizedDecelerate,
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: selected ? AppColors.sky500 : Colors.transparent,
-                      border: selected
-                          ? null
-                          : Border.all(color: AppColors.slate300, width: 2),
-                    ),
-                    child: ValueSwitcher(
-                      value: selected,
-                      duration: const Duration(milliseconds: 240),
-                      switchInCurve: Curves.easeOutBack,
-                      transitionBuilder: (child, animation, _) =>
-                          ScaleTransition(
-                            scale: animation,
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
+                SizedBox.square(
+                  dimension: side,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          curve: appEmphasizedDecelerate,
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: selected
+                                  ? AppColors.sky500
+                                  : AppColors.line,
+                              width: selected ? 2.5 : 1,
                             ),
                           ),
-                      child: selected
-                          ? Icon(
-                              Icons.check_rounded,
-                              key: const ValueKey('tick'),
-                              size: 14,
-                              color: AppColors.onAccent,
-                            )
-                          : const SizedBox.shrink(key: ValueKey('none')),
-                    ),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.slate50,
+                            ),
+                            child: ClipOval(
+                              child: ScaleTransition(
+                                scale: _pop,
+                                child: Center(
+                                  child: MascotImage(
+                                    asset: widget.asset,
+                                    size: side * 0.78,
+                                    background: AppColors.slate50,
+                                    semanticLabel: widget.name,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: side * 0.04,
+                        bottom: side * 0.04,
+                        child: ValueSwitcher(
+                          value: selected,
+                          duration: const Duration(milliseconds: 200),
+                          transitionBuilder: (child, animation, _) =>
+                              ScaleTransition(
+                                scale: animation,
+                                child: FadeTransition(
+                                  opacity: animation,
+                                  child: child,
+                                ),
+                              ),
+                          child: selected
+                              ? Container(
+                                  key: const ValueKey('tick'),
+                                  width: 28,
+                                  height: 28,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.sky500,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.surface,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: LineIcon(
+                                      LineGlyph.check,
+                                      size: 16,
+                                      stroke: 2,
+                                      color: AppColors.onAccent,
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(key: ValueKey('none')),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ScaleTransition(
-                      scale: _pop,
-                      child: MascotImage(
-                        asset: asset,
-                        size: 80,
-                        background: AppColors.card,
-                        semanticLabel: name,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    AppText(name, size: 12, weight: FontWeight.w700),
-                    const SizedBox(height: 3),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: bg,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: AppText(
-                        role,
-                        size: 9,
-                        weight: FontWeight.w700,
-                        color: tone == BadgeTone.slate
-                            ? AppColors.violet500
-                            : fg,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    AppText(
-                      description,
-                      size: 10,
-                      color: AppColors.slate500,
-                      height: 1.3,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                const SizedBox(height: 10),
+                AppText(
+                  widget.name,
+                  size: 14,
+                  weight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: selected ? AppColors.slate900 : AppColors.slate600,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
-          ),
+            );
+          },
         ),
       ),
     );

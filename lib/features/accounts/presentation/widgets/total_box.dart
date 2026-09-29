@@ -4,6 +4,8 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// The amount to pay at the foot of an order: a hairline, then the label
+/// (with a secondary line) beside the total.
 class TotalBox extends StatelessWidget {
   const TotalBox({
     super.key,
@@ -19,10 +21,9 @@ class TotalBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.only(top: 12),
       decoration: BoxDecoration(
-        color: AppColors.sky50.withValues(alpha: 0.7),
-        borderRadius: BorderRadius.circular(16),
+        border: Border(top: BorderSide(color: AppColors.line)),
       ),
       child: Row(
         children: [
@@ -30,23 +31,18 @@ class TotalBox extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppText(
-                  label,
-                  size: 11,
-                  weight: FontWeight.w500,
-                  color: AppColors.sky900,
-                ),
-                AppText(sub, size: 9, color: AppColors.sky600),
+                AppText(label, size: 14, weight: FontWeight.w600),
+                const SizedBox(height: 2),
+                AppText(sub, size: 12, color: AppColors.slate500),
               ],
             ),
           ),
           BalanceText(
             total,
             animate: true,
-            space: false,
-            size: 18,
+            size: 22,
             weight: FontWeight.w600,
-            color: AppColors.sky700,
+            color: AppColors.slate900,
           ),
         ],
       ),

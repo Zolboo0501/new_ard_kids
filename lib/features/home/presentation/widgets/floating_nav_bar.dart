@@ -4,9 +4,10 @@ import 'package:flutter/services.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/ui.dart';
 
-/// The floating bottom bar, a dark pill: Нүүр · QR · Профайл. A compact
-/// mint pill slides under the selected tab, and the QR button is a white
-/// disc raised out of the bar's top edge, cut out from it by a dark ring.
+/// The floating bottom bar, a card-coloured pill: Нүүр · QR · Профайл. A
+/// compact accent-tinted pill slides under the selected tab, and the QR
+/// button is an accent disc raised out of the bar's top edge, cut out from
+/// it by a ring in the canvas colour.
 class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
@@ -37,20 +38,14 @@ class FloatingNavBar extends StatelessWidget {
           child: Container(
             height: 64,
             decoration: BoxDecoration(
-              // Lit faintly from above so the pill reads as a raised
-              // object on the black canvas, not a flat band.
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF1C1E23), Color(0xFF131518)],
-              ),
+              color: AppColors.card,
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: Night.line),
-              boxShadow: const [
+              border: Border.all(color: AppColors.line),
+              boxShadow: [
                 BoxShadow(
-                  color: Color(0x80000000),
-                  offset: Offset(0, 12),
-                  blurRadius: 28,
+                  color: AppColors.shadow,
+                  offset: const Offset(0, 8),
+                  blurRadius: 24,
                 ),
               ],
             ),
@@ -58,7 +53,7 @@ class FloatingNavBar extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // A mint pill that travels behind the selected tab. It hugs
+                // An accent-tinted pill that travels behind the selected tab. It hugs
                 // the icon and label rather than filling its third, and only
                 // ever sits over the outer thirds, never behind QR.
                 Positioned.fill(
@@ -71,10 +66,10 @@ class FloatingNavBar extends StatelessWidget {
                       heightFactor: 1,
                       child: Center(
                         child: Container(
-                          width: 82,
-                          height: 50,
+                          width: 84,
+                          height: 52,
                           decoration: BoxDecoration(
-                            color: AppColors.sky500,
+                            color: AppColors.sky50,
                             borderRadius: BorderRadius.circular(999),
                           ),
                         ),
@@ -110,7 +105,7 @@ class FloatingNavBar extends StatelessWidget {
   }
 }
 
-/// The white QR disc in the middle of the bar, raised above its top edge.
+/// The accent QR disc in the middle of the bar, raised above its top edge.
 /// A ring in the canvas colour cuts it out from the bar.
 class _QrButton extends StatefulWidget {
   const _QrButton({required this.onTap, required this.lift});
@@ -156,21 +151,21 @@ class _QrButtonState extends State<_QrButton> {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.sky500,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Night.bg, width: 3),
-                  boxShadow: const [
+                  border: Border.all(color: AppColors.surface, width: 3),
+                  boxShadow: [
                     BoxShadow(
-                      color: Color(0x59000000),
-                      offset: Offset(0, 6),
+                      color: AppColors.shadow,
+                      offset: const Offset(0, 6),
                       blurRadius: 16,
                     ),
                   ],
                 ),
                 alignment: Alignment.center,
-                child: const LineIcon(
+                child: LineIcon(
                   LineGlyph.scan,
-                  color: Night.bg,
+                  color: AppColors.onAccent,
                   size: 24,
                   stroke: 1.7,
                 ),
@@ -212,12 +207,14 @@ class _NavItemState extends State<_NavItem> {
   @override
   Widget build(BuildContext context) {
     final selected = widget.selected;
-    final color = selected ? AppColors.onAccent : Night.text2;
+    final color = selected ? AppColors.sky700 : AppColors.slate500;
 
     return Expanded(
       child: Semantics(
         button: true,
         selected: selected,
+        label: widget.label,
+        excludeSemantics: true,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: (_) => _setPressed(true),
@@ -235,16 +232,16 @@ class _NavItemState extends State<_NavItem> {
               builder: (context, tint, _) => Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // One line glyph whose colour follows the pill: dark on
-                  // the cyan block, grey off it. No halo, the pill is lit.
+                  // One line glyph whose colour follows the pill: accent ink
+                  // on the tinted pill, grey off it.
                   LineIcon(widget.icon, size: 24, color: tint ?? color),
                   const SizedBox(height: 2),
                   AnimatedDefaultTextStyle(
                     duration: _duration,
                     curve: appEmphasizedDecelerate,
                     style: inter(
-                      size: 11,
-                      weight: selected ? FontWeight.w700 : FontWeight.w500,
+                      size: 12,
+                      weight: selected ? FontWeight.w600 : FontWeight.w500,
                       color: tint ?? color,
                     ),
                     child: Text(widget.label),

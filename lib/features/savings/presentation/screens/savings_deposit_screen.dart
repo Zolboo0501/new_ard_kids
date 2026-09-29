@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
@@ -20,7 +19,7 @@ class SavingsDepositScreen extends StatefulWidget {
 }
 
 class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
-  static const _available = 567930;
+  static const _available = Balances.main;
   static const _maxDigits = 9;
   static const _quick = [10000, 20000, 50000, 100000];
 
@@ -44,17 +43,13 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
 
   void _submit() {
     // TODO: call the savings deposit API.
-    showAppSnack(
-      context,
-      '${formatMnt(_amount)} хадгаламжид орлоо',
-      mascot: Stickers.success,
-    );
+    showAppSnack(context, '${formatMnt(_amount)} хадгаламжид орлоо');
     context.pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     const keyStyle = KeypadStyle(
       keyHeight: 48,
       // Fully rounded (pill-shaped) keys.
@@ -66,7 +61,8 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
-        title: 'Хадгаламжид орлого хийх',
+        title: 'Орлого хийх',
+        subtitle: 'Хадгаламжийн данс',
         background: bg,
         trailing: CircleIconButton(
           icon: Icons.info_outline_rounded,
@@ -89,29 +85,15 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                     child: Column(
                       children: EntranceItem.list([
-                        MascotImage(
-                          asset: Stickers.jar,
-                          size: 96,
-                          background: bg,
-                          semanticLabel: 'Зоосны лонхтой үнэг',
-                        ),
-                        const SizedBox(height: 4),
-                        const StatusBadge(
-                          label: 'Орлого хийх дүнгээ оруулна уу',
-                          icon: Icons.savings_outlined,
-                        ),
-                        const SizedBox(height: 12),
                         AppCard(
-                          radius: 24,
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             children: [
                               AppText(
-                                'ЦЭНЭГЛЭХ ДҮН',
-                                size: 11,
-                                weight: FontWeight.w600,
-                                color: AppColors.slate400,
-                                letterSpacing: 0.8,
+                                'Дүн',
+                                size: 13,
+                                weight: FontWeight.w500,
+                                color: AppColors.slate500,
                               ),
                               const SizedBox(height: 4),
                               FittedBox(
@@ -121,37 +103,37 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                                 child: BalanceText(
                                   _amount,
                                   animateFrom: 0,
-                                  size: 36,
+                                  size: 40,
                                   weight: FontWeight.w600,
-                                  letterSpacing: 0.1,
                                   currencyWeight: FontWeight.w600,
                                   color: _amount > _available
-                                      ? AppColors.rose500
-                                      : AppColors.slate800,
+                                      ? AppColors.rose600
+                                      : AppColors.slate900,
                                   currencyColor: _amount > _available
-                                      ? AppColors.rose500
-                                      : AppColors.slate700,
+                                      ? AppColors.rose600
+                                      : AppColors.slate500,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text.rich(
                                 TextSpan(
-                                  text: 'Боломжит үлдэгдэл: ',
+                                  text: 'Үндсэн дансны үлдэгдэл ',
                                   children: [
                                     WidgetSpan(
                                       alignment: PlaceholderAlignment.baseline,
                                       baseline: TextBaseline.alphabetic,
                                       child: BalanceText(
                                         _available,
-                                        size: 14,
+                                        size: 13,
                                         weight: FontWeight.w600,
+                                        color: AppColors.slate700,
                                       ),
                                     ),
                                   ],
                                 ),
                                 style: inter(
-                                  size: 11,
-                                  color: AppColors.slate400,
+                                  size: 13,
+                                  color: AppColors.slate500,
                                 ),
                               ),
                             ],
@@ -166,7 +148,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                                 // Sets the amount (not adds to it); stays selected
                                 // until the keypad changes the amount.
                                 child: QuickButton(
-                                  label: '${q ~/ 1000}k',
+                                  label: '₮${q ~/ 1000}k',
                                   selected: _amount == q,
                                   onTap: () => setState(() => _amount = q),
                                 ),
@@ -208,7 +190,6 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                         const SizedBox(height: 14),
                         PrimaryButton(
                           label: 'Орлого хийх',
-                          icon: Icons.arrow_forward_rounded,
                           onPressed: _valid ? _submit : null,
                         ),
                       ],

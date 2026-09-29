@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -10,6 +10,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/app_notification.dart';
 import '../widgets/group_header.dart';
+import '../widgets/notification_card.dart';
 
 /// "Мэдэгдэл": notification feed with category filters.
 class NotificationsScreen extends StatefulWidget {
@@ -24,90 +25,77 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     AppNotification(
       route: AppRoutes.home,
       kind: NotificationKind.transaction,
+      topic: NotificationTopic.income,
       time: '10 минутын өмнө',
-      title: 'Ээж ₮ 20,000 халаасны мөнгө шилжүүллээ!',
-      body: const TextSpan(text: '«Сайн сураарай миний хүү!»'),
-      asset: Stickers.receive,
-      tint: AppColors.amber50,
+      title: 'Ээж ${formatMnt(20000)} шилжүүллээ',
+      body: const TextSpan(text: 'Халаасны мөнгө · «Амжилт хүсье»'),
       unread: true,
-      action: ('Үлдэгдэл шалгах →', AppRoutes.home),
     ),
     AppNotification(
       route: AppRoutes.requestList,
       kind: NotificationKind.request,
+      topic: NotificationTopic.income,
       time: '2 цагийн өмнө',
-      title: 'Гэрийн даалгавар баталгаажлаа ✔',
+      title: 'Хүсэлт зөвшөөрөгдлөө',
       body: TextSpan(
         text: 'Аав таны хүсэлтийг зөвшөөрч ',
         children: [
-          TextSpan(text: '₮ 10,000', style: _bold),
-          const TextSpan(text: ' шилжүүлэв.'),
+          TextSpan(text: formatMnt(10000), style: _bold),
+          const TextSpan(text: ' шилжүүллээ.'),
         ],
       ),
-      asset: Stickers.success,
-      tint: AppColors.emerald50,
       unread: true,
     ),
     AppNotification(
       route: AppRoutes.savingsAccount,
       kind: NotificationKind.goal,
+      topic: NotificationTopic.goal,
       time: '4 цагийн өмнө',
-      title: 'PlayStation 5 Pro зорилго 50%-д хүрлээ!',
-      body: const TextSpan(
-        text: 'Та зорилгынхоо талыг хуримтлуулж чадлаа, мундаг байна!',
-      ),
-      asset: Stickers.goal,
-      tint: AppColors.sky50,
+      title: 'PlayStation 5 Pro: зорилгын 50% хуримтлагдлаа',
+      body: const TextSpan(text: 'Зорилгынхоо талыг хуримтлууллаа.'),
       unread: true,
       progress: 0.5,
     ),
     AppNotification(
       route: AppRoutes.coinAccount,
       kind: NotificationKind.transaction,
+      topic: NotificationTopic.spending,
       time: 'Өчигдөр, 16:45',
-      title: 'CU дэлгүүрт карт уншуулав',
+      title: 'CU дэлгүүрт картаар төллөө',
       body: TextSpan(
-        text: '₮ 5,600 зарцууллаа. Үлдэгдэл: ',
-        children: [TextSpan(text: '₮ 567,930', style: _bold)],
+        text: '${formatMnt(5600)} зарцууллаа. Үлдэгдэл: ',
+        children: [TextSpan(text: formatMnt(Balances.main), style: _bold)],
       ),
-      asset: Stickers.card,
-      tint: AppColors.slate50,
       today: false,
     ),
     AppNotification(
       route: AppRoutes.profile,
       kind: NotificationKind.request,
+      topic: NotificationTopic.security,
       time: 'Өчигдөр, 09:12',
-      title: 'Өдрийн лимит шинэчлэгдлээ',
-      body: const TextSpan(
-        text: 'Аав өдрийн зарцуулалтын лимитийг ₮ 100,000 болгон тохирууллаа.',
+      title: 'Өдрийн хязгаар шинэчлэгдлээ',
+      body: TextSpan(
+        text:
+            'Аав өдрийн зарцуулалтын хязгаарыг '
+            '${formatMnt(Limits.dailyTransfer)} болгож тохирууллаа.',
       ),
-      asset: Stickers.shield,
-      tint: AppColors.indigo50,
       today: false,
     ),
     AppNotification(
       route: AppRoutes.rewardsAccount,
       kind: NotificationKind.goal,
+      topic: NotificationTopic.reward,
       time: '2 өдрийн өмнө',
-      title: 'Шинэ тэмдэг нээгдлээ: "Тэргүүн хэмнэгч"',
-      body: TextSpan(
-        text: 'Баяр хүргэе! Танд ',
-        children: [
-          TextSpan(text: '+50 XP оноо', style: _bold),
-          const TextSpan(text: ' амжилттай нэмэгдлээ.'),
-        ],
-      ),
-      asset: Stickers.coin,
-      tint: AppColors.rose50,
+      title: 'Шинэ тэмдэг: «Тэргүүн хэмнэгч»',
+      body: const TextSpan(text: 'Урамшууллын данс руу нэмэгдлээ.'),
       today: false,
     ),
   ];
 
   static final _bold = inter(
-    size: 11,
-    weight: FontWeight.w700,
-    color: AppColors.slate800,
+    size: 13,
+    weight: FontWeight.w600,
+    color: AppColors.slate900,
   );
 
   int _filter = 0;
@@ -121,7 +109,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     final unread = _items.where((n) => n.unread).length;
     final today = _visible.where((n) => n.today).toList();
     final earlier = _visible.where((n) => !n.today).toList();
@@ -133,15 +121,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         background: bg,
         trailing: unread == 0
             ? null
-            : CircleIconButton(
-                icon: Icons.done_all_rounded,
-                label: 'Бүгдийг унших',
-                color: AppColors.sky500,
-                onPressed: () => setState(() {
-                  for (final n in _items) {
-                    n.unread = false;
-                  }
-                }),
+            : Semantics(
+                button: true,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: withHaptic(
+                    () => setState(() {
+                      for (final n in _items) {
+                        n.unread = false;
+                      }
+                    }),
+                  ),
+                  // The header keeps 44pt for its trailing action, so this
+                  // is an icon, named for screen readers.
+                  child: SizedBox.square(
+                    dimension: 44,
+                    child: Center(
+                      child: LineIcon(
+                        LineGlyph.checkCircle,
+                        size: 24,
+                        color: AppColors.sky600,
+                        semanticLabel: 'Бүгдийг уншсан',
+                      ),
+                    ),
+                  ),
+                ),
               ),
       ),
       body: EntranceScope(
@@ -154,22 +158,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           ),
           children: EntranceItem.list([
             SizedBox(
-              height: 36,
+              height: 44,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   for (final (i, l) in [
-                    'Бүгд (${_items.length})',
+                    'Бүгд',
                     'Гүйлгээ',
-                    'Хүсэлт & Батлах',
-                    'Зорилго & Тэмдэг',
+                    'Хүсэлт',
+                    'Зорилго, шагнал',
                   ].indexed)
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: FilterChipPill(
-                        label: l,
-                        selected: _filter == i,
-                        onTap: () => setState(() => _filter = i),
+                      child: Center(
+                        child: FilterChipPill(
+                          label: l,
+                          selected: _filter == i,
+                          onTap: () => setState(() => _filter = i),
+                        ),
                       ),
                     ),
                 ],
@@ -178,7 +184,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             const SizedBox(height: 16),
             if (today.isNotEmpty) ...[
               GroupHeader(
-                label: 'ӨНӨӨДӨР',
+                label: 'Өнөөдөр',
                 badge: unread > 0 ? '$unread шинэ' : null,
               ),
               for (final (i, n) in today.indexed)
@@ -186,18 +192,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   id: n,
                   index: i,
                   group: _filter,
-                  child: _tile(n),
+                  child: NotificationCard(
+                    notification: n,
+                    onTap: () => _open(n),
+                  ),
                 ),
             ],
             if (earlier.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              const GroupHeader(label: 'ӨЧИГДӨР'),
+              const SizedBox(height: 14),
+              const GroupHeader(label: 'Өмнө'),
               for (final (i, n) in earlier.indexed)
                 ListItemEntrance(
                   id: n,
                   index: today.length + i,
                   group: _filter,
-                  child: _tile(n),
+                  child: NotificationCard(
+                    notification: n,
+                    onTap: () => _open(n),
+                  ),
                 ),
             ],
             if (today.isEmpty && earlier.isEmpty)
@@ -205,8 +217,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: AppText(
                   'Мэдэгдэл алга',
-                  size: 13,
-                  color: AppColors.slate400,
+                  size: 14,
+                  color: AppColors.slate500,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -226,76 +238,5 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     } else {
       context.push(route);
     }
-  }
-
-  Widget _tile(AppNotification n) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: AppCard(
-        radius: 24,
-        padding: const EdgeInsets.all(16),
-        borderColor: n.unread ? AppColors.sky200 : null,
-        onTap: () => _open(n),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MascotTile(asset: n.asset, background: n.tint, label: n.title),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    n.time,
-                    size: 10,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate400,
-                  ),
-                  const SizedBox(height: 4),
-                  AppText(
-                    n.title,
-                    size: 12,
-                    weight: FontWeight.w700,
-                    height: 1.4,
-                  ),
-                  const SizedBox(height: 4),
-                  Text.rich(
-                    n.body,
-                    style: inter(
-                      size: 11,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
-                      height: 1.5,
-                    ),
-                  ),
-                  if (n.progress != null) ...[
-                    const SizedBox(height: 10),
-                    ProgressTrack(value: n.progress!),
-                  ],
-                  if (n.action != null) ...[
-                    const SizedBox(height: 10),
-                    SoftButton(
-                      label: n.action!.$1,
-                      height: 28,
-                      onPressed: () => context.go(n.action!.$2),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            if (n.unread)
-              Container(
-                width: 10,
-                height: 10,
-                margin: const EdgeInsets.only(left: 6),
-                decoration: BoxDecoration(
-                  color: AppColors.sky500,
-                  shape: BoxShape.circle,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
   }
 }

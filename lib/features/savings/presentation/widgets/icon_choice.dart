@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
-import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// A selectable goal icon: a line glyph on a rounded tile.
 class IconChoice extends StatelessWidget {
   const IconChoice({
     super.key,
     required this.label,
-    required this.asset,
+    required this.glyph,
     required this.selected,
     required this.onTap,
   });
 
+  /// Read by screen readers only.
   final String label;
-  final String asset;
+  final LineGlyph glyph;
   final bool selected;
   final VoidCallback onTap;
 
@@ -27,65 +28,23 @@ class IconChoice extends StatelessWidget {
       excludeSemantics: true,
       child: Pressable(
         onTap: onTap,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 160),
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: selected ? AppColors.sky50 : AppColors.slate50,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: selected ? AppColors.sky500 : AppColors.slate50,
-                  width: selected ? 2 : 1,
-                ),
-              ),
-              child: Column(
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: AppColors.card,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Image.asset(asset, fit: BoxFit.contain),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  AppText(
-                    label,
-                    size: 10,
-                    weight: FontWeight.w700,
-                    color: selected ? AppColors.sky600 : AppColors.slate500,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          height: 56,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: selected ? AppColors.sky50 : AppColors.slate50,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: selected ? AppColors.sky500 : AppColors.slate50,
+              width: 1.5,
             ),
-            if (selected)
-              Positioned(
-                top: -6,
-                right: -6,
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: AppColors.sky500,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.card, width: 2),
-                  ),
-                  child: Icon(
-                    Icons.check_rounded,
-                    size: 11,
-                    color: AppColors.onAccent,
-                  ),
-                ),
-              ),
-          ],
+          ),
+          child: LineIcon(
+            glyph,
+            size: 24,
+            color: selected ? AppColors.sky600 : AppColors.slate800,
+          ),
         ),
       ),
     );

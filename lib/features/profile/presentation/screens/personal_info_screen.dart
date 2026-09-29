@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
-import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/profile_details.dart';
+import '../widgets/group_label.dart';
 import '../widgets/personal_info_row.dart';
-import '../widgets/student_header_card.dart';
+import '../widgets/profile_identity_card.dart';
+import '../widgets/settings_group.dart';
 
-/// "Хувийн мэдээлэл": read-only student profile details.
+/// "Хувийн мэдээлэл": read-only profile details.
 class PersonalInfoScreen extends StatefulWidget {
   const PersonalInfoScreen({super.key});
 
@@ -23,17 +26,32 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
         title: 'Хувийн мэдээлэл',
         background: bg,
-        trailing: CircleIconButton(
-          icon: Icons.edit_outlined,
+        trailing: Semantics(
+          button: true,
           label: 'Засах',
-          color: AppColors.sky600,
-          onPressed: () => context.push(AppRoutes.editPersonalInfo),
+          child: Pressable(
+            onTap: () => context.push(AppRoutes.editPersonalInfo),
+            child: Container(
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                shape: BoxShape.circle,
+              ),
+              child: LineIcon(
+                LineGlyph.edit,
+                size: 20,
+                color: AppColors.slate800,
+              ),
+            ),
+          ),
         ),
       ),
       body: EntranceScope(
@@ -45,105 +63,58 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            const StudentHeaderCard(
-              subtitle: '12 настай · 6-р анги',
-              trailing: StatusBadge(
-                label: 'Баталгаажсан',
-                tone: BadgeTone.emerald,
-                icon: Icons.verified_rounded,
-              ),
-              onlineDot: true,
+            const ProfileIdentityCard(
+              name: Kid.fullName,
+              subtitle: '${Kid.school} · ${Kid.grade}',
+              status: 'Баталгаажсан',
             ),
-            const SizedBox(height: 16),
-            AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: AppColors.sky50,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          size: 18,
-                          color: AppColors.sky500,
-                        ),
+            const SizedBox(height: 24),
+            const GroupLabel('Үндсэн мэдээлэл'),
+            SettingsGroup(
+              indent: 16,
+              children: [
+                const PersonalInfoRow(label: 'Бүтэн нэр', value: Kid.fullName),
+                const PersonalInfoRow(
+                  label: 'Төрсөн огноо',
+                  value: Kid.birthday,
+                ),
+                const PersonalInfoRow(
+                  label: 'Хүйс',
+                  value: ProfileDetails.gender,
+                ),
+                const PersonalInfoRow(label: 'Сургууль', value: Kid.school),
+                const PersonalInfoRow(label: 'Анги', value: Kid.grade),
+                PersonalInfoRow(
+                  label: 'Регистрийн дугаар',
+                  value: _showRegister
+                      ? ProfileDetails.register
+                      : ProfileDetails.maskedRegister,
+                  trailing: Semantics(
+                    button: true,
+                    label: _showRegister ? 'Нуух' : 'Харах',
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: withHaptic(
+                        () => setState(() => _showRegister = !_showRegister),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AppText(
-                          'Үндсэн мэдээлэл',
-                          size: 14,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
-                      AppText(
-                        'Албан ёсны',
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate400,
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 24, color: AppColors.slate100),
-                  const PersonalInfoRow(
-                    icon: Icons.badge_outlined,
-                    label: 'Бүтэн нэр',
-                    value: Text('Бат-Ирээдүй Төмөрбаатар'),
-                  ),
-                  const PersonalInfoRow(
-                    icon: Icons.cake_outlined,
-                    label: 'Төрсөн огноо',
-                    value: Text('2014 оны 05 сарын 18'),
-                  ),
-                  const PersonalInfoRow(
-                    icon: Icons.wc_rounded,
-                    label: 'Хүйс',
-                    value: Text('Эрэгтэй'),
-                  ),
-                  PersonalInfoRow(
-                    icon: Icons.fingerprint_rounded,
-                    label: 'Регистрийн дугаар',
-                    value: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(_showRegister ? 'УХ14251812' : 'УХ••••••12'),
-                        const SizedBox(width: 4),
-                        Semantics(
-                          button: true,
-                          label: 'Харах эсэх',
-                          child: GestureDetector(
-                            onTap: withHaptic(
-                              () => setState(
-                                () => _showRegister = !_showRegister,
-                              ),
-                            ),
-                            child: Icon(
-                              _showRegister
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              size: 16,
-                              color: AppColors.slate400,
-                            ),
+                      child: SizedBox.square(
+                        dimension: 44,
+                        child: Center(
+                          child: LineIcon(
+                            _showRegister ? LineGlyph.eyeOff : LineGlyph.eye,
+                            size: 20,
+                            color: AppColors.slate500,
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  const PersonalInfoRow(
-                    icon: Icons.phone_iphone_rounded,
-                    label: 'Утасны дугаар',
-                    value: Text('+976 9911 2345'),
-                    last: true,
-                  ),
-                ],
-              ),
+                ),
+                const PersonalInfoRow(
+                  label: 'Утасны дугаар',
+                  value: '+976 ${Kid.phone}',
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             const InfoNote(

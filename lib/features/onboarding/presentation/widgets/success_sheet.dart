@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
@@ -15,7 +16,7 @@ class SuccessSheet extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: AppColors.card,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -23,27 +24,30 @@ class SuccessSheet extends StatelessWidget {
             Container(
               width: 56,
               height: 56,
-              decoration: const BoxDecoration(
-                color: AppColors.emerald100,
+              decoration: BoxDecoration(
+                color: AppColors.emerald50,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.check_rounded,
-                size: 30,
+              alignment: Alignment.center,
+              child: LineIcon(
+                LineGlyph.check,
+                size: 28,
+                stroke: 2,
                 color: AppColors.emerald600,
               ),
             ),
             const SizedBox(height: 12),
             AppText(
-              'Хүсэлт амжилттай илгээгдлээ!',
-              size: 16,
+              'Хүсэлт илгээгдлээ',
+              size: 18,
               weight: FontWeight.w700,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
             AppText(
-              'Таны сонгосон асран хамгаалагч руу мэдэгдэл илгээгдлээ. Зөвшөөрсний дараа таны эрх шууд 5 дахин нэмэгдэх болно.',
-              size: 12,
+              'Эцэг эх чинь апп дээрээ зөвшөөрмөгц өдрийн гүйлгээний эрх '
+              '${formatMnt(Limits.dailyTransfer)} болно.',
+              size: 14,
               color: AppColors.slate500,
               height: 1.6,
               textAlign: TextAlign.center,

@@ -1,32 +1,33 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 
 enum NotificationKind { transaction, request, goal }
+
+/// What a notification is about, which picks its icon tile.
+enum NotificationTopic { income, spending, security, reward, goal, system }
 
 class AppNotification {
   AppNotification({
     required this.kind,
+    required this.topic,
     required this.time,
     required this.title,
     required this.body,
-    required this.asset,
-    required this.tint,
     this.today = true,
     this.unread = false,
     this.progress,
-    this.action,
     this.route,
   });
 
   final NotificationKind kind;
+  final NotificationTopic topic;
   final String time;
   final String title;
   final InlineSpan body;
-  final String asset;
-  final Color tint;
   final bool today;
   bool unread;
+
+  /// A real progress value (a savings goal) drawn under the body.
   final double? progress;
-  final (String, String)? action;
 
   /// Screen opened when the card is tapped.
   final String? route;

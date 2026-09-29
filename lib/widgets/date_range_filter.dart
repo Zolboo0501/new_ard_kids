@@ -50,18 +50,10 @@ class DateRangeFilterBar extends StatelessWidget {
       child: GestureDetector(
         onTap: withHaptic(() => _open(context)),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.card,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.sky100),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.sky500.withValues(alpha: 0.08),
-                offset: const Offset(0, 4),
-                blurRadius: 12,
-              ),
-            ],
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -69,16 +61,17 @@ class DateRangeFilterBar extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 42,
-                    height: 42,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
-                      color: AppColors.sky50,
-                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.slate50,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      Icons.calendar_month_rounded,
+                    alignment: Alignment.center,
+                    child: LineIcon(
+                      LineGlyph.calendar,
                       size: 22,
-                      color: AppColors.sky600,
+                      color: AppColors.slate800,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -89,8 +82,8 @@ class DateRangeFilterBar extends StatelessWidget {
                         children: [
                           AppText(
                             title,
-                            size: 14,
-                            weight: FontWeight.w700,
+                            size: 15,
+                            weight: FontWeight.w600,
                             color: AppColors.slate800,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -98,7 +91,7 @@ class DateRangeFilterBar extends StatelessWidget {
                           const SizedBox(height: 2),
                           AppText(
                             count == 0 ? 'Гүйлгээ алга' : '$count гүйлгээ',
-                            size: 11,
+                            size: 12,
                             weight: FontWeight.w500,
                             color: AppColors.slate500,
                           ),
@@ -107,28 +100,21 @@ class DateRangeFilterBar extends StatelessWidget {
                     ),
                   ),
                   ExcludeSemantics(
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(12, 7, 8, 7),
-                      decoration: BoxDecoration(
-                        color: AppColors.sky50,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          AppText(
-                            'Өөрчлөх',
-                            size: 12,
-                            weight: FontWeight.w700,
-                            color: AppColors.sky700,
-                          ),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            size: 18,
-                            color: AppColors.sky600,
-                          ),
-                        ],
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppText(
+                          'Өөрчлөх',
+                          size: 13,
+                          weight: FontWeight.w600,
+                          color: AppColors.sky600,
+                        ),
+                        LineIcon(
+                          LineGlyph.chevronRight,
+                          size: 18,
+                          color: AppColors.sky600,
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -159,16 +145,16 @@ class _RangeDates extends StatelessWidget {
         children: [
           AppText(
             '$role · ${d.year} он',
-            size: 10,
-            weight: FontWeight.w600,
-            color: AppColors.slate400,
+            size: 12,
+            weight: FontWeight.w500,
+            color: AppColors.slate500,
           ),
           const SizedBox(height: 2),
           AppText(
             '${d.month}-р сарын ${d.day}',
-            size: 13,
-            weight: FontWeight.w700,
-            color: AppColors.slate800,
+            size: 14,
+            weight: FontWeight.w600,
+            color: AppColors.slate900,
             textAlign: align == CrossAxisAlignment.end
                 ? TextAlign.end
                 : TextAlign.start,
@@ -180,18 +166,18 @@ class _RangeDates extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.sky50,
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.slate50,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
           end('Эхлэх', range.start, CrossAxisAlignment.start),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Icon(
-              Icons.arrow_forward_rounded,
+            child: LineIcon(
+              LineGlyph.arrowRight,
               size: 18,
-              color: AppColors.sky500,
+              color: AppColors.slate400,
             ),
           ),
           end('Дуусах', range.end, CrossAxisAlignment.end),

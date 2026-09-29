@@ -61,7 +61,7 @@ class _PinSheetState extends State<PinSheet> {
             const SizedBox(height: 18),
             AppText(
               _confirming ? 'ПИН кодоо давтана уу' : 'Шинэ ПИН код оруулна уу',
-              size: 16,
+              size: 17,
               weight: FontWeight.w700,
             ),
             const SizedBox(height: 6),
@@ -69,8 +69,8 @@ class _PinSheetState extends State<PinSheet> {
               _mismatch
                   ? 'Код таарахгүй байна. Дахин оролдоно уу.'
                   : '4 оронтой нууц код',
-              size: 12,
-              color: _mismatch ? AppColors.rose500 : AppColors.slate400,
+              size: 13,
+              color: _mismatch ? AppColors.rose600 : AppColors.slate500,
             ),
             const SizedBox(height: 18),
             Row(
@@ -100,7 +100,7 @@ class _PinSheetState extends State<PinSheet> {
             ),
             const SizedBox(height: 22),
             NumericKeypad(
-              style: const KeypadStyle(
+              style: KeypadStyle(
                 keyHeight: 52,
                 radius: 16,
                 gap: 10,

@@ -27,7 +27,7 @@ String formatMnt(num amount, {bool sign = false, bool space = false}) {
 TextStyle moneyStyle({
   required double size,
   FontWeight weight = FontWeight.w700,
-  Color color = AppColors.slate800,
+  Color? color,
   double? height,
   double? letterSpacing,
 }) {
@@ -71,7 +71,7 @@ class BalanceText extends StatelessWidget {
     super.key,
     required this.size,
     this.weight = FontWeight.w400,
-    this.color = AppColors.slate800,
+    this.color,
     this.sign = false,
     this.space = false,
     this.decimals = false,
@@ -91,7 +91,7 @@ class BalanceText extends StatelessWidget {
   final num amount;
   final double size;
   final FontWeight weight;
-  final Color color;
+  final Color? color;
 
   /// Forwarded to [formatMnt]: prefix `+` on positive amounts / a space
   /// after `₮`.
@@ -137,7 +137,7 @@ class BalanceText extends StatelessWidget {
   static const decimalsScale = 0.6;
 
   /// The decimals' color, whatever [color] the amount is.
-  static const decimalsColor = AppColors.slate400;
+  static Color get decimalsColor => AppColors.slate400;
 
   @override
   Widget build(BuildContext context) {

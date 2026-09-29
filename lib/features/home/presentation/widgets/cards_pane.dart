@@ -6,8 +6,9 @@ import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import 'dashed_action.dart';
 
+/// Home's Карт tab: the active card, the one waiting on the parent, and a
+/// row to order a new one.
 class CardsPane extends StatelessWidget {
   const CardsPane({super.key, required this.onOpen});
 
@@ -19,34 +20,26 @@ class CardsPane extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ListItemEntrance(
-          id: #juniorCard,
+          id: #mainCard,
           index: 0,
           always: true,
           delay: AppTabView.incomingDelay,
           child: AppCard(
-            radius: 18,
-            color: Night.surface,
-            borderColor: Night.surface,
             shadow: false,
-            padding: const EdgeInsets.all(16),
             onTap: () => onOpen(AppRoutes.card),
             child: Row(
               children: [
-                _IconTile(
-                  icon: LineGlyph.card,
-                  background: Night.surface2,
-                  color: Night.text,
-                ),
+                const _IconTile(icon: LineGlyph.card),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: _TwoLine(title: 'Junior Card', subtitle: '•••• 5521'),
+                const Expanded(
+                  child: _TwoLine(title: 'Үндсэн карт', subtitle: '•••• 5521'),
                 ),
                 const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
                 const SizedBox(width: 4),
-                const LineIcon(
+                LineIcon(
                   LineGlyph.chevronRight,
                   size: 18,
-                  color: Night.text2,
+                  color: AppColors.slate500,
                 ),
               ],
             ),
@@ -54,60 +47,43 @@ class CardsPane extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         ListItemEntrance(
-          id: #neonCard,
+          id: #pendingCard,
           index: 1,
           always: true,
           delay: AppTabView.incomingDelay,
           child: AppCard(
-            radius: 18,
-            color: Night.surface,
-            borderColor: Night.surface,
             shadow: false,
-            padding: const EdgeInsets.all(16),
             onTap: () => onOpen(AppRoutes.cardOrder),
             child: Column(
               children: [
-                Row(
+                const Row(
                   children: [
-                    _IconTile(
-                      icon: LineGlyph.card,
-                      background: Night.surface2,
-                      color: Night.text,
-                    ),
-                    const SizedBox(width: 12),
+                    _IconTile(icon: LineGlyph.card),
+                    SizedBox(width: 12),
                     Expanded(
                       child: _TwoLine(
-                        title: 'Custom Neon Card',
+                        title: 'Шинэ карт',
                         subtitle: '•••• 8820',
                       ),
                     ),
-                    const StatusBadge(
-                      label: 'Хүлээгдэж буй',
-                      tone: BadgeTone.amber,
-                    ),
+                    StatusBadge(label: 'Хүлээгдэж буй', tone: BadgeTone.amber),
                   ],
                 ),
-                const Divider(height: 20, color: Night.line),
+                Divider(height: 24, color: AppColors.line),
                 Row(
                   children: [
-                    const LineIcon(
-                      LineGlyph.info,
-                      size: 15,
-                      color: Night.amber,
+                    LineIcon(
+                      LineGlyph.clock,
+                      size: 16,
+                      color: AppColors.amber600,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: AppText(
                         'Эцэг эхийн зөвшөөрөл хүлээж байна',
-                        size: 11,
-                        color: Night.text2,
+                        size: 12,
+                        color: AppColors.slate500,
                       ),
-                    ),
-                    AppText(
-                      'Дэлгэрэнгүй',
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky500,
                     ),
                   ],
                 ),
@@ -121,10 +97,31 @@ class CardsPane extends StatelessWidget {
           index: 2,
           always: true,
           delay: AppTabView.incomingDelay,
-          child: DashedAction(
-            icon: LineGlyph.cardAdd,
-            label: 'Шинэ загварын хүүхдийн карт захиалах',
-            onTap: () => onOpen(AppRoutes.cardOrder),
+          child: Semantics(
+            button: true,
+            label: 'Карт захиалах',
+            excludeSemantics: true,
+            child: AppCard(
+              shadow: false,
+              onTap: () => onOpen(AppRoutes.cardOrder),
+              child: Row(
+                children: [
+                  const _IconTile(icon: LineGlyph.cardAdd),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: _TwoLine(
+                      title: 'Карт захиалах',
+                      subtitle: 'Өөрийн загвараар',
+                    ),
+                  ),
+                  LineIcon(
+                    LineGlyph.chevronRight,
+                    size: 18,
+                    color: AppColors.slate500,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -133,27 +130,23 @@ class CardsPane extends StatelessWidget {
 }
 
 class _IconTile extends StatelessWidget {
-  const _IconTile({
-    required this.icon,
-    required this.background,
-    required this.color,
-  });
+  const _IconTile({required this.icon});
 
   final LineGlyph icon;
-  final Color background;
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(14),
+    return ExcludeSemantics(
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: AppColors.slate50,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        alignment: Alignment.center,
+        child: LineIcon(icon, color: AppColors.slate800, size: 21),
       ),
-      alignment: Alignment.center,
-      child: LineIcon(icon, color: color, size: 21),
     );
   }
 }
@@ -169,9 +162,14 @@ class _TwoLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(title, size: 14, weight: FontWeight.w600, color: Night.text),
+        AppText(
+          title,
+          size: 14,
+          weight: FontWeight.w600,
+          color: AppColors.slate900,
+        ),
         const SizedBox(height: 2),
-        AppText(subtitle, size: 12, color: Night.text2),
+        AppText(subtitle, size: 12, color: AppColors.slate500),
       ],
     );
   }

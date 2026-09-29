@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../data/savings_projection.dart';
@@ -11,9 +10,8 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/app_slider.dart';
-import '../widgets/result_box.dart';
-import '../widgets/savings_hero_panel.dart';
 import '../widgets/slider_scale.dart';
+import '../widgets/stat_strip.dart';
 import '../widgets/term_button.dart';
 
 /// "Хадгаламжийн тооцоолуур": interest calculator.
@@ -27,7 +25,6 @@ class SavingsCalculatorScreen extends StatefulWidget {
 
 class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
   static const _terms = [3, 6, 12, 24];
-  static const _goalTarget = 250000;
 
   final _initial = TextEditingController(text: '500,000');
   double _monthly = 50000;
@@ -59,13 +56,12 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
       monthly: _monthly.round(),
       months: _term,
     );
-    final goalProgress = (result.interest / _goalTarget).clamp(0.0, 1.0);
 
     return Scaffold(
-      backgroundColor: AppColors.dsSurface,
+      backgroundColor: AppColors.surface,
       appBar: SubPageHeader(
         title: 'Хадгаламжийн тооцоолуур',
-        background: AppColors.dsSurface,
+        background: AppColors.surface,
         trailing: CircleIconButton(
           icon: Icons.refresh_rounded,
           label: 'Шинэчлэх',
@@ -86,57 +82,12 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            SavingsHeroPanel(
-              radius: 24,
-              child: Row(
-                children: [
-                  MascotTile(
-                    asset: Stickers.calculator,
-                    size: 64,
-                    background: AppColors.slate50,
-                    label: 'Тооцоолуур барьсан маскот',
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const StatusBadge(label: 'Ухаалаг тооцоолол'),
-                        const SizedBox(height: 4),
-                        AppText(
-                          'Мөнгөө хүүгээр өсгөж зорилгодоо илүү хурдан хүрээрэй!',
-                          size: 12,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
-                        ),
-                        const SizedBox(height: 2),
-                        AppText(
-                          'Хадгаламжийн хүү өдөр бүр танд ажиллана',
-                          size: 10,
-                          color: AppColors.slate500,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
             AppCard(
-              radius: 24,
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FieldLabel(
-                    'Эхний хадгаламжийн дүн',
-                    trailing: AppText(
-                      'Хуримтлал',
-                      size: 11,
-                      weight: FontWeight.w600,
-                      color: AppColors.sky600,
-                    ),
-                  ),
+                  const FieldLabel('Эхний хадгаламжийн дүн'),
                   AppTextField(
                     controller: _initial,
                     prefixText: '₮',
@@ -153,18 +104,30 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                         );
                       }),
                     ],
-                    suffix: GestureDetector(
-                      onTap: withHaptic(_initial.clear),
-                      child: const Icon(
-                        Icons.close_rounded,
-                        size: 16,
-                        color: AppColors.slate400,
+                    suffix: Semantics(
+                      button: true,
+                      label: 'Дүнг арилгах',
+                      excludeSemantics: true,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: withHaptic(_initial.clear),
+                        child: SizedBox.square(
+                          dimension: 44,
+                          child: Center(
+                            child: LineIcon(
+                              LineGlyph.close,
+                              size: 18,
+                              color: AppColors.slate400,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
-                    spacing: 6,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
                       for (final (label, v) in [
                         ('+₮50k', 50000),
@@ -179,7 +142,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                         ),
                     ],
                   ),
-                  const Divider(height: 28, color: AppColors.slate100),
+                  Divider(height: 32, color: AppColors.line),
                   const FieldLabel('Сар бүр тогтмол нэмэх дүн'),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -188,7 +151,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.slate50,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
                       children: [
@@ -198,11 +161,11 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                             animate: true,
                             size: 16,
                             space: false,
-                            currencyColor: AppColors.emerald600,
+                            currencyColor: AppColors.slate500,
                             decimals: false,
                           ),
                         ),
-                        AppText('/ сар', size: 12, color: AppColors.slate400),
+                        AppText('/ сар', size: 13, color: AppColors.slate500),
                       ],
                     ),
                   ),
@@ -216,14 +179,14 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                   const SliderScale(
                     labels: ['₮10,000', '₮100,000', '₮200,000'],
                   ),
-                  const Divider(height: 28, color: AppColors.slate100),
+                  Divider(height: 32, color: AppColors.line),
                   FieldLabel(
                     'Хадгаламжийн хугацаа',
                     trailing: AppText(
-                      'Жилийн хүү: 13.5%',
-                      size: 11,
-                      weight: FontWeight.w700,
-                      color: AppColors.sky600,
+                      'Жилийн хүү 13.5%',
+                      size: 12,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate500,
                     ),
                   ),
                   Row(
@@ -245,142 +208,57 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             ),
             const SizedBox(height: 16),
             AppCard(
-              radius: 24,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText(
-                    'ТООЦООЛЛЫН ҮР ДҮН ($_term САР)',
-                    size: 11,
-                    weight: FontWeight.w700,
-                    color: AppColors.slate500,
-                    letterSpacing: 0.6,
-                  ),
-                  const SizedBox(height: 10),
-                  AppText(
-                    'Нийт авах дүн:',
-                    size: 12,
-                    color: AppColors.slate400,
-                  ),
-                  const SizedBox(height: 2),
-                  BalanceText(
-                    result.total,
-                    animate: true,
-                    space: false,
-                    size: 26,
-                    weight: FontWeight.w600,
-                  ),
-                  const Divider(height: 24, color: AppColors.slate100),
                   Row(
                     children: [
                       Expanded(
-                        child: ResultBox(
-                          label: 'Таны хийсэн орлого:',
-                          value: result.deposited,
-                          background: AppColors.slate50,
-                          border: AppColors.slate50,
-                          labelColor: AppColors.slate500,
-                          valueColor: AppColors.slate800,
+                        child: AppText(
+                          'Тооцоолсон дүн',
+                          size: 16,
+                          weight: FontWeight.w700,
+                          color: AppColors.slate900,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: ResultBox(
-                          label: 'Цэвэр хүүгийн өсөлт:',
-                          value: result.interest,
-                          sign: true,
-                          background: AppColors.sky50,
-                          border: AppColors.sky50,
-                          labelColor: AppColors.sky700,
-                          valueColor: AppColors.sky500,
-                        ),
+                      AppText(
+                        '$_term сарын дараа',
+                        size: 13,
+                        color: AppColors.slate500,
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppText(
-                    'Энэ өсөлтөөр биелэх зорилго:',
-                    size: 12,
-                    weight: FontWeight.w700,
+                  const SizedBox(height: 12),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: BalanceText(
+                      result.total,
+                      animate: true,
+                      space: false,
+                      size: 36,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate900,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.slate50,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        MascotTile(
-                          asset: Stickers.games,
-                          background: AppColors.card,
-                          radius: 12,
-                          label: 'PlayStation 5 тоглоом',
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: AppText(
-                                      'PlayStation 5 тоглоом',
-                                      size: 12,
-                                      weight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  AppText(
-                                    goalProgress >= 1
-                                        ? '100% Бэлэн!'
-                                        : '${(goalProgress * 100).round()}%',
-                                    size: 10,
-                                    weight: FontWeight.w700,
-                                    color: goalProgress >= 1
-                                        ? AppColors.emerald600
-                                        : AppColors.sky600,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 2),
-                              AppText(
-                                'Шаардлагатай: ${formatMnt(_goalTarget, space: false)}',
-                                size: 11,
-                                color: AppColors.slate500,
-                              ),
-                              const SizedBox(height: 6),
-                              ProgressTrack(
-                                value: goalProgress,
-                                height: 6,
-                                color: goalProgress >= 1
-                                    ? AppColors.emerald500
-                                    : AppColors.sky500,
-                                track: AppColors.slate100,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                  Divider(height: 32, color: AppColors.line),
+                  StatStrip(
+                    items: [
+                      (
+                        'Таны хийх орлого',
+                        formatMnt(result.deposited, space: false),
+                        AppColors.slate900,
+                      ),
+                      ('Хүүгийн орлого', result.interest, AppColors.emerald600),
+                    ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 18),
             PrimaryButton(
-              label: 'Энэ дүнгээр хадгаламж нээх',
+              label: 'Орлого хийх',
               onPressed: () =>
                   context.pushReplacement(AppRoutes.savingsDeposit),
             ),

@@ -204,7 +204,7 @@ class AppFieldError extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline_rounded,
                       size: 15,
                       color: AppColors.rose500,
@@ -238,7 +238,7 @@ class AppFieldTick extends StatelessWidget {
     return AnimatedOpacity(
       opacity: visible ? 1 : 0,
       duration: const Duration(milliseconds: 150),
-      child: const SizedBox(
+      child: SizedBox(
         width: 32,
         height: 32,
         child: Icon(

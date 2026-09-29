@@ -293,7 +293,7 @@ void main() {
     await _fillValid(tester);
     await tester.tap(find.text('Үргэлжлүүлэх'));
     await tester.pump();
-    expect(find.text('Илгээж байна...'), findsOneWidget);
+    expect(find.text('Илгээж байна…'), findsOneWidget);
 
     // Simulated sign-in takes 900ms, then the stack resets to home.
     await tester.pump(const Duration(milliseconds: 900));
@@ -319,7 +319,7 @@ void main() {
 
     // Simulated send: 900ms to "sent", then 700ms before pushing OTP.
     await tester.pump(const Duration(milliseconds: 900));
-    expect(find.text('Код илгээгдлээ!'), findsOneWidget);
+    expect(find.text('Код илгээгдлээ'), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 700));
     // OtpScreen has a blinking cursor that never settles, so pump the route

@@ -27,8 +27,8 @@ class _SubmitButtonState extends State<SubmitButton> {
   Widget build(BuildContext context) {
     final busy = widget.state != SubmitState.idle;
     final textStyle = inter(
-      size: 14,
-      weight: FontWeight.w700,
+      size: 15,
+      weight: FontWeight.w600,
       color: AppColors.onAccent,
     );
 
@@ -38,15 +38,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         // rather than swapping it in place.
         key: ValueKey('idle-${widget.label}'),
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(widget.label, style: textStyle),
-          const SizedBox(width: 8),
-          Icon(
-            Icons.arrow_forward_rounded,
-            size: 20,
-            color: AppColors.onAccent,
-          ),
-        ],
+        children: [Text(widget.label, style: textStyle)],
       ),
       SubmitState.sending => Row(
         key: const ValueKey('sending'),
@@ -61,42 +53,46 @@ class _SubmitButtonState extends State<SubmitButton> {
             ),
           ),
           const SizedBox(width: 8),
-          Text('Илгээж байна...', style: textStyle),
+          Text('Илгээж байна…', style: textStyle),
         ],
       ),
       SubmitState.sent => Row(
         key: const ValueKey('sent'),
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.check_rounded, size: 20, color: AppColors.onAccent),
+          LineIcon(LineGlyph.check, size: 20, color: AppColors.onAccent),
           const SizedBox(width: 8),
-          Text('Код илгээгдлээ!', style: textStyle),
+          Text('Код илгээгдлээ', style: textStyle),
         ],
       ),
     };
 
-    return GestureDetector(
-      onTapDown: busy ? null : (_) => setState(() => _pressed = true),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTapUp: busy ? null : (_) => setState(() => _pressed = false),
-      onTap: withHaptic(busy ? null : widget.onPressed),
-      child: AnimatedScale(
-        scale: _pressed ? 0.98 : 1,
-        duration: const Duration(milliseconds: 120),
-        child: AnimatedOpacity(
-          opacity: busy ? 0.8 : 1,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            height: 52,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              color: AppColors.sky500,
-            ),
-            alignment: Alignment.center,
-            child: ValueSwitcher(
-              value: busy ? widget.state : widget.label,
-              duration: const Duration(milliseconds: 180),
-              child: content,
+    return Semantics(
+      button: true,
+      enabled: !busy,
+      child: GestureDetector(
+        onTapDown: busy ? null : (_) => setState(() => _pressed = true),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTapUp: busy ? null : (_) => setState(() => _pressed = false),
+        onTap: withHaptic(busy ? null : widget.onPressed),
+        child: AnimatedScale(
+          scale: _pressed ? 0.98 : 1,
+          duration: const Duration(milliseconds: 120),
+          child: AnimatedOpacity(
+            opacity: busy ? 0.8 : 1,
+            duration: const Duration(milliseconds: 200),
+            child: Container(
+              height: 52,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                color: AppColors.sky500,
+              ),
+              alignment: Alignment.center,
+              child: ValueSwitcher(
+                value: busy ? widget.state : widget.label,
+                duration: const Duration(milliseconds: 180),
+                child: content,
+              ),
             ),
           ),
         ),

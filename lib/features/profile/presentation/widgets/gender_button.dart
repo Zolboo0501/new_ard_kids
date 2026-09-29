@@ -4,6 +4,7 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// One option of the "Хүйс" choice: a neutral segment, outlined when picked.
 class GenderButton extends StatelessWidget {
   const GenderButton({
     super.key,
@@ -25,37 +26,21 @@ class GenderButton extends StatelessWidget {
         onTap: withHaptic(onTap),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          height: 46,
+          height: 48,
+          alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky50 : AppColors.slate50,
-            borderRadius: BorderRadius.circular(16),
+            color: selected ? AppColors.card : AppColors.slate50,
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
-              width: selected ? 2 : 1,
+              color: selected ? AppColors.slate900 : AppColors.line,
+              width: selected ? 1.5 : 1,
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected ? AppColors.sky500 : Colors.transparent,
-                  border: selected
-                      ? null
-                      : Border.all(color: AppColors.slate300),
-                ),
-              ),
-              const SizedBox(width: 8),
-              AppText(
-                label,
-                size: 13,
-                weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? AppColors.sky700 : AppColors.slate600,
-              ),
-            ],
+          child: AppText(
+            label,
+            size: 14,
+            weight: selected ? FontWeight.w600 : FontWeight.w500,
+            color: selected ? AppColors.slate900 : AppColors.slate600,
           ),
         ),
       ),

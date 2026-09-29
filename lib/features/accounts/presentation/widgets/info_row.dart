@@ -4,6 +4,8 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// A label and its value on one line, with a hairline under it unless
+/// [last].
 class InfoRow extends StatelessWidget {
   const InfoRow({
     super.key,
@@ -19,21 +21,25 @@ class InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
         border: last
             ? null
-            : const Border(bottom: BorderSide(color: AppColors.slate100)),
+            : Border(bottom: BorderSide(color: AppColors.line)),
       ),
       child: Row(
         children: [
-          AppText(label, size: 12, color: AppColors.slate500),
+          AppText(label, size: 13, color: AppColors.slate500),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: moneyStyle(size: 13, color: AppColors.slate900),
+              style: moneyStyle(
+                size: 14,
+                weight: FontWeight.w500,
+                color: AppColors.slate900,
+              ),
             ),
           ),
         ],

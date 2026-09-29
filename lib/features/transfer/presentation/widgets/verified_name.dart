@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/ui.dart';
 
 class VerifiedName extends StatelessWidget {
   const VerifiedName({super.key, required this.name, required this.detail});
@@ -15,14 +16,20 @@ class VerifiedName extends StatelessWidget {
       padding: const EdgeInsets.only(top: 6, left: 4),
       child: Wrap(
         spacing: 6,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          AppText(
-            name,
-            size: 11,
-            weight: FontWeight.w700,
+          LineIcon(
+            LineGlyph.checkCircle,
+            size: 16,
             color: AppColors.emerald600,
           ),
-          AppText(detail, size: 10, color: AppColors.slate400),
+          AppText(
+            name,
+            size: 12,
+            weight: FontWeight.w600,
+            color: AppColors.emerald600,
+          ),
+          AppText(detail, size: 12, color: AppColors.slate500),
         ],
       ),
     );

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/accounts.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/savings_goal.dart';
@@ -20,12 +20,12 @@ class SavingsAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     void go(String r) => context.push(r);
 
     return Scaffold(
       backgroundColor: bg,
-      appBar: const SubPageHeader(title: 'Хадгаламжийн данс', background: bg),
+      appBar: SubPageHeader(title: 'Хадгаламжийн данс', background: bg),
       body: EntranceScope(
         // Split on wide windows: the balance and actions beside the goals.
         child: AdaptiveSplit(
@@ -38,69 +38,61 @@ class SavingsAccountScreen extends StatelessWidget {
           gap: 16,
           leading: [
             AppCard(
-              radius: 24,
               padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              'Нийт хуримтлал',
-                              size: 11,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
-                            const SizedBox(height: 2),
-                            const BalanceText(
-                              1280000,
-                              size: 30,
-                              weight: FontWeight.w600,
-                            ),
-                          ],
-                        ),
-                      ),
-                      MascotImage(
-                        asset: Stickers.piggy,
-                        size: 80,
-                        background: AppColors.card,
-                        semanticLabel: 'Гахайн сантай маскот',
-                      ),
-                    ],
+                  AppText(
+                    'Нийт хуримтлал',
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate500,
                   ),
-                  const SizedBox(height: 14),
-                  const StatStrip(
+                  const SizedBox(height: 4),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: BalanceText(
+                      Balances.savings,
+                      size: 40,
+                      weight: FontWeight.w600,
+                      color: AppColors.slate900,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    maskIban(Accounts.savings),
+                    style: moneyStyle(size: 13, color: AppColors.slate500),
+                  ),
+                  Divider(height: 32, color: AppColors.line),
+                  StatStrip(
                     items: [
                       ('Бодогдсон хүү', 48250, AppColors.emerald600),
-                      ('Жилийн хүү', '13.5%', AppColors.slate800),
-                      ('Хугацаа', '2026.12.31', AppColors.slate800),
+                      ('Жилийн хүү', '13.5%', AppColors.slate900),
+                      ('Дуусах огноо', '2026.12.31', AppColors.slate900),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Row(
               children: [
                 SavingsAccountShortcut(
                   label: 'Орлого хийх',
-                  asset: Stickers.jar,
+                  glyph: LineGlyph.plus,
                   onTap: () => go(AppRoutes.savingsDeposit),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 SavingsAccountShortcut(
                   label: 'Тооцоолуур',
-                  asset: Stickers.calculator,
+                  glyph: LineGlyph.calculator,
                   onTap: () => go(AppRoutes.savingsCalculator),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 SavingsAccountShortcut(
-                  label: 'Дэлгэрэнгүй',
-                  asset: Stickers.report,
+                  label: 'Түүх',
+                  glyph: LineGlyph.history,
                   onTap: () => go(AppRoutes.savingsHistory),
                 ),
               ],
@@ -108,8 +100,7 @@ class SavingsAccountScreen extends StatelessWidget {
           ],
           trailing: [
             AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -118,28 +109,48 @@ class SavingsAccountScreen extends StatelessWidget {
                       Expanded(
                         child: AppText(
                           'Миний зорилтууд',
-                          size: 14,
+                          size: 16,
                           weight: FontWeight.w700,
                           color: AppColors.slate900,
                         ),
                       ),
-                      SoftButton(
-                        label: '+ Шинэ зорилт',
-                        height: 30,
-                        onPressed: () => go(AppRoutes.newGoal),
+                      Semantics(
+                        button: true,
+                        label: 'Шинэ зорилт нэмэх',
+                        excludeSemantics: true,
+                        child: Pressable(
+                          onTap: () => go(AppRoutes.newGoal),
+                          child: SizedBox(
+                            height: 44,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                LineIcon(
+                                  LineGlyph.plus,
+                                  size: 18,
+                                  color: AppColors.sky600,
+                                ),
+                                const SizedBox(width: 4),
+                                AppText(
+                                  'Шинэ зорилт',
+                                  size: 13,
+                                  weight: FontWeight.w600,
+                                  color: AppColors.sky600,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  const Divider(height: 24, color: AppColors.slate100),
                   for (final (i, g) in kSampleGoals.indexed) ...[
+                    if (i > 0) Divider(height: 1, color: AppColors.line),
                     ListItemEntrance(
-                      // The title, not the goal: the list is rebuilt with new
-                      // instances whenever the companion changes.
                       id: g.title,
                       index: i,
                       child: GoalTile(goal: g),
                     ),
-                    const SizedBox(height: 10),
                   ],
                 ],
               ),

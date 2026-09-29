@@ -11,11 +11,11 @@ class CameraBackdrop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Night.surface2, Night.surface, Night.bg],
+          colors: [AppColors.slate50, AppColors.card, AppColors.surface],
         ),
       ),
       child: SizedBox.expand(child: child),

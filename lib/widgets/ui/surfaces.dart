@@ -17,8 +17,8 @@ class AppCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(14),
-    this.radius = 20,
-    this.color = AppColors.card,
+    this.radius = 16,
+    this.color,
     this.borderColor,
     this.dashed = false,
     this.onTap,
@@ -29,7 +29,7 @@ class AppCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double radius;
-  final Color color;
+  final Color? color;
 
   /// No border by default; a dashed card defaults to `AppColors.slate300`.
   final Color? borderColor;
@@ -49,7 +49,7 @@ class AppCard extends StatelessWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? AppColors.card,
         borderRadius: BorderRadius.circular(radius),
         border: dashed || borderColor == null
             ? null
@@ -259,7 +259,7 @@ class CircleIconButton extends StatelessWidget {
     required this.label,
     this.badge = false,
     this.size = 40,
-    this.color = AppColors.slate600,
+    this.color,
   });
 
   final IconData icon;
@@ -267,7 +267,7 @@ class CircleIconButton extends StatelessWidget {
   final String label;
   final bool badge;
   final double size;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -280,14 +280,14 @@ class CircleIconButton extends StatelessWidget {
         child: Container(
           width: size,
           height: size,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.card,
             shape: BoxShape.circle,
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              Icon(icon, size: 20, color: color),
+              Icon(icon, size: 20, color: color ?? AppColors.slate600),
               if (badge)
                 Positioned(
                   top: size * 0.24,

@@ -1,71 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/holding.dart';
+import '../widgets/account_section_title.dart';
+import '../widgets/stocks_holding_row.dart';
 
-/// "Хувьцаа & Хөрөнгө оруулалт": kid's investment portfolio.
-class StocksScreen extends StatefulWidget {
+/// "Миний өв": the investment portfolio. Its total is [Balances.stocks],
+/// the same number Home shows for this account.
+class StocksScreen extends StatelessWidget {
   const StocksScreen({super.key});
 
   @override
-  State<StocksScreen> createState() => _StocksScreenState();
-}
-
-class _StocksScreenState extends State<StocksScreen> {
-  static List<(String, String, String, int, double, IconData?, Color, Color)>
-  get _holdings => [
-    (
-      'Apple',
-      'AAPL',
-      '0.2 хувьцаатай',
-      145000,
-      14.2,
-      Icons.apple_rounded,
-      AppColors.slate50,
-      AppColors.slate900,
-    ),
-    (
-      'Disney',
-      'DIS',
-      '0.3 хувьцаатай',
-      95000,
-      8.5,
-      Icons.castle_outlined,
-      AppColors.sky50,
-      AppColors.sky600,
-    ),
-    (
-      'АПУ ХК',
-      'МХБ: APU',
-      '35 ширхэгтэй',
-      68000,
-      5.1,
-      null,
-      AppColors.amber50,
-      AppColors.amber700,
-    ),
-    (
-      'Roblox',
-      'RBLX',
-      '0.1 хувьцаатай',
-      32000,
-      -1.8,
-      Icons.sports_esports_outlined,
-      AppColors.rose50,
-      AppColors.rose500,
-    ),
-  ];
-
-  bool _showAll = false;
-
-  @override
   Widget build(BuildContext context) {
-    final visible = _showAll ? _holdings : _holdings.take(4);
+    assert(
+      mockHoldings.fold<int>(0, (a, h) => a + h.value) == Balances.stocks,
+      'Holdings must add up to the total Home shows',
+    );
     return Scaffold(
       backgroundColor: kPageBackground,
       appBar: const SubPageHeader(title: 'Миний өв'),
@@ -78,183 +33,125 @@ class _StocksScreenState extends State<StocksScreen> {
             16,
             24 + MediaQuery.paddingOf(context).bottom,
           ),
-          gap: 18,
+          gap: 20,
           leading: [
             AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(22),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              'Нийт багцын үнэлгээ',
-                              size: 12,
-                              weight: FontWeight.w500,
-                              color: AppColors.slate400,
-                            ),
-                            const SizedBox(height: 2),
-                            const BalanceText(
-                              340000,
-                              animateFrom: 0,
-                              space: false,
-                              size: 30,
-                              weight: FontWeight.w600,
-                              color: AppColors.slate900,
-                            ),
-                          ],
-                        ),
-                      ),
-                      MascotImage(
-                        asset: Stickers.growth,
-                        size: 80,
-                        background: AppColors.card,
-                        semanticLabel: 'Өсөлтийн графиктай үнэг',
-                      ),
-                    ],
+                  AppText(
+                    'Нийт багцын үнэлгээ',
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: AppColors.slate500,
                   ),
-
-                  const Divider(height: 28, color: AppColors.slate100),
+                  const SizedBox(height: 4),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: BalanceText(
+                      Balances.stocks,
+                      animateFrom: 0,
+                      size: 36,
+                      weight: FontWeight.w600,
+                      letterSpacing: -0.6,
+                      currencyColor: AppColors.slate700,
+                      color: AppColors.slate900,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  AppText(
+                    '+${(portfolioGain / portfolioInvested * 100).toStringAsFixed(1)}% нийт өгөөж',
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: AppColors.emerald600,
+                  ),
+                  Divider(height: 32, thickness: 1, color: AppColors.line),
                   IntrinsicHeight(
                     child: Row(
                       children: [
-                        _stat('Оруулсан', 301600, AppColors.slate700),
-                        const VerticalDivider(
-                          width: 1,
-                          color: AppColors.slate100,
+                        _stat('Оруулсан', portfolioInvested),
+                        VerticalDivider(
+                          width: 24,
+                          thickness: 1,
+                          color: AppColors.line,
                         ),
-                        _stat('Ашиг', 38400, AppColors.emerald600, sign: true),
-                        const VerticalDivider(
-                          width: 1,
-                          color: AppColors.slate100,
+                        _stat(
+                          'Ашиг',
+                          portfolioGain,
+                          color: AppColors.emerald600,
+                          sign: true,
                         ),
-                        _stat('Ногдол ашиг', 5200, AppColors.amber600),
+                        VerticalDivider(
+                          width: 24,
+                          thickness: 1,
+                          color: AppColors.line,
+                        ),
+                        _stat('Ногдол ашиг', portfolioDividends),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 12),
+                  AppText(
+                    'Ногдол ашиг: компани ашгаасаа хувьцаа эзэмшигчдэд тараадаг мөнгө.',
+                    size: 12,
+                    color: AppColors.slate500,
+                    height: 1.45,
                   ),
                 ],
               ),
             ),
           ],
           trailing: [
-            SectionHeader(
-              title: 'Миний хувьцаанууд (${_holdings.length})',
-              action: _showAll ? 'Хураах' : 'Бүгдийг харах',
-              onAction: () => setState(() => _showAll = !_showAll),
-              padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
-            ),
-            for (final (i, h) in visible.indexed) ...[
-              ListItemEntrance(
-                id: h,
-                index: i,
-                child: AppCard(
-                  radius: 18,
-                  padding: const EdgeInsets.all(14),
-                      onTap: () => showAppSnack(context, '${h.$1} (${h.$2})'),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: h.$7,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: h.$6 != null
-                            ? Icon(h.$6, size: 22, color: h.$8)
-                            : AppText(
-                                'АПУ',
-                                size: 11,
-                                weight: FontWeight.w800,
-                                color: h.$8,
-                              ),
+            const AccountSectionTitle('Хувьцаанууд'),
+            AppCard(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+              child: Column(
+                children: [
+                  for (final (i, h) in mockHoldings.indexed) ...[
+                    if (i > 0)
+                      Divider(
+                        height: 1,
+                        thickness: 1,
+                        indent: 56,
+                        color: AppColors.line,
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Wrap(
-                              spacing: 6,
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                AppText(
-                                  h.$1,
-                                  size: 14,
-                                  weight: FontWeight.w700,
-                                ),
-                                StatusBadge(label: h.$2, tone: BadgeTone.slate),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            AppText(h.$3, size: 12, color: AppColors.slate400),
-                          ],
-                        ),
+                    ListItemEntrance(
+                      id: h.ticker,
+                      index: i,
+                      child: StocksHoldingRow(
+                        holding: h,
+                        onTap: () =>
+                            showAppSnack(context, '${h.name} (${h.ticker})'),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          BalanceText(h.$4, space: false, size: 14),
-                          const SizedBox(height: 2),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                h.$5 >= 0
-                                    ? Icons.trending_up_rounded
-                                    : Icons.trending_down_rounded,
-                                size: 14,
-                                color: h.$5 >= 0
-                                    ? AppColors.emerald600
-                                    : AppColors.rose500,
-                              ),
-                              const SizedBox(width: 2),
-                              AppText(
-                                '${h.$5 >= 0 ? '+' : ''}${h.$5}%',
-                                size: 12,
-                                weight: FontWeight.w700,
-                                color: h.$5 >= 0
-                                    ? AppColors.emerald600
-                                    : AppColors.rose500,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  ],
+                ],
               ),
-              const SizedBox(height: 10),
-            ],
-            const SizedBox(height: 6),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _stat(String label, num value, Color color, {bool sign = false}) {
+  Widget _stat(String label, num value, {Color? color, bool sign = false}) {
     return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppText(label, size: 11, color: AppColors.slate400),
-          const SizedBox(height: 2),
+          AppText(label, size: 12, color: AppColors.slate500),
+          const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
             child: BalanceText(
               value,
               sign: sign,
-              space: false,
-              size: 12,
-              color: color,
+              size: 15,
+              weight: FontWeight.w600,
+              color: color ?? AppColors.slate900,
             ),
           ),
         ],

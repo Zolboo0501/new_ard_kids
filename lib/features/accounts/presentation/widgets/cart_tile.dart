@@ -4,7 +4,10 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/cart_item.dart';
+import 'account_glyph_tile.dart';
 
+/// One item in the cart: category tile, store over title and price, a
+/// remove button and the quantity stepper.
 class CartTile extends StatelessWidget {
   const CartTile({
     super.key,
@@ -20,39 +23,30 @@ class CartTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      radius: 14,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
       child: Row(
         children: [
-          MascotTile(
-            asset: item.asset,
-            size: 56,
-            background: item.tint,
-            radius: 12,
-            label: item.title,
-          ),
-          const SizedBox(width: 10),
+          AccountGlyphTile(item.glyph),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                StatusBadge(label: item.store, tone: BadgeTone.slate),
-                const SizedBox(height: 3),
                 AppText(
                   item.title,
-                  size: 12,
-                  weight: FontWeight.w700,
+                  size: 14,
+                  weight: FontWeight.w600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
+                AppText(item.store, size: 12, color: AppColors.slate500),
+                const SizedBox(height: 4),
                 BalanceText(
                   item.price * item.quantity,
                   animate: true,
-                  space: false,
-                  size: 12,
-                  weight: FontWeight.w800,
-                  color: AppColors.slate900,
+                  size: 14,
+                  weight: FontWeight.w600,
                 ),
               ],
             ),
@@ -60,53 +54,35 @@ class CartTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Semantics(
-                button: true,
-                label: 'Хасах',
-                child: GestureDetector(
-                  onTap: withHaptic(onRemove),
-                  child: const Padding(
-                    padding: EdgeInsets.all(2),
-                    child: Icon(
-                      Icons.close_rounded,
-                      size: 16,
-                      color: AppColors.slate400,
+              _IconButton(
+                glyph: LineGlyph.close,
+                label: 'Сагснаас хасах',
+                onTap: onRemove,
+              ),
+              Row(
+                children: [
+                  _IconButton(
+                    glyph: LineGlyph.minus,
+                    label: 'Тоо хасах',
+                    onTap: item.quantity > 1
+                        ? () => onChanged(item.quantity - 1)
+                        : null,
+                  ),
+                  SizedBox(
+                    width: 20,
+                    child: AppText(
+                      '${item.quantity}',
+                      size: 14,
+                      weight: FontWeight.w600,
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: AppColors.slate50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    _QtyButton(
-                      icon: Icons.remove_rounded,
-                      label: 'Хасах',
-                      onTap: item.quantity > 1
-                          ? () => onChanged(item.quantity - 1)
-                          : null,
-                    ),
-                    SizedBox(
-                      width: 22,
-                      child: AppText(
-                        '${item.quantity}',
-                        size: 12,
-                        weight: FontWeight.w700,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    _QtyButton(
-                      icon: Icons.add_rounded,
-                      label: 'Нэмэх',
-                      onTap: () => onChanged(item.quantity + 1),
-                    ),
-                  ],
-                ),
+                  _IconButton(
+                    glyph: LineGlyph.plus,
+                    label: 'Тоо нэмэх',
+                    onTap: () => onChanged(item.quantity + 1),
+                  ),
+                ],
               ),
             ],
           ),
@@ -116,10 +92,11 @@ class CartTile extends StatelessWidget {
   }
 }
 
-class _QtyButton extends StatelessWidget {
-  const _QtyButton({required this.icon, required this.label, this.onTap});
+/// A 44pt tap target around a small line glyph.
+class _IconButton extends StatelessWidget {
+  const _IconButton({required this.glyph, required this.label, this.onTap});
 
-  final IconData icon;
+  final LineGlyph glyph;
   final String label;
   final VoidCallback? onTap;
 
@@ -127,20 +104,20 @@ class _QtyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
+      enabled: onTap != null,
       label: label,
+      excludeSemantics: true,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: withHaptic(onTap),
-        child: Container(
-          width: 24,
-          height: 24,
-          decoration: BoxDecoration(
-            color: AppColors.slate200,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Icon(
-            icon,
-            size: 14,
-            color: onTap == null ? AppColors.slate300 : AppColors.slate600,
+        child: SizedBox.square(
+          dimension: 44,
+          child: Center(
+            child: LineIcon(
+              glyph,
+              size: 18,
+              color: onTap == null ? AppColors.slate300 : AppColors.slate600,
+            ),
           ),
         ),
       ),

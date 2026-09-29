@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/date_range_filter.dart';
 import '../../../../widgets/date_range_sheet.dart';
-import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import 'account_hero_panel.dart';
-import 'transaction_tile.dart';
-import 'copy_account_number.dart';
 import '../../data/tx_item.dart';
+import '../../data/units.dart';
+import 'account_hero_panel.dart';
+import 'account_section_title.dart';
+import 'account_totals.dart';
+import 'account_unit_balance.dart';
+import 'copy_account_number.dart';
+import 'rewards_shortcut_row.dart';
+import 'transaction_list.dart';
 
+/// The "Урамшуулал" tab of [RewardsAccountScreen]: the points balance, the
+/// ways to earn more, and the points history.
 class RewardsPane extends StatefulWidget {
   const RewardsPane({
     super.key,
@@ -35,67 +40,53 @@ class RewardsPane extends StatefulWidget {
 class _RewardsPaneState extends State<RewardsPane> {
   static List<TxItem> get _items => [
     TxItem(
-      title: 'Гэрийн даалгавраа онц хийсэн',
-      subtitle: 'Ааваас олгосон',
+      title: 'Улирлын дүн',
+      subtitle: 'Ааваас',
       date: daysAgo(0),
       amount: 10000,
-      asset: Mascots.owlBook,
-      tint: AppColors.sky50,
+      glyph: LineGlyph.graduation,
     ),
     TxItem(
-      title: 'Хадгаламжийн зорилгодоо хүрсэн',
-      subtitle: 'Ээжийн нэмэгдэл',
+      title: 'Хадгаламжийн зорилгод хүрсэн',
+      subtitle: 'Ээжээс',
       date: daysAgo(1),
       amount: 15000,
-      asset: Mascots.bearConfetti,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.target,
     ),
     TxItem(
-      title: 'Найзаа урьж бүртгүүлсэн',
-      subtitle: 'Урамшуулал',
+      title: 'Найз урьсан',
+      subtitle: 'Урилгын урамшуулал',
       date: daysAgo(11),
-      amount: 5000,
-      asset: Stickers.gift,
-      tint: AppColors.orange50,
-      badge: 'Амжилттай',
-      badgeTone: BadgeTone.amber,
+      amount: Limits.inviteBonus,
+      glyph: LineGlyph.personAdd,
     ),
     TxItem(
-      title: 'Ном унших сарын челленж',
-      subtitle: 'Сургуулийн даалгавар',
+      title: 'Картаар анхны төлбөр',
+      subtitle: 'Урамшууллын санал',
       date: daysAgo(13),
       amount: 10000,
-      asset: Mascots.owlMedal,
-      tint: AppColors.violet50,
-      badge: 'Биелүүлсэн',
+      glyph: LineGlyph.card,
     ),
     TxItem(
-      title: 'Интерном эрхийн бичиг авсан',
-      subtitle: 'Бэлэг худалдан авалт',
+      title: 'Интерном эрхийн бичиг',
+      subtitle: 'Оноо зарцуулсан',
       date: daysAgo(15),
       amount: -20000,
-      asset: Mascots.bearBooks,
-      tint: AppColors.rose50,
-      badge: 'Зарцуулсан',
-      badgeTone: BadgeTone.slate,
+      glyph: LineGlyph.gift,
     ),
     TxItem(
-      title: 'Гэрийн цэвэрлэгээнд тусалсан',
-      subtitle: 'Ээжээс олгосон',
+      title: 'Сар дараалан хадгалсан',
+      subtitle: 'Урамшууллын санал',
       date: daysAgo(45),
       amount: 8000,
-      asset: Mascots.bearConfetti,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.piggy,
     ),
     TxItem(
-      title: 'Тоглоомын дэлгүүрээс худалдан авалт',
-      subtitle: 'Бэлэг худалдан авалт',
+      title: 'Тоглоомын дэлгүүр',
+      subtitle: 'Оноо зарцуулсан',
       date: daysAgo(80),
       amount: -10000,
-      asset: Mascots.puppyGamepad,
-      tint: AppColors.rose50,
-      badge: 'Зарцуулсан',
-      badgeTone: BadgeTone.slate,
+      glyph: LineGlyph.gamepad,
     ),
   ];
 
@@ -117,128 +108,78 @@ class _RewardsPaneState extends State<RewardsPane> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Same structure as the coin card (number, balance beside the
-        // mascot, then the totals) so switching tabs changes the content,
-        // not the layout; the warm amber keeps the two accounts apart.
+        // Same structure as the coin card (number, balance, then the
+        // totals) so switching tabs changes the content, not the layout;
+        // the warm amber keeps the two accounts apart.
         AccountHeroPanel(
           accent: AppColors.amber500,
-          padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CopyAccountNumber(
                 number: Accounts.rewards,
-                prefix: 'Данс: ',
                 hidden: widget.hidden,
                 onToggleHidden: widget.onToggleHidden,
-                style: moneyStyle(
-                  size: 12,
-                  weight: FontWeight.w500,
-                  color: AppColors.slate500,
+              ),
+              const SizedBox(height: 8),
+              AppText(
+                'Нийт үлдэгдэл',
+                size: 13,
+                weight: FontWeight.w500,
+                color: AppColors.slate500,
+              ),
+              const SizedBox(height: 4),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: AccountUnitBalance(
+                  amount: Balances.rewards,
+                  unit: pointUnit,
+                  hidden: widget.hidden,
+                  size: 36,
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          'Нийт үлдэгдэл',
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate500,
-                        ),
-                        const SizedBox(height: 2),
-                        HideableBalance(
-                          hidden: widget.hidden,
-                          balance: const BalanceText(
-                            35000,
-                            animateFrom: 0,
-                            size: 30,
-                            currencyWeight: FontWeight.w600,
-                            currencyColor: AppColors.slate700,
-                            weight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  MascotImage(
-                    asset: Stickers.gift,
-                    size: 100,
-                    background: AppColors.card,
-                    semanticLabel: 'Урамшуулал маскот',
-                  ),
-                ],
+              const SizedBox(height: 6),
+              AppText(
+                widget.hidden
+                    ? '1 оноо = ₮1'
+                    : '≈ ${formatMnt(Balances.rewards)} · 1 оноо = ₮1',
+                size: 13,
+                color: AppColors.slate500,
               ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.slate50,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: IntrinsicHeight(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _Total(
-                          label: 'Нийт орлого',
-                          value: earned,
-                          color: AppColors.emerald700,
-                          hidden: widget.hidden,
-                        ),
-                      ),
-                      const VerticalDivider(
-                        width: 24,
-                        thickness: 1,
-                        color: AppColors.slate200,
-                      ),
-                      Expanded(
-                        child: _Total(
-                          label: 'Нийт зарцуулалт',
-                          value: -spent,
-                          color: AppColors.rose600,
-                          hidden: widget.hidden,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              Divider(height: 32, thickness: 1, color: AppColors.line),
+              AccountTotals(
+                earned: earned,
+                spent: spent,
+                unit: pointUnit,
+                hidden: widget.hidden,
               ),
             ],
           ),
         ),
         const SizedBox(height: 14),
-        // Equal-height tiles, whatever each title wraps to.
-        IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        AppCard(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+          child: Column(
             children: [
-              Expanded(
-                child: _Shortcut(
-                  asset: Stickers.addFriend,
-                  tint: AppColors.orange50,
-                  title: 'Найз урих',
-                  subtitle: '5,000 оноо',
-                  subtitleColor: AppColors.emerald600,
-                  onTap: () => widget.onOpen(AppRoutes.inviteFriends),
-                ),
+              RewardsShortcutRow(
+                glyph: LineGlyph.personAdd,
+                title: 'Найз урих',
+                subtitle:
+                    'Урилга бүрт ${formatUnits(Limits.inviteBonus, pointUnit)}',
+                onTap: () => widget.onOpen(AppRoutes.inviteFriends),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _Shortcut(
-                  asset: Stickers.goal,
-                  tint: AppColors.amber50,
-                  title: 'Урамшуулал авах',
-                  subtitle: 'Даалгаврууд',
-                  subtitleColor: AppColors.sky600,
-                  onTap: () => widget.onOpen(AppRoutes.rewardOpportunities),
-                ),
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: 56,
+                color: AppColors.line,
+              ),
+              RewardsShortcutRow(
+                glyph: LineGlyph.gift,
+                title: 'Урамшууллын саналууд',
+                subtitle: 'Оноо цуглуулах боломжууд',
+                onTap: () => widget.onOpen(AppRoutes.rewardOpportunities),
               ),
             ],
           ),
@@ -249,141 +190,19 @@ class _RewardsPaneState extends State<RewardsPane> {
           count: visible.length,
           onChanged: (r) => setState(() => _range = r),
         ),
-        const SizedBox(height: 16),
-        SectionHeader(
-          title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: Stickers.report,
-          padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
-        ),
-        if (visible.isEmpty) const DateRangeEmpty(),
-        for (final (i, item) in visible.indexed) ...[
-          ListItemEntrance(
-            id: item,
-            index: i,
+        const SizedBox(height: 20),
+        const AccountSectionTitle('Гүйлгээ'),
+        if (visible.isEmpty)
+          const DateRangeEmpty()
+        else
+          TransactionList(
+            items: visible,
+            unit: pointUnit,
             group: _range,
             always: true,
             delay: AppTabView.incomingDelay,
-            child: TransactionTile(item: item),
           ),
-          const SizedBox(height: 10),
-        ],
       ],
-    );
-  }
-}
-
-/// One of the card's two totals: a small label over a signed amount.
-class _Total extends StatelessWidget {
-  const _Total({
-    required this.label,
-    required this.value,
-    required this.color,
-    required this.hidden,
-  });
-
-  final String label;
-  final int value;
-  final Color color;
-  final bool hidden;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppText(
-          label,
-          size: 11,
-          weight: FontWeight.w500,
-          color: AppColors.slate500,
-        ),
-        const SizedBox(height: 2),
-        HideableBalance(
-          hidden: hidden,
-          balance: BalanceText(
-            value,
-            size: 15,
-            sign: value > 0,
-            weight: FontWeight.w700,
-            color: color,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _Shortcut extends StatelessWidget {
-  const _Shortcut({
-    required this.asset,
-    required this.tint,
-    required this.title,
-    required this.subtitle,
-    required this.subtitleColor,
-    required this.onTap,
-  });
-
-  final String asset;
-  final Color tint;
-  final String title;
-  final String subtitle;
-  final Color subtitleColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      radius: 20,
-      padding: const EdgeInsets.all(14),
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: tint,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: MascotImage(
-                  asset: asset,
-                  size: 42,
-                  background: tint,
-                  semanticLabel: title,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: AppColors.slate50,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 16,
-                  color: AppColors.slate500,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          AppText(title, size: 13, weight: FontWeight.w700),
-          const SizedBox(height: 2),
-          AppText(
-            subtitle,
-            size: 11,
-            weight: FontWeight.w700,
-            color: subtitleColor,
-          ),
-        ],
-      ),
     );
   }
 }

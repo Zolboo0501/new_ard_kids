@@ -57,11 +57,11 @@ class AppTabsStyle {
   final Color dotColor;
   final double dotSize;
 
-  /// Accent pill on a dark track. The sign-in screen's mode switcher.
+  /// Accent pill in a card track. The sign-in screen's mode switcher.
   static AppTabsStyle get pill => AppTabsStyle(
     trackColor: AppColors.card,
     trackRadius: 999,
-    trackBorder: Night.line,
+    trackBorder: AppColors.line,
     pillColor: AppColors.sky500,
     pillRadius: 999,
     labelSize: 12,
@@ -69,39 +69,29 @@ class AppTabsStyle {
     unselectedColor: AppColors.slate500,
   );
 
-  /// The same as [night], with the dot in the theme accent.
-  static AppTabsStyle get card => AppTabsStyle(
-    trackColor: Night.surface,
-    trackRadius: 16,
-    trackBorder: Night.line,
-    pillColor: Night.surface2,
-    pillRadius: 12,
-    labelSize: 13,
-    selectedColor: Night.text,
-    unselectedColor: Night.text2,
-    unselectedWeight: FontWeight.w600,
-    dotColor: AppColors.sky500,
-    dotSize: 6,
-  );
+  /// Home's tabs; the same as [night].
+  static AppTabsStyle get card => night;
 
-  /// A raised pill on a dark track, white label. Home's night look.
+  /// A raised pill in a quiet track. Home's look: on the dark canvas a
+  /// lighter pill on the card, on the light canvas a white pill in a grey
+  /// track.
   static AppTabsStyle get night => AppTabsStyle(
-    trackColor: Night.surface,
+    trackColor: AppColors.isDark ? AppColors.card : AppColors.slate100,
     trackRadius: 16,
-    pillColor: Night.surface2,
+    pillColor: AppColors.isDark ? AppColors.slate50 : AppColors.card,
     pillRadius: 12,
-    trackBorder: Night.line,
+    trackBorder: AppColors.line,
     labelSize: 13,
-    selectedColor: Night.text,
-    unselectedColor: Night.text2,
+    selectedColor: AppColors.slate900,
+    unselectedColor: AppColors.slate500,
     unselectedWeight: FontWeight.w600,
     dotColor: AppColors.sky500,
     dotSize: 6,
   );
 
-  /// Solid accent pill on a dark track. The QR screen's scan/show tabs.
+  /// Solid accent pill in a card track. The QR screen's scan/show tabs.
   static AppTabsStyle get solid => AppTabsStyle(
-    trackColor: Night.surface,
+    trackColor: AppColors.card,
     trackRadius: 16,
     pillColor: AppColors.sky500,
     pillRadius: 999,

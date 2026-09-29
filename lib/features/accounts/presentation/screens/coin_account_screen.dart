@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/common.dart';
 import '../../../../widgets/date_range_filter.dart';
 import '../../../../widgets/date_range_sheet.dart';
-import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/account_hero_panel.dart';
-import '../widgets/transaction_tile.dart';
-import '../widgets/copy_account_number.dart';
 import '../../data/tx_item.dart';
-import '../widgets/mini_stat.dart';
+import '../../data/units.dart';
+import '../widgets/account_hero_panel.dart';
+import '../widgets/account_section_title.dart';
+import '../widgets/account_totals.dart';
+import '../widgets/account_unit_balance.dart';
+import '../widgets/copy_account_number.dart';
+import '../widgets/transaction_list.dart';
 
-/// "Койны данс - Дэлгэрэнгүй": coin balance and transactions. It is the
+/// "Койны данс": the Ард койн balance and its transactions. It is the
 /// "Койн" tab of [RewardsAccountScreen], so it lays out as a [Column] inside
 /// that screen's list rather than owning a scaffold.
 class CoinAccountPane extends StatefulWidget {
@@ -37,65 +38,53 @@ class CoinAccountPane extends StatefulWidget {
 class _CoinAccountPaneState extends State<CoinAccountPane> {
   static List<TxItem> get _items => [
     TxItem(
-      title: 'Өдөр тутмын чекин',
-      subtitle: 'Хичээл & Апп идэвх',
+      title: 'Өдрийн идэвх',
+      subtitle: 'Апп ашигласан',
       date: daysAgo(0),
       amount: 5000,
-      asset: Mascots.penguinChecklist,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.checkCircle,
     ),
     TxItem(
-      title: 'Roblox карт авах',
-      subtitle: 'Тоглоом & Зугаа',
+      title: 'Roblox карт',
+      subtitle: 'Тоглоом/Апп',
       date: daysAgo(13),
       amount: -15000,
-      asset: Mascots.puppyGamepad,
-      tint: AppColors.violet50,
-      badge: 'Зарцуулсан',
-      badgeTone: BadgeTone.rose,
+      glyph: LineGlyph.gamepad,
     ),
     TxItem(
-      title: 'Математикийн шалгалт амжилттай',
-      subtitle: 'Ааваас урамшуулал',
+      title: 'Математикийн шалгалт',
+      subtitle: 'Ааваас',
       date: daysAgo(15),
       amount: 20000,
-      asset: Mascots.owlMedal,
-      tint: AppColors.sky50,
+      glyph: LineGlyph.graduation,
     ),
     TxItem(
-      title: 'Найзаа урьж урамшуулал авав',
-      subtitle: 'Найзын бэлэг',
+      title: 'Найз урьсан',
+      subtitle: 'Урилгын урамшуулал',
       date: daysAgo(18),
       amount: 10000,
-      asset: Stickers.gift,
-      tint: AppColors.orange50,
-      badge: 'Амжилттай',
+      glyph: LineGlyph.personAdd,
     ),
     TxItem(
-      title: 'Хадгаламжийн челленж',
-      subtitle: 'Тэргүүн хэмнэгч',
+      title: 'Хадгаламжийн сорил',
+      subtitle: 'Сар бүр хадгалсан',
       date: daysAgo(21),
       amount: 30000,
-      asset: Mascots.hedgehogPiggy,
-      tint: AppColors.amber50,
+      glyph: LineGlyph.piggy,
     ),
     TxItem(
-      title: 'Долоо хоногийн уншлагын челленж',
-      subtitle: 'Сургуулийн даалгавар',
+      title: 'Уншлагын сорил',
+      subtitle: 'Сургууль',
       date: daysAgo(40),
       amount: 8000,
-      asset: Mascots.owlBook,
-      tint: AppColors.sky50,
+      glyph: LineGlyph.book,
     ),
     TxItem(
-      title: 'Кино театрын тасалбар',
-      subtitle: 'Тоглоом & Зугаа',
+      title: 'Кино тасалбар',
+      subtitle: 'Бусад',
       date: daysAgo(70),
       amount: -12000,
-      asset: Mascots.puppyGamepad,
-      tint: AppColors.violet50,
-      badge: 'Зарцуулсан',
-      badgeTone: BadgeTone.rose,
+      glyph: LineGlyph.receipt,
     ),
   ];
 
@@ -123,7 +112,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AccountHeroPanel(
-          accent: AppColors.sky500,
+          accent: AppColors.emerald500,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -132,88 +121,59 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                 hidden: widget.hidden,
                 onToggleHidden: widget.onToggleHidden,
               ),
+              const SizedBox(height: 8),
+              AppText(
+                'Нийт койны үлдэгдэл',
+                size: 13,
+                weight: FontWeight.w500,
+                color: AppColors.slate500,
+              ),
+              const SizedBox(height: 4),
               Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          'Нийт койны үлдэгдэл',
-                          size: 12,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate400,
-                        ),
-                        const SizedBox(height: 2),
-                        HideableBalance(
-                          hidden: widget.hidden,
-                          balance: const BalanceText(
-                            50000,
-                            animateFrom: 0,
-                            size: 30,
-                            currencyWeight: FontWeight.w600,
-                            currencyColor: AppColors.slate700,
-                            weight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: AppColors.emerald400,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            AppText(
-                              'Хөрвүүлэх ханш: 1 Койн = 1₮',
-                              size: 11,
-                              color: AppColors.slate500,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Image.asset(
+                    Mascots.ardCoin3d,
+                    width: 36,
+                    height: 36,
+                    excludeFromSemantics: true,
                   ),
-                  MascotImage(
-                    asset: Stickers.coin,
-                    size: 104,
-                    background: AppColors.card,
-                    semanticLabel: 'Зоос барьсан үнэг',
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: AccountUnitBalance(
+                        amount: Balances.coins,
+                        unit: coinUnit,
+                        hidden: widget.hidden,
+                        size: 36,
+                      ),
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    child: MiniStat(
-                      asset: Stickers.receive,
-                      label: 'Нийт орлого',
-                      value: income,
-                      color: AppColors.emerald700,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: MiniStat(
-                      asset: Stickers.transfer,
-                      label: 'Нийт зарцуулалт',
-                      value: -spent,
-                      color: AppColors.rose600,
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 6),
+              AppText(
+                widget.hidden
+                    ? '1 койн = ₮1'
+                    : '≈ ${formatMnt(Balances.coins)} · 1 койн = ₮1',
+                size: 13,
+                color: AppColors.slate500,
+              ),
+              Divider(height: 32, thickness: 1, color: AppColors.line),
+              AccountTotals(
+                earned: income,
+                spent: spent,
+                unit: coinUnit,
+                hidden: widget.hidden,
               ),
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Wrap(
           spacing: 6,
+          runSpacing: 6,
           children: [
             for (final (i, l) in [
               'Бүгд (${inRange.length})',
@@ -233,26 +193,20 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
           count: visible.length,
           onChanged: (r) => setState(() => _range = r),
         ),
-        const SizedBox(height: 16),
-        SectionHeader(
-          title: 'ГҮЙЛГЭЭНИЙ ЖАГСААЛТ',
-          mascot: Stickers.report,
-          padding: EdgeInsets.fromLTRB(4, 0, 4, 10),
-        ),
-        if (visible.isEmpty) const DateRangeEmpty(),
-        for (final (i, item) in visible.indexed) ...[
-          ListItemEntrance(
-            id: item,
-            index: i,
+        const SizedBox(height: 20),
+        const AccountSectionTitle('Гүйлгээ'),
+        if (visible.isEmpty)
+          const DateRangeEmpty()
+        else
+          TransactionList(
+            items: visible,
+            unit: coinUnit,
             group: (_filter, _range),
             // The pane fades in with its tab, so rows cascade every time it
             // appears, after the tab switch has started.
             always: true,
             delay: AppTabView.incomingDelay,
-            child: TransactionTile(item: item),
           ),
-          const SizedBox(height: 10),
-        ],
       ],
     );
   }

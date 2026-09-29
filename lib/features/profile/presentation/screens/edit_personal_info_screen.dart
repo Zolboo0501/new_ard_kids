@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/student_header_card.dart';
+import '../../data/profile_details.dart';
 import '../widgets/gender_button.dart';
 
-/// "Хувийн мэдээлэл засах": edit profile fields (sent for parent approval).
+/// "Мэдээлэл засах": edit profile fields. Changes are sent to the parent
+/// for approval before they are saved.
 class EditPersonalInfoScreen extends StatefulWidget {
   const EditPersonalInfoScreen({super.key});
 
@@ -19,10 +21,16 @@ class EditPersonalInfoScreen extends StatefulWidget {
 }
 
 class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
-  final _name = TextEditingController(text: 'Бат-Ирээдүй Төмөрбаатар');
-  final _phone = TextEditingController(text: '9911 2345');
-  DateTime _birth = DateTime(2014, 5, 18);
-  bool _male = true;
+  final _name = TextEditingController(text: Kid.fullName);
+  final _phone = TextEditingController(text: Kid.phone);
+  final _register = TextEditingController(text: ProfileDetails.register);
+  DateTime _birth = _parse(Kid.birthday);
+  bool _male = ProfileDetails.gender == 'Эрэгтэй';
+
+  static DateTime _parse(String date) {
+    final p = date.split('.').map(int.parse).toList();
+    return DateTime(p[0], p[1], p[2]);
+  }
 
   @override
   void initState() {
@@ -34,11 +42,12 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
   void dispose() {
     _name.dispose();
     _phone.dispose();
+    _register.dispose();
     super.dispose();
   }
 
   String get _birthText =>
-      '${_birth.year} оны ${_birth.month.toString().padLeft(2, '0')} сарын '
+      '${_birth.year}.${_birth.month.toString().padLeft(2, '0')}.'
       '${_birth.day.toString().padLeft(2, '0')}';
 
   Future<void> _pickDate() async {
@@ -59,22 +68,10 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
-      appBar: SubPageHeader(
-        title: 'Мэдээлэл засах',
-        subtitle: 'Хувийн мэдээллээ шинэчлэх',
-        background: bg,
-        trailing: CircleIconButton(
-          icon: Icons.help_outline_rounded,
-          label: 'Тусламж',
-          onPressed: () => showAppSnack(
-            context,
-            'Өөрчлөлт бүр эцэг эхийн зөвшөөрлөөр хадгалагдана',
-          ),
-        ),
-      ),
+      appBar: SubPageHeader(title: 'Мэдээлэл засах', background: bg),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
@@ -84,126 +81,48 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            StudentHeaderCard(
-              subtitle: 'Зураг шинэчлэх боломжтой',
-              avatarBadge: Semantics(
-                button: true,
-                label: 'Зураг солих',
-                child: GestureDetector(
-                  onTap: withHaptic(
-                    () => showAppSnack(context, 'Зургийн сан нээгдэнэ'),
-                  ),
-                  child: Container(
-                    width: 28,
-                    height: 28,
-                    decoration: BoxDecoration(
-                      color: AppColors.sky500,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.card, width: 2),
-                    ),
-                    child: Icon(
-                      Icons.photo_camera_outlined,
-                      size: 14,
-                      color: AppColors.onAccent,
-                    ),
-                  ),
-                ),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.edit_outlined, size: 12, color: AppColors.sky600),
-                  const SizedBox(width: 2),
-                  AppText(
-                    'Засварлах',
-                    size: 11,
-                    weight: FontWeight.w700,
-                    color: AppColors.sky600,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
             AppCard(
-              radius: 24,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 32,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: AppColors.sky50,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.person_outline_rounded,
-                          size: 18,
-                          color: AppColors.sky500,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AppText(
-                          'Үндсэн мэдээлэл',
-                          size: 14,
-                          weight: FontWeight.w700,
-                        ),
-                      ),
-                      AppText(
-                        'Засвар',
-                        size: 11,
-                        weight: FontWeight.w600,
-                        color: AppColors.sky600,
-                      ),
-                    ],
-                  ),
-                  const Divider(height: 24, color: AppColors.slate100),
                   const FieldLabel('Бүтэн нэр'),
-                  AppTextField(
-                    controller: _name,
-                    prefixIcon: Icons.badge_outlined,
-                  ),
-                  const SizedBox(height: 14),
+                  AppTextField(controller: _name),
+                  const SizedBox(height: 16),
                   const FieldLabel('Төрсөн огноо'),
-                  GestureDetector(
-                    onTap: withHaptic(_pickDate),
-                    child: Container(
-                      height: 52,
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      decoration: BoxDecoration(
-                        color: AppColors.slate50,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.slate200),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.cake_outlined,
-                            size: 20,
-                            color: AppColors.slate400,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: AppText(
-                              _birthText,
-                              size: 14,
-                              weight: FontWeight.w700,
+                  Semantics(
+                    button: true,
+                    label: 'Төрсөн огноо сонгох',
+                    child: GestureDetector(
+                      onTap: withHaptic(_pickDate),
+                      child: Container(
+                        height: 52,
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.slate50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.line),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: AppText(
+                                _birthText,
+                                size: 15,
+                                weight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            size: 20,
-                            color: AppColors.sky500,
-                          ),
-                        ],
+                            LineIcon(
+                              LineGlyph.calendar,
+                              size: 20,
+                              color: AppColors.slate500,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   const FieldLabel('Хүйс'),
                   Row(
                     children: [
@@ -224,11 +143,10 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   const FieldLabel('Утасны дугаар'),
                   AppTextField(
                     controller: _phone,
-                    prefixIcon: Icons.phone_iphone_rounded,
                     prefixText: '+976',
                     keyboardType: TextInputType.phone,
                     inputFormatters: [
@@ -236,66 +154,56 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                       LengthLimitingTextInputFormatter(9),
                     ],
                   ),
-                  const SizedBox(height: 14),
-                  FieldLabel(
-                    'Регистрийн дугаар',
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.lock_outline_rounded,
-                          size: 12,
-                          color: AppColors.amber600,
-                        ),
-                        const SizedBox(width: 2),
-                        AppText(
-                          'Түгжигдсэн',
-                          size: 10,
-                          weight: FontWeight.w600,
-                          color: AppColors.amber600,
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 16),
+                  const FieldLabel('Регистрийн дугаар'),
                   AppTextField(
-                    controller: TextEditingController(text: 'УХ14251812'),
-                    prefixIcon: Icons.fingerprint_rounded,
+                    controller: _register,
                     enabled: false,
                     textStyle: inter(
-                      size: 14,
-                      weight: FontWeight.w700,
-                      color: AppColors.slate400,
+                      size: 15,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
-                    suffix: const Icon(
-                      Icons.lock_outline_rounded,
-                      size: 18,
-                      color: AppColors.slate400,
+                    suffix: Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: LineIcon(
+                        LineGlyph.lock,
+                        size: 18,
+                        color: AppColors.slate400,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Padding(
                     padding: const EdgeInsets.only(left: 4),
                     child: AppText(
-                      'Регистрийн дугаарыг зөвхөн захиргааны эрхээр өөрчлөх боломжтой.',
-                      size: 10,
-                      color: AppColors.slate400,
+                      'Регистрийн дугаарыг зөвхөн захиргааны эрхээр өөрчилнө.',
+                      size: 12,
+                      color: AppColors.slate500,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
+            AppText(
+              'Өөрчлөлт эцэг эхийн зөвшөөрлийн дараа хадгалагдана.',
+              size: 13,
+              color: AppColors.slate500,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
             PrimaryButton(
-              label: 'Хадгалах & Хүсэлт илгээх',
+              label: 'Хадгалах',
               height: 56,
               onPressed: _name.text.trim().isEmpty ? null : _save,
             ),
             const SizedBox(height: 10),
             SoftButton(
-              label: 'Цуцлах ба буцах',
+              label: 'Болих',
               height: 48,
-              background: Night.surface2,
-              foreground: Night.text,
+              background: AppColors.slate50,
+              foreground: AppColors.slate900,
               border: Colors.transparent,
               onPressed: () => Navigator.of(context).maybePop(),
             ),

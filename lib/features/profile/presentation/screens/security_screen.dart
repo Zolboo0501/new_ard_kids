@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../app/biometrics.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
-import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/group_label.dart';
 import '../widgets/pin_sheet.dart';
-import '../widgets/security_group.dart';
 import '../widgets/setting_tile.dart';
+import '../widgets/settings_group.dart';
 
-/// "Аюулгүй байдал & ПИН код": PIN, biometrics and device settings.
+/// "Аюулгүй байдал": PIN, biometrics and device settings.
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key});
 
@@ -84,11 +82,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
         ? '${(_biometric ?? BiometricKind.fingerprint).loginLabel} идэвхжлээ'
         : result.message;
     if (message != null) {
-      showAppSnack(
-        context,
-        message,
-        mascot: result == BiometricResult.success ? Stickers.shield : null,
-      );
+      showAppSnack(context, message);
     }
   }
 
@@ -103,36 +97,16 @@ class _SecurityScreenState extends State<SecurityScreen> {
       builder: (_) => const PinSheet(),
     );
     if (changed == true && mounted) {
-      showAppSnack(
-        context,
-        'ПИН код амжилттай шинэчлэгдлээ',
-        mascot: Stickers.shield,
-      );
+      showAppSnack(context, 'ПИН код шинэчлэгдлээ');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    const bg = AppColors.surface;
+    final bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
-      appBar: SubPageHeader(
-        title: 'Аюулгүй байдал',
-        background: bg,
-        trailing: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: AppColors.sky50,
-            shape: BoxShape.circle,
-          ),
-          child: Icon(
-            Icons.verified_user_outlined,
-            size: 20,
-            color: AppColors.sky600,
-          ),
-        ),
-      ),
+      appBar: SubPageHeader(title: 'Аюулгүй байдал', background: bg),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
@@ -142,67 +116,34 @@ class _SecurityScreenState extends State<SecurityScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            const GroupLabel('ПИН КОД & НУУЦЛАЛ', trailing: '4 оронтой'),
-            SecurityGroup(
+            const GroupLabel('ПИН код ба нууц үг'),
+            SettingsGroup(
               children: [
                 SettingTile(
-                  icon: Icons.pin_outlined,
-                  tone: BadgeTone.sky,
+                  glyph: LineGlyph.lock,
                   title: 'ПИН код солих',
-                  subtitle: 'Гүйлгээний 4 оронтой нууц код',
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      AppText(
-                        '••••',
-                        size: 12,
-                        weight: FontWeight.w700,
-                        color: AppColors.slate300,
-                      ),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.slate300,
-                      ),
-                    ],
-                  ),
+                  subtitle: 'Гүйлгээ баталгаажуулах 4 оронтой код',
                   onTap: _changePin,
                 ),
                 SettingTile(
-                  icon: Icons.password_rounded,
-                  tone: BadgeTone.slate,
-                  iconColor: AppColors.indigo500,
-                  iconBackground: AppColors.indigo50,
-                  title: 'Апп руу нэвтрэх нууц үг',
-                  subtitle: 'Сүүлд 14 хоногийн өмнө шинэчилсэн',
-                  trailing: const Icon(
-                    Icons.chevron_right_rounded,
-                    color: AppColors.slate300,
-                  ),
+                  glyph: LineGlyph.shield,
+                  title: 'Нэвтрэх нууц үг',
+                  subtitle: '14 хоногийн өмнө шинэчилсэн',
                   onTap: () => showAppSnack(context, 'Нууц үг солих'),
                 ),
               ],
             ),
-            const SizedBox(height: 18),
-            const GroupLabel('БИОМЕТРИК НЭВТРЭЛТ'),
-            SecurityGroup(children: [_buildBiometricTile()]),
-            const SizedBox(height: 18),
-            const GroupLabel('ЭЦЭГ ЭХИЙН БАТАЛГААЖУУЛАЛТ'),
-            SecurityGroup(
+            const SizedBox(height: 24),
+            const GroupLabel('Биометр'),
+            SettingsGroup(children: [_buildBiometricTile()]),
+            const SizedBox(height: 24),
+            const GroupLabel('Эцэг эхийн баталгаажуулалт'),
+            SettingsGroup(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: InfoNote(
-                    tone: BadgeTone.amber,
-                    icon: Icons.sms_outlined,
-                    text:
-                        'ПИН код шинэчлэхэд таны асран хамгаалагч Ээж (Б. Саруул)-ийн утсанд 6 оронтой баталгаажуулах код очно.',
-                  ),
-                ),
                 SettingTile(
-                  icon: Icons.phonelink_lock_rounded,
-                  tone: BadgeTone.amber,
-                  title: 'Шинэ төхөөрөмжөөс нэвтрэх зөвшөөрөл',
-                  subtitle: 'Эцэг эхийн аппаас зөвшөөрөл шаардана',
+                  glyph: LineGlyph.phone,
+                  title: 'Шинэ төхөөрөмжөөс нэвтрэх',
+                  subtitle: 'Эцэг эхийн аппаас зөвшөөрөл авна',
                   trailing: AppSwitch(
                     value: _parentApproval,
                     onChanged: (v) => setState(() => _parentApproval = v),
@@ -210,24 +151,28 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 18),
-            const GroupLabel('НЭВТЭРСЭН ТӨХӨӨРӨМЖҮҮД', trailing: '1 төхөөрөмж'),
-            SecurityGroup(
+            const SizedBox(height: 12),
+            const InfoNote(
+              tone: BadgeTone.amber,
+              icon: Icons.sms_outlined,
+              text:
+                  'ПИН код шинэчлэхэд асран хамгаалагч Ээж (Б. Саруул)-ийн '
+                  'утсанд 6 оронтой баталгаажуулах код очно.',
+            ),
+            const SizedBox(height: 24),
+            const GroupLabel('Нэвтэрсэн төхөөрөмж', trailing: '1 төхөөрөмж'),
+            const SettingsGroup(
               children: [
                 SettingTile(
-                  icon: Icons.phone_iphone_rounded,
-                  tone: BadgeTone.slate,
-                  title: 'iPhone 14 Pro (Энэ утас)',
-                  subtitle: 'Улаанбаатар · Яг одоо идэвхтэй',
-                  trailing: const StatusBadge(label: 'Идэвхтэй'),
+                  glyph: LineGlyph.phone,
+                  title: 'iPhone 14 Pro · Энэ утас',
+                  subtitle: 'Улаанбаатар · Одоо идэвхтэй',
+                  trailing: StatusBadge(
+                    label: 'Идэвхтэй',
+                    tone: BadgeTone.emerald,
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(height: 20),
-            PrimaryButton(
-              label: 'ПИН кодоо шинэчлэх',
-              leadingIcon: Icons.lock_reset_rounded,
-              onPressed: _changePin,
             ),
           ]),
         ),
@@ -238,8 +183,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
   Widget _buildBiometricTile() {
     final kind = _biometric;
     return SettingTile(
-      icon: kind?.icon ?? Icons.fingerprint_rounded,
-      tone: BadgeTone.sky,
+      glyph: kind == BiometricKind.face
+          ? LineGlyph.faceId
+          : LineGlyph.fingerprint,
       title: kind?.loginLabel ?? 'Биометрээр нэвтрэх',
       subtitle:
           kind?.description ??

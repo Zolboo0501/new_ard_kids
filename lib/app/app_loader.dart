@@ -110,7 +110,7 @@ class _AppLoadingScreenState extends State<AppLoadingScreen> {
               child: AnimatedOpacity(
                 opacity: _showSpinner ? 1 : 0,
                 duration: const Duration(milliseconds: 250),
-                child: const SizedBox.square(
+                child: SizedBox.square(
                   dimension: 28,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,

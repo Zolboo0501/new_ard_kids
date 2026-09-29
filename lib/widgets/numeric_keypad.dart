@@ -13,17 +13,20 @@ class KeypadStyle {
     required this.gap,
     required this.fontSize,
     this.border,
-    this.textColor = AppColors.slate800,
-    this.pressedColor = AppColors.slate200,
-  });
+    Color? textColor,
+    Color? pressedColor,
+  }) : _textColor = textColor,
+       _pressedColor = pressedColor;
 
   final double keyHeight;
   final double radius;
   final double gap;
   final double fontSize;
   final Color? border;
-  final Color textColor;
-  final Color pressedColor;
+  final Color? _textColor;
+  final Color? _pressedColor;
+  Color get textColor => _textColor ?? AppColors.slate800;
+  Color get pressedColor => _pressedColor ?? AppColors.slate200;
 }
 
 /// 3×4 on-screen digit keypad: 1–9, then [bottomLeft], 0, backspace.
@@ -68,7 +71,7 @@ class NumericKeypad extends StatelessWidget {
           style: style,
           onTap: onBackspace,
           semanticLabel: 'Устгах',
-          child: const Icon(
+          child: Icon(
             Icons.backspace_outlined,
             size: 22,
             color: AppColors.slate700,
@@ -103,14 +106,14 @@ class KeypadKey extends StatefulWidget {
     required this.onTap,
     required this.child,
     required this.semanticLabel,
-    this.background = AppColors.card,
+    this.background,
   });
 
   final KeypadStyle style;
   final VoidCallback onTap;
   final Widget child;
   final String semanticLabel;
-  final Color background;
+  final Color? background;
 
   @override
   State<KeypadKey> createState() => _KeypadKeyState();
@@ -147,7 +150,9 @@ class _KeypadKeyState extends State<KeypadKey> {
             height: style.keyHeight,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: _pressed ? style.pressedColor : widget.background,
+              color: _pressed
+                  ? style.pressedColor
+                  : widget.background ?? AppColors.card,
               borderRadius: BorderRadius.circular(style.radius),
               border: style.border == null
                   ? null

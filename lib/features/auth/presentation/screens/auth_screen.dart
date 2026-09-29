@@ -15,11 +15,9 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/sign_up_draft.dart';
-import '../widgets/auth_mascot.dart';
 import '../widgets/helper_note.dart';
 import '../widgets/mode_switch.dart';
 import '../widgets/submit_button.dart';
-import '../widgets/top_bar.dart';
 
 enum AuthMode { login, register }
 
@@ -66,7 +64,7 @@ class _AuthScreenState extends State<AuthScreen>
 
   /// One curved slice per element, built once in [initState].
   late final EntranceStagger _stagger = EntranceStagger(_entrance);
-  late final Animation<double> _mascotIn;
+  late final Animation<double> _logoIn;
   late final Animation<double> _titleIn;
   late final Animation<double> _subtitleIn;
   late final Animation<double> _cardIn;
@@ -77,6 +75,11 @@ class _AuthScreenState extends State<AuthScreen>
   /// Set when biometric sign-in is on (Security screen) and the device has an
   /// enrolled biometric; shows the biometric button under Нэвтрэх.
   BiometricKind? _biometric;
+
+  /// Why the last biometric prompt didn't sign in, shown under its button.
+  /// Inline rather than a snack bar, which would cover the button the teen
+  /// needs to retry with.
+  String? _biometricMessage;
   final List<Timer> _timers = [];
 
   /// Shown under their field after a failed submit; cleared as soon as the
@@ -126,7 +129,7 @@ class _AuthScreenState extends State<AuthScreen>
         if (_registerValid) _registerError = null;
       });
     });
-    _mascotIn = _stagger.slice(0);
+    _logoIn = _stagger.slice(0);
     _titleIn = _stagger.slice(0.1);
     _subtitleIn = _stagger.slice(0.16);
     _cardIn = _stagger.slice(0.24);
@@ -146,13 +149,12 @@ class _AuthScreenState extends State<AuthScreen>
 
   Future<void> _biometricLogin() async {
     if (_submitState != SubmitState.idle) return;
-    final result = await Biometrics.instance.authenticate(
-      'Ard KIDS руу нэвтрэх',
-    );
+    setState(() => _biometricMessage = null);
+    final result = await Biometrics.instance.authenticate('Ard руу нэвтрэх');
     if (!mounted) return;
     // TODO: restore the saved session instead of signing straight in.
     if (result == BiometricResult.success) return context.go(AppRoutes.home);
-    if (result.message case final message?) showAppSnack(context, message);
+    setState(() => _biometricMessage = result.message);
   }
 
   @override
@@ -254,130 +256,85 @@ class _AuthScreenState extends State<AuthScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Size the hero from the screen height (ignoring the keyboard, so the
-    // layout doesn't jump while it opens). Бүртгүүлэх has an extra field, so
-    // the mascot shrinks there to keep the whole form on screen.
     final padding = MediaQuery.paddingOf(context);
-    final viewport =
-        MediaQuery.sizeOf(context).height - padding.top - TopBar.height;
-    final compact = viewport < 640;
-    final mascotShare = _mode == AuthMode.login ? 0.2 : 0.11;
-    final mascotSize = (viewport * mascotShare).clamp(64.0, 180.0);
-    final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final topGap = compact ? 0.0 : 8.0;
-    final bottomGap = 24 + padding.bottom;
+    final bottomGap = 16 + padding.bottom;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: Column(
-            children: [
-              const TopBar(),
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) => SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20, topGap, 20, bottomGap),
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    child: ConstrainedBox(
-                      // At least the visible height, so a short form sits
-                      // centered instead of hugging the top on tall screens.
-                      constraints: BoxConstraints(
-                        minHeight: (constraints.maxHeight - topGap - bottomGap)
-                            .clamp(0.0, double.infinity),
-                      ),
-                      child: Center(
-                        child: ConstrainedBox(
-                          // Full width on iPad, like every other screen.
-                          constraints: const BoxConstraints(
-                            maxWidth: AppLayout.contentMax,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Entrance(
-                                t: _mascotIn,
-                                // The mascot leads, and grows in slightly
-                                // rather than just sliding.
-                                scaleFrom: 0.94,
-                                child: TweenAnimationBuilder<double>(
-                                  tween: Tween(end: mascotSize),
-                                  duration: reduceMotion
-                                      ? Duration.zero
-                                      : const Duration(milliseconds: 320),
-                                  curve: Curves.easeOutCubic,
-                                  builder: (context, size, _) =>
-                                      AuthMascot(size: size),
-                                ),
-                              ),
-                              SizedBox(height: compact ? 12 : 18),
-                              Entrance(
-                                t: _titleIn,
-                                child: Text.rich(
-                                  TextSpan(
-                                    text: 'Ard ',
-                                    children: [
-                                      TextSpan(
-                                        text: 'KIDS',
-                                        style: inter(
-                                          size: compact ? 24 : 28,
-                                          weight: FontWeight.w800,
-                                          color: AppColors.sky500,
-                                          height: 1.15,
-                                          letterSpacing: -0.6,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  style: inter(
-                                    size: compact ? 24 : 28,
-                                    weight: FontWeight.w800,
-                                    color: AppColors.slate800,
-                                    height: 1.15,
-                                    letterSpacing: -0.6,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Entrance(
-                                t: _subtitleIn,
-                                // Narrow enough that the sentence breaks
-                                // into two even lines, not a lone last word.
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 240,
-                                  ),
-                                  child: AppText(
-                                    'Ухаалаг санхүүгийн аяллаа өнөөдөр эхлүүлээрэй.',
-                                    size: 13,
-                                    weight: FontWeight.w500,
-                                    color: AppColors.slate500,
-                                    height: 1.5,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: compact ? 16 : 24),
-                              Entrance(
-                                t: _cardIn,
-                                // Travels a little further, so the card
-                                // reads as settling into place under the
-                                // heading.
-                                offsetY: 24,
-                                child: _buildFormCard(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              padding: AppLayout.centered(
+                EdgeInsets.fromLTRB(20, 16, 20, bottomGap),
+                constraints.maxWidth,
+              ),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: ConstrainedBox(
+                // At least the visible height, so the title stays at the top
+                // and the form sits low, in thumb reach, on tall screens.
+                constraints: BoxConstraints(
+                  minHeight: (constraints.maxHeight - 16 - bottomGap).clamp(
+                    0.0,
+                    double.infinity,
                   ),
                 ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Entrance(
+                          t: _logoIn,
+                          child: Image.asset(
+                            'assets/images/ard_logo.png',
+                            height: 28,
+                            fit: BoxFit.contain,
+                            // The mark is black on transparent; tint it so
+                            // it follows the canvas in both modes.
+                            color: AppColors.slate900,
+                            semanticLabel: 'Ard',
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        Entrance(
+                          t: _titleIn,
+                          child: AppText(
+                            'Тавтай морил',
+                            size: 32,
+                            weight: FontWeight.w700,
+                            color: AppColors.slate900,
+                            height: 1.15,
+                            letterSpacing: -0.8,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Entrance(
+                          t: _subtitleIn,
+                          child: AppText(
+                            'Данс, карт, хадгаламжаа нэг дороос удирд.',
+                            size: 15,
+                            color: AppColors.slate500,
+                            height: 1.45,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                      ],
+                    ),
+                    Entrance(
+                      t: _cardIn,
+                      // Travels a little further, so the card reads as
+                      // settling into place under the heading.
+                      offsetY: 24,
+                      child: _buildFormCard(),
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -390,7 +347,7 @@ class _AuthScreenState extends State<AuthScreen>
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
       decoration: BoxDecoration(
         color: AppColors.card,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -439,10 +396,10 @@ class _AuthScreenState extends State<AuthScreen>
         const SizedBox(height: 6),
         AppInputShell(
           hasError: _nameError != null,
-          leading: Icon(
-            Icons.person_outline_rounded,
+          leading: LineIcon(
+            LineGlyph.profile,
             size: 18,
-            color: AppColors.sky500,
+            color: AppColors.slate500,
           ),
           trailing: AppFieldTick(visible: _nameValid),
           child: TextField(
@@ -465,16 +422,11 @@ class _AuthScreenState extends State<AuthScreen>
         const SizedBox(height: 6),
         AppInputShell(
           hasError: _phoneError != null,
-          leading: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AppText(
-                '+976',
-                size: 12,
-                weight: FontWeight.w700,
-                color: AppColors.sky700,
-              ),
-            ],
+          leading: AppText(
+            '+976',
+            size: 14,
+            weight: FontWeight.w600,
+            color: AppColors.slate600,
           ),
           trailing: AppFieldTick(visible: _phoneValid),
           child: TextField(
@@ -509,9 +461,24 @@ class _AuthScreenState extends State<AuthScreen>
           const SizedBox(height: 10),
           SoftButton(
             label: kind.loginLabel,
-            icon: kind.icon,
+            leading: LineIcon(
+              kind == BiometricKind.face
+                  ? LineGlyph.faceId
+                  : LineGlyph.fingerprint,
+              size: 20,
+              color: AppColors.sky600,
+            ),
             onPressed: _biometricLogin,
           ),
+          if (_biometricMessage case final message?) ...[
+            const SizedBox(height: 8),
+            AppText(
+              message,
+              size: 12,
+              color: AppColors.slate500,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ],
     );

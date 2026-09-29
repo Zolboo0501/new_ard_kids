@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:new_ard_kids/app/kid_profile.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/accounts/presentation/screens/card_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
@@ -23,13 +24,16 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Карт'));
     await tester.pumpAndSettle();
-    // Below the hero on a phone; scroll it into view first.
-    await tester.ensureVisible(find.text('Junior Card'));
+    // The active card's row, found by its number, which doesn't change with
+    // the row's title. Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('•••• 5521'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Junior Card'));
+    await tester.tap(find.text('•••• 5521'));
     await tester.pumpAndSettle();
     expect(router.state.uri.path, AppRoutes.card);
     expect(find.byType(CardScreen), findsOneWidget);
+    expect(find.text('Ard Card'), findsOneWidget);
+    expect(find.text(Kid.cardName), findsWidgets);
     expect(find.text('•••• •••• •••• 5521'), findsNWidgets(2));
 
     // Дугаар харах shows the full number on the card and in the details.

@@ -19,13 +19,11 @@ class OtpBox extends StatelessWidget {
       height: 64,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.dsSurfaceContainerHigh,
-        borderRadius: BorderRadius.circular(32),
+        color: AppColors.slate50,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: active
-              ? AppColors.sky500.withValues(alpha: 0.4)
-              : Colors.transparent,
-          width: 2,
+          color: active ? AppColors.sky500 : AppColors.line,
+          width: active ? 2 : 1,
         ),
       ),
       // The digit springs in when the key is pressed, and the cursor it
@@ -47,16 +45,13 @@ class OtpBox extends StatelessWidget {
         child: digit != null
             ? AppText(
                 digit!,
-                size: 22,
-                weight: FontWeight.w700,
-                color: AppColors.dsPrimary,
+                size: 24,
+                weight: FontWeight.w600,
+                color: AppColors.slate900,
                 key: ValueKey('digit-$digit'),
               )
             : active
-            ? BlinkingCursor(
-                key: ValueKey('cursor'),
-                color: AppColors.dsPrimary,
-              )
+            ? BlinkingCursor(key: ValueKey('cursor'), color: AppColors.sky500)
             : const SizedBox.shrink(key: ValueKey('empty')),
       ),
     );

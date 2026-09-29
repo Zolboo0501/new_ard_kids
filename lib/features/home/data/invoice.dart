@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-
-import '../../../theme/app_theme.dart';
 import '../../../widgets/date_range_sheet.dart';
 import '../../../widgets/ui.dart';
 
@@ -13,7 +10,7 @@ enum InvoiceStatus { pending, approved, paid }
 class Invoice {
   const Invoice({
     required this.title,
-    required this.mascot,
+    required this.glyph,
     required this.amount,
     required this.date,
     required this.status,
@@ -21,7 +18,9 @@ class Invoice {
   });
 
   final String title;
-  final String mascot;
+
+  /// The category's line glyph, drawn in the row's tile.
+  final LineGlyph glyph;
   final int amount;
   final DateTime date;
   final InvoiceStatus status;
@@ -33,14 +32,14 @@ class Invoice {
 
   String get statusLabel => switch (status) {
     InvoiceStatus.pending => 'Хүлээгдэж буй',
-    InvoiceStatus.approved => 'Зөвшөөрсөн / Төлөх',
-    InvoiceStatus.paid => 'Батлагдсан',
+    InvoiceStatus.approved => 'Зөвшөөрсөн',
+    InvoiceStatus.paid => 'Төлөгдсөн',
   };
 
-  Color get statusColor => switch (status) {
-    InvoiceStatus.pending => AppColors.amber500,
-    InvoiceStatus.approved => AppColors.emerald500,
-    InvoiceStatus.paid => AppColors.sky500,
+  BadgeTone get statusTone => switch (status) {
+    InvoiceStatus.pending => BadgeTone.amber,
+    InvoiceStatus.approved => BadgeTone.emerald,
+    InvoiceStatus.paid => BadgeTone.sky,
   };
 }
 
@@ -51,7 +50,7 @@ class Invoice {
 List<Invoice> get mockInvoices => [
   Invoice(
     title: 'Ээжээс халаасны мөнгө',
-    mascot: Mascots.catHeart,
+    glyph: LineGlyph.wallet,
     amount: 20000,
     date: daysAgo(0),
     status: InvoiceStatus.pending,
@@ -59,7 +58,7 @@ List<Invoice> get mockInvoices => [
   ),
   Invoice(
     title: 'Ном, дэвтэр авах',
-    mascot: Mascots.bearBooks,
+    glyph: LineGlyph.book,
     amount: 18500,
     date: daysAgo(1),
     status: InvoiceStatus.approved,
@@ -67,42 +66,42 @@ List<Invoice> get mockInvoices => [
   ),
   Invoice(
     title: 'Ааваас даалгаврын урамшуулал',
-    mascot: Mascots.owlBook,
+    glyph: LineGlyph.star,
     amount: 10000,
     date: _at(5, 18, 20),
     status: InvoiceStatus.paid,
   ),
   Invoice(
     title: 'Дугуй засварын төлбөр',
-    mascot: Mascots.hedgehogPiggy,
+    glyph: LineGlyph.bus,
     amount: 12000,
     date: _at(16, 12, 5),
     status: InvoiceStatus.paid,
   ),
   Invoice(
     title: 'Сургуулийн аялалын төлбөр',
-    mascot: Mascots.bearBooks,
+    glyph: LineGlyph.plane,
     amount: 25000,
     date: _at(35, 9, 40),
     status: InvoiceStatus.paid,
   ),
   Invoice(
-    title: 'Тоглоомын дэлгүүрийн нэхэмжлэх',
-    mascot: Mascots.puppyGamepad,
+    title: 'Тоглоом, апп худалдан авалт',
+    glyph: LineGlyph.gamepad,
     amount: 15000,
     date: _at(41, 16, 15),
     status: InvoiceStatus.paid,
   ),
   Invoice(
     title: 'Хөгжмийн дугуйлангийн төлбөр',
-    mascot: Mascots.owlMedal,
+    glyph: LineGlyph.graduation,
     amount: 30000,
     date: _at(63, 19, 0),
     status: InvoiceStatus.paid,
   ),
   Invoice(
     title: 'Эмээгээс төрсөн өдрийн бэлэг',
-    mascot: Mascots.bearConfetti,
+    glyph: LineGlyph.gift,
     amount: 50000,
     date: _at(88, 11, 30),
     status: InvoiceStatus.paid,

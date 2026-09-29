@@ -15,7 +15,7 @@ class TransferLabel extends StatelessWidget {
       child: AppText(
         text,
         size: 12,
-        weight: FontWeight.w700,
+        weight: FontWeight.w600,
         color: AppColors.slate700,
       ),
     );

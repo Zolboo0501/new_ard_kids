@@ -44,11 +44,7 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
           height: 64,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Night.line,
-              ),
-            ),
+            border: Border(bottom: BorderSide(color: AppColors.line)),
           ),
           child: Row(
             children: [
@@ -76,7 +72,7 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
                     if (subtitle != null)
                       AppText(
                         subtitle!,
-                        size: 11,
+                        size: 12,
                         weight: FontWeight.w500,
                         color: AppColors.slate400,
                         textAlign: TextAlign.center,

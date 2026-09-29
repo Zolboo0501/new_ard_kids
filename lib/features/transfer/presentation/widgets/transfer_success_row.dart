@@ -18,10 +18,10 @@ class TransferSuccessRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: divider ? 12 : 0, bottom: 12),
+      padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: divider
-          ? const BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.slate100)),
+          ? BoxDecoration(
+              border: Border(top: BorderSide(color: AppColors.line)),
             )
           : null,
       child: Row(

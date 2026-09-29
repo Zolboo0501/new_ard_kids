@@ -37,12 +37,13 @@ class FilterChipPill extends StatelessWidget {
         onTap: withHaptic(onTap),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 160),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          constraints: const BoxConstraints(minHeight: 36),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky500 : AppColors.card,
+            color: selected ? AppColors.slate900 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.sky100,
+              color: selected ? AppColors.slate900 : AppColors.line,
             ),
           ),
           child: Row(
@@ -52,7 +53,7 @@ class FilterChipPill extends StatelessWidget {
                 Icon(
                   icon,
                   size: 14,
-                  color: selected ? AppColors.onAccent : AppColors.slate500,
+                  color: selected ? AppColors.surface : AppColors.slate500,
                 ),
                 const SizedBox(width: 4),
               ],
@@ -62,9 +63,9 @@ class FilterChipPill extends StatelessWidget {
               ],
               AppText(
                 label,
-                size: 11,
-                weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? AppColors.onAccent : AppColors.slate500,
+                size: 13,
+                weight: selected ? FontWeight.w600 : FontWeight.w500,
+                color: selected ? AppColors.surface : AppColors.slate600,
               ),
             ],
           ),
@@ -93,7 +94,7 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final (bg, fg, border) = tone.colors;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(999),
@@ -114,7 +115,7 @@ class StatusBadge extends StatelessWidget {
             Icon(icon, size: 12, color: fg),
             const SizedBox(width: 3),
           ],
-          AppText(label, size: 10, weight: FontWeight.w700, color: fg),
+          AppText(label, size: 12, weight: FontWeight.w600, color: fg),
         ],
       ),
     );
@@ -175,27 +176,28 @@ class QuickAmountChips extends StatelessWidget {
               onTap: withHaptic(() => onSelected(amounts[i])),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: selected == amounts[i]
-                      ? AppColors.sky500
-                      : AppColors.sky50,
-                  borderRadius: BorderRadius.circular(999),
+                      ? AppColors.slate900
+                      : AppColors.card,
+                  borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: selected == amounts[i]
-                        ? AppColors.sky500
-                        : AppColors.sky100,
+                        ? AppColors.slate900
+                        : AppColors.line,
                   ),
                 ),
                 child: FittedBox(
                   child: AppText(
                     additive ? '+${_short(amounts[i])}' : formatMnt(amounts[i]),
-                    size: 11,
-                    weight: FontWeight.w700,
+                    size: 13,
+                    weight: FontWeight.w600,
                     color: selected == amounts[i]
-                        ? AppColors.onAccent
-                        : AppColors.sky700,
+                        ? AppColors.surface
+                        : AppColors.slate800,
                   ),
                 ),
               ),

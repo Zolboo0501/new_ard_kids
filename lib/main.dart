@@ -41,17 +41,25 @@ class ArdKidsApp extends StatefulWidget {
   State<ArdKidsApp> createState() => _ArdKidsAppState();
 }
 
-class _ArdKidsAppState extends State<ArdKidsApp> {
+class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
   late final GoRouter _router = AppRoutes.createRouter();
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     appThemeChoice.addListener(_rebuildAll);
+    appBrightness.addListener(_rebuildAll);
     appAvatar.addListener(_rebuildAll);
   }
 
-  /// `AppColors` accent tokens and `Stickers` are read during build, so every
+  /// With "Систем" picked, the canvas follows the phone's dark mode.
+  @override
+  void didChangePlatformBrightness() {
+    if (appBrightness.value == AppBrightness.system) _rebuildAll();
+  }
+
+  /// `AppColors` tokens and `Stickers` are read during build, so every
   /// element has to rebuild (const subtrees and routes under the stack
   /// included) to pick up a new palette or companion. Navigation and screen
   /// state are kept.
@@ -67,7 +75,9 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     appThemeChoice.removeListener(_rebuildAll);
+    appBrightness.removeListener(_rebuildAll);
     appAvatar.removeListener(_rebuildAll);
     _router.dispose();
     super.dispose();
@@ -76,14 +86,16 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Ard Kidsv2',
+      title: 'Ard',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       routerConfig: _router,
-      // Every screen is drawn on the night canvas, so the status bar icons
-      // are light everywhere.
+      // Status bar icons contrast with the canvas: light on dark, dark on
+      // light.
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
+        value: AppColors.isDark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         child: AppScale.builder(context, child),
       ),
     );

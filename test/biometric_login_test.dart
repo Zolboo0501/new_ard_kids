@@ -265,7 +265,7 @@ void main() {
     Biometrics.instance = _FakeBiometrics();
     final router = await pumpAt(tester, AppRoutes.avatarPicker, pulsing: true);
 
-    await tester.tap(find.text('Сонгосон найзаа батлах '));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
     await settle(tester);
     expect(router.state.uri.path, AppRoutes.biometricSetup);
   });
@@ -276,7 +276,7 @@ void main() {
     Biometrics.instance = _FakeBiometrics(kind: null, sensor: false);
     final router = await pumpAt(tester, AppRoutes.avatarPicker, pulsing: true);
 
-    await tester.tap(find.text('Сонгосон найзаа батлах '));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
     await settle(tester);
     expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
   });

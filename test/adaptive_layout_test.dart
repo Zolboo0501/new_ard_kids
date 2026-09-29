@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:new_ard_kids/app/kid_profile.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar.dart';
 import 'package:new_ard_kids/features/home/presentation/widgets/home_header.dart';
@@ -62,7 +63,7 @@ void main() {
 
       await tester.tap(find.text('Нүүр'));
       await tester.pumpAndSettle();
-      expect(find.text('Тэмүүлэн!'), findsOneWidget);
+      expect(find.text('Тэмүүлэн'), findsOneWidget);
 
       await tester.tap(find.bySemanticsLabel('QR уншуулах'));
       await tester.pump(const Duration(milliseconds: 600));
@@ -91,7 +92,7 @@ void main() {
       tester,
     ) async {
       await _pump(tester, AppRoutes.profile, _ipadLandscape);
-      final name = tester.getRect(find.text('Бат-Ирээдүй Т.'));
+      final name = tester.getRect(find.text(Kid.shortName));
       final settings = tester.getRect(find.text('Хувийн мэдээлэл'));
       expect(settings.left, greaterThan(name.right));
     });
@@ -130,7 +131,7 @@ void main() {
     /// The on-screen height of the Home greeting on a [size] screen.
     Future<double> greetingHeight(WidgetTester tester, Size size) async {
       await _pump(tester, AppRoutes.home, size);
-      return tester.getRect(find.text('Тэмүүлэн!')).height;
+      return tester.getRect(find.text('Тэмүүлэн')).height;
     }
 
     testWidgets('text is drawn bigger on a Pro Max and on iPad', (

@@ -1,4 +1,3 @@
-import '../../../app/avatar.dart';
 import '../../../widgets/ui.dart';
 
 /// Savings goal shown on the savings screens.
@@ -8,7 +7,7 @@ class SavingsGoal {
     required this.category,
     required this.saved,
     required this.target,
-    required this.asset,
+    required this.glyph,
     required this.tone,
   });
 
@@ -16,36 +15,40 @@ class SavingsGoal {
   final String category;
   final int saved;
   final int target;
-  final String asset;
+
+  /// The line icon on the goal's tile.
+  final LineGlyph glyph;
+
+  /// Tints the goal's tile.
   final BadgeTone tone;
 
-  double get progress => target == 0 ? 0 : saved / target;
+  double get progress => target == 0 ? 0 : (saved / target).clamp(0.0, 1.0);
 }
 
-/// Sample goals, pictured with the chosen companion's stickers.
-List<SavingsGoal> get kSampleGoals => [
+/// Sample goals.
+const kSampleGoals = [
   SavingsGoal(
-    title: 'PlayStation 5 тоглоом',
-    category: 'Дижитал зугаа',
+    title: 'PlayStation 5 Pro',
+    category: 'Технологи',
     saved: 180000,
     target: 250000,
-    asset: Stickers.games,
+    glyph: LineGlyph.gamepad,
     tone: BadgeTone.sky,
   ),
   SavingsGoal(
-    title: 'Шинэ хичээлийн ном, дэвтэр',
-    category: 'Хичээл & Хөгжил',
+    title: 'Хичээлийн ном, дэвтэр',
+    category: 'Хичээл',
     saved: 95000,
     target: 100000,
-    asset: Stickers.books,
+    glyph: LineGlyph.book,
     tone: BadgeTone.emerald,
   ),
   SavingsGoal(
-    title: 'Зуны зуслан явах сан',
-    category: 'Аялал, зуслан',
+    title: 'Зуны аялал',
+    category: 'Аялал',
     saved: 450000,
     target: 800000,
-    asset: Stickers.travel,
+    glyph: LineGlyph.plane,
     tone: BadgeTone.amber,
   ),
 ];
