@@ -132,7 +132,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
             content: AppText(
               '${_username.text.trim()} рүү найзын хүсэлт илгээлээ',
               size: 13,
-              color: Colors.white,
+              color: Night.text,
             ),
           ),
         );
@@ -143,7 +143,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.slate50,
+      backgroundColor: AppColors.surface,
       body: Stack(
         children: [
           const AmbientGlow(),
@@ -246,16 +246,8 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.slate100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-          ),
-        ],
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,7 +268,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
               'Найзынхаа нэрийг мэдэхгүй байна уу?',
               size: 12,
               weight: FontWeight.w500,
-              color: AppColors.slate400,
+              color: AppColors.slate500,
             ),
           ),
         ],

@@ -21,7 +21,7 @@ class TransferSuccessRow extends StatelessWidget {
       padding: EdgeInsets.only(top: divider ? 12 : 0, bottom: 12),
       decoration: divider
           ? const BoxDecoration(
-              border: Border(top: BorderSide(color: AppColors.slate50)),
+              border: Border(top: BorderSide(color: AppColors.slate100)),
             )
           : null,
       child: Row(
@@ -31,7 +31,7 @@ class TransferSuccessRow extends StatelessWidget {
             label,
             size: 13,
             weight: FontWeight.w500,
-            color: AppColors.slate400,
+            color: AppColors.slate500,
           ),
           const SizedBox(width: 12),
           Expanded(

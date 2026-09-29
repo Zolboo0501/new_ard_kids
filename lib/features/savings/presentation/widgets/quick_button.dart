@@ -40,23 +40,12 @@ class QuickButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 9),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: selected ? AppColors.sky50 : Colors.white,
+              color: selected ? AppColors.sky50 : AppColors.slate50,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: selected
-                    ? AppColors.sky400
-                    : AppColors.slate200.withValues(alpha: 0.8),
+                color: selected ? AppColors.sky500 : AppColors.slate50,
                 width: selected ? 1.5 : 1,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.sky500.withValues(
-                    alpha: selected ? 0.18 : 0,
-                  ),
-                  offset: const Offset(0, 4),
-                  blurRadius: 10,
-                ),
-              ],
             ),
             child: AnimatedDefaultTextStyle(
               duration: duration,
@@ -64,7 +53,7 @@ class QuickButton extends StatelessWidget {
               style: inter(
                 size: 12,
                 weight: FontWeight.w700,
-                color: selected ? AppColors.sky700 : AppColors.slate600,
+                color: selected ? AppColors.sky700 : AppColors.slate700,
               ),
               child: Text(label),
             ),

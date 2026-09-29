@@ -10,6 +10,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/icon_choice.dart';
 import '../widgets/new_goal_section.dart';
+import '../widgets/savings_hero_panel.dart';
 
 /// "Шинэ зорилго үүсгэх": create a savings goal.
 class NewGoalScreen extends StatefulWidget {
@@ -80,21 +81,16 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            Container(
+            SavingsHeroPanel(
+              accent: AppColors.amber500,
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  colors: [AppColors.sky50, AppColors.amber50],
-                ),
-                border: Border.all(color: AppColors.sky100),
-              ),
+              radius: 24,
               child: Row(
                 children: [
                   MascotImage(
                     asset: Stickers.goal,
                     size: 80,
-                    background: AppColors.sky50,
+                    background: AppColors.card,
                     semanticLabel: 'Зорилгодоо онилсон маскот',
                   ),
                   const SizedBox(width: 12),
@@ -111,7 +107,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                           'Зорилгоо тодорхойлж, бага багаар хуримтлуулаад мөрөөдөлдөө хүрээрэй!',
                           size: 12,
                           weight: FontWeight.w500,
-                          color: AppColors.slate600,
+                          color: AppColors.slate700,
                           height: 1.5,
                         ),
                       ],
@@ -178,7 +174,6 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.slate50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.slate200),
                   ),
                   child: Row(
                     children: [
@@ -204,11 +199,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                           ),
                           child: const CircleAvatar(
                             radius: 14,
-                            backgroundColor: AppColors.slate200,
+                            backgroundColor: AppColors.slate100,
                             child: Icon(
                               Icons.close_rounded,
                               size: 14,
-                              color: AppColors.slate600,
+                              color: AppColors.slate700,
                             ),
                           ),
                         ),
@@ -273,11 +268,8 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.amber50.withValues(alpha: 0.8),
+                    color: AppColors.amber50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.amber200.withValues(alpha: 0.7),
-                    ),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,7 +285,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                                 style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
-                                  color: const Color(0xFF451A03),
+                                  color: AppColors.amber500,
                                 ),
                               ),
                               const TextSpan(text: 'Сар бүр '),
@@ -302,7 +294,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                                 style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
-                                  color: AppColors.sky600,
+                                  color: AppColors.slate900,
                                 ),
                               ),
                               const TextSpan(text: ' хадгалбал '),
@@ -311,7 +303,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                                 style: inter(
                                   size: 11.5,
                                   weight: FontWeight.w700,
-                                  color: const Color(0xFF451A03),
+                                  color: AppColors.amber500,
                                 ),
                               ),
                               const TextSpan(text: ' зорилгодоо 100% хүрнэ!'),
@@ -320,7 +312,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
                           style: inter(
                             size: 11.5,
                             weight: FontWeight.w500,
-                            color: const Color(0xFF78350F),
+                            color: AppColors.amber800,
                             height: 1.5,
                           ),
                         ),

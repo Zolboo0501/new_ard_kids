@@ -48,7 +48,7 @@ class _TransferScreenState extends State<TransferScreen> {
   static List<(String, String, Color, String)> get _friends => [
     ('Анар (Дүү)', Stickers.siblings, AppColors.amber100, '5049 8219 02'),
     ('Мишээл', Stickers.love, AppColors.emerald100, '5049 7712 45'),
-    ('Аав', Stickers.dad, const Color(0xFFDBEAFE), '5049 1102 33'),
+    ('Аав', Stickers.dad, AppColors.indigo100, '5049 1102 33'),
     ('Ээж', Stickers.mom, AppColors.pink100, '5049 3321 08'),
   ];
   static List<(String, String, String, String)> get _phones => [
@@ -115,7 +115,7 @@ class _TransferScreenState extends State<TransferScreen> {
     final account = await showModalBottomSheet<KnownAccount>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -190,10 +190,10 @@ class _TransferScreenState extends State<TransferScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.slate50,
+      backgroundColor: AppColors.surface,
       appBar: SubPageHeader(
         title: 'Гүйлгээ хийх',
-        background: AppColors.slate50,
+        background: AppColors.surface,
         trailing: CircleIconButton(
           icon: Icons.qr_code_scanner_rounded,
           label: 'QR код уншуулах',
@@ -225,7 +225,6 @@ class _TransferScreenState extends State<TransferScreen> {
             AppCard(
               radius: 26,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

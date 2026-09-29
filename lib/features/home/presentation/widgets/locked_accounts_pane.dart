@@ -26,15 +26,14 @@ class LockedAccountsPane extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         decoration: BoxDecoration(
-          color: AppColors.sky50,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.sky200.withValues(alpha: 0.6)),
+          color: AppColors.sky500,
+          borderRadius: BorderRadius.circular(999),
         ),
         child: AppText(
           'Эцэг эх холбох',
-          size: 10,
+          size: 10.5,
           weight: FontWeight.w700,
-          color: AppColors.sky600,
+          color: AppColors.onAccent,
         ),
       ),
     );
@@ -57,16 +56,12 @@ class LockedAccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.pocket,
             title: 'Халаасны үндсэн данс',
             subtitle: formatIban(Accounts.main),
             mascot: avatar.pick,
             tileColor: AppColors.sky50,
-            trailing: status(
-              20000,
-              '● Идэвхтэй',
-              AppColors.slate800,
-              AppColors.emerald600,
-            ),
+            trailing: status(20000, '● Идэвхтэй', Night.text, AppColors.sky500),
           ),
         ),
         const SizedBox(height: 10),
@@ -76,6 +71,7 @@ class LockedAccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.piggy,
             title: 'Хадгаламжийн данс',
             subtitle: 'Холболт шаардлагатай',
             mascot: avatar.savings,
@@ -91,6 +87,7 @@ class LockedAccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.sprout,
             title: 'Хувьцаа данс',
             subtitle: formatIban(Accounts.stocks),
             mascot: avatar.stocks,
@@ -106,16 +103,12 @@ class LockedAccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.gift,
             title: 'Урамшууллын данс',
             subtitle: 'Эхлэлийн урамшуулал',
             mascot: avatar.rewards,
             tileColor: AppColors.amber50,
-            trailing: status(
-              10000,
-              'Идэвхтэй',
-              AppColors.amber500,
-              AppColors.slate400,
-            ),
+            trailing: status(10000, 'Идэвхтэй', Night.amber, Night.text2),
           ),
         ),
         const SizedBox(height: 10),
@@ -127,7 +120,7 @@ class LockedAccountsPane extends StatelessWidget {
           child: AccountRow(
             title: 'Койны данс',
             subtitle: formatIban(Accounts.coin),
-            mascot: Stickers.coins,
+            mascot: Mascots.ardCoin3d,
             tileColor: AppColors.amber50,
             locked: true,
             trailing: linkButton(),

@@ -47,13 +47,8 @@ class QrScanViewfinder extends StatelessWidget {
                     child: Container(
                       height: 2,
                       decoration: BoxDecoration(
-                        color: AppColors.sky400,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.sky400.withValues(alpha: 0.8),
-                            blurRadius: 12,
-                          ),
-                        ],
+                        color: AppColors.sky500,
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ),

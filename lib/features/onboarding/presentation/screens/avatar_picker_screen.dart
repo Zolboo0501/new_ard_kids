@@ -111,15 +111,22 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
       backgroundColor: AppColors.dsSurface,
       body: Stack(
         children: [
-          const Positioned(
+          // Faint accent light from the top-left, as on Home's hero panel.
+          Positioned(
             top: -96,
             left: -80,
-            child: AvatarPickerBlob(size: 288, color: Color(0x80BAE6FD)),
+            child: AvatarPickerBlob(
+              size: 288,
+              color: AppColors.sky500.withValues(alpha: 0.12),
+            ),
           ),
-          const Positioned(
+          Positioned(
             top: 192,
             right: -80,
-            child: AvatarPickerBlob(size: 256, color: Color(0x99FEF3C7)),
+            child: AvatarPickerBlob(
+              size: 256,
+              color: Night.amber.withValues(alpha: 0.06),
+            ),
           ),
           SafeArea(
             child: Column(
@@ -222,13 +229,8 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                               child: Container(
                                 padding: const EdgeInsets.all(14),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
-                                    color: AppColors.sky100.withValues(
-                                      alpha: 0.7,
-                                    ),
-                                  ),
+                                  color: AppColors.card,
+                                  borderRadius: BorderRadius.circular(18),
                                 ),
                                 child: Row(
                                   children: [
@@ -236,9 +238,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                       width: 36,
                                       height: 36,
                                       decoration: BoxDecoration(
-                                        color: AppColors.sky100.withValues(
-                                          alpha: 0.8,
-                                        ),
+                                        color: AppColors.sky50,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
                                       child: Icon(
@@ -270,7 +270,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                         ),
                                         style: inter(
                                           size: 11,
-                                          color: AppColors.slate600,
+                                          color: AppColors.slate500,
                                           height: 1.4,
                                         ),
                                       ),

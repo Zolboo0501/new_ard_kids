@@ -11,6 +11,7 @@ import '../../../../widgets/date_range_filter.dart';
 import '../../../../widgets/date_range_sheet.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import 'account_hero_panel.dart';
 import 'transaction_tile.dart';
 import 'copy_account_number.dart';
 import '../../data/tx_item.dart';
@@ -119,25 +120,9 @@ class _RewardsPaneState extends State<RewardsPane> {
         // Same structure as the coin card (number, balance beside the
         // mascot, then the totals) so switching tabs changes the content,
         // not the layout; the warm amber keeps the two accounts apart.
-        Container(
+        AccountHeroPanel(
+          accent: AppColors.amber500,
           padding: const EdgeInsets.fromLTRB(20, 18, 16, 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, AppColors.amber50],
-            ),
-            border: Border.all(color: AppColors.amber100),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.amber500.withValues(alpha: 0.08),
-                offset: const Offset(0, 10),
-                blurRadius: 24,
-                spreadRadius: -8,
-              ),
-            ],
-          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -182,7 +167,7 @@ class _RewardsPaneState extends State<RewardsPane> {
                   MascotImage(
                     asset: Stickers.gift,
                     size: 100,
-                    background: Color(0xFFFFFCF2),
+                    background: AppColors.card,
                     semanticLabel: 'Урамшуулал маскот',
                   ),
                 ],
@@ -194,9 +179,8 @@ class _RewardsPaneState extends State<RewardsPane> {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.8),
+                  color: AppColors.slate50,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.amber100),
                 ),
                 child: IntrinsicHeight(
                   child: Row(
@@ -212,7 +196,7 @@ class _RewardsPaneState extends State<RewardsPane> {
                       const VerticalDivider(
                         width: 24,
                         thickness: 1,
-                        color: AppColors.amber100,
+                        color: AppColors.slate200,
                       ),
                       Expanded(
                         child: _Total(

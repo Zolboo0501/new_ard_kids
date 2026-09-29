@@ -52,7 +52,7 @@ class DateRangeFilterBar extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.card,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: AppColors.sky100),
             boxShadow: [

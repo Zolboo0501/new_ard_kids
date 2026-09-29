@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 enum AppThemeChoice { blue, pink }
 
 /// The accent scale a theme swaps in for the `sky*` and primary `ds*` tokens.
+///
+/// The app is drawn in the night palette (see [Night]), so the scale runs
+/// the opposite way to Tailwind's: [c50]–[c200] are dark tinted surfaces and
+/// borders, [c500] is the bright accent fill, and [c600]–[c900] are ever
+/// lighter accent inks for text on the dark canvas. Text on a [c500] or
+/// [c600] fill is [onAccent].
 class AppPalette {
   const AppPalette({
     required this.c50,
@@ -16,51 +22,56 @@ class AppPalette {
     required this.c700,
     required this.c800,
     required this.c900,
+    required this.onAccent,
     required this.dsPrimary,
     required this.pageBackground,
     required this.pageBackgroundMuted,
   });
 
   final Color c50, c100, c200, c300, c400, c500, c600, c700, c800, c900;
+
+  /// Text and icons printed on the accent fill.
+  final Color onAccent;
   final Color dsPrimary;
 
-  /// Tinted page backgrounds behind the white cards: the default one and the
-  /// greyer one used by Profile.
+  /// The page canvas: the default one and the one used by Profile.
   final Color pageBackground;
   final Color pageBackgroundMuted;
 
-  /// Tailwind sky: the original Stitch design.
+  /// Home's mint, the default.
   static const blue = AppPalette(
-    c50: Color(0xFFF0F9FF),
-    c100: Color(0xFFE0F2FE),
-    c200: Color(0xFFBAE6FD),
-    c300: Color(0xFF7DD3FC),
-    c400: Color(0xFF38BDF8),
-    c500: Color(0xFF0EA5E9),
-    c600: Color(0xFF0284C7),
-    c700: Color(0xFF0369A1),
-    c800: Color(0xFF075985),
-    c900: Color(0xFF0C4A6E),
-    dsPrimary: Color(0xFF006591),
-    pageBackground: Color(0xFFF5F8FE),
-    pageBackgroundMuted: Color(0xFFF4F6FB),
+    c50: Color(0xFF0C2225),
+    c100: Color(0xFF113035),
+    c200: Color(0xFF1A474C),
+    c300: Color(0xFF2A8A91),
+    c400: Color(0xFF34CBD5),
+    c500: Night.mint,
+    c600: Color(0xFF5BEBF3),
+    c700: Color(0xFF86F0F6),
+    c800: Color(0xFFB2F6F9),
+    c900: Color(0xFFD8FBFC),
+    onAccent: Night.onMint,
+    dsPrimary: Night.mint,
+    pageBackground: Night.bg,
+    pageBackgroundMuted: Night.bg,
   );
 
-  /// Tailwind pink, kept apart from the rose used for errors.
+  /// Night pink, kept apart from the red used for errors.
   static const pink = AppPalette(
-    c50: Color(0xFFFDF2F8),
-    c100: Color(0xFFFCE7F3),
-    c200: Color(0xFFFBCFE8),
-    c300: Color(0xFFF9A8D4),
-    c400: Color(0xFFF472B6),
-    c500: Color(0xFFEC4899),
-    c600: Color(0xFFDB2777),
-    c700: Color(0xFFBE185D),
-    c800: Color(0xFF9D174D),
-    c900: Color(0xFF831843),
-    dsPrimary: Color(0xFFA3195B),
-    pageBackground: Color(0xFFFEF6FA),
-    pageBackgroundMuted: Color(0xFFFBF5F8),
+    c50: Color(0xFF28111D),
+    c100: Color(0xFF371727),
+    c200: Color(0xFF55223D),
+    c300: Color(0xFFA9487A),
+    c400: Color(0xFFE668A4),
+    c500: Night.pink,
+    c600: Color(0xFFFF92C4),
+    c700: Color(0xFFFFAAD1),
+    c800: Color(0xFFFFC7E1),
+    c900: Color(0xFFFFE2EF),
+    onAccent: Color(0xFF3A0A22),
+    dsPrimary: Night.pink,
+    pageBackground: Night.bg,
+    pageBackgroundMuted: Night.bg,
   );
 
   static AppPalette of(AppThemeChoice choice) => switch (choice) {
@@ -73,27 +84,43 @@ class AppPalette {
 /// changes, so every `AppColors.sky*` read picks up the new palette.
 final appThemeChoice = ValueNotifier(AppThemeChoice.blue);
 
-/// Colors from the Stitch "Playful Youth Fintech" design system
-/// (Tailwind sky / slate / emerald scales used by the screens).
+/// The app's colour tokens, drawn in Home's night palette ([Night]).
 ///
-/// `sky*`, `dsPrimary`, `dsPrimaryContainer` and the `pageBackground*`
-/// tints are the theme accent: they
-/// follow [appThemeChoice], so they are getters and can't be used in `const`
+/// The names come from the original light Stitch design (Tailwind
+/// sky / slate / emerald scales), but every scale now runs dark to light:
+/// `*50`–`*200` are dark surfaces, tints and borders, the middle steps are
+/// the bright fills, and the high steps are light inks for text. So
+/// `slate50` is a raised surface, `slate500` secondary text and `slate900`
+/// white. Cards are [card]; text on an accent fill is [onAccent].
+///
+/// `sky*`, `dsPrimary`, `dsPrimaryContainer`, [onAccent] and the
+/// `pageBackground*` tints are the theme accent: they follow
+/// [appThemeChoice], so they are getters and can't be used in `const`
 /// expressions. Everything else is a fixed constant.
 abstract final class AppColors {
   static AppPalette get _p => AppPalette.of(appThemeChoice.value);
 
-  static const surface = Color(0xFFF8FAFF);
+  /// The page canvas.
+  static const surface = Night.bg;
+
+  /// A card or sheet on the canvas.
+  static const card = Night.surface;
+
+  /// Text and icons on the accent fill (`sky500`/`sky600`).
+  static Color get onAccent => _p.onAccent;
+
+  /// Text and icons on a bright semantic fill (emerald, amber, rose).
+  static const onBright = Night.bg;
 
   // Material 3 tokens generated by Stitch for the design system.
   static Color get dsPrimary => _p.dsPrimary;
   static Color get dsPrimaryContainer => _p.c500;
-  static const dsSurface = Color(0xFFFAF8FF);
-  static const dsSurfaceContainerLow = Color(0xFFF2F3FF);
-  static const dsSurfaceContainerHigh = Color(0xFFE2E7FF);
-  static const dsOnSurface = Color(0xFF131B2E);
-  static const dsOnSurfaceVariant = Color(0xFF3E4850);
-  static const dsOutlineVariant = Color(0xFFBEC8D2);
+  static const dsSurface = Night.bg;
+  static const dsSurfaceContainerLow = Night.surface;
+  static const dsSurfaceContainerHigh = Night.surface2;
+  static const dsOnSurface = Night.text;
+  static const dsOnSurfaceVariant = Night.text2;
+  static const dsOutlineVariant = Night.line;
 
   static Color get pageBackground => _p.pageBackground;
   static Color get pageBackgroundMuted => _p.pageBackgroundMuted;
@@ -109,56 +136,80 @@ abstract final class AppColors {
   static Color get sky800 => _p.c800;
   static Color get sky900 => _p.c900;
 
-  static const slate50 = Color(0xFFF8FAFC);
-  static const slate100 = Color(0xFFF1F5F9);
-  static const slate200 = Color(0xFFE2E8F0);
-  static const slate300 = Color(0xFFCBD5E1);
-  static const slate400 = Color(0xFF94A3B8);
-  static const slate500 = Color(0xFF64748B);
-  static const slate600 = Color(0xFF475569);
-  static const slate700 = Color(0xFF334155);
-  static const slate800 = Color(0xFF1E293B);
+  // Neutrals: surfaces and lines at the low end, text at the high end.
+  static const slate50 = Night.surface2;
+  static const slate100 = Color(0xFF212328);
+  static const slate200 = Night.line;
+  static const slate300 = Color(0xFF454952);
+  static const slate400 = Color(0xFF7B808A);
+  static const slate500 = Night.text2;
+  static const slate600 = Color(0xFFB9BDC5);
+  static const slate700 = Color(0xFFD5D8DE);
+  static const slate800 = Color(0xFFEDEEF1);
+  static const slate900 = Night.text;
 
-  static const indigo100 = Color(0xFFE0E7FF);
+  static const emerald50 = Color(0xFF0D261C);
+  static const emerald100 = Color(0xFF123626);
+  static const emerald200 = Color(0xFF1B523A);
+  static const emerald300 = Color(0xFF3FBF83);
+  static const emerald400 = Color(0xFF4ADE9A);
+  static const emerald500 = Color(0xFF4ADE9A);
+  static const emerald600 = Color(0xFF5FE6A6);
+  static const emerald700 = Color(0xFF86EDBC);
+  static const emerald800 = Color(0xFFB0F4D3);
+  static const emerald950 = Color(0xFFD9FAEA);
 
-  static const emerald50 = Color(0xFFECFDF5);
-  static const emerald100 = Color(0xFFD1FAE5);
-  static const emerald200 = Color(0xFFA7F3D0);
-  static const emerald400 = Color(0xFF34D399);
-  static const emerald500 = Color(0xFF10B981);
-  static const emerald600 = Color(0xFF059669);
-  static const emerald800 = Color(0xFF065F46);
-  static const emerald950 = Color(0xFF022C22);
+  static const amber50 = Color(0xFF29200F);
+  static const amber100 = Color(0xFF382B12);
+  static const amber200 = Color(0xFF55411A);
+  static const amber400 = Night.amber;
+  static const amber500 = Night.amber;
+  static const amber600 = Color(0xFFFFCB7E);
+  static const amber700 = Color(0xFFFFD699);
+  static const amber800 = Color(0xFFFFE2B8);
 
-  static const amber50 = Color(0xFFFFFBEB);
-  static const amber100 = Color(0xFFFEF3C7);
-  static const amber200 = Color(0xFFFDE68A);
-  static const amber400 = Color(0xFFFBBF24);
-  static const amber500 = Color(0xFFF59E0B);
-  static const amber600 = Color(0xFFD97706);
-  static const amber700 = Color(0xFFB45309);
-  static const amber800 = Color(0xFF92400E);
+  static const orange50 = Color(0xFF2A1B10);
 
-  static const orange50 = Color(0xFFFFF7ED);
+  static const rose50 = Color(0xFF2B1215);
+  static const rose100 = Color(0xFF3B171C);
+  static const rose400 = Night.red;
+  static const rose500 = Night.red;
+  static const rose600 = Color(0xFFFF9090);
 
-  static const rose50 = Color(0xFFFFF1F2);
-  static const rose100 = Color(0xFFFFE4E6);
-  static const rose400 = Color(0xFFFB7185);
-  static const rose500 = Color(0xFFF43F5E);
-  static const rose600 = Color(0xFFE11D48);
+  static const indigo50 = Color(0xFF181A31);
+  static const indigo100 = Color(0xFF222549);
+  static const indigo500 = Color(0xFF8E96FF);
+  static const violet50 = Color(0xFF1D1730);
+  static const violet100 = Color(0xFF292043);
+  static const violet500 = Night.violet;
+  static const pink50 = Color(0xFF28111D);
+  static const pink100 = Color(0xFF371727);
+  static const pink400 = Night.pink;
+  static const pink500 = Night.pink;
+}
 
-  static const indigo50 = Color(0xFFEEF2FF);
-  static const indigo500 = Color(0xFF6366F1);
-  static const violet50 = Color(0xFFF5F3FF);
-  static const violet100 = Color(0xFFEDE9FE);
-  static const violet500 = Color(0xFF8B5CF6);
-  static const pink50 = Color(0xFFFDF2F8);
-  static const pink100 = Color(0xFFFCE7F3);
-  static const pink400 = Color(0xFFF472B6);
-  static const pink500 = Color(0xFFEC4899);
-  static const slate900 = Color(0xFF0F172A);
-  static const emerald300 = Color(0xFF6EE7B7);
-  static const emerald700 = Color(0xFF047857);
+/// The night palette Home is drawn in: a near-black canvas, two steps of
+/// raised surface, and a mint accent with violet, pink and amber for
+/// variety. Text on the canvas is white or [Night.text2] (7:1 on
+/// [Night.surface]).
+abstract final class Night {
+  static const bg = Color(0xFF050607);
+  static const surface = Color(0xFF121316);
+  static const surface2 = Color(0xFF1B1D21);
+  static const line = Color(0xFF26282D);
+
+  static const text = Color(0xFFFFFFFF);
+  static const text2 = Color(0xFF9EA3AD);
+
+  static const mint = Color(0xFF3EE6F0);
+
+  /// Text and icons printed on [mint].
+  static const onMint = Color(0xFF032A2E);
+  static const violet = Color(0xFFA78BFA);
+  static const pink = Color(0xFFFF7AB6);
+  static const amber = Color(0xFFFFC46B);
+  static const lime = Color(0xFFA3E635);
+  static const red = Color(0xFFFF7B7B);
 }
 
 /// Motion tokens. Material 3 "emphasized" easing starts slowly and settles
@@ -197,12 +248,23 @@ ThemeData buildAppTheme() {
   return ThemeData(
     useMaterial3: true,
     fontFamily: 'Inter',
+    brightness: Brightness.dark,
     scaffoldBackgroundColor: AppColors.surface,
+    canvasColor: AppColors.surface,
     colorScheme: ColorScheme.fromSeed(
       seedColor: AppColors.sky500,
-      primary: AppColors.sky600,
-      surface: AppColors.surface,
+      brightness: Brightness.dark,
+      primary: AppColors.sky500,
+      onPrimary: AppColors.onAccent,
+      surface: AppColors.card,
+      onSurface: Night.text,
     ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: AppColors.sky500,
+      selectionColor: AppColors.sky500.withValues(alpha: 0.35),
+      selectionHandleColor: AppColors.sky500,
+    ),
+    dividerColor: Night.line,
     // Sheets span the full width on iPad too, like the pages, instead of
     // Material's 640 cap.
     bottomSheetTheme: const BottomSheetThemeData(constraints: BoxConstraints()),

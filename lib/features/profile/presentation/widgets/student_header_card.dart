@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/ui.dart';
 import 'profile_avatar.dart';
 
-/// Gradient header with avatar, "Сурагчийн карт" chip, name and ID.
+/// Night hero panel with avatar, "Сурагчийн карт" chip, name and ID.
 class StudentHeaderCard extends StatelessWidget {
   const StudentHeaderCard({
     super.key,
@@ -22,16 +21,22 @@ class StudentHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = AppColors.sky500;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Colors.white, AppColors.sky50, AppColors.emerald50],
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
+        // A faint wash of the theme accent from the top-left corner, like
+        // Home's account panels.
+        gradient: RadialGradient(
+          center: const Alignment(-1, -1),
+          radius: 1.4,
+          colors: [
+            Color.alphaBlend(accent.withValues(alpha: 0.16), AppColors.card),
+            AppColors.card,
+          ],
         ),
-        border: Border.all(color: AppColors.sky100),
       ),
       child: Row(
         children: [
@@ -47,7 +52,7 @@ class StudentHeaderCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.emerald400,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: AppColors.card, width: 2),
                         ),
                       )
                     : null),
@@ -77,9 +82,8 @@ class StudentHeaderCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Night.surface2,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: AppColors.slate100),
                       ),
                       child: AppText(
                         'ID: 889201',

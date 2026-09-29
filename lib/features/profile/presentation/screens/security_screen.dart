@@ -96,7 +96,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
     final changed = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.card,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -113,7 +113,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF5F8FD);
+    const bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
@@ -125,7 +125,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
           decoration: BoxDecoration(
             color: AppColors.sky50,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.sky100),
           ),
           child: Icon(
             Icons.verified_user_outlined,

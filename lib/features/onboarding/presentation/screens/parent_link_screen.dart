@@ -215,11 +215,8 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 footer: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.amber50.withValues(alpha: 0.9),
+                    color: AppColors.amber50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.amber200.withValues(alpha: 0.6),
-                    ),
                   ),
                   child: Row(
                     children: [
@@ -246,7 +243,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               AppCard(
                 radius: 20,
                 padding: const EdgeInsets.all(16),
-                borderColor: AppColors.slate100,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -312,14 +308,14 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
               const SizedBox(height: 20),
               // Always tappable: pressing it with a bad field is how the user
               // finds out what is wrong, so gating it would hide the message.
-              AnimatedOpacity(
-                opacity: _phoneValid ? 1 : 0.6,
-                duration: const Duration(milliseconds: 200),
-                child: PrimaryButton(
-                  label: 'Эцэг эх рүү хүсэлт илгээх',
-                  height: 56,
-                  onPressed: _submit,
-                ),
+              // Until the phone is valid it wears the flat "not ready" colours
+              // instead of fading, which reads as mud on the dark canvas.
+              PrimaryButton(
+                label: 'Эцэг эх рүү хүсэлт илгээх',
+                height: 56,
+                color: _phoneValid ? null : AppColors.slate100,
+                foreground: _phoneValid ? null : AppColors.slate500,
+                onPressed: _submit,
               ),
               const SizedBox(height: 10),
               TextButton.icon(

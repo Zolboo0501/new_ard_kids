@@ -22,7 +22,6 @@ class CartTile extends StatelessWidget {
     return AppCard(
       radius: 14,
       padding: const EdgeInsets.all(10),
-      borderColor: AppColors.slate100,
       child: Row(
         children: [
           MascotTile(
@@ -80,7 +79,7 @@ class CartTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(2),
                 decoration: BoxDecoration(
-                  color: AppColors.slate100,
+                  color: AppColors.slate50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -135,7 +134,7 @@ class _QtyButton extends StatelessWidget {
           width: 24,
           height: 24,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.slate200,
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(

@@ -26,16 +26,15 @@ class MiniStat extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.slate50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.slate100),
       ),
       child: Row(
         children: [
           MascotImage(
             asset: asset,
             size: 40,
-            background: Colors.white,
+            background: AppColors.slate50,
             semanticLabel: label,
           ),
           const SizedBox(width: 8),

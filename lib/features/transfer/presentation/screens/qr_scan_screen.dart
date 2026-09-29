@@ -204,7 +204,6 @@ class _QrScanScreenState extends State<QrScanScreen>
       AppCard(
         radius: 28,
         padding: const EdgeInsets.all(24),
-        borderColor: AppColors.slate100,
         child: Column(
           children: [
             Stack(
@@ -220,7 +219,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                   ),
                   child: ClipOval(
                     child: Container(
-                      color: Colors.white,
+                      color: AppColors.sky50,
                       // The kid's chosen companion, as on Home and Profile.
                       child: Image.asset(
                         appAvatar.value.portrait,
@@ -239,12 +238,12 @@ class _QrScanScreenState extends State<QrScanScreen>
                     decoration: BoxDecoration(
                       color: AppColors.emerald400,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: AppColors.card, width: 2),
                     ),
                     child: const Icon(
                       Icons.check_rounded,
                       size: 12,
-                      color: Colors.white,
+                      color: AppColors.onBright,
                     ),
                   ),
                 ),
@@ -264,9 +263,9 @@ class _QrScanScreenState extends State<QrScanScreen>
               height: 220,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
+                // The code keeps its own white quiet zone so it scans.
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.slate100),
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -284,10 +283,10 @@ class _QrScanScreenState extends State<QrScanScreen>
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.white, width: 4),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.wallet_rounded,
                       size: 22,
-                      color: Colors.white,
+                      color: AppColors.onAccent,
                     ),
                   ),
                 ],

@@ -14,7 +14,7 @@ class KeypadStyle {
     required this.fontSize,
     this.border,
     this.textColor = AppColors.slate800,
-    this.pressedColor = AppColors.slate100,
+    this.pressedColor = AppColors.slate200,
   });
 
   final double keyHeight;
@@ -103,7 +103,7 @@ class KeypadKey extends StatefulWidget {
     required this.onTap,
     required this.child,
     required this.semanticLabel,
-    this.background = Colors.white,
+    this.background = AppColors.card,
   });
 
   final KeypadStyle style;
@@ -152,13 +152,6 @@ class _KeypadKeyState extends State<KeypadKey> {
               border: style.border == null
                   ? null
                   : Border.all(color: style.border!),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  offset: const Offset(0, 1),
-                  blurRadius: 2,
-                ),
-              ],
             ),
             child: widget.child,
           ),

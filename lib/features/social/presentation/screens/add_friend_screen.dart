@@ -76,10 +76,10 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.slate50,
+      backgroundColor: AppColors.surface,
       appBar: SubPageHeader(
         title: 'Найз нэмэх',
-        background: AppColors.slate50,
+        background: AppColors.surface,
         trailing: CircleIconButton(
           icon: Icons.qr_code_scanner_rounded,
           label: 'QR код уншуулах',
@@ -98,7 +98,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             AppCard(
               radius: 28,
               padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
               child: Row(
                 children: [
                   Expanded(
@@ -120,7 +119,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   MascotImage(
                     asset: Stickers.addFriend,
                     size: 96,
-                    background: Colors.white,
+                    background: AppColors.card,
                     semanticLabel: 'Найз нэмж буй маскот',
                   ),
                 ],
@@ -151,7 +150,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
             AppCard(
               radius: 28,
               padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -242,7 +240,6 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                 child: AppCard(
                   radius: 18,
                   padding: const EdgeInsets.all(12),
-                  borderColor: AppColors.slate100,
                   child: Row(
                     children: [
                       MascotTile(asset: s.$3, background: s.$4, label: s.$1),

@@ -88,27 +88,12 @@ class _AvatarCardState extends State<AvatarCard>
             curve: appEmphasizedDecelerate,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: selected ? AppColors.sky400 : AppColors.slate100,
+                color: selected ? AppColors.sky500 : Colors.transparent,
                 width: 2,
               ),
-              boxShadow: selected
-                  ? [
-                      BoxShadow(
-                        color: AppColors.sky400.withValues(alpha: 0.2),
-                        offset: const Offset(0, 8),
-                        blurRadius: 20,
-                      ),
-                    ]
-                  : const [
-                      BoxShadow(
-                        color: Color(0x0D000000),
-                        offset: Offset(0, 1),
-                        blurRadius: 2,
-                      ),
-                    ],
             ),
             child: Stack(
               children: [
@@ -121,7 +106,7 @@ class _AvatarCardState extends State<AvatarCard>
                     height: 20,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: selected ? AppColors.sky500 : Colors.white,
+                      color: selected ? AppColors.sky500 : Colors.transparent,
                       border: selected
                           ? null
                           : Border.all(color: AppColors.slate300, width: 2),
@@ -139,11 +124,11 @@ class _AvatarCardState extends State<AvatarCard>
                             ),
                           ),
                       child: selected
-                          ? const Icon(
+                          ? Icon(
                               Icons.check_rounded,
-                              key: ValueKey('tick'),
+                              key: const ValueKey('tick'),
                               size: 14,
-                              color: Colors.white,
+                              color: AppColors.onAccent,
                             )
                           : const SizedBox.shrink(key: ValueKey('none')),
                     ),
@@ -157,7 +142,7 @@ class _AvatarCardState extends State<AvatarCard>
                       child: MascotImage(
                         asset: asset,
                         size: 80,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: name,
                       ),
                     ),
@@ -186,7 +171,7 @@ class _AvatarCardState extends State<AvatarCard>
                     AppText(
                       description,
                       size: 10,
-                      color: AppColors.slate400,
+                      color: AppColors.slate500,
                       height: 1.3,
                       textAlign: TextAlign.center,
                       maxLines: 2,

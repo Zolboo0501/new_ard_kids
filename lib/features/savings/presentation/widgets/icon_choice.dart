@@ -34,12 +34,10 @@ class IconChoice extends StatelessWidget {
               duration: const Duration(milliseconds: 160),
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: selected
-                    ? AppColors.sky50.withValues(alpha: 0.8)
-                    : AppColors.slate50,
+                color: selected ? AppColors.sky50 : AppColors.slate50,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: selected ? AppColors.sky500 : AppColors.slate100,
+                  color: selected ? AppColors.sky500 : AppColors.slate50,
                   width: selected ? 2 : 1,
                 ),
               ),
@@ -50,7 +48,7 @@ class IconChoice extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.card,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Image.asset(asset, fit: BoxFit.contain),
@@ -61,7 +59,7 @@ class IconChoice extends StatelessWidget {
                     label,
                     size: 10,
                     weight: FontWeight.w700,
-                    color: selected ? AppColors.sky600 : AppColors.slate600,
+                    color: selected ? AppColors.sky600 : AppColors.slate500,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -78,12 +76,12 @@ class IconChoice extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.sky500,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    border: Border.all(color: AppColors.card, width: 2),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check_rounded,
                     size: 11,
-                    color: Colors.white,
+                    color: AppColors.onAccent,
                   ),
                 ),
               ),

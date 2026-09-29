@@ -32,10 +32,10 @@ class FilterTab extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky500 : Colors.white,
+            color: selected ? AppColors.sky500 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
+              color: selected ? AppColors.sky500 : AppColors.card,
             ),
           ),
           child: Row(
@@ -46,7 +46,7 @@ class FilterTab extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: selected ? Colors.white : colors.$2,
+                    color: selected ? AppColors.onAccent : colors.$2,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -56,7 +56,7 @@ class FilterTab extends StatelessWidget {
                 label,
                 size: 12,
                 weight: FontWeight.w700,
-                color: selected ? Colors.white : AppColors.slate700,
+                color: selected ? AppColors.onAccent : AppColors.slate700,
               ),
               if (count != null) ...[
                 const SizedBox(width: 6),
@@ -67,7 +67,7 @@ class FilterTab extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: selected
-                        ? Colors.white.withValues(alpha: 0.25)
+                        ? AppColors.onAccent.withValues(alpha: 0.15)
                         : colors!.$1,
                     borderRadius: BorderRadius.circular(999),
                   ),
@@ -75,7 +75,7 @@ class FilterTab extends StatelessWidget {
                     '$count',
                     size: 10,
                     weight: FontWeight.w700,
-                    color: selected ? Colors.white : colors!.$2,
+                    color: selected ? AppColors.onAccent : colors!.$2,
                   ),
                 ),
               ],

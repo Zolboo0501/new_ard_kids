@@ -54,14 +54,13 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF8FAFF);
+    const bg = AppColors.surface;
     const keyStyle = KeypadStyle(
       keyHeight: 48,
       // Fully rounded (pill-shaped) keys.
       radius: 999,
       gap: 10,
       fontSize: 18,
-      border: AppColors.slate100,
     );
 
     return Scaffold(
@@ -105,7 +104,6 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                         AppCard(
                           radius: 24,
                           padding: const EdgeInsets.all(20),
-                          borderColor: AppColors.slate100,
                           child: Column(
                             children: [
                               AppText(

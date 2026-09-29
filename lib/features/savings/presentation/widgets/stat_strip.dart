@@ -16,18 +16,14 @@ class StatStrip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.slate50.withValues(alpha: 0.8),
+        color: AppColors.slate50,
         borderRadius: BorderRadius.circular(16),
       ),
       child: IntrinsicHeight(
         child: Row(
           children: [
             for (final (i, it) in items.indexed) ...[
-              if (i > 0)
-                VerticalDivider(
-                  width: 1,
-                  color: AppColors.slate200.withValues(alpha: 0.7),
-                ),
+              if (i > 0) VerticalDivider(width: 1, color: AppColors.slate100),
               Expanded(
                 child: Column(
                   children: [

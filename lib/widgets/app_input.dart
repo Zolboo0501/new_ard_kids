@@ -110,7 +110,7 @@ class _AppInputShellState extends State<AppInputShell>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: _focused || widget.valid ? Colors.white : AppColors.surface,
+          color: _focused || widget.valid ? AppColors.card : AppColors.slate50,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.hasError
@@ -139,7 +139,7 @@ class _AppInputShellState extends State<AppInputShell>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.slate50,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.slate100),
                   boxShadow: [

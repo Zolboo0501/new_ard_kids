@@ -93,7 +93,6 @@ class _RequestListScreenState extends State<RequestListScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   Row(
@@ -119,7 +118,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                       MascotImage(
                         asset: Stickers.contacts,
                         size: 80,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: 'Хүсэлтийн жагсаалттай маскот',
                       ),
                     ],
@@ -138,7 +137,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                         label: 'Зөвшөөрсөн',
                         value: '${_count(RequestStatus.approved)} хүсэлт',
                         background: AppColors.emerald50,
-                        color: const Color(0xFF006C49),
+                        color: AppColors.emerald700,
                         dot: AppColors.emerald500,
                       ),
                       const SizedBox(width: 8),

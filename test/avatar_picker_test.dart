@@ -128,8 +128,8 @@ void main() {
       MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
     );
     await tester.pumpAndSettle();
+    // Home shows the companion in its header.
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isTrue);
-    expect(_showsAsset(tester, AppAvatar.fox.savings), isTrue);
 
     router.push(AppRoutes.avatarPickerEdit);
     await tester.pump();
@@ -144,8 +144,6 @@ void main() {
     expect(appAvatar.value, AppAvatar.bear);
     expect(await const FlutterSecureStorage().read(key: 'app_avatar'), 'bear');
     expect(_showsAsset(tester, AppAvatar.bear.portrait), isTrue);
-    expect(_showsAsset(tester, AppAvatar.bear.pick), isTrue);
-    expect(_showsAsset(tester, AppAvatar.bear.savings), isTrue);
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });
 

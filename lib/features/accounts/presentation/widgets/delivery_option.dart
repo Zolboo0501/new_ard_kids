@@ -33,11 +33,11 @@ class DeliveryOption extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky50 : Colors.white,
+            color: selected ? AppColors.sky50 : AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
-              width: selected ? 2 : 1,
+              color: selected ? AppColors.sky500 : Colors.transparent,
+              width: 1.5,
             ),
           ),
           child: Column(
@@ -50,7 +50,7 @@ class DeliveryOption extends StatelessWidget {
                       title,
                       size: 12,
                       weight: FontWeight.w700,
-                      color: selected ? AppColors.sky900 : AppColors.slate700,
+                      color: selected ? AppColors.slate900 : AppColors.slate700,
                     ),
                   ),
                   AnimatedContainer(
@@ -59,16 +59,16 @@ class DeliveryOption extends StatelessWidget {
                     height: 16,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: selected ? AppColors.sky500 : Colors.white,
+                      color: selected ? AppColors.sky500 : Colors.transparent,
                       border: selected
                           ? null
                           : Border.all(color: AppColors.slate300),
                     ),
                     child: selected
-                        ? const Icon(
+                        ? Icon(
                             Icons.check_rounded,
                             size: 11,
-                            color: Colors.white,
+                            color: AppColors.onAccent,
                           )
                         : null,
                   ),

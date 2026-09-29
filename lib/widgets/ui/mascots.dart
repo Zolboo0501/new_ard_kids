@@ -24,14 +24,14 @@ class MascotIcon extends StatelessWidget {
       width: size,
       height: size,
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.slate50,
         shape: BoxShape.circle,
       ),
       child: ClipOval(
         child: MascotImage(
           asset: asset,
           size: size,
-          background: Colors.white,
+          background: AppColors.slate50,
           semanticLabel: label,
         ),
       ),
@@ -45,7 +45,7 @@ class MascotTile extends StatelessWidget {
     super.key,
     required this.asset,
     this.size = 48,
-    this.background = Colors.white,
+    this.background = AppColors.slate50,
     this.radius = 16,
     this.border,
     this.label = '',
@@ -134,6 +134,12 @@ abstract final class Mascots {
   static const puppyGamepad = '$_d/mascot_puppy_gamepad.jpg';
   static const catHeart = '$_d/mascot_cat_heart.jpg';
   static const bearBooks = '$_d/mascot_bear_books.jpg';
+
+  /// Home's hero: a teen in a black hoodie holding up his card, on black.
+  static const teenCard = '$_d/mascot_teen_card.jpg';
+
+  /// The Ард койн: the Ard mark as a green 3D cut-out (transparent PNG).
+  static const ardCoin3d = '$_d/ardcoin-3d.png';
   static const bearConfetti = '$_d/mascot_bear_confetti.jpg';
   static const owlAbacus = '$_d/mascot_owl_abacus.jpg';
   static const bearFamily = '$_d/mascot_bear_family.jpg';

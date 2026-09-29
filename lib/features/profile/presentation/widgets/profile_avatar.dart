@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
 
-/// Round gradient-ringed avatar used on the profile screens.
+/// Round accent-ringed avatar used on the profile screens.
 class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({super.key, this.size = 80, this.badge});
 
@@ -21,15 +21,11 @@ class ProfileAvatar extends StatelessWidget {
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [AppColors.sky400, AppColors.emerald300],
-            ),
+            color: AppColors.sky500,
           ),
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: Night.surface2,
               shape: BoxShape.circle,
             ),
             padding: const EdgeInsets.all(2),

@@ -16,46 +16,35 @@ class VerifyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ink = enabled ? AppColors.onAccent : AppColors.slate500;
     return Semantics(
       button: true,
       enabled: enabled,
       child: GestureDetector(
         onTap: withHaptic(enabled ? onPressed : null),
-        child: AnimatedOpacity(
-          opacity: enabled ? 1 : 0.6,
+        // Until the code is complete it sits on a raised surface with muted
+        // ink; a faded accent fill reads as a muddy teal on the dark canvas.
+        child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          child: Container(
-            height: 52,
-            decoration: BoxDecoration(
-              color: AppColors.dsPrimaryContainer,
-              borderRadius: BorderRadius.circular(999),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  offset: const Offset(0, 4),
-                  blurRadius: 6,
-                  spreadRadius: -1,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppText(
-                  'Баталгаажуулах',
-                  size: 14,
-                  weight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: 0.14,
-                ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ],
-            ),
+          curve: appEmphasizedDecelerate,
+          height: 52,
+          decoration: BoxDecoration(
+            color: enabled ? AppColors.dsPrimaryContainer : AppColors.slate50,
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AppText(
+                'Баталгаажуулах',
+                size: 14,
+                weight: FontWeight.w700,
+                color: ink,
+                letterSpacing: 0.14,
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.auto_awesome_rounded, size: 18, color: ink),
+            ],
           ),
         ),
       ),

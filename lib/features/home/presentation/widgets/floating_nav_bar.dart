@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../theme/app_theme.dart';
-import '../../../../widgets/app_text.dart';
-import '../../../../widgets/value_switcher.dart';
+import '../../../../widgets/ui.dart';
 
-/// Rounded floating bottom bar: Нүүр · QR · Профайл.
+/// The floating bottom bar, a dark pill: Нүүр · QR · Профайл. A compact
+/// mint pill slides under the selected tab, and the QR button is a white
+/// disc raised out of the bar's top edge, cut out from it by a dark ring.
 class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
@@ -20,11 +21,15 @@ class FloatingNavBar extends StatelessWidget {
 
   static const _duration = Duration(milliseconds: 320);
 
+  /// How far the QR disc rises above the bar's top edge.
+  static const _qrLift = 14.0;
+
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.paddingOf(context).bottom;
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, 0, 20, 12 + bottom),
+      // Room above the bar for the raised QR disc.
+      padding: EdgeInsets.fromLTRB(20, _qrLift, 20, 12 + bottom),
       child: Center(
         heightFactor: 1,
         child: ConstrainedBox(
@@ -32,14 +37,20 @@ class FloatingNavBar extends StatelessWidget {
           child: Container(
             height: 64,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.96),
+              // Lit faintly from above so the pill reads as a raised
+              // object on the black canvas, not a flat band.
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF1C1E23), Color(0xFF131518)],
+              ),
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: AppColors.slate100),
-              boxShadow: [
+              border: Border.all(color: Night.line),
+              boxShadow: const [
                 BoxShadow(
-                  color: AppColors.slate900.withValues(alpha: 0.10),
-                  offset: const Offset(0, 10),
-                  blurRadius: 24,
+                  color: Color(0x80000000),
+                  offset: Offset(0, 12),
+                  blurRadius: 28,
                 ),
               ],
             ),
@@ -47,8 +58,9 @@ class FloatingNavBar extends StatelessWidget {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // A tinted pill that travels behind the selected tab. It only
-                // ever sits over the outer thirds, never behind the QR button.
+                // A mint pill that travels behind the selected tab. It hugs
+                // the icon and label rather than filling its third, and only
+                // ever sits over the outer thirds, never behind QR.
                 Positioned.fill(
                   child: AnimatedAlign(
                     duration: _duration,
@@ -57,14 +69,12 @@ class FloatingNavBar extends StatelessWidget {
                     child: FractionallySizedBox(
                       widthFactor: 1 / 3,
                       heightFactor: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
-                        ),
-                        child: DecoratedBox(
+                      child: Center(
+                        child: Container(
+                          width: 82,
+                          height: 50,
                           decoration: BoxDecoration(
-                            color: AppColors.sky50,
+                            color: AppColors.sky500,
                             borderRadius: BorderRadius.circular(999),
                           ),
                         ),
@@ -75,16 +85,16 @@ class FloatingNavBar extends StatelessWidget {
                 Row(
                   children: [
                     _NavItem(
-                      icon: Icons.cottage_rounded,
-                      outlinedIcon: Icons.cottage_outlined,
+                      icon: LineGlyph.home,
                       label: 'Нүүр',
                       selected: index == 0,
                       onTap: () => onTab(0),
                     ),
-                    Expanded(child: _QrButton(onTap: onQr)),
+                    Expanded(
+                      child: _QrButton(onTap: onQr, lift: _qrLift),
+                    ),
                     _NavItem(
-                      icon: Icons.account_circle_rounded,
-                      outlinedIcon: Icons.account_circle_outlined,
+                      icon: LineGlyph.profile,
                       label: 'Профайл',
                       selected: index == 1,
                       onTap: () => onTab(1),
@@ -100,11 +110,15 @@ class FloatingNavBar extends StatelessWidget {
   }
 }
 
-/// The raised circle in the middle of the bar.
+/// The white QR disc in the middle of the bar, raised above its top edge.
+/// A ring in the canvas colour cuts it out from the bar.
 class _QrButton extends StatefulWidget {
-  const _QrButton({required this.onTap});
+  const _QrButton({required this.onTap, required this.lift});
 
   final VoidCallback onTap;
+
+  /// How far the disc's centre sits above the bar's centre.
+  final double lift;
 
   @override
   State<_QrButton> createState() => _QrButtonState();
@@ -131,55 +145,38 @@ class _QrButtonState extends State<_QrButton> {
           HapticFeedback.selectionClick();
           widget.onTap();
         },
-        // The circle rises above the bar, so lay it out in a Stack rather
-        // than a Column that must fit the height.
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              top: -16,
-              child: AnimatedScale(
-                scale: _pressed ? 0.92 : 1,
-                duration: const Duration(milliseconds: 140),
-                curve: appEmphasizedDecelerate,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                      colors: [AppColors.sky500, AppColors.sky400],
+        child: Center(
+          child: Transform.translate(
+            offset: Offset(0, -widget.lift),
+            child: AnimatedScale(
+              scale: _pressed ? 0.9 : 1,
+              duration: const Duration(milliseconds: 140),
+              curve: appEmphasizedDecelerate,
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Night.bg, width: 3),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x59000000),
+                      offset: Offset(0, 6),
+                      blurRadius: 16,
                     ),
-                    border: Border.all(color: Colors.white, width: 4),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.sky500.withValues(alpha: 0.35),
-                        offset: const Offset(0, 6),
-                        blurRadius: 14,
-                      ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.qr_code_scanner_rounded,
-                    color: Colors.white,
-                    size: 22,
-                  ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: const LineIcon(
+                  LineGlyph.scan,
+                  color: Night.bg,
+                  size: 24,
+                  stroke: 1.7,
                 ),
               ),
             ),
-            const Positioned(
-              bottom: 6,
-              child: AppText(
-                'QR',
-                size: 11,
-                weight: FontWeight.w700,
-                color: AppColors.slate600,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -189,14 +186,12 @@ class _QrButtonState extends State<_QrButton> {
 class _NavItem extends StatefulWidget {
   const _NavItem({
     required this.icon,
-    required this.outlinedIcon,
     required this.label,
     required this.selected,
     required this.onTap,
   });
 
-  final IconData icon;
-  final IconData outlinedIcon;
+  final LineGlyph icon;
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -217,7 +212,7 @@ class _NavItemState extends State<_NavItem> {
   @override
   Widget build(BuildContext context) {
     final selected = widget.selected;
-    final color = selected ? AppColors.sky500 : AppColors.slate400;
+    final color = selected ? AppColors.onAccent : Night.text2;
 
     return Expanded(
       child: Semantics(
@@ -240,23 +235,9 @@ class _NavItemState extends State<_NavItem> {
               builder: (context, tint, _) => Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // The filled and outlined glyphs are different icons, so
-                  // cross-fade them rather than swapping in place.
-                  ValueSwitcher(
-                    value: selected,
-                    duration: _duration,
-                    switchInCurve: appEmphasizedDecelerate,
-                    transitionBuilder: (child, animation, _) => ScaleTransition(
-                      scale: Tween(begin: 0.8, end: 1.0).animate(animation),
-                      child: FadeTransition(opacity: animation, child: child),
-                    ),
-                    child: Icon(
-                      selected ? widget.icon : widget.outlinedIcon,
-                      key: ValueKey(selected),
-                      size: 24,
-                      color: tint,
-                    ),
-                  ),
+                  // One line glyph whose colour follows the pill: dark on
+                  // the cyan block, grey off it. No halo, the pill is lit.
+                  LineIcon(widget.icon, size: 24, color: tint ?? color),
                   const SizedBox(height: 2),
                   AnimatedDefaultTextStyle(
                     duration: _duration,

@@ -85,7 +85,7 @@ Widget _slide(
           child: IgnorePointer(
             child: FadeTransition(
               opacity: outgoing,
-              child: const ColoredBox(color: Color(0x140F172A)),
+              child: const ColoredBox(color: Color(0x66000000)),
             ),
           ),
         ),
@@ -100,7 +100,7 @@ Widget _slide(
           decoration: const BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Color(0x1A0F172A),
+                color: Color(0x80000000),
                 blurRadius: 24,
                 offset: Offset(-4, 0),
               ),

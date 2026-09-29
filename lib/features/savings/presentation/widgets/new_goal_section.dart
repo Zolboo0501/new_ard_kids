@@ -25,7 +25,6 @@ class NewGoalSection extends StatelessWidget {
     return AppCard(
       radius: 24,
       padding: const EdgeInsets.all(16),
-      borderColor: AppColors.slate100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -42,7 +41,7 @@ class NewGoalSection extends StatelessWidget {
                   title.toUpperCase(),
                   size: 12,
                   weight: FontWeight.w700,
-                  color: AppColors.slate700,
+                  color: AppColors.slate800,
                   letterSpacing: 0.4,
                 ),
               ),

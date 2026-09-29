@@ -111,7 +111,7 @@ Future<DateTimeRange?> showDateRangeSheet(
   return showModalBottomSheet<DateTimeRange>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.card,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
@@ -267,7 +267,9 @@ class _DateRangeSheetState extends State<DateRangeSheet> {
                 disabledDayTextStyle: dayStyle.copyWith(
                   color: AppColors.slate200,
                 ),
-                selectedDayTextStyle: dayStyle.copyWith(color: Colors.white),
+                selectedDayTextStyle: dayStyle.copyWith(
+                  color: AppColors.onAccent,
+                ),
                 selectedRangeDayTextStyle: dayStyle.copyWith(
                   color: AppColors.sky800,
                 ),

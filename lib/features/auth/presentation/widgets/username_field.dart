@@ -44,25 +44,16 @@ class _UsernameFieldState extends State<UsernameField> {
         curve: appEmphasizedDecelerate,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         decoration: BoxDecoration(
-          color: _focused ? Colors.white : AppColors.slate50,
+          color: AppColors.slate50,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: widget.hasError
                 ? AppColors.rose400
                 : _focused
                 ? AppColors.sky500
-                : AppColors.slate200.withValues(alpha: 0.7),
+                : Colors.transparent,
             width: _focused || widget.hasError ? 2 : 1,
           ),
-          boxShadow: _focused || widget.hasError
-              ? [
-                  BoxShadow(
-                    color: accent.withValues(alpha: 0.25),
-                    offset: const Offset(0, 1),
-                    blurRadius: 3,
-                  ),
-                ]
-              : null,
         ),
         child: Row(
           children: [
@@ -85,14 +76,14 @@ class _UsernameFieldState extends State<UsernameField> {
                 style: inter(
                   size: 16,
                   weight: FontWeight.w700,
-                  color: AppColors.sky700,
+                  color: Night.text,
                 ),
                 decoration: InputDecoration(
                   isDense: true,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: 12),
                   hintText: 'temuulen_07',
-                  hintStyle: inter(size: 16, color: AppColors.slate300),
+                  hintStyle: inter(size: 16, color: AppColors.slate400),
                 ),
               ),
             ),

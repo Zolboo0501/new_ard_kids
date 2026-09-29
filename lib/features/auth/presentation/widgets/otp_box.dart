@@ -19,7 +19,7 @@ class OtpBox extends StatelessWidget {
       height: 64,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: digit != null ? AppColors.dsSurfaceContainerLow : Colors.white,
+        color: AppColors.dsSurfaceContainerHigh,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: active

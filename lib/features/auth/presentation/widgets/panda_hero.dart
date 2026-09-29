@@ -18,21 +18,6 @@ class PandaHero extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Soft sky glow standing in for the CSS drop-shadow filter.
-          Container(
-            width: size * 0.682,
-            height: size * 0.682,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.sky500.withValues(alpha: 0.15),
-                  offset: const Offset(0, 8),
-                  blurRadius: 32,
-                ),
-              ],
-            ),
-          ),
           MascotImage(
             asset: 'assets/images/mascot_panda_key.png',
             size: size * 0.909,

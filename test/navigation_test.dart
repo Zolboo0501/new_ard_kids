@@ -38,6 +38,9 @@ void main() {
     final router = await _pumpApp(tester, AppRoutes.home);
 
     // Change state inside the Home branch.
+    // Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('Карт'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Карт'));
     await tester.pumpAndSettle();
     expect(find.text('Junior Card'), findsOneWidget);

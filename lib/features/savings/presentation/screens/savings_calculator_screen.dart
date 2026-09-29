@@ -12,6 +12,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/app_slider.dart';
 import '../widgets/result_box.dart';
+import '../widgets/savings_hero_panel.dart';
 import '../widgets/slider_scale.dart';
 import '../widgets/term_button.dart';
 
@@ -85,15 +86,14 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AppCard(
+            SavingsHeroPanel(
               radius: 24,
-              color: Colors.white.withValues(alpha: 0.8),
               child: Row(
                 children: [
                   MascotTile(
                     asset: Stickers.calculator,
                     size: 64,
-                    background: AppColors.sky50,
+                    background: AppColors.slate50,
                     label: 'Тооцоолуур барьсан маскот',
                   ),
                   const SizedBox(width: 12),
@@ -107,12 +107,13 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                           'Мөнгөө хүүгээр өсгөж зорилгодоо илүү хурдан хүрээрэй!',
                           size: 12,
                           weight: FontWeight.w700,
+                          color: AppColors.slate900,
                         ),
                         const SizedBox(height: 2),
                         AppText(
                           'Хадгаламжийн хүү өдөр бүр танд ажиллана',
                           size: 10,
-                          color: AppColors.slate400,
+                          color: AppColors.slate500,
                         ),
                       ],
                     ),
@@ -124,7 +125,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -189,7 +189,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.slate50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.slate200),
                     ),
                     child: Row(
                       children: [
@@ -280,7 +279,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                           label: 'Таны хийсэн орлого:',
                           value: result.deposited,
                           background: AppColors.slate50,
-                          border: AppColors.slate100,
+                          border: AppColors.slate50,
                           labelColor: AppColors.slate500,
                           valueColor: AppColors.slate800,
                         ),
@@ -291,9 +290,9 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                           label: 'Цэвэр хүүгийн өсөлт:',
                           value: result.interest,
                           sign: true,
-                          background: AppColors.sky50.withValues(alpha: 0.6),
-                          border: AppColors.sky100,
-                          labelColor: AppColors.sky600,
+                          background: AppColors.sky50,
+                          border: AppColors.sky50,
+                          labelColor: AppColors.sky700,
                           valueColor: AppColors.sky500,
                         ),
                       ),
@@ -306,7 +305,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -321,13 +319,12 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.slate50,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.slate100),
                     ),
                     child: Row(
                       children: [
                         MascotTile(
                           asset: Stickers.games,
-                          background: AppColors.sky50,
+                          background: AppColors.card,
                           radius: 12,
                           label: 'PlayStation 5 тоглоом',
                         ),
@@ -370,7 +367,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
                                 color: goalProgress >= 1
                                     ? AppColors.emerald500
                                     : AppColors.sky500,
-                                track: AppColors.slate200,
+                                track: AppColors.slate100,
                               ),
                             ],
                           ),

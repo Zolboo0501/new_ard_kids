@@ -22,7 +22,7 @@ class ModeTabs extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.slate100.withValues(alpha: 0.8),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Stack(
@@ -40,17 +40,7 @@ class ModeTabs extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    gradient: LinearGradient(
-                      colors: [AppColors.sky500, AppColors.sky600],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.sky500.withValues(alpha: 0.35),
-                        offset: const Offset(0, 4),
-                        blurRadius: 12,
-                        spreadRadius: -2,
-                      ),
-                    ],
+                    color: AppColors.sky500,
                   ),
                 ),
               ),
@@ -78,7 +68,7 @@ class ModeTabs extends StatelessWidget {
                                   ? FontWeight.w700
                                   : FontWeight.w600,
                               color: m == mode
-                                  ? Colors.white
+                                  ? AppColors.onAccent
                                   : AppColors.slate500,
                             ),
                             child: Text(labels[m.index]),

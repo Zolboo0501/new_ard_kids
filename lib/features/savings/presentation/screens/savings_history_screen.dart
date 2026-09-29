@@ -156,7 +156,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   Row(
@@ -186,7 +185,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                       MascotImage(
                         asset: Stickers.report,
                         size: 90,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: 'Гүйлгээний түүх харж буй маскот',
                       ),
                     ],
@@ -259,7 +258,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
                   child: AppCard(
                     radius: 18,
                     padding: const EdgeInsets.all(12),
-                    borderColor: AppColors.slate100,
                     child: Row(
                       children: [
                         MascotTile(

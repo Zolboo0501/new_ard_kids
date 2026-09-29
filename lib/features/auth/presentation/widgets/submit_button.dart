@@ -29,7 +29,7 @@ class _SubmitButtonState extends State<SubmitButton> {
     final textStyle = inter(
       size: 14,
       weight: FontWeight.w700,
-      color: Colors.white,
+      color: AppColors.onAccent,
     );
 
     final Widget content = switch (widget.state) {
@@ -41,10 +41,10 @@ class _SubmitButtonState extends State<SubmitButton> {
         children: [
           Text(widget.label, style: textStyle),
           const SizedBox(width: 8),
-          const Icon(
+          Icon(
             Icons.arrow_forward_rounded,
             size: 20,
-            color: Colors.white,
+            color: AppColors.onAccent,
           ),
         ],
       ),
@@ -52,12 +52,12 @@ class _SubmitButtonState extends State<SubmitButton> {
         key: const ValueKey('sending'),
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 18,
             height: 18,
             child: CircularProgressIndicator(
               strokeWidth: 2.2,
-              color: Colors.white,
+              color: AppColors.onAccent,
             ),
           ),
           const SizedBox(width: 8),
@@ -68,7 +68,7 @@ class _SubmitButtonState extends State<SubmitButton> {
         key: const ValueKey('sent'),
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.check_rounded, size: 20, color: Colors.white),
+          Icon(Icons.check_rounded, size: 20, color: AppColors.onAccent),
           const SizedBox(width: 8),
           Text('Код илгээгдлээ!', style: textStyle),
         ],
@@ -90,17 +90,7 @@ class _SubmitButtonState extends State<SubmitButton> {
             height: 52,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
-              gradient: LinearGradient(
-                colors: [AppColors.sky500, AppColors.sky600],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.sky500.withValues(alpha: 0.3),
-                  offset: const Offset(0, 8),
-                  blurRadius: 18,
-                  spreadRadius: -2,
-                ),
-              ],
+              color: AppColors.sky500,
             ),
             alignment: Alignment.center,
             child: ValueSwitcher(

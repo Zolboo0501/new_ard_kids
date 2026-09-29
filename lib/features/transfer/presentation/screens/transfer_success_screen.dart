@@ -43,7 +43,7 @@ class TransferSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = receipt ?? _sample;
-    const bg = Color(0xFFF4F9FD);
+    const bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
@@ -65,49 +65,71 @@ class TransferSuccessScreen extends StatelessWidget {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AppCard(
-              radius: 28,
-              padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
-              child: Column(
-                children: [
-                  MascotImage(
-                    asset: Stickers.success,
-                    size: 128,
-                    background: Colors.white,
-                    semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',
+            // The hero: the card with a faint success wash from its top-left
+            // corner, as on Home's account panel.
+            Container(
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(28),
+              ),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: const Alignment(-1, -1),
+                    radius: 1.2,
+                    colors: [
+                      AppColors.emerald500.withValues(alpha: 0.16),
+                      AppColors.emerald500.withValues(alpha: 0),
+                    ],
                   ),
-                  const SizedBox(height: 8),
-                  const StatusBadge(
-                    label: 'Хүлээн авагчийн дансанд орсон ✓',
-                    tone: BadgeTone.emerald,
-                    dot: true,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      MascotImage(
+                        asset: Stickers.success,
+                        size: 128,
+                        background: AppColors.card,
+                        semanticLabel: 'Амжилттай гүйлгээний баяр хөөр',
+                      ),
+                      const SizedBox(height: 8),
+                      const StatusBadge(
+                        label: 'Хүлээн авагчийн дансанд орсон ✓',
+                        tone: BadgeTone.emerald,
+                        dot: true,
+                      ),
+                      const SizedBox(height: 10),
+                      AppText(
+                        'Гүйлгээ амжилттай!',
+                        size: 18,
+                        weight: FontWeight.w700,
+                      ),
+                      const SizedBox(height: 4),
+                      BalanceText(
+                        r.amount,
+                        size: 34,
+                        color: AppColors.sky500,
+                        weight: FontWeight.w600,
+                        currencyWeight: FontWeight.w600,
+                        currencyColor: AppColors.sky400,
+                      ),
+                      const SizedBox(height: 4),
+                      AppText(
+                        _date(r.time),
+                        size: 12,
+                        color: AppColors.slate500,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  AppText(
-                    'Гүйлгээ амжилттай!',
-                    size: 18,
-                    weight: FontWeight.w700,
-                  ),
-                  const SizedBox(height: 4),
-                  BalanceText(
-                    r.amount,
-                    size: 34,
-                    color: AppColors.sky500,
-                    weight: FontWeight.w600,
-                    currencyWeight: FontWeight.w600,
-                    currencyColor: AppColors.sky400,
-                  ),
-                  const SizedBox(height: 4),
-                  AppText(_date(r.time), size: 12, color: AppColors.slate400),
-                ],
+                ),
               ),
             ),
             const SizedBox(height: 14),
             AppCard(
               radius: 28,
               padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   TransferSuccessRow(
@@ -168,7 +190,7 @@ class TransferSuccessScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: AppColors.sky50.withValues(alpha: 0.7),
+                      color: AppColors.slate50,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
@@ -177,7 +199,7 @@ class TransferSuccessScreen extends StatelessWidget {
                           width: 32,
                           height: 32,
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.sky50,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -212,9 +234,10 @@ class TransferSuccessScreen extends StatelessWidget {
             SoftButton(
               label: 'Нүүр хуудас руу буцах',
               height: 52,
-              background: Colors.white,
-              foreground: AppColors.slate700,
-              border: AppColors.slate200,
+              // Home's secondary action: a solid white pill with canvas ink.
+              background: Night.text,
+              foreground: Night.bg,
+              border: Colors.transparent,
               onPressed: () => _home(context),
             ),
           ]),

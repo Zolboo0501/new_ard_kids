@@ -145,7 +145,7 @@ class _LetterBox extends StatelessWidget {
           width: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: filled ? Colors.white : AppColors.surface,
+            color: filled ? AppColors.card : AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError

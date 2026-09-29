@@ -20,7 +20,7 @@ class ScanResultSheet extends StatelessWidget {
         20 + MediaQuery.paddingOf(context).bottom,
       ),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.card,
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
@@ -68,7 +68,6 @@ class ScanResultSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.slate50,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.slate100),
             ),
             child: AppText(
               value,

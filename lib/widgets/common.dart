@@ -23,16 +23,8 @@ class CircleBackButton extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.9),
+            color: AppColors.card,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.slate100),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                offset: const Offset(0, 1),
-                blurRadius: 2,
-              ),
-            ],
           ),
           child: const Icon(
             Icons.chevron_left_rounded,
@@ -89,6 +81,9 @@ class _BlinkingCursorState extends State<BlinkingCursor>
 /// Mascot image with a white JPEG/PNG background blended into [background]
 /// (equivalent of CSS `mix-blend-mode: multiply`).
 class MascotImage extends StatelessWidget {
+  /// The light tile a white-background JPEG sits on over a dark surface.
+  static const _paper = Color(0xFFEDEFF3);
+
   const MascotImage({
     super.key,
     required this.asset,
@@ -108,6 +103,22 @@ class MascotImage extends StatelessWidget {
     // the surface; the PNG cutouts are already transparent, so blending them
     // would only tint the artwork.
     final cutout = asset.endsWith('.png');
+    // Multiplying into a dark surface would turn the mascot black too, so on
+    // the night canvas a JPEG sits on a light rounded tile of its own.
+    if (!cutout && background.computeLuminance() < 0.4) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size * 0.24),
+        child: Image.asset(
+          asset,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
+          color: _paper,
+          colorBlendMode: BlendMode.multiply,
+          semanticLabel: semanticLabel,
+        ),
+      );
+    }
     return Image.asset(
       asset,
       width: size,

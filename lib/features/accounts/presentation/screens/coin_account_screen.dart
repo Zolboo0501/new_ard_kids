@@ -10,6 +10,7 @@ import '../../../../widgets/date_range_filter.dart';
 import '../../../../widgets/date_range_sheet.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../widgets/account_hero_panel.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/copy_account_number.dart';
 import '../../data/tx_item.dart';
@@ -121,9 +122,8 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AppCard(
-          radius: 24,
-          padding: const EdgeInsets.all(20),
+        AccountHeroPanel(
+          accent: AppColors.sky500,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -181,7 +181,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                   MascotImage(
                     asset: Stickers.coin,
                     size: 104,
-                    background: Colors.white,
+                    background: AppColors.card,
                     semanticLabel: 'Зоос барьсан үнэг',
                   ),
                 ],

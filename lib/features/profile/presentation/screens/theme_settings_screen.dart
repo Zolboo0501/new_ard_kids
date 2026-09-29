@@ -49,7 +49,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF6F8FD);
+    const bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: const SubPageHeader(title: 'Өнгөний тохиргоо', background: bg),
@@ -64,12 +64,22 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
           children: EntranceItem.list([
             Container(
               padding: const EdgeInsets.all(16),
+              clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                gradient: LinearGradient(
-                  colors: [AppColors.sky50, AppColors.pink50],
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(22),
+                // A faint wash of the theme accent from the top-left corner.
+                gradient: RadialGradient(
+                  center: const Alignment(-1, -1),
+                  radius: 1.4,
+                  colors: [
+                    Color.alphaBlend(
+                      AppColors.sky500.withValues(alpha: 0.14),
+                      AppColors.card,
+                    ),
+                    AppColors.card,
+                  ],
                 ),
-                border: Border.all(color: AppColors.sky100),
               ),
               child: Row(
                 children: [
@@ -77,13 +87,13 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
                     width: 96,
                     height: 96,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.7),
-                      borderRadius: BorderRadius.circular(24),
+                      color: Night.surface2,
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: MascotImage(
                       asset: Stickers.edit,
                       size: 88,
-                      background: Colors.white,
+                      background: Night.surface2,
                       semanticLabel: 'Үнэг маскот',
                     ),
                   ),
@@ -139,6 +149,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               label: 'Сонгосон өнгийг хадгалах',
               leadingIcon: Icons.check_rounded,
               color: AppPalette.of(_selected).c500,
+              foreground: AppPalette.of(_selected).onAccent,
               onPressed: _selected == appThemeChoice.value ? null : _save,
             ),
           ]),

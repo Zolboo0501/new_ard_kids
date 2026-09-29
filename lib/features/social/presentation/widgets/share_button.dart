@@ -27,7 +27,7 @@ class ShareButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.sky50,
+            color: AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
@@ -36,7 +36,7 @@ class ShareButton extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.sky50,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, size: 18, color: AppColors.sky600),

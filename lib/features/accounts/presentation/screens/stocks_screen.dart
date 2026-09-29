@@ -26,8 +26,8 @@ class _StocksScreenState extends State<StocksScreen> {
       145000,
       14.2,
       Icons.apple_rounded,
+      AppColors.slate50,
       AppColors.slate900,
-      Colors.white,
     ),
     (
       'Disney',
@@ -56,8 +56,8 @@ class _StocksScreenState extends State<StocksScreen> {
       32000,
       -1.8,
       Icons.sports_esports_outlined,
-      Color(0xFFFEF2F2),
-      Color(0xFFEF4444),
+      AppColors.rose50,
+      AppColors.rose500,
     ),
   ];
 
@@ -67,11 +67,8 @@ class _StocksScreenState extends State<StocksScreen> {
   Widget build(BuildContext context) {
     final visible = _showAll ? _holdings : _holdings.take(4);
     return Scaffold(
-      backgroundColor: AppColors.slate50,
-      appBar: const SubPageHeader(
-        title: 'Миний өв',
-        background: AppColors.slate50,
-      ),
+      backgroundColor: kPageBackground,
+      appBar: const SubPageHeader(title: 'Миний өв'),
       body: EntranceScope(
         // Split on wide windows: the portfolio total beside the holdings.
         child: AdaptiveSplit(
@@ -86,7 +83,6 @@ class _StocksScreenState extends State<StocksScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(22),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -118,7 +114,7 @@ class _StocksScreenState extends State<StocksScreen> {
                       MascotImage(
                         asset: Stickers.growth,
                         size: 80,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: 'Өсөлтийн графиктай үнэг',
                       ),
                     ],
@@ -160,8 +156,7 @@ class _StocksScreenState extends State<StocksScreen> {
                 child: AppCard(
                   radius: 18,
                   padding: const EdgeInsets.all(14),
-                  borderColor: AppColors.slate100,
-                  onTap: () => showAppSnack(context, '${h.$1} (${h.$2})'),
+                      onTap: () => showAppSnack(context, '${h.$1} (${h.$2})'),
                   child: Row(
                     children: [
                       Container(

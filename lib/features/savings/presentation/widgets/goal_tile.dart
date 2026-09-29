@@ -13,20 +13,19 @@ class GoalTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, border) = goal.tone.colors;
+    final (_, fg, _) = goal.tone.colors;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: bg.withValues(alpha: 0.4),
+        color: AppColors.slate50,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border.withValues(alpha: 0.7)),
       ),
       child: Row(
         children: [
           MascotTile(
             asset: goal.asset,
             size: 56,
-            border: AppColors.slate100,
+            background: AppColors.card,
             label: goal.title,
           ),
           const SizedBox(width: 12),

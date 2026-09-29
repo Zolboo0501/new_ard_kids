@@ -28,10 +28,10 @@ class TermButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky50 : Colors.white,
+            color: selected ? AppColors.sky50 : AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
+              color: selected ? AppColors.sky500 : AppColors.slate50,
               width: selected ? 2 : 1,
             ),
           ),
@@ -39,7 +39,7 @@ class TermButton extends StatelessWidget {
             label,
             size: 12,
             weight: selected ? FontWeight.w700 : FontWeight.w600,
-            color: selected ? AppColors.sky700 : AppColors.slate600,
+            color: selected ? AppColors.sky700 : AppColors.slate700,
           ),
         ),
       ),

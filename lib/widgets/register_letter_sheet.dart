@@ -23,7 +23,7 @@ Future<List<String>?> showRegisterLetterSheet(
   return showModalBottomSheet<List<String>>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.card,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
@@ -162,7 +162,7 @@ class _Slot extends StatelessWidget {
           height: 56,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: active ? Colors.white : AppColors.surface,
+            color: active ? AppColors.slate50 : AppColors.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: active ? AppColors.sky400 : AppColors.slate200,
@@ -214,7 +214,7 @@ class _LetterKey extends StatelessWidget {
             letter,
             size: 17,
             weight: FontWeight.w700,
-            color: selected ? Colors.white : AppColors.sky700,
+            color: selected ? AppColors.onAccent : AppColors.sky700,
           ),
         ),
       ),

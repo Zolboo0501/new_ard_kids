@@ -29,7 +29,9 @@ class ThemeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = palette.c500;
-    final swatches = [palette.c500, palette.c400, palette.c100, palette.c600];
+    // The night palette the theme paints: accent fill, dark tint, tinted
+    // line and the light accent ink.
+    final swatches = [palette.c500, palette.c50, palette.c200, palette.c700];
     return Semantics(
       button: true,
       selected: selected,
@@ -43,21 +45,12 @@ class ThemeCard extends StatelessWidget {
               duration: const Duration(milliseconds: 180),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(22),
                 border: Border.all(
-                  color: selected ? accent : AppColors.slate100,
-                  width: selected ? 2 : 1,
+                  color: selected ? accent : Colors.transparent,
+                  width: 2,
                 ),
-                boxShadow: selected
-                    ? [
-                        BoxShadow(
-                          color: accent.withValues(alpha: 0.18),
-                          offset: const Offset(0, 8),
-                          blurRadius: 20,
-                        ),
-                      ]
-                    : null,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,13 +60,9 @@ class ThemeCard extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [swatches[1], swatches[3]],
-                      ),
+                      color: palette.c100,
                     ),
-                    child: Icon(icon, color: Colors.white),
+                    child: Icon(icon, color: accent),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -130,15 +119,9 @@ class ThemeCard extends StatelessWidget {
                                   color: c,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
+                                    color: AppColors.slate300,
+                                    width: 1,
                                   ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0x14000000),
-                                      blurRadius: 3,
-                                    ),
-                                  ],
                                 ),
                               ),
                             const Spacer(),
@@ -148,7 +131,7 @@ class ThemeCard extends StatelessWidget {
                                 tag,
                                 size: 11,
                                 weight: FontWeight.w600,
-                                color: accent,
+                                color: palette.c600,
                                 textAlign: TextAlign.right,
                               ),
                             ),
@@ -177,7 +160,7 @@ class ThemeCard extends StatelessWidget {
                     'Идэвхтэй',
                     size: 10,
                     weight: FontWeight.w700,
-                    color: Colors.white,
+                    color: palette.onAccent,
                   ),
                 ),
               ),

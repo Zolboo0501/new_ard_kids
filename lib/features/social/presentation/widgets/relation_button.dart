@@ -31,20 +31,12 @@ class RelationButton extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky500 : Colors.white,
+            color: selected ? AppColors.sky50 : AppColors.card,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
+              color: selected ? AppColors.sky500 : AppColors.card,
+              width: 1.5,
             ),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: AppColors.sky500.withValues(alpha: 0.3),
-                      offset: const Offset(0, 6),
-                      blurRadius: 14,
-                    ),
-                  ]
-                : null,
           ),
           child: Column(
             children: [
@@ -53,7 +45,7 @@ class RelationButton extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: selected ? Colors.white : tint,
+                  color: tint,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 padding: const EdgeInsets.all(3),
@@ -64,7 +56,7 @@ class RelationButton extends StatelessWidget {
                 label,
                 size: 11,
                 weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? Colors.white : AppColors.slate600,
+                color: selected ? AppColors.sky700 : AppColors.slate600,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

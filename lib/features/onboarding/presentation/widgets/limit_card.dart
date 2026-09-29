@@ -29,76 +29,80 @@ class LimitCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: muted ? AppColors.slate100.withValues(alpha: 0.8) : Colors.white,
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: muted
-              ? AppColors.slate200.withValues(alpha: 0.7)
-              : AppColors.emerald200.withValues(alpha: 0.8),
-        ),
-        boxShadow: muted
-            ? null
-            : [
-                BoxShadow(
-                  color: AppColors.emerald500.withValues(alpha: 0.18),
-                  offset: const Offset(0, 8),
-                  blurRadius: 24,
-                  spreadRadius: -8,
-                ),
-              ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: muted ? AppColors.slate200 : AppColors.emerald100,
-                ),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: muted ? AppColors.slate500 : AppColors.emerald600,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(title, size: 13, weight: FontWeight.w700),
-                    AppText(
-                      subtitle,
-                      size: 11,
-                      weight: muted ? FontWeight.w500 : FontWeight.w700,
-                      color: muted ? AppColors.slate500 : AppColors.emerald600,
-                    ),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        // The unlocked card carries a faint emerald wash from its top-left
+        // corner, the same accent light Home's hero panel uses.
+        decoration: muted
+            ? null
+            : BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: RadialGradient(
+                  center: Alignment.topLeft,
+                  radius: 1.3,
+                  colors: [
+                    AppColors.emerald500.withValues(alpha: 0.16),
+                    AppColors.emerald500.withValues(alpha: 0),
                   ],
                 ),
               ),
-              badge,
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              for (final (i, s) in stats.indexed) ...[
-                if (i > 0) const SizedBox(width: 8),
-                Expanded(
-                  child: _StatBox(label: s.$1, value: s.$2, tone: s.$3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: muted ? AppColors.slate50 : AppColors.emerald100,
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 18,
+                    color: muted ? AppColors.slate500 : AppColors.emerald600,
+                  ),
                 ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(title, size: 13, weight: FontWeight.w700),
+                      AppText(
+                        subtitle,
+                        size: 11,
+                        weight: muted ? FontWeight.w500 : FontWeight.w700,
+                        color: muted
+                            ? AppColors.slate500
+                            : AppColors.emerald600,
+                      ),
+                    ],
+                  ),
+                ),
+                badge,
               ],
-            ],
-          ),
-          const SizedBox(height: 10),
-          footer,
-        ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                for (final (i, s) in stats.indexed) ...[
+                  if (i > 0) const SizedBox(width: 8),
+                  Expanded(
+                    child: _StatBox(label: s.$1, value: s.$2, tone: s.$3),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 10),
+            footer,
+          ],
+        ),
       ),
     );
   }
@@ -120,9 +124,8 @@ class _StatBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: colors?.$1 ?? Colors.white,
+        color: colors?.$1 ?? AppColors.slate50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colors?.$3 ?? AppColors.slate100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

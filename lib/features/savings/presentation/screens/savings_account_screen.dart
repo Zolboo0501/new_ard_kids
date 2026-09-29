@@ -20,7 +20,7 @@ class SavingsAccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFFAF9FF);
+    const bg = AppColors.surface;
     void go(String r) => context.push(r);
 
     return Scaffold(
@@ -40,7 +40,6 @@ class SavingsAccountScreen extends StatelessWidget {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   Row(
@@ -68,7 +67,7 @@ class SavingsAccountScreen extends StatelessWidget {
                       MascotImage(
                         asset: Stickers.piggy,
                         size: 80,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: 'Гахайн сантай маскот',
                       ),
                     ],
@@ -111,7 +110,6 @@ class SavingsAccountScreen extends StatelessWidget {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

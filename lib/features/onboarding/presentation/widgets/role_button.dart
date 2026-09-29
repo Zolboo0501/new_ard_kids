@@ -21,7 +21,7 @@ class RoleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? AppColors.sky50 : Colors.white;
+    final bg = selected ? AppColors.sky50 : AppColors.slate50;
     return Semantics(
       button: true,
       selected: selected,
@@ -37,7 +37,7 @@ class RoleButton extends StatelessWidget {
                 color: bg,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: selected ? AppColors.sky500 : AppColors.slate200,
+                  color: selected ? AppColors.sky500 : Colors.transparent,
                   width: selected ? 2 : 1,
                 ),
               ),
@@ -74,12 +74,12 @@ class RoleButton extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.sky500,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 2),
+                    border: Border.all(color: AppColors.card, width: 2),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.check_rounded,
                     size: 11,
-                    color: Colors.white,
+                    color: AppColors.onAccent,
                   ),
                 ),
               ),

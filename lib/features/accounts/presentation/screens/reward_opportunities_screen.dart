@@ -113,7 +113,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
                       MascotImage(
                         asset: Stickers.gift,
                         size: 112,
-                        background: Colors.white,
+                        background: AppColors.card,
                         semanticLabel: 'Бэлэг барьсан үнэг',
                       ),
                     ],

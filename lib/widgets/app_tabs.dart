@@ -57,51 +57,56 @@ class AppTabsStyle {
   final Color dotColor;
   final double dotSize;
 
-  /// Sky gradient pill on a slate track. The sign-in screen's mode switcher.
+  /// Accent pill on a dark track. The sign-in screen's mode switcher.
   static AppTabsStyle get pill => AppTabsStyle(
-    trackColor: AppColors.slate100.withValues(alpha: 0.8),
+    trackColor: AppColors.card,
     trackRadius: 999,
-    trackBorder: AppColors.slate200.withValues(alpha: 0.5),
-    pillGradient: LinearGradient(colors: [AppColors.sky500, AppColors.sky400]),
+    trackBorder: Night.line,
+    pillColor: AppColors.sky500,
     pillRadius: 999,
-    pillShadow: [
-      BoxShadow(
-        color: AppColors.sky500.withValues(alpha: 0.3),
-        offset: const Offset(0, 2),
-        blurRadius: 8,
-      ),
-    ],
     labelSize: 12,
-    selectedColor: Colors.white,
+    selectedColor: AppColors.onAccent,
     unselectedColor: AppColors.slate500,
   );
 
-  /// White card pill on a sky track. The home screen's account tabs.
+  /// The same as [night], with the dot in the theme accent.
   static AppTabsStyle get card => AppTabsStyle(
-    trackColor: AppColors.sky100.withValues(alpha: 0.6),
+    trackColor: Night.surface,
     trackRadius: 16,
-    trackBorder: AppColors.sky100,
-    pillColor: Colors.white,
+    trackBorder: Night.line,
+    pillColor: Night.surface2,
     pillRadius: 12,
-    pillShadow: const [
-      BoxShadow(color: Color(0x0D000000), offset: Offset(0, 1), blurRadius: 2),
-    ],
     labelSize: 13,
-    selectedColor: AppColors.sky600,
-    unselectedColor: AppColors.slate500,
+    selectedColor: Night.text,
+    unselectedColor: Night.text2,
     unselectedWeight: FontWeight.w600,
     dotColor: AppColors.sky500,
-    dotSize: 7,
+    dotSize: 6,
   );
 
-  /// Solid sky pill on a slate track. The QR screen's scan/show tabs.
+  /// A raised pill on a dark track, white label. Home's night look.
+  static AppTabsStyle get night => AppTabsStyle(
+    trackColor: Night.surface,
+    trackRadius: 16,
+    pillColor: Night.surface2,
+    pillRadius: 12,
+    trackBorder: Night.line,
+    labelSize: 13,
+    selectedColor: Night.text,
+    unselectedColor: Night.text2,
+    unselectedWeight: FontWeight.w600,
+    dotColor: AppColors.sky500,
+    dotSize: 6,
+  );
+
+  /// Solid accent pill on a dark track. The QR screen's scan/show tabs.
   static AppTabsStyle get solid => AppTabsStyle(
-    trackColor: AppColors.slate200.withValues(alpha: 0.7),
+    trackColor: Night.surface,
     trackRadius: 16,
     pillColor: AppColors.sky500,
     pillRadius: 999,
     labelSize: 13,
-    selectedColor: Colors.white,
+    selectedColor: AppColors.onAccent,
     unselectedColor: AppColors.slate600,
     verticalPadding: 10,
     iconSize: 17,

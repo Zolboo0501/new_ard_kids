@@ -234,7 +234,7 @@ class _OtpScreenState extends State<OtpScreen>
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.dsSurfaceContainerLow.withValues(alpha: 0.7),
+              color: AppColors.card,
               borderRadius: BorderRadius.circular(40),
             ),
             child: NumericKeypad(
@@ -317,15 +317,8 @@ class _OtpScreenState extends State<OtpScreen>
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(48),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, 1),
-            blurRadius: 2,
-          ),
-        ],
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
         children: [

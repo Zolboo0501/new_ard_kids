@@ -64,7 +64,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Тэмүүлэн!'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.qr_code_scanner_rounded));
+      await tester.tap(find.bySemanticsLabel('QR уншуулах'));
       await tester.pump(const Duration(milliseconds: 600));
       expect(router.state.uri.path, AppRoutes.qrScan);
     });
@@ -73,7 +73,7 @@ void main() {
   group('two panes', () {
     testWidgets('Home stays one column on a Pro Max', (tester) async {
       await _pump(tester, AppRoutes.home, _proMax);
-      final balance = tester.getRect(find.text('ХАРИЛЦАХ ДАНС').first);
+      final balance = tester.getRect(find.text('Харилцах данс').first);
       final tabs = tester.getRect(find.text('Нэхэмжлэх').first);
       expect(tabs.top, greaterThan(balance.bottom));
     });
@@ -82,7 +82,7 @@ void main() {
       tester,
     ) async {
       await _pump(tester, AppRoutes.home, _ipadLandscape);
-      final balance = tester.getRect(find.text('ХАРИЛЦАХ ДАНС').first);
+      final balance = tester.getRect(find.text('Харилцах данс').first);
       final tabs = tester.getRect(find.text('Нэхэмжлэх').first);
       expect(tabs.left, greaterThan(balance.right));
     });

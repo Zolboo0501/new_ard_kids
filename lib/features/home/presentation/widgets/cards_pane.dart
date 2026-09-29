@@ -25,14 +25,17 @@ class CardsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: AppCard(
             radius: 18,
+            color: Night.surface,
+            borderColor: Night.surface,
+            shadow: false,
             padding: const EdgeInsets.all(16),
             onTap: () => onOpen(AppRoutes.card),
             child: Row(
               children: [
                 _IconTile(
-                  icon: Icons.credit_card_rounded,
-                  background: AppColors.sky100,
-                  color: AppColors.sky600,
+                  icon: LineGlyph.card,
+                  background: Night.surface2,
+                  color: Night.text,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -40,10 +43,10 @@ class CardsPane extends StatelessWidget {
                 ),
                 const StatusBadge(label: 'Идэвхтэй', tone: BadgeTone.emerald),
                 const SizedBox(width: 4),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: AppColors.slate400,
+                const LineIcon(
+                  LineGlyph.chevronRight,
+                  size: 18,
+                  color: Night.text2,
                 ),
               ],
             ),
@@ -57,6 +60,9 @@ class CardsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: AppCard(
             radius: 18,
+            color: Night.surface,
+            borderColor: Night.surface,
+            shadow: false,
             padding: const EdgeInsets.all(16),
             onTap: () => onOpen(AppRoutes.cardOrder),
             child: Column(
@@ -64,9 +70,9 @@ class CardsPane extends StatelessWidget {
                 Row(
                   children: [
                     _IconTile(
-                      icon: Icons.credit_card_rounded,
-                      background: AppColors.amber500.withValues(alpha: 0.1),
-                      color: AppColors.amber500,
+                      icon: LineGlyph.card,
+                      background: Night.surface2,
+                      color: Night.text,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -78,31 +84,30 @@ class CardsPane extends StatelessWidget {
                     const StatusBadge(
                       label: 'Хүлээгдэж буй',
                       tone: BadgeTone.amber,
-                      icon: Icons.schedule_rounded,
                     ),
                   ],
                 ),
-                const Divider(height: 20, color: AppColors.slate100),
+                const Divider(height: 20, color: Night.line),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.info_outline_rounded,
-                      size: 14,
-                      color: AppColors.amber500,
+                    const LineIcon(
+                      LineGlyph.info,
+                      size: 15,
+                      color: Night.amber,
                     ),
                     const SizedBox(width: 4),
                     Expanded(
                       child: AppText(
                         'Эцэг эхийн зөвшөөрөл хүлээж байна',
                         size: 11,
-                        color: AppColors.slate400,
+                        color: Night.text2,
                       ),
                     ),
                     AppText(
                       'Дэлгэрэнгүй',
                       size: 11,
                       weight: FontWeight.w700,
-                      color: AppColors.sky600,
+                      color: AppColors.sky500,
                     ),
                   ],
                 ),
@@ -117,7 +122,7 @@ class CardsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: DashedAction(
-            icon: Icons.add_card_rounded,
+            icon: LineGlyph.cardAdd,
             label: 'Шинэ загварын хүүхдийн карт захиалах',
             onTap: () => onOpen(AppRoutes.cardOrder),
           ),
@@ -134,7 +139,7 @@ class _IconTile extends StatelessWidget {
     required this.color,
   });
 
-  final IconData icon;
+  final LineGlyph icon;
   final Color background;
   final Color color;
 
@@ -145,9 +150,10 @@ class _IconTile extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
         color: background,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
       ),
-      child: Icon(icon, color: color, size: 24),
+      alignment: Alignment.center,
+      child: LineIcon(icon, color: color, size: 21),
     );
   }
 }
@@ -163,9 +169,9 @@ class _TwoLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText(title, size: 13, weight: FontWeight.w500),
+        AppText(title, size: 14, weight: FontWeight.w600, color: Night.text),
         const SizedBox(height: 2),
-        AppText(subtitle, size: 11, color: AppColors.slate600),
+        AppText(subtitle, size: 12, color: Night.text2),
       ],
     );
   }

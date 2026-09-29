@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.card,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: AppText(
           'Системээс гарах уу?',
@@ -80,7 +80,6 @@ class ProfileScreen extends StatelessWidget {
           AppCard(
             radius: 24,
             padding: const EdgeInsets.all(20),
-            borderColor: AppColors.slate100,
             child: Column(
               children: [
                 Row(
@@ -100,12 +99,12 @@ class ProfileScreen extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: AppColors.sky500,
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
+                              border: Border.all(color: AppColors.card, width: 2),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.edit_rounded,
                               size: 13,
-                              color: Colors.white,
+                              color: AppColors.onAccent,
                             ),
                           ),
                         ),
@@ -165,7 +164,6 @@ class ProfileScreen extends StatelessWidget {
           AppCard(
             radius: 24,
             padding: const EdgeInsets.all(16),
-            borderColor: AppColors.slate100,
             child: Column(
               children: [
                 Row(
@@ -225,9 +223,8 @@ class ProfileScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.slate50.withValues(alpha: 0.8),
+                    color: AppColors.slate50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.slate100),
                   ),
                   child: Column(
                     children: [
@@ -269,7 +266,6 @@ class ProfileScreen extends StatelessWidget {
           AppCard(
             radius: 24,
             padding: EdgeInsets.zero,
-            borderColor: AppColors.slate100,
             child: Column(
               children: [
                 MenuTile(

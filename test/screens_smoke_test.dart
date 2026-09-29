@@ -121,6 +121,9 @@ void main() {
       ),
     );
     await tester.pump();
+    // Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('Хадгаламж'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Хадгаламж'));
     await tester.pumpAndSettle();
     expect(find.text('Миний зорилтууд'), findsOneWidget);

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../value_switcher.dart';
 import 'interaction.dart';
+import 'line_icons.dart';
 
 /// Formats [amount] as Mongolian tugrik with thousands separators:
 /// `formatMnt(1280000)` → `₮1,280,000`.
@@ -573,7 +574,11 @@ class EyeToggle extends StatelessWidget {
     required this.onTap,
     this.size = 16,
     this.highlighted = false,
+    this.lineColor,
   });
+
+  /// Draws the eye as a thin [LineIcon] in this colour (the night Home).
+  final Color? lineColor;
 
   final bool hidden;
   final VoidCallback onTap;
@@ -609,14 +614,21 @@ class EyeToggle extends StatelessWidget {
               scale: Tween(begin: 0.6, end: 1.0).animate(animation),
               child: FadeTransition(opacity: animation, child: child),
             ),
-            child: Icon(
-              hidden
-                  ? Icons.visibility_off_outlined
-                  : Icons.visibility_outlined,
-              key: ValueKey(hidden),
-              size: size,
-              color: highlighted ? AppColors.sky600 : AppColors.slate400,
-            ),
+            child: lineColor != null
+                ? LineIcon(
+                    hidden ? LineGlyph.eyeOff : LineGlyph.eye,
+                    key: ValueKey(hidden),
+                    size: size,
+                    color: lineColor!,
+                  )
+                : Icon(
+                    hidden
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    key: ValueKey(hidden),
+                    size: size,
+                    color: highlighted ? AppColors.sky600 : AppColors.slate400,
+                  ),
           ),
         ),
       ),

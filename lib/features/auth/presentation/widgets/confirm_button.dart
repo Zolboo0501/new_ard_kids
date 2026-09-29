@@ -29,6 +29,7 @@ class _ConfirmButtonState extends State<ConfirmButton> {
 
   @override
   Widget build(BuildContext context) {
+    final ink = widget.dimmed ? AppColors.slate500 : AppColors.onAccent;
     return Semantics(
       button: true,
       child: GestureDetector(
@@ -42,42 +43,28 @@ class _ConfirmButtonState extends State<ConfirmButton> {
           scale: _pressed ? 0.98 : 1,
           duration: const Duration(milliseconds: 120),
           curve: appEmphasizedDecelerate,
-          child: AnimatedOpacity(
-            opacity: widget.dimmed ? 0.6 : 1,
+          // Dimmed, it drops to a raised surface with muted ink: fading the
+          // accent fill on the dark canvas would read as a muddy teal.
+          child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            child: Container(
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.sky400, AppColors.sky500],
+            curve: appEmphasizedDecelerate,
+            height: 52,
+            decoration: BoxDecoration(
+              color: widget.dimmed ? AppColors.slate50 : AppColors.sky500,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AppText(
+                  'Хүсэлт илгээх',
+                  size: 16,
+                  weight: FontWeight.w700,
+                  color: ink,
                 ),
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.sky500.withValues(alpha: 0.25),
-                    offset: const Offset(0, 4),
-                    blurRadius: 6,
-                    spreadRadius: -1,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const AppText(
-                    'Хүсэлт илгээх',
-                    size: 16,
-                    weight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 18,
-                    color: Colors.white,
-                  ),
-                ],
-              ),
+                const SizedBox(width: 8),
+                Icon(Icons.arrow_forward_rounded, size: 18, color: ink),
+              ],
             ),
           ),
         ),

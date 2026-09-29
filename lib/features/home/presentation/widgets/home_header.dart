@@ -7,32 +7,31 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
+/// Home's top bar on the night canvas: the companion portrait (opens
+/// Profile) with the greeting, and the bell and settings on the right.
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
     super.key,
     required this.linked,
     required this.avatar,
     required this.onNotifications,
+    required this.onSettings,
   });
 
   final bool linked;
   final AppAvatar avatar;
   final VoidCallback onNotifications;
+  final VoidCallback onSettings;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Night.bg,
       padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top),
-      decoration: BoxDecoration(
-        color: kPageBackground.withValues(alpha: 0.95),
-        border: Border(
-          bottom: BorderSide(color: AppColors.sky100.withValues(alpha: 0.6)),
-        ),
-      ),
       child: SizedBox(
         height: 68,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
           child: Row(
             children: [
               GestureDetector(
@@ -43,23 +42,18 @@ class HomeHeader extends StatelessWidget {
                   StatefulNavigationShell.of(context).goBranch(1);
                 },
                 child: Container(
-                  width: 46,
-                  height: 46,
-                  padding: const EdgeInsets.all(2),
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
+                    color: Night.surface2,
                     shape: BoxShape.circle,
-                    color: AppColors.sky100,
-                    border: Border.all(
-                      color: AppColors.sky500.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
+                    border: Border.all(color: Night.line),
                   ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      avatar.portrait,
-                      fit: BoxFit.cover,
-                      semanticLabel: 'Тэмүүлэн',
-                    ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    avatar.portrait,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'Тэмүүлэн',
                   ),
                 ),
               ),
@@ -69,41 +63,93 @@ class HomeHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        AppText(
-                          'Сайн уу',
-                          size: 11,
-                          weight: FontWeight.w600,
-                          color: AppColors.slate500,
-                        ),
-                        const SizedBox(width: 4),
-                        MascotIcon(Stickers.success, size: 16),
-                      ],
+                    AppText(
+                      'Сайн уу,',
+                      size: 12,
+                      weight: FontWeight.w500,
+                      color: Night.text2,
                     ),
                     AppText(
                       'Тэмүүлэн!',
                       size: 17,
-                      weight: FontWeight.w500,
+                      weight: FontWeight.w700,
+                      color: Night.text,
                       letterSpacing: -0.3,
                     ),
                     if (!linked)
-                      const Padding(
-                        padding: EdgeInsets.only(top: 2),
-                        child: StatusBadge(
-                          label: 'Эцэг эх холбогдоогүй',
-                          tone: BadgeTone.amber,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: AppText(
+                          'Эцэг эх холбогдоогүй',
+                          size: 10.5,
+                          weight: FontWeight.w600,
+                          color: Night.amber,
                         ),
                       ),
                   ],
                 ),
               ),
-              CircleIconButton(
-                icon: Icons.notifications_none_rounded,
+              _HeaderIcon(
+                icon: LineGlyph.bell,
                 label: 'Мэдэгдэл',
                 badge: true,
-                onPressed: onNotifications,
+                onTap: onNotifications,
               ),
+              _HeaderIcon(
+                icon: LineGlyph.settings,
+                label: 'Тохиргоо',
+                onTap: onSettings,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A bare white icon with a 44pt hit area, as on the reference.
+class _HeaderIcon extends StatelessWidget {
+  const _HeaderIcon({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.badge = false,
+  });
+
+  final LineGlyph icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool badge;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: Pressable(
+        onTap: onTap,
+        scale: 0.9,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              LineIcon(icon, size: 24, color: Night.text),
+              if (badge)
+                Positioned(
+                  top: 11,
+                  right: 12,
+                  child: Container(
+                    width: 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: AppColors.sky500,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

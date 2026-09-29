@@ -33,10 +33,10 @@ class ParentCard extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: selected ? AppColors.sky50 : AppColors.card,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.slate200,
+              color: selected ? AppColors.sky500 : AppColors.card,
               width: selected ? 2 : 1,
             ),
           ),

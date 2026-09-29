@@ -57,7 +57,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         text: 'Та зорилгынхоо талыг хуримтлуулж чадлаа, мундаг байна!',
       ),
       asset: Stickers.goal,
-      tint: const Color(0xFFEFF6FF),
+      tint: AppColors.sky50,
       unread: true,
       progress: 0.5,
     ),
@@ -107,7 +107,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   static final _bold = inter(
     size: 11,
     weight: FontWeight.w700,
-    color: AppColors.slate700,
+    color: AppColors.slate800,
   );
 
   int _filter = 0;
@@ -121,7 +121,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF6FAFF);
+    const bg = AppColors.surface;
     final unread = _items.where((n) => n.unread).length;
     final today = _visible.where((n) => n.today).toList();
     final earlier = _visible.where((n) => !n.today).toList();
@@ -234,7 +234,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       child: AppCard(
         radius: 24,
         padding: const EdgeInsets.all(16),
-        borderColor: n.unread ? AppColors.sky200 : AppColors.slate100,
+        borderColor: n.unread ? AppColors.sky200 : null,
         onTap: () => _open(n),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,

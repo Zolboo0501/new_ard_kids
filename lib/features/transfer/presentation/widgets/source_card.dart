@@ -18,7 +18,6 @@ class SourceCard extends StatelessWidget {
     return AppCard(
       radius: 26,
       padding: const EdgeInsets.all(16),
-      borderColor: AppColors.slate100,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -65,7 +64,7 @@ class SourceCard extends StatelessWidget {
           MascotImage(
             asset: Stickers.payment,
             size: 110,
-            background: Colors.white,
+            background: AppColors.card,
             semanticLabel: 'Гүйлгээ хийж буй маскот',
           ),
         ],

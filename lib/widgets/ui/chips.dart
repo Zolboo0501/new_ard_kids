@@ -39,7 +39,7 @@ class FilterChipPill extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky500 : Colors.white,
+            color: selected ? AppColors.sky500 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
               color: selected ? AppColors.sky500 : AppColors.sky100,
@@ -52,7 +52,7 @@ class FilterChipPill extends StatelessWidget {
                 Icon(
                   icon,
                   size: 14,
-                  color: selected ? Colors.white : AppColors.slate500,
+                  color: selected ? AppColors.onAccent : AppColors.slate500,
                 ),
                 const SizedBox(width: 4),
               ],
@@ -64,7 +64,7 @@ class FilterChipPill extends StatelessWidget {
                 label,
                 size: 11,
                 weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? Colors.white : AppColors.slate500,
+                color: selected ? AppColors.onAccent : AppColors.slate500,
               ),
             ],
           ),
@@ -194,7 +194,7 @@ class QuickAmountChips extends StatelessWidget {
                     size: 11,
                     weight: FontWeight.w700,
                     color: selected == amounts[i]
-                        ? Colors.white
+                        ? AppColors.onAccent
                         : AppColors.sky700,
                   ),
                 ),

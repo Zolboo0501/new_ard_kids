@@ -20,8 +20,9 @@ class LinkParentBanner extends StatelessWidget {
       foregroundPainter: null,
       child: AppCard(
         dashed: true,
-        borderColor: AppColors.amber400,
-        color: AppColors.amber50,
+        borderColor: Night.amber.withValues(alpha: 0.6),
+        color: Night.surface,
+        shadow: false,
         radius: 24,
         padding: const EdgeInsets.all(14),
         child: Column(
@@ -38,13 +39,13 @@ class LinkParentBanner extends StatelessWidget {
                         'Эцэг эхтэйгээ холбогдох',
                         size: 12,
                         weight: FontWeight.w700,
-                        color: AppColors.amber800,
+                        color: Night.amber,
                       ),
                       const SizedBox(height: 4),
                       AppText(
                         'Эрхээ 5 дахин нэмэгдүүлж, хадгаламж болон урамшууллын дансаа идэвхжүүлээрэй!',
-                        size: 11,
-                        color: AppColors.slate600,
+                        size: 11.5,
+                        color: Night.text2,
                         height: 1.4,
                       ),
                     ],
@@ -57,10 +58,10 @@ class LinkParentBanner extends StatelessWidget {
                     onTap: withHaptic(onClose),
                     child: const Padding(
                       padding: EdgeInsets.all(4),
-                      child: Icon(
-                        Icons.close_rounded,
+                      child: LineIcon(
+                        LineGlyph.close,
                         size: 16,
-                        color: AppColors.slate400,
+                        color: Night.text2,
                       ),
                     ),
                   ),
@@ -71,9 +72,8 @@ class LinkParentBanner extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.8),
+                color: Night.surface2,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.amber100),
               ),
               child: Row(
                 children: [
@@ -87,7 +87,7 @@ class LinkParentBanner extends StatelessWidget {
                             style: inter(
                               size: 10,
                               weight: FontWeight.w700,
-                              color: AppColors.amber600,
+                              color: Night.amber,
                             ),
                           ),
                         ],
@@ -95,7 +95,7 @@ class LinkParentBanner extends StatelessWidget {
                       style: inter(
                         size: 10,
                         weight: FontWeight.w500,
-                        color: AppColors.slate500,
+                        color: Night.text2,
                       ),
                     ),
                   ),
@@ -107,10 +107,26 @@ class LinkParentBanner extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            PrimaryButton(
-              label: 'Эцэг эхээ холбох ',
-              height: 40,
-              onPressed: onLink,
+            Semantics(
+              button: true,
+              child: Pressable(
+                onTap: onLink,
+                scale: 0.97,
+                child: Container(
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.sky500,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: AppText(
+                    'Эцэг эхээ холбох',
+                    size: 13,
+                    weight: FontWeight.w700,
+                    color: AppColors.onAccent,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

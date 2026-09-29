@@ -70,7 +70,7 @@ class FriendAvatar extends StatelessWidget {
                             child: MascotImage(
                               asset: asset!,
                               size: 50,
-                              background: Colors.white,
+                              background: tint,
                               semanticLabel: label,
                             ),
                           ),
@@ -83,14 +83,14 @@ class FriendAvatar extends StatelessWidget {
                         width: 18,
                         height: 18,
                         decoration: BoxDecoration(
-                          color: AppColors.sky600,
+                          color: AppColors.sky500,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
+                          border: Border.all(color: AppColors.card, width: 2),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.check_rounded,
                           size: 10,
-                          color: Colors.white,
+                          color: AppColors.onAccent,
                         ),
                       ),
                     ),

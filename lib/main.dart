@@ -80,7 +80,12 @@ class _ArdKidsAppState extends State<ArdKidsApp> {
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       routerConfig: _router,
-      builder: AppScale.builder,
+      // Every screen is drawn on the night canvas, so the status bar icons
+      // are light everywhere.
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: AppScale.builder(context, child),
+      ),
     );
   }
 }

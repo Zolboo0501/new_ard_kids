@@ -24,7 +24,7 @@ class RequestMoneyScreen extends StatefulWidget {
 class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
   static List<(String, String, String, Color)> get _parents => [
     ('Ээж', 'Голомт • 1605******', Stickers.mom, AppColors.pink50),
-    ('Аав', 'Хаан • 5042******', Stickers.dad, const Color(0xFFEFF6FF)),
+    ('Аав', 'Хаан • 5042******', Stickers.dad, AppColors.indigo50),
   ];
   static List<(String, String)> get _types => [
     (Stickers.books, 'Ном дэвтэр'),
@@ -69,10 +69,10 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.slate50,
+      backgroundColor: AppColors.surface,
       appBar: SubPageHeader(
         title: 'Мөнгө хүсэх',
-        background: AppColors.slate50,
+        background: AppColors.surface,
         trailing: CircleIconButton(
           icon: Icons.history_rounded,
           label: 'Хүсэлтийн жагсаалт',
@@ -91,7 +91,6 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
             AppCard(
               radius: 26,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Row(
                 children: [
                   Expanded(
@@ -113,7 +112,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   MascotImage(
                     asset: Stickers.family,
                     size: 96,
-                    background: Colors.white,
+                    background: AppColors.card,
                     semanticLabel: 'Аав ээжтэйгээ маскот',
                   ),
                 ],
@@ -145,7 +144,6 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
             AppCard(
               radius: 26,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

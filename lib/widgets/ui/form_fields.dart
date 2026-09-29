@@ -99,7 +99,7 @@ class _AppTextFieldState extends State<AppTextField> {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         constraints: const BoxConstraints(minHeight: 52),
         decoration: BoxDecoration(
-          color: widget.enabled ? Colors.white : AppColors.slate50,
+          color: widget.enabled ? AppColors.card : AppColors.slate50,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: focused ? AppColors.sky400 : AppColors.slate200,
@@ -191,9 +191,9 @@ class AppSwitch extends StatelessWidget {
               onChanged(v);
             },
       activeTrackColor: AppColors.sky500,
-      activeThumbColor: Colors.white,
+      activeThumbColor: AppColors.onAccent,
       inactiveTrackColor: AppColors.slate200,
-      inactiveThumbColor: Colors.white,
+      inactiveThumbColor: AppColors.slate500,
       trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
     );
   }

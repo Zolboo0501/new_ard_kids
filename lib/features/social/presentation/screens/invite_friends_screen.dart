@@ -51,7 +51,7 @@ class InviteFriendsScreen extends StatelessWidget {
                   MascotImage(
                     asset: Stickers.friends,
                     size: 128,
-                    background: Colors.white,
+                    background: AppColors.card,
                     semanticLabel: 'Найз урих урамшууллын зураг',
                   ),
                   const SizedBox(height: 6),
@@ -175,7 +175,7 @@ class InviteFriendsScreen extends StatelessWidget {
                           icon: Icons.content_copy_rounded,
                           height: 36,
                           background: AppColors.sky500,
-                          foreground: Colors.white,
+                          foreground: AppColors.onAccent,
                           border: Colors.transparent,
                           onPressed: () => _copy(context),
                         ),

@@ -18,7 +18,13 @@ void main() {
     router.go(AppRoutes.home);
     await tester.pumpAndSettle();
 
+    // Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('Карт'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Карт'));
+    await tester.pumpAndSettle();
+    // Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('Junior Card'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Junior Card'));
     await tester.pumpAndSettle();

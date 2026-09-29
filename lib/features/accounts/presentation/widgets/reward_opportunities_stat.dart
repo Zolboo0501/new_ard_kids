@@ -22,13 +22,12 @@ class RewardOpportunitiesStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, border) = tone.colors;
+    final (_, fg, _) = tone.colors;
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: bg.withValues(alpha: 0.6),
+        color: AppColors.slate50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: border),
       ),
       child: Row(
         children: [
@@ -36,7 +35,7 @@ class RewardOpportunitiesStat extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: fg.withValues(alpha: 0.14),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, size: 18, color: fg),

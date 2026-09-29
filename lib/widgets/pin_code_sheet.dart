@@ -27,7 +27,7 @@ Future<bool?> showPinCodeSheet(
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.card,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
     ),
@@ -134,7 +134,7 @@ class _PinCodeSheetState extends State<PinCodeSheet>
             MascotImage(
               asset: Stickers.lock,
               size: 80,
-              background: Colors.white,
+              background: AppColors.card,
               semanticLabel: 'ПИН кодын маскот',
             ),
             const SizedBox(height: 8),

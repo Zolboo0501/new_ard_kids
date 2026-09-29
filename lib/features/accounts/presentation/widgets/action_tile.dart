@@ -28,7 +28,7 @@ class ActionTile extends StatelessWidget {
         onTap: withHaptic(onTap),
         radius: 18,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
-        color: highlighted ? AppColors.sky500 : Colors.white,
+        color: highlighted ? AppColors.sky500 : AppColors.card,
         child: Column(
           children: [
             Container(
@@ -36,14 +36,14 @@ class ActionTile extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 color: highlighted
-                    ? Colors.white.withValues(alpha: 0.2)
-                    : AppColors.sky50,
+                    ? AppColors.onAccent.withValues(alpha: 0.12)
+                    : AppColors.slate50,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
                 size: 18,
-                color: highlighted ? Colors.white : AppColors.sky600,
+                color: highlighted ? AppColors.onAccent : AppColors.sky600,
               ),
             ),
             const SizedBox(height: 6),
@@ -51,7 +51,7 @@ class ActionTile extends StatelessWidget {
               label,
               size: 11,
               weight: FontWeight.w700,
-              color: highlighted ? Colors.white : AppColors.slate700,
+              color: highlighted ? AppColors.onAccent : AppColors.slate800,
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

@@ -21,7 +21,6 @@ class CardOrderSection extends StatelessWidget {
     return AppCard(
       radius: 24,
       padding: const EdgeInsets.all(16),
-      borderColor: AppColors.slate100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

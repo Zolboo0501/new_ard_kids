@@ -46,7 +46,7 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: AppColors.sky100.withValues(alpha: 0.6),
+                color: Night.line,
               ),
             ),
           ),

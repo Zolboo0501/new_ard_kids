@@ -23,7 +23,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF4F8FC);
+    const bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
@@ -58,7 +58,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(16),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   Row(

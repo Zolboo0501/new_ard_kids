@@ -23,14 +23,13 @@ class SavingsAccountShortcut extends StatelessWidget {
       child: AppCard(
         radius: 20,
         padding: const EdgeInsets.symmetric(vertical: 12),
-        borderColor: AppColors.slate100,
         onTap: onTap,
         child: Column(
           children: [
             MascotImage(
               asset: asset,
               size: 56,
-              background: Colors.white,
+              background: AppColors.card,
               semanticLabel: label,
             ),
             const SizedBox(height: 4),

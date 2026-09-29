@@ -14,7 +14,7 @@ class SuccessSheet extends StatelessWidget {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.card,
           borderRadius: BorderRadius.circular(28),
         ),
         child: Column(

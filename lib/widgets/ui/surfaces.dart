@@ -7,21 +7,18 @@ import '../../theme/app_theme.dart';
 import '../app_text.dart';
 import 'interaction.dart';
 
-const _softShadow = [
-  BoxShadow(color: Color(0x0D000000), offset: Offset(0, 1), blurRadius: 2),
-];
-
 /// Page background shared by the in-app screens. Follows the theme.
 Color get kPageBackground => AppColors.pageBackground;
 
-/// White rounded container with a thin sky border.
+/// A rounded card on the night canvas: flat [AppColors.card], no border
+/// unless one is asked for (a dashed card always draws its outline).
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(14),
     this.radius = 20,
-    this.color = Colors.white,
+    this.color = AppColors.card,
     this.borderColor,
     this.dashed = false,
     this.onTap,
@@ -34,31 +31,36 @@ class AppCard extends StatelessWidget {
   final double radius;
   final Color color;
 
-  /// Defaults to the theme accent (`AppColors.sky100`).
+  /// No border by default; a dashed card defaults to `AppColors.slate300`.
   final Color? borderColor;
   final bool dashed;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
+
+  /// Kept so existing callers still build; shadows don't read on the dark
+  /// canvas, so cards are flat.
   final bool shadow;
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = this.borderColor ?? AppColors.sky100;
+    final borderColor =
+        this.borderColor ?? (dashed ? AppColors.slate300 : null);
     Widget box = Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(radius),
-        border: dashed ? null : Border.all(color: borderColor),
-        boxShadow: shadow ? _softShadow : null,
+        border: dashed || borderColor == null
+            ? null
+            : Border.all(color: borderColor),
       ),
       child: child,
     );
     if (dashed) {
       box = CustomPaint(
         foregroundPainter: _DashedRRectPainter(
-          color: borderColor,
+          color: borderColor!,
           radius: radius,
         ),
         child: box,
@@ -102,7 +104,9 @@ class _DashedRRectPainter extends CustomPainter {
       old.color != color || old.radius != radius;
 }
 
-/// Full-width pill call-to-action (sky gradient).
+/// Full-width pill call-to-action: a solid accent fill with dark ink, like
+/// Home's mint button. A custom [color] gets [AppColors.onBright] ink
+/// unless [foreground] says otherwise.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
     super.key,
@@ -112,6 +116,7 @@ class PrimaryButton extends StatelessWidget {
     this.leadingIcon,
     this.height = 52,
     this.color,
+    this.foreground,
   });
 
   final String label;
@@ -121,10 +126,15 @@ class PrimaryButton extends StatelessWidget {
   final double height;
   final Color? color;
 
+  /// The label and icon colour on an enabled button.
+  final Color? foreground;
+
   @override
   Widget build(BuildContext context) {
     final enabled = onPressed != null;
     final base = color ?? AppColors.sky500;
+    final ink =
+        foreground ?? (color == null ? AppColors.onAccent : AppColors.onBright);
     return Semantics(
       button: true,
       enabled: enabled,
@@ -136,23 +146,7 @@ class PrimaryButton extends StatelessWidget {
           height: height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
-            color: enabled ? null : AppColors.slate200,
-            gradient: enabled
-                ? LinearGradient(
-                    colors: color == null
-                        ? [AppColors.sky500, AppColors.sky600]
-                        : [base, base],
-                  )
-                : null,
-            boxShadow: enabled
-                ? [
-                    BoxShadow(
-                      color: base.withValues(alpha: 0.3),
-                      offset: const Offset(0, 8),
-                      blurRadius: 18,
-                    ),
-                  ]
-                : null,
+            color: enabled ? base : AppColors.slate100,
           ),
           alignment: Alignment.center,
           child: Row(
@@ -162,7 +156,7 @@ class PrimaryButton extends StatelessWidget {
                 Icon(
                   leadingIcon,
                   size: 20,
-                  color: enabled ? Colors.white : AppColors.slate400,
+                  color: enabled ? ink : AppColors.slate400,
                 ),
                 const SizedBox(width: 8),
               ],
@@ -171,17 +165,13 @@ class PrimaryButton extends StatelessWidget {
                   label,
                   size: 14,
                   weight: FontWeight.w700,
-                  color: enabled ? Colors.white : AppColors.slate400,
+                  color: enabled ? ink : AppColors.slate400,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (icon != null) ...[
                 const SizedBox(width: 8),
-                Icon(
-                  icon,
-                  size: 20,
-                  color: enabled ? Colors.white : AppColors.slate400,
-                ),
+                Icon(icon, size: 20, color: enabled ? ink : AppColors.slate400),
               ],
             ],
           ),
@@ -191,13 +181,14 @@ class PrimaryButton extends StatelessWidget {
   }
 }
 
-/// Light pill button (sky tint) used for secondary actions.
+/// Secondary pill button: a dark accent tint with accent ink.
 class SoftButton extends StatelessWidget {
   const SoftButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.icon,
+    this.leading,
     this.height = 48,
     this.background,
     this.foreground,
@@ -207,6 +198,9 @@ class SoftButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
+
+  /// Drawn in place of [icon] (e.g. a [LineIcon]).
+  final Widget? leading;
   final double height;
 
   /// The colors default to the theme accent (`AppColors.sky50`/`sky600`/
@@ -235,8 +229,8 @@ class SoftButton extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (icon != null) ...[
-                Icon(icon, size: 18, color: foreground),
+              if (leading != null || icon != null) ...[
+                leading ?? Icon(icon, size: 18, color: foreground),
                 const SizedBox(width: 6),
               ],
               Flexible(
@@ -256,7 +250,7 @@ class SoftButton extends StatelessWidget {
   }
 }
 
-/// Round white icon button used in headers.
+/// Round raised icon button used in headers.
 class CircleIconButton extends StatelessWidget {
   const CircleIconButton({
     super.key,
@@ -286,11 +280,9 @@ class CircleIconButton extends StatelessWidget {
         child: Container(
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            color: Colors.white,
+          decoration: const BoxDecoration(
+            color: AppColors.card,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.sky100),
-            boxShadow: _softShadow,
           ),
           child: Stack(
             alignment: Alignment.center,
@@ -306,7 +298,7 @@ class CircleIconButton extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.sky500,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 1.5),
+                      border: Border.all(color: AppColors.card, width: 1.5),
                     ),
                   ),
                 ),

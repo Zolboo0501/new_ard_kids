@@ -26,24 +26,22 @@ void main() {
   });
   tearDown(() => appThemeChoice.value = AppThemeChoice.blue);
 
-  testWidgets('Blue theme keeps the original sky colors', (tester) async {
-    expect(AppColors.sky500, const Color(0xFF0EA5E9));
-    expect(AppColors.sky600, const Color(0xFF0284C7));
-    expect(AppColors.dsPrimary, const Color(0xFF006591));
-    expect(AppColors.pageBackground, const Color(0xFFF5F8FE));
-    expect(AppColors.pageBackgroundMuted, const Color(0xFFF4F6FB));
+  testWidgets('Blue theme is Home\'s night mint', (tester) async {
+    expect(AppColors.sky500, Night.mint);
+    expect(AppColors.onAccent, Night.onMint);
+    expect(AppColors.dsPrimary, Night.mint);
+    expect(AppColors.pageBackground, Night.bg);
+    expect(AppColors.pageBackgroundMuted, Night.bg);
   });
 
   test('Tab styles follow the theme', () {
-    expect(AppTabsStyle.card.selectedColor, AppPalette.blue.c600);
+    expect(AppTabsStyle.card.dotColor, AppPalette.blue.c500);
+    expect(AppTabsStyle.pill.selectedColor, AppPalette.blue.onAccent);
     appThemeChoice.value = AppThemeChoice.pink;
-    expect(AppTabsStyle.card.selectedColor, AppPalette.pink.c600);
     expect(AppTabsStyle.card.dotColor, AppPalette.pink.c500);
     expect(AppTabsStyle.solid.pillColor, AppPalette.pink.c500);
-    expect(
-      AppTabsStyle.pill.pillGradient?.colors,
-      contains(AppPalette.pink.c500),
-    );
+    expect(AppTabsStyle.pill.pillColor, AppPalette.pink.c500);
+    expect(AppTabsStyle.pill.selectedColor, AppPalette.pink.onAccent);
   });
 
   testWidgets('Saving the pink theme applies it', (tester) async {

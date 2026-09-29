@@ -44,7 +44,8 @@ class FrozenCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.slate900.withValues(alpha: 0.8),
+                  color: Night.bg.withValues(alpha: 0.85),
+                  border: Border.all(color: Night.line),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Row(
@@ -53,14 +54,14 @@ class FrozenCard extends StatelessWidget {
                     const Icon(
                       Icons.ac_unit_rounded,
                       size: 16,
-                      color: Colors.white,
+                      color: Night.text,
                     ),
                     const SizedBox(width: 6),
                     AppText(
                       'Түр хаасан',
                       size: 12,
                       weight: FontWeight.w700,
-                      color: Colors.white,
+                      color: Night.text,
                     ),
                   ],
                 ),

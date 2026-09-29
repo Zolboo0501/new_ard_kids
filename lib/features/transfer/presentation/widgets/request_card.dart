@@ -27,7 +27,6 @@ class RequestCard extends StatelessWidget {
     };
     return AppCard(
       radius: 18,
-      borderColor: AppColors.slate100,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -88,7 +87,7 @@ class RequestCard extends StatelessWidget {
                 weight: FontWeight.w500,
                 color: switch (r.status) {
                   RequestStatus.pending => AppColors.sky600,
-                  RequestStatus.approved => const Color(0xFF006C49),
+                  RequestStatus.approved => AppColors.emerald600,
                   RequestStatus.declined => AppColors.slate400,
                 },
                 decoration: r.status == RequestStatus.declined
@@ -125,7 +124,7 @@ class RequestCard extends StatelessWidget {
                         icon: Icons.notifications_active_outlined,
                         height: 34,
                         background: AppColors.sky500,
-                        foreground: Colors.white,
+                        foreground: AppColors.onAccent,
                         border: Colors.transparent,
                         onPressed: onNudge,
                       ),

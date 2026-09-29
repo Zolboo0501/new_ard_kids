@@ -4,6 +4,7 @@ import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
+import '../../../../widgets/ui.dart';
 import 'account_row.dart';
 
 class AccountsPane extends StatelessWidget {
@@ -22,6 +23,7 @@ class AccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.piggy,
             title: 'Хадгаламж',
             subtitle: 'Хуримтлал үүсгээрэй',
             mascot: avatar.savings,
@@ -36,6 +38,7 @@ class AccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.sprout,
             title: 'Миний өв',
             subtitle: 'Хөрөнгө оруулалтаа хараарай',
             mascot: avatar.stocks,
@@ -50,6 +53,7 @@ class AccountsPane extends StatelessWidget {
           always: true,
           delay: AppTabView.incomingDelay,
           child: AccountRow(
+            icon: LineGlyph.gift,
             title: 'Урамшуулал',
             subtitle: 'Оноогоо хараарай',
             mascot: avatar.rewards,

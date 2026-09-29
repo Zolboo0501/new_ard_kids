@@ -22,12 +22,12 @@ class AmbientGlow extends StatelessWidget {
           Positioned(
             top: -96,
             left: -80,
-            child: blob(360, AppColors.sky200.withValues(alpha: 0.45)),
+            child: blob(360, AppColors.sky500.withValues(alpha: 0.10)),
           ),
           Positioned(
             top: 40,
             right: -80,
-            child: blob(320, AppColors.indigo100.withValues(alpha: 0.5)),
+            child: blob(320, Night.violet.withValues(alpha: 0.06)),
           ),
         ],
       ),

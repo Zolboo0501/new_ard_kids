@@ -8,6 +8,7 @@ import '../../../../widgets/common.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../data/cart_item.dart';
+import '../widgets/account_hero_panel.dart';
 import '../widgets/cart_tile.dart';
 
 /// "Миний сагс - Авсаархан загвар": shopping cart pending parent approval.
@@ -64,13 +65,12 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFFAF9FF);
+    final bg = kPageBackground;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
         title: 'Миний сагс',
         subtitle: '${_items.length} бараа сонгогдсон',
-        background: bg,
         trailing: _items.isEmpty
             ? null
             : CircleIconButton(
@@ -89,21 +89,15 @@ class _CartScreenState extends State<CartScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            Container(
+            AccountHeroPanel(
+              accent: AppColors.sky500,
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: LinearGradient(
-                  colors: [AppColors.sky50, AppColors.indigo50],
-                ),
-                border: Border.all(color: AppColors.sky100),
-              ),
               child: Row(
                 children: [
                   MascotImage(
                     asset: Mascots.pandaPiggy,
                     size: 56,
-                    background: AppColors.sky50,
+                    background: AppColors.card,
                     semanticLabel: 'Хөөрхөн панда сагстай дэлгүүр хэсэж буй',
                   ),
                   const SizedBox(width: 10),
@@ -156,7 +150,7 @@ class _CartScreenState extends State<CartScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 40),
                 child: Column(
                   children: [
-                    const MascotImage(
+                    MascotImage(
                       asset: Mascots.sleepingCat,
                       size: 120,
                       background: bg,
@@ -186,7 +180,6 @@ class _CartScreenState extends State<CartScreen> {
             AppCard(
               radius: 18,
               padding: const EdgeInsets.all(14),
-              borderColor: AppColors.slate100,
               child: Column(
                 children: [
                   Row(

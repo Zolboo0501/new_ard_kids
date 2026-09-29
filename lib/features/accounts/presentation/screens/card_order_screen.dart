@@ -59,10 +59,9 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFFAF9FF);
     return Scaffold(
-      backgroundColor: bg,
-      appBar: const SubPageHeader(title: 'Карт захиалга', background: bg),
+      backgroundColor: kPageBackground,
+      appBar: const SubPageHeader(title: 'Карт захиалга'),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
@@ -108,9 +107,8 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.sky50.withValues(alpha: 0.6),
+                    color: AppColors.slate50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.sky100),
                   ),
                   child: Row(
                     children: [
@@ -118,9 +116,8 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: AppColors.sky500.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.sky100),
                         ),
                         child: Icon(
                           Icons.account_balance_wallet_outlined,

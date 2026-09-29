@@ -38,20 +38,20 @@ class CameraError extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 40, color: AppColors.sky300),
+            Icon(icon, size: 40, color: AppColors.sky500),
             const SizedBox(height: 12),
             AppText(
               title,
               size: 15,
               weight: FontWeight.w700,
-              color: Colors.white,
+              color: Night.text,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
             AppText(
               body,
               size: 12,
-              color: Colors.white.withValues(alpha: 0.75),
+              color: Night.text2,
               textAlign: TextAlign.center,
               height: 1.4,
             ),

@@ -389,23 +389,8 @@ class _AuthScreenState extends State<AuthScreen>
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.sky100.withValues(alpha: 0.8)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.sky500.withValues(alpha: 0.08),
-            offset: const Offset(0, 12),
-            blurRadius: 36,
-            spreadRadius: -6,
-          ),
-          BoxShadow(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.03),
-            offset: const Offset(0, 4),
-            blurRadius: 12,
-            spreadRadius: -2,
-          ),
-        ],
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

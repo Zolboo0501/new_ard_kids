@@ -17,10 +17,10 @@ class PageDots extends StatelessWidget {
           AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: i == index ? 20 : 8,
-            height: 8,
+            width: i == index ? 18 : 6,
+            height: 6,
             decoration: BoxDecoration(
-              color: i == index ? AppColors.sky500 : AppColors.sky200,
+              color: i == index ? Colors.white : Night.line,
               borderRadius: BorderRadius.circular(8),
             ),
           ),

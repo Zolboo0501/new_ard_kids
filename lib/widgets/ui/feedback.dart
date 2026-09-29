@@ -129,16 +129,16 @@ void showAppSnack(BuildContext context, String message, {String? mascot}) {
     ..showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.slate800,
+        backgroundColor: Night.surface2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         content: mascot == null
-            ? AppText(message, size: 13, color: Colors.white)
+            ? AppText(message, size: 13, color: Night.text)
             : Row(
                 children: [
                   MascotIcon(mascot, size: 28),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: AppText(message, size: 13, color: Colors.white),
+                    child: AppText(message, size: 13, color: Night.text),
                   ),
                 ],
               ),

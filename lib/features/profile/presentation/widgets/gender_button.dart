@@ -27,7 +27,7 @@ class GenderButton extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           height: 46,
           decoration: BoxDecoration(
-            color: selected ? AppColors.sky50 : Colors.white,
+            color: selected ? AppColors.sky50 : AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: selected ? AppColors.sky500 : AppColors.slate200,

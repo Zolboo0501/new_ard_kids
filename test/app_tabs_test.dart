@@ -242,7 +242,7 @@ void main() {
       );
     }
 
-    testWidgets('pill keeps the sign-in look: gradient on a round track', (
+    testWidgets('pill keeps the sign-in look: accent pill, round track', (
       tester,
     ) async {
       await pumpStyled(tester, AppTabsStyle.pill);
@@ -250,20 +250,20 @@ void main() {
 
       expect((track.borderRadius! as BorderRadius).topLeft.x, 999);
       expect(track.border, isNotNull);
-      expect(pill.gradient, isNotNull);
+      expect(pill.color, AppColors.sky500);
       expect((pill.borderRadius! as BorderRadius).topLeft.x, 999);
     });
 
-    testWidgets('card keeps the home look: white pill on a sky track', (
+    testWidgets('card keeps the home look: raised pill on a dark track', (
       tester,
     ) async {
       await pumpStyled(tester, AppTabsStyle.card);
       final (track, pill) = chrome(tester);
 
       expect((track.borderRadius! as BorderRadius).topLeft.x, 16);
-      expect(pill.color, Colors.white);
+      expect(track.color, Night.surface);
+      expect(pill.color, Night.surface2);
       expect((pill.borderRadius! as BorderRadius).topLeft.x, 12);
-      expect(pill.boxShadow, isNotNull);
     });
 
     testWidgets('solid keeps the QR look: sky pill, borderless track', (

@@ -38,7 +38,7 @@ class TaskTile extends StatelessWidget {
           MascotImage(
             asset: asset,
             size: 48,
-            background: Colors.white,
+            background: AppColors.card,
             semanticLabel: title,
           ),
           const SizedBox(width: 12),
@@ -95,7 +95,7 @@ class TaskTile extends StatelessWidget {
                 ? AppColors.emerald50
                 : AppColors.sky50,
             foreground: primary
-                ? Colors.white
+                ? AppColors.onAccent
                 : green
                 ? AppColors.emerald600
                 : AppColors.sky600,

@@ -8,5 +8,6 @@ export 'ui/form_fields.dart';
 export 'ui/headers.dart';
 export 'ui/interaction.dart';
 export 'ui/mascots.dart';
+export 'ui/line_icons.dart';
 export 'ui/money.dart';
 export 'ui/surfaces.dart';

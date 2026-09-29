@@ -14,7 +14,6 @@ class SecurityGroup extends StatelessWidget {
     return AppCard(
       radius: 24,
       padding: const EdgeInsets.all(14),
-      borderColor: AppColors.slate100,
       child: Column(
         children: [
           for (final (i, c) in children.indexed) ...[

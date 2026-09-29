@@ -59,7 +59,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const bg = Color(0xFFF4F8FC);
+    const bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
       appBar: SubPageHeader(
@@ -99,12 +99,12 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.sky500,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
+                      border: Border.all(color: AppColors.card, width: 2),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.photo_camera_outlined,
                       size: 14,
-                      color: Colors.white,
+                      color: AppColors.onAccent,
                     ),
                   ),
                 ),
@@ -112,13 +112,13 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit_outlined, size: 12, color: AppColors.sky500),
+                  Icon(Icons.edit_outlined, size: 12, color: AppColors.sky600),
                   const SizedBox(width: 2),
                   AppText(
                     'Засварлах',
                     size: 11,
                     weight: FontWeight.w700,
-                    color: AppColors.sky500,
+                    color: AppColors.sky600,
                   ),
                 ],
               ),
@@ -127,7 +127,6 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
             AppCard(
               radius: 24,
               padding: const EdgeInsets.all(20),
-              borderColor: AppColors.slate100,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -176,7 +175,7 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                       height: 52,
                       padding: const EdgeInsets.symmetric(horizontal: 14),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.slate50,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: AppColors.slate200),
                       ),
@@ -295,9 +294,9 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
             SoftButton(
               label: 'Цуцлах ба буцах',
               height: 48,
-              background: Colors.white,
-              foreground: AppColors.slate600,
-              border: AppColors.slate200,
+              background: Night.surface2,
+              foreground: Night.text,
+              border: Colors.transparent,
               onPressed: () => Navigator.of(context).maybePop(),
             ),
           ]),

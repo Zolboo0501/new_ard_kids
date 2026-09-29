@@ -100,6 +100,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // Home's tab has no date filter, just the way to the statement.
+    // Below the hero on a phone; scroll it into view first.
+    await tester.ensureVisible(find.text('Нэхэмжлэх'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Нэхэмжлэх'));
     await tester.pumpAndSettle();
     expect(find.byType(DateRangeFilterBar), findsNothing);
