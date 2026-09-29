@@ -23,9 +23,7 @@ class InfoRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        border: last
-            ? null
-            : Border(bottom: BorderSide(color: AppColors.line)),
+        border: last ? null : Border(bottom: BorderSide(color: AppColors.line)),
       ),
       child: Row(
         children: [

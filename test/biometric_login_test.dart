@@ -214,7 +214,7 @@ void main() {
       pulsing: true,
     );
 
-    expect(find.text('Алхам 5/6'), findsOneWidget);
+    expect(find.text('Алхам 6/7'), findsOneWidget);
     expect(find.text('Face ID-аар нэвтрэх үү?'), findsOneWidget);
 
     await tester.tap(find.text('Face ID идэвхжүүлэх'));
@@ -259,13 +259,23 @@ void main() {
     expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
   });
 
-  testWidgets('Register: the avatar step leads to the biometric step', (
+  testWidgets('Register: the avatar step leads to the friend step', (
     tester,
   ) async {
-    Biometrics.instance = _FakeBiometrics();
     final router = await pumpAt(tester, AppRoutes.avatarPicker, pulsing: true);
 
     await tester.tap(find.text('Үргэлжлүүлэх'));
+    await settle(tester);
+    expect(router.state.uri.path, AppRoutes.friendCode);
+  });
+
+  testWidgets('Register: the friend step leads to the biometric step', (
+    tester,
+  ) async {
+    Biometrics.instance = _FakeBiometrics();
+    final router = await pumpAt(tester, AppRoutes.friendCode, pulsing: true);
+
+    await tester.tap(find.text('Алгасах'));
     await settle(tester);
     expect(router.state.uri.path, AppRoutes.biometricSetup);
   });
@@ -274,9 +284,9 @@ void main() {
     tester,
   ) async {
     Biometrics.instance = _FakeBiometrics(kind: null, sensor: false);
-    final router = await pumpAt(tester, AppRoutes.avatarPicker, pulsing: true);
+    final router = await pumpAt(tester, AppRoutes.friendCode, pulsing: true);
 
-    await tester.tap(find.text('Үргэлжлүүлэх'));
+    await tester.tap(find.text('Алгасах'));
     await settle(tester);
     expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
   });

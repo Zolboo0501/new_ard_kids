@@ -125,7 +125,7 @@ void main() {
   test('Unknown saved values keep the defaults', () async {
     appBrightness.value = AppBrightness.system;
     FlutterSecureStorage.setMockInitialValues({
-      'app_theme': 'green',
+      'app_theme': 'teal',
       'app_brightness': 'dim',
     });
     await ThemeStore.load();

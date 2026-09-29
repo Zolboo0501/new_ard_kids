@@ -5,7 +5,17 @@ import 'package:flutter/material.dart';
 /// The accent a teen picks in "Өнгө ба харагдац". Each one has a light and
 /// a dark scale (see [AppPalette]). Stored by name, so `blue` and `pink`
 /// keep the choices saved before the accents were renamed.
-enum AppThemeChoice { blue, violet, pink, mono }
+enum AppThemeChoice {
+  sky,
+  blue,
+  indigo,
+  violet,
+  pink,
+  orange,
+  green,
+  lime,
+  mono,
+}
 
 /// Light or dark canvas. [system] follows the phone's setting.
 enum AppBrightness { system, light, dark }
@@ -41,12 +51,46 @@ class AppPalette {
   static AppPalette of(AppThemeChoice choice, {bool? dark}) {
     final d = dark ?? AppColors.isDark;
     return switch (choice) {
+      AppThemeChoice.sky => d ? _skyDark : _skyLight,
       AppThemeChoice.blue => d ? _blueDark : _blueLight,
+      AppThemeChoice.indigo => d ? _indigoDark : _indigoLight,
       AppThemeChoice.violet => d ? _violetDark : _violetLight,
       AppThemeChoice.pink => d ? _pinkDark : _pinkLight,
+      AppThemeChoice.orange => d ? _orangeDark : _orangeLight,
+      AppThemeChoice.green => d ? _greenDark : _greenLight,
+      AppThemeChoice.lime => d ? _limeDark : _limeLight,
       AppThemeChoice.mono => d ? _monoDark : _monoLight,
     };
   }
+
+  /// The app's original sky blue, from before the light/dark redesign.
+  /// White text needs the light fill a shade deeper than Tailwind's sky-500.
+  static const _skyDark = AppPalette(
+    c50: Color(0xFF0B1E2B),
+    c100: Color(0xFF0F2A3D),
+    c200: Color(0xFF16405C),
+    c300: Color(0xFF1F77A8),
+    c400: Color(0xFF2EA8E6),
+    c500: Color(0xFF38BDF8),
+    c600: Color(0xFF5CCBFA),
+    c700: Color(0xFF7DD3FC),
+    c800: Color(0xFFBAE6FD),
+    c900: Color(0xFFE0F2FE),
+    onAccent: Color(0xFF06263A),
+  );
+  static const _skyLight = AppPalette(
+    c50: Color(0xFFF0F9FF),
+    c100: Color(0xFFE0F2FE),
+    c200: Color(0xFFBAE6FD),
+    c300: Color(0xFF7DD3FC),
+    c400: Color(0xFF38BDF8),
+    c500: Color(0xFF027BBD),
+    c600: Color(0xFF0369A1),
+    c700: Color(0xFF075985),
+    c800: Color(0xFF0C4A6E),
+    c900: Color(0xFF082F49),
+    onAccent: Color(0xFFFFFFFF),
+  );
 
   static const _blueDark = AppPalette(
     c50: Color(0xFF0C2225),
@@ -127,6 +171,118 @@ class AppPalette {
     c800: Color(0xFF680C31),
     c900: Color(0xFF4A0823),
     onAccent: Color(0xFFFFFFFF),
+  );
+
+  /// Electric indigo.
+  static const _indigoDark = AppPalette(
+    c50: Color(0xFF16173A),
+    c100: Color(0xFF1E2050),
+    c200: Color(0xFF2D2F75),
+    c300: Color(0xFF4F52B8),
+    c400: Color(0xFF6D72E6),
+    c500: Color(0xFF818CF8),
+    c600: Color(0xFFA5B4FC),
+    c700: Color(0xFFC7D2FE),
+    c800: Color(0xFFE0E7FF),
+    c900: Color(0xFFEEF2FF),
+    onAccent: Color(0xFF1E1B4B),
+  );
+  static const _indigoLight = AppPalette(
+    c50: Color(0xFFEEF2FF),
+    c100: Color(0xFFE0E7FF),
+    c200: Color(0xFFC7D2FE),
+    c300: Color(0xFFA5B4FC),
+    c400: Color(0xFF818CF8),
+    c500: Color(0xFF4F46E5),
+    c600: Color(0xFF4338CA),
+    c700: Color(0xFF3730A3),
+    c800: Color(0xFF312E81),
+    c900: Color(0xFF1E1B4B),
+    onAccent: Color(0xFFFFFFFF),
+  );
+
+  /// Warm orange. Bright enough that its fill takes dark text in both modes.
+  static const _orangeDark = AppPalette(
+    c50: Color(0xFF2A150C),
+    c100: Color(0xFF3A1D10),
+    c200: Color(0xFF5A2C17),
+    c300: Color(0xFFA84A24),
+    c400: Color(0xFFE8703F),
+    c500: Color(0xFFFF8A5B),
+    c600: Color(0xFFFFA582),
+    c700: Color(0xFFFFBFA3),
+    c800: Color(0xFFFFD8C7),
+    c900: Color(0xFFFFEDE5),
+    onAccent: Color(0xFF3B0D02),
+  );
+  static const _orangeLight = AppPalette(
+    c50: Color(0xFFFFF3ED),
+    c100: Color(0xFFFFE4D6),
+    c200: Color(0xFFFFC7AD),
+    c300: Color(0xFFFFA27F),
+    c400: Color(0xFFFF8659),
+    c500: Color(0xFFFF6B3D),
+    c600: Color(0xFFC2410C),
+    c700: Color(0xFF9A3412),
+    c800: Color(0xFF7C2D12),
+    c900: Color(0xFF431407),
+    onAccent: Color(0xFF3B0D02),
+  );
+
+  /// Bright fintech green, with dark text on the fill.
+  static const _greenDark = AppPalette(
+    c50: Color(0xFF0B2416),
+    c100: Color(0xFF0F3320),
+    c200: Color(0xFF17502F),
+    c300: Color(0xFF238A4E),
+    c400: Color(0xFF36C06C),
+    c500: Color(0xFF4ADE80),
+    c600: Color(0xFF6EE7A0),
+    c700: Color(0xFF9AF0BD),
+    c800: Color(0xFFC6F7D9),
+    c900: Color(0xFFE6FCEF),
+    onAccent: Color(0xFF052E16),
+  );
+  static const _greenLight = AppPalette(
+    c50: Color(0xFFECFDF3),
+    c100: Color(0xFFD1FADF),
+    c200: Color(0xFFA6F0C0),
+    c300: Color(0xFF6EE39A),
+    c400: Color(0xFF3DD47A),
+    c500: Color(0xFF22C55E),
+    c600: Color(0xFF15803D),
+    c700: Color(0xFF166534),
+    c800: Color(0xFF14532D),
+    c900: Color(0xFF052E16),
+    onAccent: Color(0xFF052E16),
+  );
+
+  /// Neon lime, with dark text on the fill.
+  static const _limeDark = AppPalette(
+    c50: Color(0xFF1A230B),
+    c100: Color(0xFF243112),
+    c200: Color(0xFF36491A),
+    c300: Color(0xFF5E7F24),
+    c400: Color(0xFFA6D12F),
+    c500: Color(0xFFC6F432),
+    c600: Color(0xFFD4F75F),
+    c700: Color(0xFFE0FA8A),
+    c800: Color(0xFFECFCB8),
+    c900: Color(0xFFF6FEE0),
+    onAccent: Color(0xFF1A2E05),
+  );
+  static const _limeLight = AppPalette(
+    c50: Color(0xFFF5FCE7),
+    c100: Color(0xFFEAF8CC),
+    c200: Color(0xFFD4F09A),
+    c300: Color(0xFFBEE868),
+    c400: Color(0xFFAEE343),
+    c500: Color(0xFFA3E635),
+    c600: Color(0xFF4D7C0F),
+    c700: Color(0xFF3F6212),
+    c800: Color(0xFF365314),
+    c900: Color(0xFF1A2E05),
+    onAccent: Color(0xFF1A2E05),
   );
 
   /// Graphite: the ink itself is the accent. White on the dark canvas,

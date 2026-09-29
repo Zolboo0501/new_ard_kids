@@ -15,9 +15,7 @@ class AccountSectionTitle extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
       child: Row(
         children: [
-          Expanded(
-            child: AppText(title, size: 16, weight: FontWeight.w700),
-          ),
+          Expanded(child: AppText(title, size: 16, weight: FontWeight.w700)),
           ?trailing,
         ],
       ),

@@ -64,10 +64,16 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/images/fox/
-    - assets/images/bear/
-    - assets/images/rabbit/
-    - assets/images/penguin/
+    - assets/images/kids/fox/
+    - assets/images/kids/bear/
+    - assets/images/kids/rabbit/
+    - assets/images/kids/penguin/
+    - assets/images/teenegars/fox/
+    - assets/images/teenegars/bear/
+    - assets/images/teenegars/rabbit/
+    - assets/images/teenegars/cat/
+    - assets/images/avatars/teen/
+    - assets/images/avatars/mature/
     - assets/svg/
     - shorebird.yaml
 

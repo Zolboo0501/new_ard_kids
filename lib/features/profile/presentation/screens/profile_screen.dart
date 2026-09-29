@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/age_group.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
@@ -106,24 +107,34 @@ class ProfileScreen extends StatelessWidget {
                 subtitle: 'Профайл зургаа солих',
                 onTap: () => go(AppRoutes.avatarPickerEdit),
               ),
-              SettingTile(
-                glyph: LineGlyph.shield,
-                title: 'Аюулгүй байдал',
-                subtitle: 'ПИН код, биометр, төхөөрөмж',
-                onTap: () => go(AppRoutes.security),
+              ValueListenableBuilder(
+                valueListenable: appAgeGroup,
+                builder: (_, age, _) => SettingTile(
+                  glyph: LineGlyph.calendar,
+                  title: 'Нас',
+                  subtitle: age.label,
+                  onTap: () => go(AppRoutes.ageGroupEdit),
+                ),
               ),
+              // Hidden for now: both open from the Home header (gear, bell).
+              // SettingTile(
+              //   glyph: LineGlyph.shield,
+              //   title: 'Аюулгүй байдал',
+              //   subtitle: 'ПИН код, биометр, төхөөрөмж',
+              //   onTap: () => go(AppRoutes.security),
+              // ),
               SettingTile(
                 glyph: LineGlyph.palette,
                 title: 'Харагдац',
                 subtitle: 'Гэрэл, харанхуй, өнгө',
                 onTap: () => go(AppRoutes.themeSettings),
               ),
-              SettingTile(
-                glyph: LineGlyph.bell,
-                title: 'Мэдэгдэл',
-                subtitle: 'Гүйлгээ, хүсэлт, зорилго',
-                onTap: () => go(AppRoutes.notifications),
-              ),
+              // SettingTile(
+              //   glyph: LineGlyph.bell,
+              //   title: 'Мэдэгдэл',
+              //   subtitle: 'Гүйлгээ, хүсэлт, зорилго',
+              //   onTap: () => go(AppRoutes.notifications),
+              // ),
             ],
           ),
           const SizedBox(height: 16),

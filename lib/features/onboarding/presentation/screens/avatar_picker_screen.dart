@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/age_group.dart';
 import '../../../../app/avatar.dart';
-import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -12,7 +12,8 @@ import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/avatar_card.dart';
 
-/// "Аватараа сонго" (onboarding step 4/6): pick a profile avatar.
+/// "Аватараа сонго" (registration step 4/7, right after the age): pick a
+/// profile avatar from the set for [appAgeGroup].
 ///
 /// With [editing] (opened from Profile) there is no step indicator or skip,
 /// and confirming returns to the previous screen.
@@ -27,10 +28,13 @@ class AvatarPickerScreen extends StatefulWidget {
 
 class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     with SingleTickerProviderStateMixin {
-  static const _avatars = AppAvatar.values;
+  /// The set for the teen's age range (see [AppAvatar.forAge]).
+  final _avatars = AppAvatar.forAge(appAgeGroup.value);
 
   /// Starts on the current avatar, so editing shows what's in use.
-  late int _selected = appAvatar.value.index;
+  late int _selected = _avatars
+      .indexOf(appAvatar.value.inAge(appAgeGroup.value))
+      .clamp(0, 3);
 
   /// Drives the one-shot entrance: each element fades and rises over its own
   /// slice of this controller (see [Entrance]).
@@ -75,21 +79,12 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     super.dispose();
   }
 
-  /// Offers biometric sign-in next, unless the phone has no sensor for it.
-  Future<void> _next() async {
-    final hasSensor = await Biometrics.instance.hasSensor();
-    if (!mounted) return;
-    context.push(
-      hasSensor ? AppRoutes.biometricSetup : AppRoutes.parentLinkOnboarding,
-    );
-  }
-
   void _confirm() {
     final avatar = _avatars[_selected];
     appAvatar.value = avatar;
     AvatarStore.save(avatar);
     if (!widget.editing) {
-      _next();
+      context.push(AppRoutes.friendCode);
       return;
     }
     showAppSnack(context, 'Аватар солигдлоо', mascot: avatar.portrait);
@@ -120,7 +115,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _headerIn,
                           child: Header(
-                            step: widget.editing ? null : 'Алхам 4/6',
+                            step: widget.editing ? null : 'Алхам 4/7',
                           ),
                         ),
                         const SizedBox(height: 12),

@@ -26,9 +26,14 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
   ];
 
   static const _accents = [
+    (AppThemeChoice.sky, 'Тэнгэр'),
     (AppThemeChoice.blue, 'Цэнхэр'),
+    (AppThemeChoice.indigo, 'Индиго'),
     (AppThemeChoice.violet, 'Нил ягаан'),
     (AppThemeChoice.pink, 'Ягаан'),
+    (AppThemeChoice.orange, 'Улбар шар'),
+    (AppThemeChoice.green, 'Ногоон'),
+    (AppThemeChoice.lime, 'Шар ногоон'),
     (AppThemeChoice.mono, 'Монохром'),
   ];
 
@@ -90,22 +95,36 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
             const SizedBox(height: 32),
             _heading('Өнгө', 'Товч, сонголт болон тэмдэглэгээний өнгө.'),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 18),
+              padding: const EdgeInsets.fromLTRB(8, 18, 8, 18),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  for (final (choice, label) in _accents)
-                    AccentSwatch(
-                      choice: choice,
-                      label: label,
-                      selected: appThemeChoice.value == choice,
-                      onTap: () => _setAccent(choice),
-                    ),
-                ],
+              // Five to a row on phones, wider rows on tablets; each cell is
+              // a fixed width so the rows line up as a grid.
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final perRow = (constraints.maxWidth / 72).floor().clamp(
+                    5,
+                    _accents.length,
+                  );
+                  final cell = constraints.maxWidth / perRow;
+                  return Wrap(
+                    runSpacing: 18,
+                    children: [
+                      for (final (choice, label) in _accents)
+                        SizedBox(
+                          width: cell,
+                          child: AccentSwatch(
+                            choice: choice,
+                            label: label,
+                            selected: appThemeChoice.value == choice,
+                            onTap: () => _setAccent(choice),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
             ),
             const SizedBox(height: 32),

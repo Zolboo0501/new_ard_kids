@@ -75,10 +75,10 @@ class HomeAccountPanel extends StatelessWidget {
                         child: image != null
                             ? Image.asset(
                                 image!,
-                                width: 30,
-                                height: 30,
+                                width: 40,
+                                height: 40,
                                 fit: BoxFit.contain,
-                                cacheWidth: 120,
+                                cacheWidth: 160,
                                 excludeFromSemantics: true,
                               )
                             : LineIcon(icon, size: 22, color: accent),

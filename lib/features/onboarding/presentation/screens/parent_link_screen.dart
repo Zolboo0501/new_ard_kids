@@ -110,7 +110,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             children: EntranceItem.list([
               Header(
-                step: widget.onboarding ? 'Алхам 6/6' : null,
+                step: widget.onboarding ? 'Алхам 7/7' : null,
                 trailing: HeaderSkipButton(
                   onPressed: () => _goHome(linked: false),
                 ),

@@ -178,7 +178,7 @@ abstract final class Mascots {
 /// background. Unlike the [Mascots] JPEGs these need no multiply blend, so
 /// [MascotImage] leaves PNGs alone.
 abstract final class FoxStickers {
-  static const _d = 'assets/images';
+  static const _d = 'assets/images/kids';
   static const addFriend = '$_d/fox/fox_add_friend.png';
   static const avatar = '$_d/fox/fox_avatar.png';
   static const calculator = '$_d/fox/fox_calculator.png';
@@ -207,7 +207,7 @@ abstract final class FoxStickers {
 /// The bear companion's sticker set, cut from a sheet drawn to match
 /// [FoxStickers] (same names, same poses).
 abstract final class BearStickers {
-  static const _d = 'assets/images';
+  static const _d = 'assets/images/kids';
   static const addFriend = '$_d/bear/bear_add_friend.png';
   static const avatar = '$_d/bear/bear_avatar.png';
   static const calculator = '$_d/bear/bear_calculator.png';
@@ -236,7 +236,7 @@ abstract final class BearStickers {
 /// The rabbit (bunny) companion's sticker set, drawn to match
 /// [FoxStickers] (same names, same poses).
 abstract final class RabbitStickers {
-  static const _d = 'assets/images';
+  static const _d = 'assets/images/kids';
   static const addFriend = '$_d/rabbit/rabbit_add_friend.png';
   static const avatar = '$_d/rabbit/rabbit_avatar.png';
   static const calculator = '$_d/rabbit/rabbit_calculator.png';
@@ -265,7 +265,7 @@ abstract final class RabbitStickers {
 /// The penguin companion's sticker set, drawn to match [FoxStickers]
 /// (same names, same poses).
 abstract final class PenguinStickers {
-  static const _d = 'assets/images';
+  static const _d = 'assets/images/kids';
   static const addFriend = '$_d/penguin/penguin_add_friend.png';
   static const avatar = '$_d/penguin/penguin_avatar.png';
   static const calculator = '$_d/penguin/penguin_calculator.png';

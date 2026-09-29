@@ -11,6 +11,7 @@ import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/entrance.dart';
+import '../../data/account_art.dart';
 import '../widgets/account_panel.dart';
 import '../widgets/accounts_pane.dart';
 import '../widgets/balance_card.dart';
@@ -38,7 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Every account in the carousel: label, number, balance, the colour
   /// its panel glows in, its glyph, a short line about what it is for and
-  /// an optional picture that replaces the glyph.
+  /// the chosen character's sticker for it, which replaces the glyph (see
+  /// [accountSticker]; 14+ keeps the glyphs).
   static List<(String, String, int, Color, LineGlyph, String, String?)>
   get _cards => [
     (
@@ -48,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.sky500,
       LineGlyph.pocket,
       'Өдөр тутмын зарлага',
-      null,
+      accountSticker(Accounts.main),
     ),
     (
       'Хадгаламж данс',
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.violet500,
       LineGlyph.piggy,
       'Хуримтлал',
-      null,
+      accountSticker(Accounts.savings),
     ),
     (
       'Миний өв',
@@ -66,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.lime500,
       LineGlyph.sprout,
       'Хөрөнгө оруулалт',
-      null,
+      accountSticker(Accounts.stocks),
     ),
     (
       'Урамшууллын данс',
@@ -75,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.pink500,
       LineGlyph.gift,
       'Оноо, урамшуулал',
-      null,
+      accountSticker(Accounts.rewards),
     ),
     (
       'Ард койн данс',
@@ -84,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.amber500,
       LineGlyph.ardCoin,
       '1 Койн = 1₮',
-      Mascots.ardCoin3d,
+      accountSticker(Accounts.coin) ?? Mascots.ardCoin3d,
     ),
   ];
 

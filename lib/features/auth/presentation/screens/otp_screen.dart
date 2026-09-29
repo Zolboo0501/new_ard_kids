@@ -121,7 +121,7 @@ class _OtpScreenState extends State<OtpScreen>
   void _verify() {
     if (!_complete) return;
     // TODO: verify the code with the API before continuing.
-    context.push(AppRoutes.friendCode);
+    context.push(AppRoutes.ageGroup);
   }
 
   @override
@@ -134,7 +134,7 @@ class _OtpScreenState extends State<OtpScreen>
         // screens.
         child: Column(
           children: [
-            const Header(step: 'Алхам 2/6'),
+            const Header(step: 'Алхам 2/7'),
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(

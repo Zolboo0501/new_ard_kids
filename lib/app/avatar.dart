@@ -2,19 +2,27 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../widgets/ui.dart';
+import 'age_group.dart';
 
-/// The companion the kid picks in "Аватар сонгох". Its set of images stands
-/// in for the kid throughout Home and Profile.
+/// The avatar the teen picks in "Аватараа сонго", shown on Home and Profile.
+///
+/// The art follows [appAgeGroup]: under 10 gets the cartoon companions
+/// (fox, bear, bunny, penguin), 10–13 and 14+ get the streetwear characters
+/// (fox, bear, bunny, cat) from `assets/images/avatars/teen` and `/mature`.
+/// The penguin only exists in the kids' set and the cat only in the older
+/// ones; [forAge] swaps one for the other when the age range changes.
 enum AppAvatar {
   fox(
     id: 'fox',
     stickerSet: 'fox',
-    name: 'Үнэгхэн',
+    art: 'fox',
+    kidsName: 'Үнэгхэн',
+    olderName: 'Үнэг',
     role: 'Гүйлгээний мастер',
     description: 'Мөнгөө хурдан, ухаалгаар тооцоолно!',
     tone: BadgeTone.sky,
     pick: FoxStickers.transfer,
-    portrait: FoxStickers.avatar,
+    kidsPortrait: FoxStickers.avatar,
     savings: FoxStickers.piggy,
     stocks: FoxStickers.growth,
     rewards: FoxStickers.gift,
@@ -22,12 +30,14 @@ enum AppAvatar {
   bear(
     id: 'bear',
     stickerSet: 'bear',
-    name: 'Бамбарууш',
+    art: 'bear',
+    kidsName: 'Бамбарууш',
+    olderName: 'Баавгай',
     role: 'Хадгаламж сахигч',
     description: 'Мөнгөө зорилгодоо хүртэл найдвартай хадгална!',
     tone: BadgeTone.emerald,
     pick: BearStickers.jar,
-    portrait: BearStickers.avatar,
+    kidsPortrait: BearStickers.avatar,
     savings: BearStickers.piggy,
     stocks: BearStickers.growth,
     rewards: BearStickers.gift,
@@ -35,12 +45,14 @@ enum AppAvatar {
   bunny(
     id: 'bunny',
     stickerSet: 'rabbit',
-    name: 'Бүжинхэн',
+    art: 'rabbit',
+    kidsName: 'Бүжинхэн',
+    olderName: 'Туулай',
     role: 'Данс цэнэглэгч',
     description: 'Эрч хүчтэйгээр өдөр бүр даалгавар биелүүлнэ!',
     tone: BadgeTone.amber,
     pick: RabbitStickers.receive,
-    portrait: RabbitStickers.avatar,
+    kidsPortrait: RabbitStickers.avatar,
     savings: RabbitStickers.piggy,
     stocks: RabbitStickers.growth,
     rewards: RabbitStickers.gift,
@@ -48,12 +60,32 @@ enum AppAvatar {
   penguin(
     id: 'penguin',
     stickerSet: 'penguin',
-    name: 'Шувуухай',
+    art: null,
+    kidsName: 'Шувуухай',
+    olderName: 'Шувуухай',
     role: 'Хяналтын нярав',
     description: 'Зарцуулалт ба тайлангаа нямбай тэмдэглэнэ!',
     tone: BadgeTone.slate,
     pick: PenguinStickers.report,
-    portrait: PenguinStickers.avatar,
+    kidsPortrait: PenguinStickers.avatar,
+    savings: PenguinStickers.piggy,
+    stocks: PenguinStickers.growth,
+    rewards: PenguinStickers.gift,
+  ),
+
+  /// Only in the 10–13 and 14+ sets. It has no cartoon stickers, so the
+  /// kid-set fields borrow the penguin's.
+  cat(
+    id: 'cat',
+    stickerSet: 'penguin',
+    art: 'cat',
+    kidsName: 'Муур',
+    olderName: 'Муур',
+    role: '',
+    description: '',
+    tone: BadgeTone.slate,
+    pick: PenguinStickers.report,
+    kidsPortrait: PenguinStickers.avatar,
     savings: PenguinStickers.piggy,
     stocks: PenguinStickers.growth,
     rewards: PenguinStickers.gift,
@@ -62,12 +94,14 @@ enum AppAvatar {
   const AppAvatar({
     required this.id,
     required this.stickerSet,
-    required this.name,
+    required this.art,
+    required this.kidsName,
+    required this.olderName,
     required this.role,
     required this.description,
     required this.tone,
     required this.pick,
-    required this.portrait,
+    required this.kidsPortrait,
     required this.savings,
     required this.stocks,
     required this.rewards,
@@ -80,7 +114,16 @@ enum AppAvatar {
   /// Folder of the sticker sheet the screens draw from (see [Stickers]).
   final String stickerSet;
 
-  final String name;
+  /// File name of the streetwear art, or null for the kids-only penguin.
+  final String? art;
+
+  final String kidsName;
+  final String olderName;
+
+  /// Diminutive for the cartoon set ("Үнэгхэн"), plain for the older ones.
+  String get name =>
+      appAgeGroup.value == AgeGroup.under10 ? kidsName : olderName;
+
   final String role;
   final String description;
   final BadgeTone tone;
@@ -88,8 +131,27 @@ enum AppAvatar {
   /// Shown on its picker card, and on Home for the main account.
   final String pick;
 
-  /// Waving head-and-shoulders, for the round profile pictures.
-  final String portrait;
+  /// The cartoon set's waving head-and-shoulders.
+  final String kidsPortrait;
+
+  /// Head and shoulders for the round profile pictures, in the set for
+  /// [appAgeGroup].
+  String get portrait => switch ((appAgeGroup.value, art)) {
+    (AgeGroup.tween, final art?) =>
+      'assets/images/avatars/teen/${art}_avatar.png',
+    (AgeGroup.teen, final art?) =>
+      'assets/images/avatars/mature/${art}_avatar.png',
+    _ => kidsPortrait,
+  };
+
+  /// The avatars offered for [age]: the penguin for under 10, the cat above.
+  static List<AppAvatar> forAge(AgeGroup age) => age == AgeGroup.under10
+      ? const [fox, bear, bunny, penguin]
+      : const [fox, bear, bunny, cat];
+
+  /// This avatar, or its counterpart when [age] doesn't have it.
+  AppAvatar inAge(AgeGroup age) =>
+      forAge(age).contains(this) ? this : (this == penguin ? cat : penguin);
 
   /// Home account images: savings (piggy bank), "Миний өв" (growing
   /// investment) and rewards (trophy).
@@ -101,11 +163,174 @@ enum AppAvatar {
 /// Screen illustrations in the chosen companion's sticker set. Getters, like the
 /// `AppColors` accent, so they can't appear in `const` expressions;
 /// `ArdKidsApp` rebuilds the tree when [appAvatar] changes.
+///
+/// For 10–13 the set comes from `assets/images/teenegars/<set>/` where that
+/// set has the sticker ([_teen]); anything it lacks falls back to the kids'
+/// set in `assets/images/kids/<set>/`.
 abstract final class Stickers {
   static String _path(String name) {
+    if (_hasOwn(name)) {
+      final teen = _teenSet!;
+      return 'assets/images/teenegars/$teen/${teen}_$name.png';
+    }
     final set = appAvatar.value.stickerSet;
-    return 'assets/images/$set/${set}_$name.png';
+    return 'assets/images/kids/$set/${set}_$name.png';
   }
+
+  /// The 10–13 sheet for the chosen character (its streetwear art name, so
+  /// the cat gets its own sheet rather than the penguin's), or null.
+  static String? get _teenSet =>
+      appAgeGroup.value == AgeGroup.tween ? appAvatar.value.art : null;
+
+  /// Whether the current age has stickers of its own to show on screens:
+  /// the kids' set under 10 and the streetwear sheets for 10–13. 14+ has
+  /// none, and the kids' cartoons would undo its grown-up look, so screens
+  /// keep their line icons there.
+  static bool get forAge => appAgeGroup.value != AgeGroup.teen;
+
+  /// The first of [names] the 10–13 sheet has, so a sheet without one
+  /// ("piggy") uses its own next best rather than the kids' cartoon; under
+  /// 10 it is the kids' sticker for the first name.
+  static String prefer(List<String> names) {
+    for (final name in names) {
+      if (_hasOwn(name)) return _path(name);
+    }
+    return _path(names.first);
+  }
+
+  /// Any sticker by [name]: the 10–13 sheet's when it has one, else
+  /// [fallback]. For the extras only some sheets draw ("fish", "relax").
+  static String named(String name, {required String fallback}) =>
+      _hasOwn(name) ? _path(name) : fallback;
+
+  /// The stickers each 10–13 set has, cut from its sheet.
+  static const _teen = {
+    'fox': {
+      'avatar',
+      'calculator',
+      'card',
+      'cart',
+      'coin',
+      'coins',
+      'edit',
+      'friends',
+      'gift',
+      'goal',
+      'growth',
+      'home',
+      'lesson',
+      'lock',
+      'love',
+      'notification',
+      'payment',
+      'peace',
+      'piggy',
+      'profile',
+      'qr',
+      'report',
+      'send',
+      'shield',
+      'shopping',
+      'study',
+      'success',
+      'transfer',
+    },
+    'bear': {
+      'avatar',
+      'ball',
+      'card',
+      'coin',
+      'coins',
+      'drink',
+      'friends',
+      'games',
+      'gift',
+      'goal',
+      'growth',
+      'home',
+      'jump',
+      'lesson',
+      'music',
+      'payment',
+      'piggy',
+      'profile',
+      'qr',
+      'report',
+      'shield',
+      'shopping',
+      'snack',
+      'sports',
+      'study',
+      'success',
+      'transfer',
+      'travel',
+    },
+    'rabbit': {
+      'avatar',
+      'ball',
+      'card',
+      'coin',
+      'coins',
+      'cool',
+      'drink',
+      'games',
+      'gift',
+      'goal',
+      'growth',
+      'home',
+      'idea',
+      'jump',
+      'lesson',
+      'love',
+      'music',
+      'payment',
+      'profile',
+      'qr',
+      'report',
+      'shield',
+      'shopping',
+      'snack',
+      'sports',
+      'study',
+      'success',
+      'transfer',
+      'travel',
+    },
+    'cat': {
+      'art',
+      'avatar',
+      'ball',
+      'books',
+      'calm',
+      'card',
+      'chill',
+      'coin',
+      'contacts',
+      'cool',
+      'drink',
+      'fish',
+      'friends',
+      'games',
+      'gift',
+      'goal',
+      'growth',
+      'idea',
+      'lesson',
+      'love',
+      'music',
+      'online',
+      'qr',
+      'relax',
+      'report',
+      'school',
+      'snack',
+      'sports',
+      'study',
+      'success',
+      'transfer',
+      'travel',
+    },
+  };
 
   static String get addFriend => _path('add_friend');
   static String get avatar => _path('avatar');
@@ -147,10 +372,29 @@ abstract final class Stickers {
   static String get study => _path('study');
   static String get travel => _path('travel');
 
-  /// The bear and rabbit sheets drew an invite where the others have games,
-  /// so those two show their sports sticker instead.
+  // Only on some 10–13 sheets; other sets fall back to their own closest
+  // sticker.
+  static String get cart => _hasOwn('cart') ? _path('cart') : payment;
+  static String get peace => _hasOwn('peace') ? _path('peace') : friends;
+  static String get send => _hasOwn('send') ? _path('send') : transfer;
+  static String get shopping =>
+      _hasOwn('shopping') ? _path('shopping') : payment;
+  static String get music => _hasOwn('music') ? _path('music') : games;
+  static String get jump => _hasOwn('jump') ? _path('jump') : sports;
+  static String get ball => _hasOwn('ball') ? _path('ball') : sports;
+  static String get drink => _hasOwn('drink') ? _path('drink') : snack;
+  static String get cool => _hasOwn('cool') ? _path('cool') : avatar;
+  static String get idea => _hasOwn('idea') ? _path('idea') : lesson;
+
+  static bool _hasOwn(String name) => _teen[_teenSet]?.contains(name) ?? false;
+
+  /// The kids' bear and rabbit sheets drew an invite where the others have
+  /// games, so those two show their sports sticker instead, unless their
+  /// 10–13 sheet has one.
   static String get games =>
-      _path(_noGames.contains(appAvatar.value.stickerSet) ? 'sports' : 'games');
+      _hasOwn('games') || !_noGames.contains(appAvatar.value.stickerSet)
+      ? _path('games')
+      : _path('sports');
   static const _noGames = {'bear', 'rabbit'};
 }
 

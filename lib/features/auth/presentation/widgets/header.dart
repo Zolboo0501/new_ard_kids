@@ -6,7 +6,7 @@ import '../../../../widgets/app_text.dart';
 class Header extends StatelessWidget {
   const Header({super.key, this.step, this.trailing});
 
-  /// The registration step pill ("Алхам 2/6"). Leave it null outside the
+  /// The registration step pill ("Алхам 2/7"). Leave it null outside the
   /// sign-up flow and only the back button (and [trailing]) show.
   final String? step;
 

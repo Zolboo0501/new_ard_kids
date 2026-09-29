@@ -1,0 +1,98 @@
+import 'dart:io';
+
+import 'package:flutter_test/flutter_test.dart';
+
+import 'package:new_ard_kids/app/age_group.dart';
+import 'package:new_ard_kids/app/avatar.dart';
+
+void main() {
+  tearDown(() {
+    appAgeGroup.value = AgeGroup.tween;
+    appAvatar.value = AppAvatar.fox;
+  });
+
+  test('10–13 fox uses its own sheet, and the kids set for the rest', () {
+    appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.tween;
+    expect(Stickers.piggy, 'assets/images/teenegars/fox/fox_piggy.png');
+    expect(Stickers.shopping, 'assets/images/teenegars/fox/fox_shopping.png');
+    // Not on the teen sheet: the kids' sticker stands in.
+    expect(Stickers.dad, 'assets/images/kids/fox/fox_dad.png');
+  });
+
+  test('Under 10, and the other companions, keep the kids set', () {
+    appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.under10;
+    expect(Stickers.piggy, 'assets/images/kids/fox/fox_piggy.png');
+    expect(Stickers.shopping, Stickers.payment);
+
+    appAgeGroup.value = AgeGroup.teen;
+    appAvatar.value = AppAvatar.cat;
+    expect(Stickers.piggy, 'assets/images/kids/penguin/penguin_piggy.png');
+  });
+
+  test('10–13 cat uses its own sheet, not the penguin it borrows from', () {
+    appAvatar.value = AppAvatar.cat;
+    appAgeGroup.value = AgeGroup.tween;
+    expect(Stickers.love, 'assets/images/teenegars/cat/cat_love.png');
+    expect(Stickers.books, 'assets/images/teenegars/cat/cat_books.png');
+    expect(
+      Stickers.named('fish', fallback: Stickers.snack),
+      'assets/images/teenegars/cat/cat_fish.png',
+    );
+    // Not on the cat's sheet: the kids' set it borrows stands in.
+    expect(Stickers.piggy, 'assets/images/kids/penguin/penguin_piggy.png');
+  });
+
+  test('10–13 rabbit uses its own sheet', () {
+    appAvatar.value = AppAvatar.bunny;
+    appAgeGroup.value = AgeGroup.tween;
+    expect(Stickers.love, 'assets/images/teenegars/rabbit/rabbit_love.png');
+    expect(Stickers.cool, 'assets/images/teenegars/rabbit/rabbit_cool.png');
+    expect(Stickers.games, 'assets/images/teenegars/rabbit/rabbit_games.png');
+    // Not on the rabbit's sheet: its kids' sticker stands in.
+    expect(Stickers.piggy, 'assets/images/kids/rabbit/rabbit_piggy.png');
+  });
+
+  test('10–13 bear uses its own sheet', () {
+    appAvatar.value = AppAvatar.bear;
+    appAgeGroup.value = AgeGroup.tween;
+    expect(Stickers.piggy, 'assets/images/teenegars/bear/bear_piggy.png');
+    expect(Stickers.games, 'assets/images/teenegars/bear/bear_games.png');
+    expect(Stickers.drink, 'assets/images/teenegars/bear/bear_drink.png');
+    // The fox-only extras fall back to the bear's closest sticker.
+    expect(Stickers.peace, Stickers.friends);
+    expect(Stickers.dad, 'assets/images/kids/bear/bear_dad.png');
+  });
+
+  test('Every 10–13 sticker file exists', () {
+    for (final set in ['fox', 'bear', 'rabbit', 'cat']) {
+      final dir = Directory('assets/images/teenegars/$set');
+      final files = dir.listSync().whereType<File>().toList();
+      expect(files, isNotEmpty, reason: set);
+      for (final f in files) {
+        expect(f.path, endsWith('.png'));
+      }
+    }
+  });
+
+  test('Every sticker a 10–13 fox can resolve exists on disk', () {
+    appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.tween;
+    final paths = [
+      Stickers.avatar, Stickers.calculator, Stickers.card, Stickers.cart,
+      Stickers.coin, Stickers.coins, Stickers.edit, Stickers.friends,
+      Stickers.gift, Stickers.goal, Stickers.growth, Stickers.home,
+      Stickers.lesson, Stickers.lock, Stickers.love, Stickers.notification,
+      Stickers.payment, Stickers.peace, Stickers.piggy, Stickers.profile,
+      Stickers.qr, Stickers.report, Stickers.send, Stickers.shield,
+      Stickers.shopping, Stickers.study, Stickers.success, Stickers.transfer,
+      // Fallbacks to the kids set.
+      Stickers.dad, Stickers.mom, Stickers.games, Stickers.travel,
+    ];
+    for (final path in paths) {
+      expect(File(path).existsSync(), isTrue, reason: path);
+    }
+    expect(paths.where((p) => p.contains('teenegars')), hasLength(28));
+  });
+}

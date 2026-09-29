@@ -13,6 +13,7 @@ import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/home/presentation/screens/invoice_history_screen.dart';
 import '../features/notifications/presentation/screens/notifications_screen.dart';
+import '../features/onboarding/presentation/screens/age_group_screen.dart';
 import '../features/onboarding/presentation/screens/avatar_picker_screen.dart';
 import '../features/onboarding/presentation/screens/biometric_setup_screen.dart';
 import '../features/onboarding/presentation/screens/parent_link_screen.dart';
@@ -52,6 +53,13 @@ abstract final class AppRoutes {
   /// the "Эцэг эх холбогдоогүй" state (`?linked=false`).
   static const home = '/home';
   static const homeUnlinked = '/home?linked=false';
+
+  /// "Насаа сонгох": the first registration step after the phone is
+  /// verified.
+  static const ageGroup = '/onboarding/age';
+
+  /// The age screen opened from Profile: saves and returns.
+  static const ageGroupEdit = '$ageGroup?edit=true';
   static const avatarPicker = '/onboarding/avatar';
   static const parentLink = '/onboarding/parent';
 
@@ -103,6 +111,8 @@ abstract final class AppRoutes {
   static final Map<String, GoRouterWidgetBuilder> _builders = {
     auth: (_, _) => const AuthScreen(),
     otp: (_, state) => OtpScreen(phone: state.extra as String? ?? ''),
+    ageGroup: (_, state) =>
+        AgeGroupScreen(editing: state.uri.queryParameters['edit'] == 'true'),
     friendCode: (_, _) => const FriendCodeScreen(),
     avatarPicker: (_, state) => AvatarPickerScreen(
       editing: state.uri.queryParameters['edit'] == 'true',

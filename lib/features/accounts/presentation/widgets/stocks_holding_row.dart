@@ -70,11 +70,7 @@ class StocksHoldingRow extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    BalanceText(
-                      h.value,
-                      size: 14,
-                      weight: FontWeight.w600,
-                    ),
+                    BalanceText(h.value, size: 14, weight: FontWeight.w600),
                     const SizedBox(height: 2),
                     Text(
                       '${up ? '+' : ''}${h.change}%',

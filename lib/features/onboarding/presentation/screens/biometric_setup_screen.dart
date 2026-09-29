@@ -81,7 +81,7 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
                 child: AdaptiveListView(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   children: EntranceItem.list([
-                    const Header(step: 'Алхам 5/6'),
+                    const Header(step: 'Алхам 6/7'),
                     const SizedBox(height: 12),
                     Row(
                       children: [

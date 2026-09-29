@@ -58,11 +58,7 @@ class RewardOfferTile extends StatelessWidget {
             border: Colors.transparent,
             onPressed: onTap,
           )
-        : LineIcon(
-            LineGlyph.chevronRight,
-            size: 18,
-            color: AppColors.slate400,
-          );
+        : LineIcon(LineGlyph.chevronRight, size: 18, color: AppColors.slate400);
 
     final row = ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 64),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'app/age_group.dart';
 import 'app/app_loader.dart';
 import 'app/avatar.dart';
 import 'app/biometrics.dart';
@@ -26,7 +27,12 @@ void main() {
     AppLoader(
       load: () => Future.wait([
         ThemeStore.load(),
-        AvatarStore.load(),
+        AvatarStore.load()
+            .then((_) => AgeGroupStore.load())
+            .then(
+              // The saved avatar may be one the saved age range doesn't have.
+              (_) => appAvatar.value = appAvatar.value.inAge(appAgeGroup.value),
+            ),
         BiometricStore.load(),
       ]),
       builder: (_) => const ArdKidsApp(),
@@ -51,6 +57,7 @@ class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
     appThemeChoice.addListener(_rebuildAll);
     appBrightness.addListener(_rebuildAll);
     appAvatar.addListener(_rebuildAll);
+    appAgeGroup.addListener(_rebuildAll);
   }
 
   /// With "Систем" picked, the canvas follows the phone's dark mode.
@@ -79,6 +86,7 @@ class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
     appThemeChoice.removeListener(_rebuildAll);
     appBrightness.removeListener(_rebuildAll);
     appAvatar.removeListener(_rebuildAll);
+    appAgeGroup.removeListener(_rebuildAll);
     _router.dispose();
     super.dispose();
   }

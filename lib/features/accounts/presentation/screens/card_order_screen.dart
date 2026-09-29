@@ -175,7 +175,7 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
                   AppTextField(
                     controller: _address,
                     hint: 'Дүүрэг, хороо, байр, орц',
-                                        textStyle: inter(size: 14, weight: FontWeight.w500),
+                    textStyle: inter(size: 14, weight: FontWeight.w500),
                   ),
                 ],
               ],

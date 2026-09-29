@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/biometrics.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -113,7 +114,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
     super.dispose();
   }
 
-  void _finish({required bool skipped}) {
+  Future<void> _finish({required bool skipped}) async {
     if (!skipped) {
       final error = _validate();
       if (error != null) {
@@ -135,7 +136,12 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
           ),
         );
     }
-    context.push(AppRoutes.avatarPicker);
+    // Offers biometric sign-in next, unless the phone has no sensor for it.
+    final hasSensor = await Biometrics.instance.hasSensor();
+    if (!mounted) return;
+    context.push(
+      hasSensor ? AppRoutes.biometricSetup : AppRoutes.parentLinkOnboarding,
+    );
   }
 
   @override
@@ -163,7 +169,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
         Entrance(
           t: _headerIn,
           child: Header(
-            step: 'Алхам 3/6',
+            step: 'Алхам 5/7',
             trailing: HeaderSkipButton(onPressed: () => _finish(skipped: true)),
           ),
         ),

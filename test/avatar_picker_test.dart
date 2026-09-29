@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:new_ard_kids/app/age_group.dart';
 import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/main.dart';
@@ -66,11 +67,45 @@ bool _showsAsset(WidgetTester tester, String asset) => tester
 
 void main() {
   // appAvatar is global and outlives a test.
+  // appAgeGroup too; 10–13 is the default and shows the streetwear set.
   setUp(() {
     FlutterSecureStorage.setMockInitialValues({});
     appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.tween;
   });
-  tearDown(() => appAvatar.value = AppAvatar.fox);
+  tearDown(() {
+    appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.tween;
+  });
+
+  testWidgets('Avatar: the picker offers the set for the age range', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    for (final (age, names, folder) in [
+      (
+        AgeGroup.under10,
+        ['Үнэгхэн', 'Бамбарууш', 'Бүжинхэн', 'Шувуухай'],
+        'kids/',
+      ),
+      (AgeGroup.tween, ['Үнэг', 'Баавгай', 'Туулай', 'Муур'], 'avatars/teen/'),
+      (AgeGroup.teen, ['Үнэг', 'Баавгай', 'Туулай', 'Муур'], 'avatars/mature/'),
+    ]) {
+      appAgeGroup.value = age;
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(_wrap());
+      await tester.pump(const Duration(milliseconds: 900));
+      for (final name in names) {
+        expect(find.text(name), findsOneWidget, reason: '$age $name');
+      }
+      final portraits = tester
+          .widgetList<Image>(find.byType(Image))
+          .map((i) => i.image)
+          .whereType<AssetImage>()
+          .map((a) => a.assetName);
+      expect(portraits, everyElement(contains(folder)), reason: '$age');
+    }
+  });
 
   testWidgets('Avatar: content fades in and settles fully opaque', (
     tester,
@@ -102,17 +137,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 900));
 
     // The first card is selected by default, so pick a different one.
-    expect(_mascotScale(tester, 'Бамбарууш'), 1);
+    expect(_mascotScale(tester, 'Баавгай'), 1);
 
-    await tester.tap(find.text('Бамбарууш'));
+    await tester.tap(find.text('Баавгай'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 120));
 
     // Mid-pop the mascot is larger than its resting size.
-    expect(_mascotScale(tester, 'Бамбарууш'), greaterThan(1));
+    expect(_mascotScale(tester, 'Баавгай'), greaterThan(1));
 
     await tester.pump(const Duration(milliseconds: 600));
-    expect(_mascotScale(tester, 'Бамбарууш'), 1);
+    expect(_mascotScale(tester, 'Баавгай'), 1);
 
     // Exactly one avatar carries the tick.
     expect(
@@ -139,7 +174,7 @@ void main() {
     router.push(AppRoutes.avatarPickerEdit);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 900));
-    await tester.tap(find.text('Бамбарууш'));
+    await tester.tap(find.text('Баавгай'));
     await tester.pump();
     final save = find.text('Аватараа хадгалах');
     await tester.ensureVisible(save);
