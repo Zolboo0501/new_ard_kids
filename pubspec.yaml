@@ -69,9 +69,13 @@ flutter:
     - assets/images/kids/rabbit/
     - assets/images/kids/penguin/
     - assets/images/teenegars/fox/
+    - assets/images/teenegars/fox/cards/
     - assets/images/teenegars/bear/
+    - assets/images/teenegars/bear/cards/
     - assets/images/teenegars/rabbit/
+    - assets/images/teenegars/rabbit/cards/
     - assets/images/teenegars/cat/
+    - assets/images/teenegars/cat/cards/
     - assets/images/avatars/teen/
     - assets/images/avatars/mature/
     - assets/svg/
@@ -81,6 +85,10 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/fonts/Inter-VariableFont_opsz,wght.ttf
+    # Display face for the account names on the character card art.
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Variable.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

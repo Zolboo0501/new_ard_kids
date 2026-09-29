@@ -11,7 +11,7 @@ import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/entrance.dart';
-import '../../data/account_art.dart';
+import '../../data/card_art.dart';
 import '../widgets/account_panel.dart';
 import '../widgets/accounts_pane.dart';
 import '../widgets/balance_card.dart';
@@ -31,7 +31,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _pages = PageController(viewportFraction: 0.8);
+  final _pages = PageController(viewportFraction: 0.92);
   int _page = 0;
   int _tab = 0;
   int _invoiceFilter = 0;
@@ -39,8 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// Every account in the carousel: label, number, balance, the colour
   /// its panel glows in, its glyph, a short line about what it is for and
-  /// the chosen character's sticker for it, which replaces the glyph (see
-  /// [accountSticker]; 14+ keeps the glyphs).
+  /// an optional picture that replaces the glyph.
   static List<(String, String, int, Color, LineGlyph, String, String?)>
   get _cards => [
     (
@@ -50,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.sky500,
       LineGlyph.pocket,
       'Өдөр тутмын зарлага',
-      accountSticker(Accounts.main),
+      null,
     ),
     (
       'Хадгаламж данс',
@@ -59,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.violet500,
       LineGlyph.piggy,
       'Хуримтлал',
-      accountSticker(Accounts.savings),
+      null,
     ),
     (
       'Миний өв',
@@ -68,7 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.lime500,
       LineGlyph.sprout,
       'Хөрөнгө оруулалт',
-      accountSticker(Accounts.stocks),
+      null,
     ),
     (
       'Урамшууллын данс',
@@ -77,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.pink500,
       LineGlyph.gift,
       'Оноо, урамшуулал',
-      accountSticker(Accounts.rewards),
+      null,
     ),
     (
       'Ард койн данс',
@@ -86,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.amber500,
       LineGlyph.ardCoin,
       '1 Койн = 1₮',
-      accountSticker(Accounts.coin) ?? Mascots.ardCoin3d,
+      Mascots.ardCoin3d,
     ),
   ];
 
@@ -246,12 +245,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// The account panels over a soft glow in the selected account's colour.
-  /// Neighbouring panels peek in at the sides and shrink as they leave.
+  /// Each panel spans most of the width at a fixed height; neighbours peek
+  /// in at the sides and shrink as they leave.
   Widget _carousel(int count, bool linked) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth * 0.8 - 28;
-        final height = cardWidth / 1.586 + 24;
+        // The height a bank-card-shaped panel at 80% of the width would
+        // have; the panels themselves are wider (92%) at that height.
+        final height = (constraints.maxWidth * 0.8 - 28) / 1.586 + 24;
         final glow = _cards[linked ? _page : 0].$4;
         return SizedBox(
           height: height,
@@ -317,14 +318,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                    padding: const EdgeInsets.fromLTRB(6, 12, 6, 12),
                     child: HomeAccountPanel(
+                      aspectRatio: null,
                       label: _cards[i].$1,
                       account: _cards[i].$2,
                       accent: _cards[i].$4,
                       icon: _cards[i].$5,
                       subtitle: _cards[i].$6,
                       image: _cards[i].$7,
+                      background: accountCardArt(_cards[i].$2),
                     ),
                   ),
                 ),

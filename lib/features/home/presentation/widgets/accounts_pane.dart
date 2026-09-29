@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/accounts.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../../data/account_art.dart';
 import 'account_row.dart';
 
 /// Home's Данс tab for a linked teen: every account besides the main one,
@@ -21,7 +19,6 @@ class AccountsPane extends StatelessWidget {
     final rows = [
       (
         LineGlyph.piggy,
-        Accounts.savings,
         'Хадгаламж',
         'Хуримтлал',
         Balances.savings,
@@ -29,7 +26,6 @@ class AccountsPane extends StatelessWidget {
       ),
       (
         LineGlyph.sprout,
-        Accounts.stocks,
         'Миний өв',
         'Хөрөнгө оруулалт',
         Balances.stocks,
@@ -37,7 +33,6 @@ class AccountsPane extends StatelessWidget {
       ),
       (
         LineGlyph.gift,
-        Accounts.rewards,
         'Урамшуулал',
         'Оноо, урамшуулал',
         Balances.rewards,
@@ -46,7 +41,7 @@ class AccountsPane extends StatelessWidget {
     ];
     return Column(
       children: [
-        for (final (i, (icon, account, title, subtitle, amount, route))
+        for (final (i, (icon, title, subtitle, amount, route))
             in rows.indexed) ...[
           if (i > 0) const SizedBox(height: 10),
           ListItemEntrance(
@@ -56,7 +51,6 @@ class AccountsPane extends StatelessWidget {
             delay: AppTabView.incomingDelay,
             child: AccountRow(
               icon: icon,
-              image: accountSticker(account),
               title: title,
               subtitle: subtitle,
               amount: amount,

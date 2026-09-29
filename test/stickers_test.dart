@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:new_ard_kids/app/accounts.dart';
 import 'package:new_ard_kids/app/age_group.dart';
 import 'package:new_ard_kids/app/avatar.dart';
+import 'package:new_ard_kids/features/home/data/card_art.dart';
 
 void main() {
   tearDown(() {
@@ -94,5 +96,40 @@ void main() {
       expect(File(path).existsSync(), isTrue, reason: path);
     }
     expect(paths.where((p) => p.contains('teenegars')), hasLength(28));
+  });
+
+  test('Home card art: every 10–13 character, one per account', () {
+    appAgeGroup.value = AgeGroup.tween;
+    for (final avatar in [
+      AppAvatar.fox,
+      AppAvatar.bunny,
+      AppAvatar.bear,
+      AppAvatar.cat,
+    ]) {
+      appAvatar.value = avatar;
+      for (final account in [
+        Accounts.main,
+        Accounts.savings,
+        Accounts.stocks,
+        Accounts.rewards,
+        Accounts.coin,
+      ]) {
+        final art = accountCardArt(account);
+        expect(art, isNotNull, reason: account);
+        expect(File(art!.asset).existsSync(), isTrue, reason: art.asset);
+      }
+    }
+    appAvatar.value = AppAvatar.bunny;
+    expect(
+      accountCardArt(Accounts.savings)!.asset,
+      'assets/images/teenegars/rabbit/cards/savings.webp',
+    );
+
+    // The penguin is kids-only, so it never has card art.
+    appAvatar.value = AppAvatar.penguin;
+    expect(accountCardArt(Accounts.main), isNull);
+    appAvatar.value = AppAvatar.fox;
+    appAgeGroup.value = AgeGroup.teen;
+    expect(accountCardArt(Accounts.main), isNull);
   });
 }

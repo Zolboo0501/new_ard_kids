@@ -5,7 +5,6 @@ import '../../../../app/kid_profile.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../../data/account_art.dart';
 import 'account_row.dart';
 import 'home_link_prompt.dart';
 
@@ -26,7 +25,6 @@ class LockedAccountsPane extends StatelessWidget {
         'Харилцах данс',
         AccountRow(
           icon: LineGlyph.pocket,
-          image: accountSticker(Accounts.main),
           title: 'Харилцах данс',
           subtitle: formatIban(Accounts.main),
           amount: Balances.main,
@@ -34,9 +32,8 @@ class LockedAccountsPane extends StatelessWidget {
       ),
       (
         'Урамшуулал',
-        AccountRow(
+        const AccountRow(
           icon: LineGlyph.gift,
-          image: accountSticker(Accounts.rewards),
           title: 'Урамшуулал',
           subtitle: 'Оноо, урамшуулал',
           amount: Balances.rewards,
@@ -44,9 +41,8 @@ class LockedAccountsPane extends StatelessWidget {
       ),
       (
         'Хадгаламж',
-        AccountRow(
+        const AccountRow(
           icon: LineGlyph.piggy,
-          image: accountSticker(Accounts.savings),
           title: 'Хадгаламж',
           subtitle: locked,
           locked: true,
@@ -54,9 +50,8 @@ class LockedAccountsPane extends StatelessWidget {
       ),
       (
         'Миний өв',
-        AccountRow(
+        const AccountRow(
           icon: LineGlyph.sprout,
-          image: accountSticker(Accounts.stocks),
           title: 'Миний өв',
           subtitle: locked,
           locked: true,
@@ -66,7 +61,7 @@ class LockedAccountsPane extends StatelessWidget {
         'Ард койн',
         AccountRow(
           icon: LineGlyph.ardCoin,
-          image: accountSticker(Accounts.coin) ?? Mascots.ardCoin3d,
+          image: Mascots.ardCoin3d,
           title: 'Ард койн',
           subtitle: locked,
           locked: true,

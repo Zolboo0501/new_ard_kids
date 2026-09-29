@@ -51,10 +51,9 @@ class AccountRow extends StatelessWidget {
               child: image != null
                   ? Image.asset(
                       image!,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.contain,
-                      cacheWidth: 160,
+                      width: 28,
+                      height: 28,
+                      cacheWidth: 112,
                       color: locked ? AppColors.slate50 : null,
                       colorBlendMode: locked ? BlendMode.saturation : null,
                     )

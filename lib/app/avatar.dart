@@ -182,22 +182,6 @@ abstract final class Stickers {
   static String? get _teenSet =>
       appAgeGroup.value == AgeGroup.tween ? appAvatar.value.art : null;
 
-  /// Whether the current age has stickers of its own to show on screens:
-  /// the kids' set under 10 and the streetwear sheets for 10–13. 14+ has
-  /// none, and the kids' cartoons would undo its grown-up look, so screens
-  /// keep their line icons there.
-  static bool get forAge => appAgeGroup.value != AgeGroup.teen;
-
-  /// The first of [names] the 10–13 sheet has, so a sheet without one
-  /// ("piggy") uses its own next best rather than the kids' cartoon; under
-  /// 10 it is the kids' sticker for the first name.
-  static String prefer(List<String> names) {
-    for (final name in names) {
-      if (_hasOwn(name)) return _path(name);
-    }
-    return _path(names.first);
-  }
-
   /// Any sticker by [name]: the 10–13 sheet's when it has one, else
   /// [fallback]. For the extras only some sheets draw ("fish", "relax").
   static String named(String name, {required String fallback}) =>
