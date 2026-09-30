@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/accounts.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/card_art.dart';
 import 'account_row.dart';
 
 /// Home's Данс tab for a linked teen: every account besides the main one,
-/// each opening its own screen.
+/// each opening its own screen, on the character's row banners where it
+/// has them (`accountRowArt`).
 class AccountsPane extends StatelessWidget {
   const AccountsPane({super.key, required this.onOpen});
 
@@ -18,6 +21,7 @@ class AccountsPane extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = [
       (
+        Accounts.savings,
         LineGlyph.piggy,
         'Хадгаламж',
         'Хуримтлал',
@@ -25,6 +29,7 @@ class AccountsPane extends StatelessWidget {
         AppRoutes.savingsAccount,
       ),
       (
+        Accounts.stocks,
         LineGlyph.sprout,
         'Миний өв',
         'Хөрөнгө оруулалт',
@@ -32,6 +37,7 @@ class AccountsPane extends StatelessWidget {
         AppRoutes.stocks,
       ),
       (
+        Accounts.rewards,
         LineGlyph.gift,
         'Урамшуулал',
         'Оноо, урамшуулал',
@@ -41,7 +47,7 @@ class AccountsPane extends StatelessWidget {
     ];
     return Column(
       children: [
-        for (final (i, (icon, title, subtitle, amount, route))
+        for (final (i, (account, icon, title, subtitle, amount, route))
             in rows.indexed) ...[
           if (i > 0) const SizedBox(height: 10),
           ListItemEntrance(
@@ -54,6 +60,7 @@ class AccountsPane extends StatelessWidget {
               title: title,
               subtitle: subtitle,
               amount: amount,
+              background: accountRowArt(account),
               onTap: () => onOpen(route),
             ),
           ),

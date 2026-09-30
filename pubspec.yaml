@@ -72,6 +72,10 @@ flutter:
     - assets/images/kids/fox/cards/
     - assets/images/kids/penguin/cards/
     - assets/images/kids/rabbit/cards/
+    - assets/images/kids/rabbit/rows/
+    - assets/images/kids/penguin/rows/
+    - assets/images/kids/fox/rows/
+    - assets/images/kids/bear/rows/
     - assets/images/teenegars/fox/
     - assets/images/teenegars/fox/cards/
     - assets/images/teenegars/bear/

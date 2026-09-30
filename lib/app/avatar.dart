@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../widgets/ui.dart';
 import 'age_group.dart';
+import '../theme/app_theme.dart';
 
 /// The avatar the teen picks in "Аватараа сонго", shown on Home and Profile.
 ///
@@ -152,6 +153,16 @@ enum AppAvatar {
   /// This avatar, or its counterpart when [age] doesn't have it.
   AppAvatar inAge(AgeGroup age) =>
       forAge(age).contains(this) ? this : (this == penguin ? cat : penguin);
+
+  /// The accent that goes with this character: picking it in the avatar
+  /// picker also sets the theme (the penguin shares the cat's, since one
+  /// stands in for the other across the age ranges).
+  AppThemeChoice get accent => switch (this) {
+    fox => AppThemeChoice.sky,
+    bear => AppThemeChoice.blue,
+    bunny => AppThemeChoice.pink,
+    cat || penguin => AppThemeChoice.indigo,
+  };
 
   /// Home account images: savings (piggy bank), "Миний өв" (growing
   /// investment) and rewards (trophy).

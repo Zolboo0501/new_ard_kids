@@ -6,19 +6,24 @@ import '../../../../widgets/common.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/value_switcher.dart';
 
-/// One choice in the avatar grid: the portrait in a circle, the name under
-/// it, and an accent ring with a tick while it is the selected one.
+/// One choice in the avatar grid: the portrait in a circle tinted with the
+/// character's own [accent], the name under it, and a ring with a tick in
+/// that accent while it is the selected one.
 class AvatarCard extends StatefulWidget {
   const AvatarCard({
     super.key,
     required this.name,
     required this.asset,
+    required this.accent,
     required this.selected,
     required this.onTap,
   });
 
   final String name;
   final String asset;
+
+  /// The character's accent (see `AppAvatar.accent`).
+  final AppThemeChoice accent;
   final bool selected;
   final VoidCallback onTap;
 
@@ -60,6 +65,7 @@ class _AvatarCardState extends State<AvatarCard>
   @override
   Widget build(BuildContext context) {
     final selected = widget.selected;
+    final p = AppPalette.of(widget.accent);
     return Semantics(
       button: true,
       selected: selected,
@@ -86,16 +92,14 @@ class _AvatarCardState extends State<AvatarCard>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: selected
-                                  ? AppColors.sky500
-                                  : AppColors.line,
+                              color: selected ? p.c500 : p.c200,
                               width: selected ? 2.5 : 1,
                             ),
                           ),
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: AppColors.slate50,
+                              color: p.c50,
                             ),
                             child: ClipOval(
                               child: ScaleTransition(
@@ -104,7 +108,7 @@ class _AvatarCardState extends State<AvatarCard>
                                   child: MascotImage(
                                     asset: widget.asset,
                                     size: side * 0.78,
-                                    background: AppColors.slate50,
+                                    background: p.c50,
                                     semanticLabel: widget.name,
                                   ),
                                 ),
@@ -133,7 +137,7 @@ class _AvatarCardState extends State<AvatarCard>
                                   width: 28,
                                   height: 28,
                                   decoration: BoxDecoration(
-                                    color: AppColors.sky500,
+                                    color: p.c500,
                                     shape: BoxShape.circle,
                                     border: Border.all(
                                       color: AppColors.surface,
@@ -145,7 +149,7 @@ class _AvatarCardState extends State<AvatarCard>
                                       LineGlyph.check,
                                       size: 16,
                                       stroke: 2,
-                                      color: AppColors.onAccent,
+                                      color: p.onAccent,
                                     ),
                                   ),
                                 )

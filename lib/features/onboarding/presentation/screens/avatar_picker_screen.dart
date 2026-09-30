@@ -5,6 +5,7 @@ import '../../../../app/age_group.dart';
 import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../theme/theme_store.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
@@ -13,7 +14,9 @@ import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/avatar_card.dart';
 
 /// "Аватараа сонго" (registration step 4/7, right after the age): pick a
-/// profile avatar from the set for [appAgeGroup].
+/// profile avatar from the set for [appAgeGroup]. Each character carries
+/// its own accent (`AppAvatar.accent`), and confirming applies it as the
+/// theme too; Харагдац can change it afterwards.
 ///
 /// With [editing] (opened from Profile) there is no step indicator or skip,
 /// and confirming returns to the previous screen.
@@ -83,6 +86,10 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
     final avatar = _avatars[_selected];
     appAvatar.value = avatar;
     AvatarStore.save(avatar);
+    if (appThemeChoice.value != avatar.accent) {
+      appThemeChoice.value = avatar.accent;
+      ThemeStore.save(avatar.accent);
+    }
     if (!widget.editing) {
       context.push(AppRoutes.friendCode);
       return;
@@ -156,6 +163,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                 child: AvatarCard(
                                   name: a.name,
                                   asset: a.portrait,
+                                  accent: a.accent,
                                   selected: _selected == i,
                                   onTap: () => setState(() => _selected = i),
                                 ),

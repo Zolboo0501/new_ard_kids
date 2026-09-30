@@ -76,6 +76,8 @@ void main() {
   tearDown(() {
     appAvatar.value = AppAvatar.fox;
     appAgeGroup.value = AgeGroup.tween;
+    // Confirming an avatar also sets its accent.
+    appThemeChoice.value = AppThemeChoice.sky;
   });
 
   testWidgets('Avatar: the picker offers the set for the age range', (
@@ -183,6 +185,9 @@ void main() {
 
     expect(appAvatar.value, AppAvatar.bear);
     expect(await const FlutterSecureStorage().read(key: 'app_avatar'), 'bear');
+    // The bear brings Цэнхэр with it.
+    expect(appThemeChoice.value, AppThemeChoice.blue);
+    expect(await const FlutterSecureStorage().read(key: 'app_theme'), 'blue');
     expect(_showsAsset(tester, AppAvatar.bear.portrait), isTrue);
     expect(_showsAsset(tester, AppAvatar.fox.portrait), isFalse);
   });

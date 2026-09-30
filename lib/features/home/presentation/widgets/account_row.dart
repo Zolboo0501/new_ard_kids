@@ -7,6 +7,12 @@ import '../../../../widgets/ui.dart';
 /// One account in Home's list: the account's glyph in a quiet tile, its
 /// name and a short line, and the balance. A locked account (no parent
 /// linked yet) is muted and shows a small lock instead of a balance.
+///
+/// With [background] (a character's banner, see `accountRowArt`) the row
+/// is taller and the banner fills its right half: the character stands
+/// there with the chevron at the edge, the glyph takes the banner's own hue
+/// on its pale tile, and the balance moves under the name so the text side
+/// stays clear of the art.
 class AccountRow extends StatelessWidget {
   const AccountRow({
     super.key,
@@ -17,6 +23,7 @@ class AccountRow extends StatelessWidget {
     this.amount,
     this.onTap,
     this.locked = false,
+    this.background,
   });
 
   final String title;
@@ -29,12 +36,22 @@ class AccountRow extends StatelessWidget {
   final VoidCallback? onTap;
   final bool locked;
 
+  /// A banner behind the row, its glyph hue and its tile tint.
+  final ({String asset, Color ink, Color tint})? background;
+
+  /// The banners are about 3.3:1 (blank left end and decorative right end
+  /// trimmed); at this height one spans most of a phone row.
+  static const _bannerRowHeight = 92.0;
+
   @override
   Widget build(BuildContext context) {
-    final row = Container(
+    final art = background;
+    final card = AppColors.card;
+    final dark = AppColors.isDark;
+    Widget row = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: art == null ? card : Colors.transparent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -44,7 +61,7 @@ class AccountRow extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.slate50,
+                color: art?.tint ?? AppColors.slate50,
                 borderRadius: BorderRadius.circular(12),
               ),
               alignment: Alignment.center,
@@ -60,7 +77,9 @@ class AccountRow extends StatelessWidget {
                   : LineIcon(
                       icon,
                       size: 21,
-                      color: locked ? AppColors.slate400 : AppColors.slate800,
+                      color: locked
+                          ? AppColors.slate400
+                          : art?.ink ?? AppColors.slate800,
                     ),
             ),
           ),
@@ -71,7 +90,7 @@ class AccountRow extends StatelessWidget {
               children: [
                 AppText(
                   title,
-                  size: 14,
+                  size: art == null ? 14 : 15,
                   weight: FontWeight.w600,
                   color: locked ? AppColors.slate500 : AppColors.slate900,
                   maxLines: 1,
@@ -81,10 +100,19 @@ class AccountRow extends StatelessWidget {
                 AppText(
                   subtitle,
                   size: 12,
-                  color: AppColors.slate500,
+                  color: art == null ? AppColors.slate500 : AppColors.slate600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (art != null && amount != null && !locked) ...[
+                  const SizedBox(height: 4),
+                  BalanceText(
+                    amount!,
+                    size: 15,
+                    weight: FontWeight.w700,
+                    color: AppColors.slate900,
+                  ),
+                ],
               ],
             ),
           ),
@@ -99,7 +127,8 @@ class AccountRow extends StatelessWidget {
               ),
             )
           else ...[
-            if (amount != null)
+            // On a banner the balance is under the name instead.
+            if (amount != null && art == null)
               BalanceText(
                 amount!,
                 size: 15,
@@ -111,13 +140,64 @@ class AccountRow extends StatelessWidget {
               LineIcon(
                 LineGlyph.chevronRight,
                 size: 18,
-                color: AppColors.slate500,
+                color: art == null ? AppColors.slate500 : AppColors.slate700,
               ),
             ],
           ],
         ],
       ),
     );
+    if (art != null) {
+      // A fixed height with the banner fitted to it against the right
+      // edge, its left end fading into the card colour under the text.
+      // (No LayoutBuilder here: an image inside one re-resolves on every
+      // layout pass and overflows the stack.)
+      row = SizedBox(
+        height: _bannerRowHeight,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              Positioned.fill(child: ColoredBox(color: card)),
+              Positioned.fill(
+                child: ShaderMask(
+                  shaderCallback: (rect) => const LinearGradient(
+                    colors: [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
+                    stops: [0.1, 0.45],
+                  ).createShader(rect),
+                  blendMode: BlendMode.dstIn,
+                  child: Image.asset(
+                    art.asset,
+                    fit: BoxFit.fitHeight,
+                    alignment: Alignment.centerRight,
+                    filterQuality: FilterQuality.high,
+                    excludeFromSemantics: true,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                ),
+              ),
+              // The name's side stays clear of the art; on the dark canvas a
+              // scrim keeps the light text readable.
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: dark ? card.withValues(alpha: 0.7) : null,
+                    gradient: LinearGradient(
+                      colors: [
+                        card.withValues(alpha: dark ? 0.85 : 0.6),
+                        card.withValues(alpha: 0),
+                      ],
+                      stops: const [0.35, 0.6],
+                    ),
+                  ),
+                ),
+              ),
+              Center(child: row),
+            ],
+          ),
+        ),
+      );
+    }
     if (onTap == null) return row;
     return Pressable(onTap: onTap!, scale: 0.98, child: row);
   }
