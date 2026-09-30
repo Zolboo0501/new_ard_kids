@@ -3,6 +3,7 @@ import 'package:new_ard_kids/features/auth/presentation/screens/auth_screen.dart
 import 'package:new_ard_kids/features/auth/presentation/screens/friend_code_screen.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/otp_screen.dart';
 
+import '../widgets/ui/line_icons.dart';
 import '../features/accounts/presentation/screens/card_screen.dart';
 import '../features/accounts/presentation/screens/card_order_screen.dart';
 
@@ -112,16 +113,19 @@ abstract final class AppRoutes {
   static const themeSettings = '/profile/theme';
 
   static final Map<String, GoRouterWidgetBuilder> _builders = {
-    welcome: (_, _) => const WelcomeScreen(),
-    auth: (_, state) => AuthScreen(
-      initialMode: state.uri.queryParameters['mode'] == 'register'
-          ? AuthMode.register
-          : AuthMode.login,
+    welcome: (_, _) => const PlainLineIcons(child: WelcomeScreen()),
+    auth: (_, state) => PlainLineIcons(
+      child: AuthScreen(
+        initialMode: state.uri.queryParameters['mode'] == 'register'
+            ? AuthMode.register
+            : AuthMode.login,
+      ),
     ),
-    otp: (_, state) => OtpScreen(phone: state.extra as String? ?? ''),
+    otp: (_, state) =>
+        PlainLineIcons(child: OtpScreen(phone: state.extra as String? ?? '')),
     ageGroup: (_, state) =>
         AgeGroupScreen(editing: state.uri.queryParameters['edit'] == 'true'),
-    friendCode: (_, _) => const FriendCodeScreen(),
+    friendCode: (_, _) => const PlainLineIcons(child: FriendCodeScreen()),
     avatarPicker: (_, state) => AvatarPickerScreen(
       editing: state.uri.queryParameters['edit'] == 'true',
     ),

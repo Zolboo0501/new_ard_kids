@@ -25,7 +25,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
   /// is none. [_hasSensor] tells "set one up in Settings" from "unsupported".
   BiometricKind? _biometric;
   bool _hasSensor = false;
-  bool _biometricChecked = false;
   bool _biometricBusy = false;
 
   /// Re-checks when the app comes back, so a face or finger enrolled in the
@@ -57,7 +56,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
     setState(() {
       _biometric = kind;
       _hasSensor = kind != null || hasSensor;
-      _biometricChecked = true;
     });
   }
 
@@ -122,13 +120,11 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 SettingTile(
                   glyph: LineGlyph.lock,
                   title: 'ПИН код солих',
-                  subtitle: 'Гүйлгээ баталгаажуулах 4 оронтой код',
                   onTap: _changePin,
                 ),
                 SettingTile(
                   glyph: LineGlyph.shield,
                   title: 'Нэвтрэх нууц үг',
-                  subtitle: '14 хоногийн өмнө шинэчилсэн',
                   onTap: () => showAppSnack(context, 'Нууц үг солих'),
                 ),
               ],
@@ -143,7 +139,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 SettingTile(
                   glyph: LineGlyph.phone,
                   title: 'Шинэ төхөөрөмжөөс нэвтрэх',
-                  subtitle: 'Эцэг эхийн аппаас зөвшөөрөл авна',
                   trailing: AppSwitch(
                     value: _parentApproval,
                     onChanged: (v) => setState(() => _parentApproval = v),
@@ -166,7 +161,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 SettingTile(
                   glyph: LineGlyph.phone,
                   title: 'iPhone 14 Pro · Энэ утас',
-                  subtitle: 'Улаанбаатар · Одоо идэвхтэй',
                   trailing: StatusBadge(
                     label: 'Идэвхтэй',
                     tone: BadgeTone.emerald,
@@ -187,13 +181,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
           ? LineGlyph.faceId
           : LineGlyph.fingerprint,
       title: kind?.loginLabel ?? 'Биометрээр нэвтрэх',
-      subtitle:
-          kind?.description ??
-          switch ((_biometricChecked, _hasSensor)) {
-            (false, _) => 'Төхөөрөмжийг шалгаж байна…',
-            (true, true) => 'Эхлээд утасныхаа тохиргооноос бүртгүүлнэ үү',
-            (true, false) => 'Энэ төхөөрөмж дэмжихгүй байна',
-          },
       trailing: AppSwitch(
         value: kind != null && appBiometricLogin.value,
         // With a sensor but nothing enrolled the switch stays live: the scan

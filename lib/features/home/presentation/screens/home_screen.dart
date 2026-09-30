@@ -202,6 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 20),
                     HomeActions(
                       actions: _actions(linked ? current.$2 : Accounts.main),
+                      art: accountActionArt,
                     ),
                   ],
                   trailing: [

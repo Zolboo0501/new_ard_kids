@@ -10,9 +10,9 @@ import '../../../../widgets/ui.dart';
 ///
 /// With [background] (a character's banner, see `accountRowArt`) the row
 /// is taller and the banner fills its right half: the character stands
-/// there with the chevron at the edge, the glyph takes the banner's own hue
-/// on its pale tile, and the balance moves under the name so the text side
-/// stays clear of the art.
+/// there with the chevron at the edge, the icon tile is dropped (the art is
+/// the account's picture), and the balance moves under the name so the
+/// text side stays clear of the art.
 class AccountRow extends StatelessWidget {
   const AccountRow({
     super.key,
@@ -36,11 +36,12 @@ class AccountRow extends StatelessWidget {
   final VoidCallback? onTap;
   final bool locked;
 
-  /// A banner behind the row, its glyph hue and its tile tint.
+  /// A banner behind the row (its `ink`/`tint` are unused now the tile is
+  /// dropped on banner rows).
   final ({String asset, Color ink, Color tint})? background;
 
-  /// Two lines (name, balance) and the icon tile, with the row's padding;
-  /// the banner is fitted to this height.
+  /// Two lines (name, balance) with the row's padding; the banner is
+  /// fitted to this height.
   static const _bannerRowHeight = 72.0;
 
   @override
@@ -56,34 +57,36 @@ class AccountRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          ExcludeSemantics(
-            child: Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: art?.tint ?? AppColors.slate50,
-                borderRadius: BorderRadius.circular(12),
+          // On a banner the art is the account's picture, so no icon tile.
+          if (art == null) ...[
+            ExcludeSemantics(
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.slate50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: image != null
+                    ? Image.asset(
+                        image!,
+                        width: 28,
+                        height: 28,
+                        cacheWidth: 112,
+                        color: locked ? AppColors.slate50 : null,
+                        colorBlendMode: locked ? BlendMode.saturation : null,
+                      )
+                    : LineIcon(
+                        icon,
+                        size: 21,
+                        color: locked ? AppColors.slate400 : AppColors.slate800,
+                      ),
               ),
-              alignment: Alignment.center,
-              child: image != null
-                  ? Image.asset(
-                      image!,
-                      width: 28,
-                      height: 28,
-                      cacheWidth: 112,
-                      color: locked ? AppColors.slate50 : null,
-                      colorBlendMode: locked ? BlendMode.saturation : null,
-                    )
-                  : LineIcon(
-                      icon,
-                      size: 21,
-                      color: locked
-                          ? AppColors.slate400
-                          : art?.ink ?? AppColors.slate800,
-                    ),
             ),
-          ),
-          const SizedBox(width: 12),
+            const SizedBox(width: 12),
+          ] else
+            const SizedBox(width: 4),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

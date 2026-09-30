@@ -28,6 +28,11 @@ class FloatingNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.paddingOf(context).bottom;
+    // The bar keeps its line icons at every age (no companion stickers).
+    return PlainLineIcons(child: _bar(bottom));
+  }
+
+  Widget _bar(double bottom) {
     return Padding(
       // Room above the bar for the raised QR disc.
       padding: EdgeInsets.fromLTRB(20, _qrLift, 20, 12 + bottom),

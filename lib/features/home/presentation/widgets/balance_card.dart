@@ -168,27 +168,83 @@ class _IconHit extends StatelessWidget {
 /// first, a quiet card for the second. A single action takes the full
 /// width in the accent.
 class HomeActions extends StatelessWidget {
-  const HomeActions({super.key, required this.actions});
+  const HomeActions({super.key, required this.actions, this.art});
 
   /// (label, icon, onTap).
   final List<(String, LineGlyph, VoidCallback)> actions;
+
+  /// The picture for an action, by label (`accountActionArt`), that replaces
+  /// the whole button, label included; null keeps the plain button.
+  final String? Function(String label)? art;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         for (final (i, (label, icon, onTap)) in actions.indexed) ...[
-          if (i > 0) const SizedBox(width: 10),
+          if (i > 0) const SizedBox(width: 8),
           Expanded(
-            child: _BigAction(
-              label: label,
-              icon: icon,
-              primary: i == 0,
-              onTap: onTap,
-            ),
+            child: switch (art?.call(label)) {
+              final asset? => _ArtAction(
+                label: label,
+                asset: asset,
+                onTap: onTap,
+              ),
+              null => _BigAction(
+                label: label,
+                icon: icon,
+                primary: i == 0,
+                onTap: onTap,
+              ),
+            },
           ),
         ],
       ],
+    );
+  }
+}
+
+/// A big action drawn as the character's button art, which carries its own
+/// label; the label is kept for screen readers.
+class _ArtAction extends StatelessWidget {
+  const _ArtAction({
+    required this.label,
+    required this.asset,
+    required this.onTap,
+  });
+
+  final String label;
+  final String asset;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: onTap,
+        scale: 0.96,
+        // The art's own pill shape, as wide as the slot but no taller than
+        // a plain button, so a lone full-width one stays button-sized.
+        child: SizedBox(
+          height: 64,
+          child: Image.asset(
+            asset,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            errorBuilder: (_, _, _) => Center(
+              child: AppText(
+                label,
+                size: 14,
+                weight: FontWeight.w600,
+                color: AppColors.slate900,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

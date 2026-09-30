@@ -70,3 +70,26 @@ const _kidsSets = {'fox', 'bear', 'rabbit', 'penguin'};
 
 /// The under-10 characters with a row banner set.
 const _kidsRowSets = {'fox', 'bear', 'rabbit', 'penguin'};
+
+/// The chosen character's art for one of Home's big action buttons, by its
+/// label (Гүйлгээ, Мөнгө хүсэх, Дэлгэрэнгүй, Орлого, Найз урих), or null where the character has
+/// none (the plain button is drawn). The art carries its own label. All
+/// four under-10 cartoons have sets, in `assets/images/kids/<set>/buttons/`.
+String? accountActionArt(String label) {
+  final set = appAvatar.value.stickerSet;
+  if (appAgeGroup.value != AgeGroup.under10 || !_kidsButtonSets.contains(set)) {
+    return null;
+  }
+  final name = switch (label) {
+    'Гүйлгээ' => 'transaction',
+    'Мөнгө хүсэх' => 'charge',
+    'Дэлгэрэнгүй' => 'detail',
+    'Орлого' => 'revenue',
+    'Найз урих' => 'invite-friend',
+    _ => null,
+  };
+  return name == null ? null : 'assets/images/kids/$set/buttons/$name.webp';
+}
+
+/// The under-10 characters with action-button art.
+const _kidsButtonSets = {'rabbit', 'bear', 'fox', 'penguin'};

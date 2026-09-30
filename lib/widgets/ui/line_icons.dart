@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../app/age_group.dart';
+import '../../app/avatar.dart';
+
 /// The app's own line icons, drawn instead of Material's: one thin 1.5
 /// stroke on a 24 grid with round caps and joins, like the reference's
 /// narrow white icons. Pick a glyph and a colour; size scales the stroke.
@@ -116,15 +119,111 @@ class LineIcon extends StatelessWidget {
   final double stroke;
   final String? semanticLabel;
 
+  /// Under 10 the content glyphs (piggy, gift, card, QR…) are drawn as the
+  /// chosen companion's sticker for the same thing, so every screen's icons
+  /// follow the avatar. Chrome glyphs (arrows, chevrons, close, eye, plus…)
+  /// and tiny inline icons stay as lines.
+  /// Screens under [PlainLineIcons] (sign-in and the auth steps) keep the
+  /// lines.
+  static String? kidsSticker(LineGlyph glyph, double size) {
+    if (appAgeGroup.value != AgeGroup.under10 || size < _stickerMin) {
+      return null;
+    }
+    return switch (glyph) {
+      LineGlyph.home => Stickers.home,
+      LineGlyph.profile => Stickers.profile,
+      LineGlyph.bell ||
+      LineGlyph.bellRing ||
+      LineGlyph.mail => Stickers.notification,
+      LineGlyph.personAdd => Stickers.addFriend,
+      LineGlyph.users => Stickers.friends,
+      LineGlyph.card ||
+      LineGlyph.cardAdd ||
+      LineGlyph.contactless => Stickers.card,
+      LineGlyph.coins || LineGlyph.sparkleCoin => Stickers.coins,
+      LineGlyph.ardCoin => Stickers.coin,
+      LineGlyph.trend || LineGlyph.sprout || LineGlyph.chart => Stickers.growth,
+      LineGlyph.crown ||
+      LineGlyph.trophy ||
+      LineGlyph.star ||
+      LineGlyph.checkCircle => Stickers.success,
+      LineGlyph.wallet ||
+      LineGlyph.banknote ||
+      LineGlyph.bag ||
+      LineGlyph.shirt ||
+      LineGlyph.percent => Stickers.payment,
+      LineGlyph.camera => Stickers.avatar,
+      LineGlyph.pocket => Stickers.jar,
+      LineGlyph.receipt || LineGlyph.history => Stickers.report,
+      LineGlyph.piggy || LineGlyph.bank => Stickers.piggy,
+      LineGlyph.gift => Stickers.gift,
+      LineGlyph.paperPlane => Stickers.transfer,
+      LineGlyph.charge => Stickers.receive,
+      LineGlyph.lock ||
+      LineGlyph.fingerprint ||
+      LineGlyph.faceId ||
+      LineGlyph.phone => Stickers.lock,
+      LineGlyph.shield => Stickers.shield,
+      LineGlyph.target => Stickers.goal,
+      LineGlyph.calculator => Stickers.calculator,
+      LineGlyph.link => Stickers.family,
+      LineGlyph.food => Stickers.snack,
+      LineGlyph.bus || LineGlyph.plane => Stickers.travel,
+      LineGlyph.gamepad => Stickers.games,
+      LineGlyph.book => Stickers.books,
+      LineGlyph.graduation => Stickers.study,
+      LineGlyph.heart => Stickers.love,
+      LineGlyph.qr || LineGlyph.scan => Stickers.qr,
+      LineGlyph.edit => Stickers.edit,
+      LineGlyph.palette => Stickers.art,
+      LineGlyph.ball => Stickers.sports,
+      _ => null,
+    };
+  }
+
+  /// Below this a sticker is too small to read, so the line stays.
+  static const _stickerMin = 18.0;
+
   @override
   Widget build(BuildContext context) {
+    final sticker = PlainLineIcons.of(context)
+        ? null
+        : kidsSticker(glyph, size);
     final icon = SizedBox.square(
       dimension: size,
-      child: CustomPaint(painter: _LinePainter(glyph, color, stroke)),
+      child: sticker == null
+          ? CustomPaint(painter: _LinePainter(glyph, color, stroke))
+          // A cut-out character has air around it, so it's drawn a little
+          // larger than the glyph's box (which keeps the layout unchanged).
+          : OverflowBox(
+              maxWidth: size * 1.45,
+              maxHeight: size * 1.45,
+              child: Image.asset(
+                sticker,
+                width: size * 1.45,
+                height: size * 1.45,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (_, _, _) =>
+                    CustomPaint(painter: _LinePainter(glyph, color, stroke)),
+              ),
+            ),
     );
     if (semanticLabel == null) return ExcludeSemantics(child: icon);
     return Semantics(label: semanticLabel, child: icon);
   }
+}
+
+/// Keeps every [LineIcon] below it a line, even under 10 where icons
+/// otherwise become the companion's stickers (the sign-in and auth screens).
+class PlainLineIcons extends InheritedWidget {
+  const PlainLineIcons({super.key, required super.child});
+
+  static bool of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<PlainLineIcons>() != null;
+
+  @override
+  bool updateShouldNotify(PlainLineIcons oldWidget) => false;
 }
 
 class _LinePainter extends CustomPainter {

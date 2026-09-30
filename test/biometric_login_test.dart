@@ -119,10 +119,6 @@ void main() {
       Biometrics.instance = fake;
       await pumpAt(tester, AppRoutes.security);
 
-      expect(
-        find.text('Эхлээд утасныхаа тохиргооноос бүртгүүлнэ үү'),
-        findsOneWidget,
-      );
       await tester.tap(biometricSwitch());
       await tester.pumpAndSettle();
       expect(appBiometricLogin.value, isFalse);
@@ -145,7 +141,6 @@ void main() {
     Biometrics.instance = _FakeBiometrics(kind: null, sensor: false);
     await pumpAt(tester, AppRoutes.security);
 
-    expect(find.text('Энэ төхөөрөмж дэмжихгүй байна'), findsOneWidget);
     expect(tester.widget<Switch>(biometricSwitch()).onChanged, isNull);
   });
 
