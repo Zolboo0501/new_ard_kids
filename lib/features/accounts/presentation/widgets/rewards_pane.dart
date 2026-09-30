@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
+
 import '../../../../app/accounts.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -111,50 +114,54 @@ class _RewardsPaneState extends State<RewardsPane> {
         // Same structure as the coin card (number, balance, then the
         // totals) so switching tabs changes the content, not the layout;
         // the warm amber keeps the two accounts apart.
-        AccountHeroPanel(
-          accent: AppColors.amber500,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CopyAccountNumber(
-                number: Accounts.rewards,
-                hidden: widget.hidden,
-                onToggleHidden: widget.onToggleHidden,
-              ),
-              const SizedBox(height: 8),
-              AppText(
-                'Нийт үлдэгдэл',
-                size: 13,
-                weight: FontWeight.w500,
-                color: AppColors.slate500,
-              ),
-              const SizedBox(height: 4),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: AccountUnitBalance(
-                  amount: Balances.rewards,
+        AvatarCardArt(
+          sticker: Stickers.gift,
+          size: 100,
+          child: AccountHeroPanel(
+            accent: AppColors.amber500,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CopyAccountNumber(
+                  number: Accounts.rewards,
+                  hidden: widget.hidden,
+                  onToggleHidden: widget.onToggleHidden,
+                ),
+                const SizedBox(height: 8),
+                AppText(
+                  'Нийт үлдэгдэл',
+                  size: 13,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate500,
+                ),
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: AccountUnitBalance(
+                    amount: Balances.rewards,
+                    unit: pointUnit,
+                    hidden: widget.hidden,
+                    size: 36,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                AppText(
+                  widget.hidden
+                      ? '1 оноо = ₮1'
+                      : '≈ ${formatMnt(Balances.rewards)} · 1 оноо = ₮1',
+                  size: 13,
+                  color: AppColors.slate500,
+                ),
+                Divider(height: 32, thickness: 1, color: AppColors.line),
+                AccountTotals(
+                  earned: earned,
+                  spent: spent,
                   unit: pointUnit,
                   hidden: widget.hidden,
-                  size: 36,
                 ),
-              ),
-              const SizedBox(height: 6),
-              AppText(
-                widget.hidden
-                    ? '1 оноо = ₮1'
-                    : '≈ ${formatMnt(Balances.rewards)} · 1 оноо = ₮1',
-                size: 13,
-                color: AppColors.slate500,
-              ),
-              Divider(height: 32, thickness: 1, color: AppColors.line),
-              AccountTotals(
-                earned: earned,
-                spent: spent,
-                unit: pointUnit,
-                hidden: widget.hidden,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 14),

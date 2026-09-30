@@ -62,6 +62,7 @@ class HomeAccountPanel extends StatelessWidget {
                 art.asset,
                 fit: BoxFit.cover,
                 alignment: Alignment.centerRight,
+                filterQuality: FilterQuality.high,
                 excludeFromSemantics: true,
               ),
             )

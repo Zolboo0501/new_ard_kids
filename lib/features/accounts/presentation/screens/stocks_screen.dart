@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
+
 import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -35,71 +38,75 @@ class StocksScreen extends StatelessWidget {
           ),
           gap: 20,
           leading: [
-            AppCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    'Нийт багцын үнэлгээ',
-                    size: 13,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate500,
-                  ),
-                  const SizedBox(height: 4),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: BalanceText(
-                      Balances.stocks,
-                      animateFrom: 0,
-                      size: 36,
-                      weight: FontWeight.w600,
-                      letterSpacing: -0.6,
-                      currencyColor: AppColors.slate700,
-                      color: AppColors.slate900,
+            AvatarCardArt(
+              sticker: Stickers.growth,
+              area: 118,
+              child: AppCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      'Нийт багцын үнэлгээ',
+                      size: 13,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  AppText(
-                    '+${(portfolioGain / portfolioInvested * 100).toStringAsFixed(1)}% нийт өгөөж',
-                    size: 13,
-                    weight: FontWeight.w500,
-                    color: AppColors.emerald600,
-                  ),
-                  Divider(height: 32, thickness: 1, color: AppColors.line),
-                  IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        _stat('Оруулсан', portfolioInvested),
-                        VerticalDivider(
-                          width: 24,
-                          thickness: 1,
-                          color: AppColors.line,
-                        ),
-                        _stat(
-                          'Ашиг',
-                          portfolioGain,
-                          color: AppColors.emerald600,
-                          sign: true,
-                        ),
-                        VerticalDivider(
-                          width: 24,
-                          thickness: 1,
-                          color: AppColors.line,
-                        ),
-                        _stat('Ногдол ашиг', portfolioDividends),
-                      ],
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: BalanceText(
+                        Balances.stocks,
+                        animateFrom: 0,
+                        size: 36,
+                        weight: FontWeight.w600,
+                        letterSpacing: -0.6,
+                        currencyColor: AppColors.slate700,
+                        color: AppColors.slate900,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  AppText(
-                    'Ногдол ашиг: компани ашгаасаа хувьцаа эзэмшигчдэд тараадаг мөнгө.',
-                    size: 12,
-                    color: AppColors.slate500,
-                    height: 1.45,
-                  ),
-                ],
+                    const SizedBox(height: 6),
+                    AppText(
+                      '+${(portfolioGain / portfolioInvested * 100).toStringAsFixed(1)}% нийт өгөөж',
+                      size: 13,
+                      weight: FontWeight.w500,
+                      color: AppColors.emerald600,
+                    ),
+                    Divider(height: 32, thickness: 1, color: AppColors.line),
+                    IntrinsicHeight(
+                      child: Row(
+                        children: [
+                          _stat('Оруулсан', portfolioInvested),
+                          VerticalDivider(
+                            width: 24,
+                            thickness: 1,
+                            color: AppColors.line,
+                          ),
+                          _stat(
+                            'Ашиг',
+                            portfolioGain,
+                            color: AppColors.emerald600,
+                            sign: true,
+                          ),
+                          VerticalDivider(
+                            width: 24,
+                            thickness: 1,
+                            color: AppColors.line,
+                          ),
+                          _stat('Ногдол ашиг', portfolioDividends),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    AppText(
+                      'Ногдол ашиг: компани ашгаасаа хувьцаа эзэмшигчдэд тараадаг мөнгө.',
+                      size: 12,
+                      color: AppColors.slate500,
+                      height: 1.45,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

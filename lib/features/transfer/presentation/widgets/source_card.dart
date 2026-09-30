@@ -22,30 +22,30 @@ class SourceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  'Боломжит үлдэгдэл',
-                  size: 13,
-                  weight: FontWeight.w500,
-                  color: AppColors.slate500,
-                ),
-              ),
-              AppText(
-                'Үндсэн данс ••${iban.substring(iban.length - 4)}',
-                size: 12,
-                color: AppColors.slate500,
-              ),
-            ],
+          AppText(
+            'Боломжит үлдэгдэл',
+            size: 13,
+            weight: FontWeight.w500,
+            color: AppColors.slate500,
           ),
           const SizedBox(height: 4),
-          BalanceText(
-            Balances.main,
-            size: 36,
-            color: AppColors.slate900,
-            weight: FontWeight.w600,
-            currencyWeight: FontWeight.w600,
+          // Left-aligned, under the label: the card's right side is where
+          // the character's sticker stands (see AvatarCardArt).
+          Align(
+            alignment: Alignment.centerLeft,
+            child: BalanceText(
+              Balances.main,
+              size: 36,
+              color: AppColors.slate900,
+              weight: FontWeight.w600,
+              currencyWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 2),
+          AppText(
+            'Үндсэн данс ••${iban.substring(iban.length - 4)}',
+            size: 12,
+            color: AppColors.slate500,
           ),
           Divider(height: 28, color: AppColors.line),
           LimitNote(amount: amount),

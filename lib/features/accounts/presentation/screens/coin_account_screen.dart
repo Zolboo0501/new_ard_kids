@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
+
 import '../../../../app/accounts.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
@@ -111,63 +114,67 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        AccountHeroPanel(
-          accent: AppColors.emerald500,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CopyAccountNumber(
-                number: Accounts.coin,
-                hidden: widget.hidden,
-                onToggleHidden: widget.onToggleHidden,
-              ),
-              const SizedBox(height: 8),
-              AppText(
-                'Нийт койны үлдэгдэл',
-                size: 13,
-                weight: FontWeight.w500,
-                color: AppColors.slate500,
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  Image.asset(
-                    Mascots.ardCoin3d,
-                    width: 36,
-                    height: 36,
-                    excludeFromSemantics: true,
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: AccountUnitBalance(
-                        amount: Balances.coins,
-                        unit: coinUnit,
-                        hidden: widget.hidden,
-                        size: 36,
+        AvatarCardArt(
+          sticker: Stickers.coin,
+          size: 100,
+          child: AccountHeroPanel(
+            accent: AppColors.emerald500,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CopyAccountNumber(
+                  number: Accounts.coin,
+                  hidden: widget.hidden,
+                  onToggleHidden: widget.onToggleHidden,
+                ),
+                const SizedBox(height: 8),
+                AppText(
+                  'Нийт койны үлдэгдэл',
+                  size: 13,
+                  weight: FontWeight.w500,
+                  color: AppColors.slate500,
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Image.asset(
+                      Mascots.ardCoin3d,
+                      width: 36,
+                      height: 36,
+                      excludeFromSemantics: true,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: AccountUnitBalance(
+                          amount: Balances.coins,
+                          unit: coinUnit,
+                          hidden: widget.hidden,
+                          size: 36,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              AppText(
-                widget.hidden
-                    ? '1 койн = ₮1'
-                    : '≈ ${formatMnt(Balances.coins)} · 1 койн = ₮1',
-                size: 13,
-                color: AppColors.slate500,
-              ),
-              Divider(height: 32, thickness: 1, color: AppColors.line),
-              AccountTotals(
-                earned: income,
-                spent: spent,
-                unit: coinUnit,
-                hidden: widget.hidden,
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 6),
+                AppText(
+                  widget.hidden
+                      ? '1 койн = ₮1'
+                      : '≈ ${formatMnt(Balances.coins)} · 1 койн = ₮1',
+                  size: 13,
+                  color: AppColors.slate500,
+                ),
+                Divider(height: 32, thickness: 1, color: AppColors.line),
+                AccountTotals(
+                  earned: income,
+                  spent: spent,
+                  unit: coinUnit,
+                  hidden: widget.hidden,
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 20),

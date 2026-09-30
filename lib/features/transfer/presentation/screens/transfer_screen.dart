@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
@@ -222,7 +225,11 @@ class _TransferScreenState extends State<TransferScreen> {
               child: AdaptiveListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 children: EntranceItem.list([
-                  SourceCard(amount: _amountValue),
+                  AvatarCardArt(
+                    sticker: Stickers.transfer,
+                    area: 118,
+                    child: SourceCard(amount: _amountValue),
+                  ),
                   const SizedBox(height: 12),
                   ModeTabs(
                     mode: _mode,

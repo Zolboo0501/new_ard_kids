@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/kid_profile.dart';
@@ -85,58 +88,70 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                     child: Column(
                       children: EntranceItem.list([
-                        AppCard(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            children: [
-                              AppText(
-                                'Дүн',
-                                size: 13,
-                                weight: FontWeight.w500,
-                                color: AppColors.slate500,
-                              ),
-                              const SizedBox(height: 4),
-                              FittedBox(
-                                // Like the Home balance card: rolls in from ₮0
-                                // when the screen opens, then rolls between
-                                // values as the keypad changes it.
-                                child: BalanceText(
-                                  _amount,
-                                  animateFrom: 0,
-                                  size: 40,
-                                  weight: FontWeight.w600,
-                                  currencyWeight: FontWeight.w600,
-                                  color: _amount > _available
-                                      ? AppColors.rose600
-                                      : AppColors.slate900,
-                                  currencyColor: _amount > _available
-                                      ? AppColors.rose600
-                                      : AppColors.slate500,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text.rich(
-                                TextSpan(
-                                  text: 'Үндсэн дансны үлдэгдэл ',
-                                  children: [
-                                    WidgetSpan(
-                                      alignment: PlaceholderAlignment.baseline,
-                                      baseline: TextBaseline.alphabetic,
-                                      child: BalanceText(
-                                        _available,
-                                        size: 13,
-                                        weight: FontWeight.w600,
-                                        color: AppColors.slate700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                style: inter(
+                        AvatarCardArt(
+                          sticker: Stickers.coin,
+                          size: 80,
+                          child: AppCard(
+                            // The amount is centred in the space left of
+                            // the sticker, not under it.
+                            padding: EdgeInsets.fromLTRB(
+                              20,
+                              20,
+                              Stickers.onCards ? 96 : 20,
+                              20,
+                            ),
+                            child: Column(
+                              children: [
+                                AppText(
+                                  'Дүн',
                                   size: 13,
+                                  weight: FontWeight.w500,
                                   color: AppColors.slate500,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                                FittedBox(
+                                  // Like the Home balance card: rolls in from ₮0
+                                  // when the screen opens, then rolls between
+                                  // values as the keypad changes it.
+                                  child: BalanceText(
+                                    _amount,
+                                    animateFrom: 0,
+                                    size: 40,
+                                    weight: FontWeight.w600,
+                                    currencyWeight: FontWeight.w600,
+                                    color: _amount > _available
+                                        ? AppColors.rose600
+                                        : AppColors.slate900,
+                                    currencyColor: _amount > _available
+                                        ? AppColors.rose600
+                                        : AppColors.slate500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text.rich(
+                                  TextSpan(
+                                    text: 'Үндсэн дансны үлдэгдэл ',
+                                    children: [
+                                      WidgetSpan(
+                                        alignment:
+                                            PlaceholderAlignment.baseline,
+                                        baseline: TextBaseline.alphabetic,
+                                        child: BalanceText(
+                                          _available,
+                                          size: 13,
+                                          weight: FontWeight.w600,
+                                          color: AppColors.slate700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  style: inter(
+                                    size: 13,
+                                    color: AppColors.slate500,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         const SizedBox(height: 12),

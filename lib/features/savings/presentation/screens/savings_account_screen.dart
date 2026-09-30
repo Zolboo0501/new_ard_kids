@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/accounts.dart';
@@ -37,42 +40,47 @@ class SavingsAccountScreen extends StatelessWidget {
           ),
           gap: 16,
           leading: [
-            AppCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppText(
-                    'Нийт хуримтлал',
-                    size: 13,
-                    weight: FontWeight.w500,
-                    color: AppColors.slate500,
-                  ),
-                  const SizedBox(height: 4),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: BalanceText(
-                      Balances.savings,
-                      size: 40,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate900,
+            AvatarCardArt(
+              sticker: Stickers.goal,
+              size: 86,
+              area: 118,
+              child: AppCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      'Нийт хуримтлал',
+                      size: 13,
+                      weight: FontWeight.w500,
+                      color: AppColors.slate500,
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    maskIban(Accounts.savings),
-                    style: moneyStyle(size: 13, color: AppColors.slate500),
-                  ),
-                  Divider(height: 32, color: AppColors.line),
-                  StatStrip(
-                    items: [
-                      ('Бодогдсон хүү', 48250, AppColors.emerald600),
-                      ('Жилийн хүү', '13.5%', AppColors.slate900),
-                      ('Дуусах огноо', '2026.12.31', AppColors.slate900),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: BalanceText(
+                        Balances.savings,
+                        size: 40,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      maskIban(Accounts.savings),
+                      style: moneyStyle(size: 13, color: AppColors.slate500),
+                    ),
+                    Divider(height: 32, color: AppColors.line),
+                    StatStrip(
+                      items: [
+                        ('Бодогдсон хүү', 48250, AppColors.emerald600),
+                        ('Жилийн хүү', '13.5%', AppColors.slate900),
+                        ('Дуусах огноо', '2026.12.31', AppColors.slate900),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 12),

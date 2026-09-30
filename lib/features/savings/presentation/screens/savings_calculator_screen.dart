@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../app/avatar.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
@@ -207,53 +210,60 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            AppCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          'Тооцоолсон дүн',
-                          size: 16,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
+            AvatarCardArt(
+              sticker: Stickers.growth,
+              child: AppCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppText(
+                            'Тооцоолсон дүн',
+                            size: 16,
+                            weight: FontWeight.w700,
+                            color: AppColors.slate900,
+                          ),
                         ),
-                      ),
-                      AppText(
-                        '$_term сарын дараа',
-                        size: 13,
-                        color: AppColors.slate500,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: BalanceText(
-                      result.total,
-                      animate: true,
-                      space: false,
-                      size: 36,
-                      weight: FontWeight.w600,
-                      color: AppColors.slate900,
+                        AppText(
+                          '$_term сарын дараа',
+                          size: 13,
+                          color: AppColors.slate500,
+                        ),
+                      ],
                     ),
-                  ),
-                  Divider(height: 32, color: AppColors.line),
-                  StatStrip(
-                    items: [
-                      (
-                        'Таны хийх орлого',
-                        formatMnt(result.deposited, space: false),
-                        AppColors.slate900,
+                    const SizedBox(height: 12),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: BalanceText(
+                        result.total,
+                        animate: true,
+                        space: false,
+                        size: 36,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate900,
                       ),
-                      ('Хүүгийн орлого', result.interest, AppColors.emerald600),
-                    ],
-                  ),
-                ],
+                    ),
+                    Divider(height: 32, color: AppColors.line),
+                    StatStrip(
+                      items: [
+                        (
+                          'Таны хийх орлого',
+                          formatMnt(result.deposited, space: false),
+                          AppColors.slate900,
+                        ),
+                        (
+                          'Хүүгийн орлого',
+                          result.interest,
+                          AppColors.emerald600,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 18),

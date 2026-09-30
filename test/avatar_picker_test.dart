@@ -210,21 +210,35 @@ void main() {
     }
   });
 
-  testWidgets('Avatar: task screens show no companion art', (tester) async {
+  testWidgets('Avatar: summary cards carry the character\'s sticker, not 14+', (
+    tester,
+  ) async {
+    // The asset names on screen, unwrapping resized images.
+    List<String> assets() => [
+      for (final i in tester.widgetList<Image>(find.byType(Image)))
+        switch (i.image) {
+          ResizeImage(imageProvider: AssetImage(:final assetName)) => assetName,
+          AssetImage(:final assetName) => assetName,
+          _ => '',
+        },
+    ];
+    final companion = RegExp(r'/(fox|bear|rabbit|penguin|cat)/');
+
     _usePhoneViewport(tester);
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
-    for (final route in [AppRoutes.transfer, AppRoutes.savingsAccount]) {
+    for (final (route, sticker) in [
+      (AppRoutes.transfer, 'teenegars/fox/fox_transfer.png'),
+      (AppRoutes.savingsAccount, 'teenegars/fox/fox_goal.png'),
+    ]) {
       GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
       await tester.pumpAndSettle();
-      final companionArt = tester
-          .widgetList<Image>(find.byType(Image))
-          .map((i) => i.image)
-          .whereType<AssetImage>()
-          .where(
-            (a) => RegExp(r'/(fox|bear|rabbit|penguin)/').hasMatch(a.assetName),
-          );
-      expect(companionArt, isEmpty, reason: route);
+      expect(assets(), contains(endsWith(sticker)), reason: route);
     }
+
+    // 14+ has no stickers of its own, so no companion art at all.
+    appAgeGroup.value = AgeGroup.teen;
+    await tester.pumpAndSettle();
+    expect(assets().where(companion.hasMatch), isEmpty);
   });
 }

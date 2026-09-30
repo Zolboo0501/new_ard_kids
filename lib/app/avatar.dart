@@ -187,6 +187,11 @@ abstract final class Stickers {
   static String named(String name, {required String fallback}) =>
       _hasOwn(name) ? _path(name) : fallback;
 
+  /// Whether screens may stand the character's sticker on their summary
+  /// card (`AvatarCardArt`): under 10 and 10–13 have their own sticker sets,
+  /// 14+ has none and the kids' cartoons would undo its grown-up look.
+  static bool get onCards => appAgeGroup.value != AgeGroup.teen;
+
   /// The stickers each 10–13 set has, cut from its sheet.
   static const _teen = {
     'fox': {
