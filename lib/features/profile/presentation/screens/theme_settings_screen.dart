@@ -6,7 +6,7 @@ import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/accent_swatch.dart';
+import '../widgets/accent_card.dart';
 import '../widgets/theme_mode_tile.dart';
 
 /// "Харагдац": light / dark / system canvas and the accent colour. Every
@@ -25,16 +25,50 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
     (AppBrightness.dark, 'Харанхуй'),
   ];
 
+  /// Choice, name, English name, a line about it, and the tile's glyph.
   static const _accents = [
-    (AppThemeChoice.sky, 'Тэнгэр'),
-    (AppThemeChoice.blue, 'Цэнхэр'),
-    (AppThemeChoice.indigo, 'Индиго'),
-    (AppThemeChoice.violet, 'Нил ягаан'),
-    (AppThemeChoice.pink, 'Ягаан'),
-    (AppThemeChoice.orange, 'Улбар шар'),
-    (AppThemeChoice.green, 'Ногоон'),
-    (AppThemeChoice.lime, 'Шар ногоон'),
-    (AppThemeChoice.mono, 'Монохром'),
+    (
+      AppThemeChoice.sky,
+      'Тэнгэр',
+      'Sky',
+      'Цэлмэг, эрч хүчтэй цэнхэр. Үндсэн сэдэв.',
+      LineGlyph.sun,
+    ),
+    (
+      AppThemeChoice.blue,
+      'Цэнхэр',
+      'Ocean',
+      'Тайван, гүн далайн цэнхэр.',
+      LineGlyph.pocket,
+    ),
+    (
+      AppThemeChoice.indigo,
+      'Индиго',
+      'Indigo',
+      'Орчин үеийн, тод индиго.',
+      LineGlyph.bolt,
+    ),
+    (
+      AppThemeChoice.pink,
+      'Ягаан',
+      'Bloom',
+      'Дулаахан, зөөлөн ягаан.',
+      LineGlyph.heart,
+    ),
+    (
+      AppThemeChoice.lime,
+      'Шар ногоон',
+      'Lime',
+      'Тод, шинэ маягийн шар ногоон.',
+      LineGlyph.ball,
+    ),
+    (
+      AppThemeChoice.mono,
+      'Монохром',
+      'Mono',
+      'Хар цагаан, цэвэрхэн харагдац.',
+      LineGlyph.moon,
+    ),
   ];
 
   void _setMode(AppBrightness mode) {
@@ -93,40 +127,23 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               ],
             ),
             const SizedBox(height: 32),
-            _heading('Өнгө', 'Товч, сонголт болон тэмдэглэгээний өнгө.'),
-            Container(
-              padding: const EdgeInsets.fromLTRB(8, 18, 8, 18),
-              decoration: BoxDecoration(
-                color: AppColors.card,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              // Five to a row on phones, wider rows on tablets; each cell is
-              // a fixed width so the rows line up as a grid.
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final perRow = (constraints.maxWidth / 72).floor().clamp(
-                    5,
-                    _accents.length,
-                  );
-                  final cell = constraints.maxWidth / perRow;
-                  return Wrap(
-                    runSpacing: 18,
-                    children: [
-                      for (final (choice, label) in _accents)
-                        SizedBox(
-                          width: cell,
-                          child: AccentSwatch(
-                            choice: choice,
-                            label: label,
-                            selected: appThemeChoice.value == choice,
-                            onTap: () => _setAccent(choice),
-                          ),
-                        ),
-                    ],
-                  );
-                },
-              ),
+            _heading(
+              'Өнгө',
+              'Товч, сонголт, тэмдэглэгээ болон дэвсгэрийн өнгө.',
             ),
+            for (final (i, (choice, label, subtitle, note, glyph))
+                in _accents.indexed) ...[
+              if (i > 0) const SizedBox(height: 10),
+              AccentCard(
+                choice: choice,
+                label: label,
+                subtitle: subtitle,
+                description: note,
+                glyph: glyph,
+                selected: appThemeChoice.value == choice,
+                onTap: () => _setAccent(choice),
+              ),
+            ],
             const SizedBox(height: 32),
             _heading('Урьдчилан харах', 'Сонголт тань шууд хэрэгжинэ.'),
             const _Preview(),

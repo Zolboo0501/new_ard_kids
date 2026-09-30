@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/avatar_card_art.dart';
 
 /// The balance panel at the top of the rewards and coin tabs: a flat card
 /// with one faint wash of the account's [accent] from the top-left corner,
@@ -19,6 +20,10 @@ class AccountHeroPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On a character's card art the art is the panel.
+    if (AvatarCardArt.artUnder(context)) {
+      return Padding(padding: padding, child: child);
+    }
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.card,

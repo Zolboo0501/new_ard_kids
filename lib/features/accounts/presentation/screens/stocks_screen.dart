@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 
@@ -40,6 +41,7 @@ class StocksScreen extends StatelessWidget {
           leading: [
             AvatarCardArt(
               sticker: Stickers.growth,
+              account: Accounts.stocks,
               area: 118,
               child: AppCard(
                 padding: const EdgeInsets.all(20),

@@ -116,6 +116,8 @@ class _RewardsPaneState extends State<RewardsPane> {
         // the warm amber keeps the two accounts apart.
         AvatarCardArt(
           sticker: Stickers.gift,
+          account: Accounts.rewards,
+          area: 150,
           size: 100,
           child: AccountHeroPanel(
             accent: AppColors.amber500,

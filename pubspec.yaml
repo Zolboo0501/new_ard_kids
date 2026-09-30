@@ -68,6 +68,10 @@ flutter:
     - assets/images/kids/bear/
     - assets/images/kids/rabbit/
     - assets/images/kids/penguin/
+    - assets/images/kids/bear/cards/
+    - assets/images/kids/fox/cards/
+    - assets/images/kids/penguin/cards/
+    - assets/images/kids/rabbit/cards/
     - assets/images/teenegars/fox/
     - assets/images/teenegars/fox/cards/
     - assets/images/teenegars/bear/

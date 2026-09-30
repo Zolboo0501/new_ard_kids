@@ -144,6 +144,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           children: EntranceItem.list([
             AvatarCardArt(
               sticker: Stickers.report,
+              account: Accounts.savings,
               size: 86,
               area: 118,
               child: AppCard(

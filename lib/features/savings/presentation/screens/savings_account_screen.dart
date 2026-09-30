@@ -42,6 +42,7 @@ class SavingsAccountScreen extends StatelessWidget {
           leading: [
             AvatarCardArt(
               sticker: Stickers.goal,
+              account: Accounts.savings,
               size: 86,
               area: 118,
               child: AppCard(

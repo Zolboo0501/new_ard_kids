@@ -116,6 +116,8 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
       children: [
         AvatarCardArt(
           sticker: Stickers.coin,
+          account: Accounts.coin,
+          area: 150,
           size: 100,
           child: AccountHeroPanel(
             accent: AppColors.emerald500,

@@ -227,14 +227,21 @@ void main() {
     _usePhoneViewport(tester);
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
-    for (final (route, sticker) in [
-      (AppRoutes.transfer, 'teenegars/fox/fox_transfer.png'),
-      (AppRoutes.savingsAccount, 'teenegars/fox/fox_goal.png'),
+    // 10–13: the fox's card art backs the card.
+    for (final (route, art) in [
+      (AppRoutes.transfer, 'teenegars/fox/cards/main.webp'),
+      (AppRoutes.savingsAccount, 'teenegars/fox/cards/savings.webp'),
     ]) {
       GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
       await tester.pumpAndSettle();
-      expect(assets(), contains(endsWith(sticker)), reason: route);
+      expect(assets(), contains(endsWith(art)), reason: route);
     }
+
+    // Under 10 the cartoon's own card set backs the card.
+    appAgeGroup.value = AgeGroup.under10;
+    appAvatar.value = AppAvatar.bunny;
+    await tester.pumpAndSettle();
+    expect(assets(), contains(endsWith('kids/rabbit/cards/savings.webp')));
 
     // 14+ has no stickers of its own, so no companion art at all.
     appAgeGroup.value = AgeGroup.teen;

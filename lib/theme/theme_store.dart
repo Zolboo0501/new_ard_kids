@@ -7,7 +7,7 @@ import 'app_theme.dart';
 /// storage so they survive an app restart.
 ///
 /// Storage errors never reach the UI: a failed read keeps the defaults
-/// (blue accent, following the phone) and a failed write keeps the choice
+/// (sky accent, following the phone) and a failed write keeps the choice
 /// for this session only.
 abstract final class ThemeStore {
   static const _key = 'app_theme';

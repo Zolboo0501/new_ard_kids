@@ -5,17 +5,7 @@ import 'package:flutter/material.dart';
 /// The accent a teen picks in "Өнгө ба харагдац". Each one has a light and
 /// a dark scale (see [AppPalette]). Stored by name, so `blue` and `pink`
 /// keep the choices saved before the accents were renamed.
-enum AppThemeChoice {
-  sky,
-  blue,
-  indigo,
-  violet,
-  pink,
-  orange,
-  green,
-  lime,
-  mono,
-}
+enum AppThemeChoice { sky, blue, indigo, pink, lime, mono }
 
 /// Light or dark canvas. [system] follows the phone's setting.
 enum AppBrightness { system, light, dark }
@@ -40,12 +30,26 @@ class AppPalette {
     required this.c800,
     required this.c900,
     required this.onAccent,
+    required this.dsPrimary,
+    required this.pageBackground,
+    required this.pageBackgroundMuted,
   });
 
   final Color c50, c100, c200, c300, c400, c500, c600, c700, c800, c900;
 
   /// Text and icons printed on the accent fill.
   final Color onAccent;
+
+  /// The Material 3 primary for this accent: a deeper take on [c500] for
+  /// the theme's `ColorScheme` seed.
+  final Color dsPrimary;
+
+  /// The page canvas, tinted towards the accent from the neutral canvas so
+  /// the whole page follows the choice, not only the fills.
+  /// [pageBackgroundMuted] is the quieter take for Profile and settings.
+  /// Cards stay the plain card colour on both.
+  final Color pageBackground;
+  final Color pageBackgroundMuted;
 
   /// The accent scale for [choice] on the light or [dark] canvas.
   static AppPalette of(AppThemeChoice choice, {bool? dark}) {
@@ -54,235 +58,181 @@ class AppPalette {
       AppThemeChoice.sky => d ? _skyDark : _skyLight,
       AppThemeChoice.blue => d ? _blueDark : _blueLight,
       AppThemeChoice.indigo => d ? _indigoDark : _indigoLight,
-      AppThemeChoice.violet => d ? _violetDark : _violetLight,
       AppThemeChoice.pink => d ? _pinkDark : _pinkLight,
-      AppThemeChoice.orange => d ? _orangeDark : _orangeLight,
-      AppThemeChoice.green => d ? _greenDark : _greenLight,
       AppThemeChoice.lime => d ? _limeDark : _limeLight,
       AppThemeChoice.mono => d ? _monoDark : _monoLight,
     };
   }
 
-  /// The app's original sky blue, from before the light/dark redesign.
-  /// White text needs the light fill a shade deeper than Tailwind's sky-500.
+  /// The app's original sky blue, from before the light/dark redesign, and
+  /// the default. Tailwind's sky scale, softened: every light fill sits at
+  /// about 3.2:1 under white text (the bar for the large, bold text on
+  /// buttons and for controls), which keeps the fills gentle.
   static const _skyDark = AppPalette(
-    c50: Color(0xFF0B1E2B),
-    c100: Color(0xFF0F2A3D),
-    c200: Color(0xFF16405C),
-    c300: Color(0xFF1F77A8),
-    c400: Color(0xFF2EA8E6),
-    c500: Color(0xFF38BDF8),
-    c600: Color(0xFF5CCBFA),
-    c700: Color(0xFF7DD3FC),
-    c800: Color(0xFFBAE6FD),
-    c900: Color(0xFFE0F2FE),
+    c50: Color(0xFF0D1E29),
+    c100: Color(0xFF12293A),
+    c200: Color(0xFF1B3F57),
+    c300: Color(0xFF327295),
+    c400: Color(0xFF48A0CC),
+    c500: Color(0xFF53B3DD),
+    c600: Color(0xFF72C2E4),
+    c700: Color(0xFF8FCDEA),
+    c800: Color(0xFFC3E3F4),
+    c900: Color(0xFFE4F1FA),
     onAccent: Color(0xFF06263A),
+    dsPrimary: Color(0xFF48A0CC),
+    pageBackground: Color(0xFF060C10),
+    pageBackgroundMuted: Color(0xFF060A0C),
   );
   static const _skyLight = AppPalette(
-    c50: Color(0xFFF0F9FF),
-    c100: Color(0xFFE0F2FE),
-    c200: Color(0xFFBAE6FD),
-    c300: Color(0xFF7DD3FC),
-    c400: Color(0xFF38BDF8),
-    c500: Color(0xFF027BBD),
-    c600: Color(0xFF0369A1),
-    c700: Color(0xFF075985),
-    c800: Color(0xFF0C4A6E),
-    c900: Color(0xFF082F49),
+    c50: Color(0xFFF1F9FE),
+    c100: Color(0xFFE2F2FC),
+    c200: Color(0xFFBFE4F8),
+    c300: Color(0xFF8FCDEA),
+    c400: Color(0xFF53B3DD),
+    c500: Color(0xFF2599D9),
+    c600: Color(0xFF19638B),
+    c700: Color(0xFF195473),
+    c800: Color(0xFF1A4660),
+    c900: Color(0xFF112D40),
     onAccent: Color(0xFFFFFFFF),
+    dsPrimary: Color(0xFF145D7D),
+    pageBackground: Color(0xFFF5F8FE),
+    pageBackgroundMuted: Color(0xFFF4F6FB),
   );
 
   static const _blueDark = AppPalette(
-    c50: Color(0xFF0C2225),
-    c100: Color(0xFF113035),
-    c200: Color(0xFF1A474C),
-    c300: Color(0xFF2A8A91),
-    c400: Color(0xFF34CBD5),
-    c500: Color(0xFF3EE6F0),
-    c600: Color(0xFF5BEBF3),
-    c700: Color(0xFF86F0F6),
-    c800: Color(0xFFB2F6F9),
-    c900: Color(0xFFD8FBFC),
+    c50: Color(0xFF0E2123),
+    c100: Color(0xFF142E32),
+    c200: Color(0xFF1E4448),
+    c300: Color(0xFF387E83),
+    c400: Color(0xFF4BB7BE),
+    c500: Color(0xFF57D0D7),
+    c600: Color(0xFF70D8DE),
+    c700: Color(0xFF96E2E6),
+    c800: Color(0xFFBCEDEF),
+    c900: Color(0xFFDDF6F7),
     onAccent: Color(0xFF032A2E),
+    dsPrimary: Color(0xFF4BB7BE),
+    pageBackground: Color(0xFF070D0E),
+    pageBackgroundMuted: Color(0xFF060A0C),
   );
   static const _blueLight = AppPalette(
-    c50: Color(0xFFE6F4F5),
-    c100: Color(0xFFCCE9EB),
-    c200: Color(0xFF99D3D8),
-    c300: Color(0xFF4DB3BC),
-    c400: Color(0xFF1C929D),
-    c500: Color(0xFF0A7882),
-    c600: Color(0xFF086670),
-    c700: Color(0xFF06535B),
-    c800: Color(0xFF054147),
-    c900: Color(0xFF032E33),
+    c50: Color(0xFFE7F3F4),
+    c100: Color(0xFFCEE7E9),
+    c200: Color(0xFF9ECFD3),
+    c300: Color(0xFF5DA6AC),
+    c400: Color(0xFF3FC5D1),
+    c500: Color(0xFF29A0AB),
+    c600: Color(0xFF175A61),
+    c700: Color(0xFF12494F),
+    c800: Color(0xFF0E393E),
+    c900: Color(0xFF0A292C),
     onAccent: Color(0xFFFFFFFF),
-  );
-
-  static const _violetDark = AppPalette(
-    c50: Color(0xFF1D1730),
-    c100: Color(0xFF292043),
-    c200: Color(0xFF3D2F66),
-    c300: Color(0xFF6A55B0),
-    c400: Color(0xFF8E74E8),
-    c500: Color(0xFFA78BFA),
-    c600: Color(0xFFB9A2FB),
-    c700: Color(0xFFCBB9FC),
-    c800: Color(0xFFDDD1FD),
-    c900: Color(0xFFEEE8FE),
-    onAccent: Color(0xFF1E1340),
-  );
-  static const _violetLight = AppPalette(
-    c50: Color(0xFFF3F0FE),
-    c100: Color(0xFFE6DFFD),
-    c200: Color(0xFFCBBDFA),
-    c300: Color(0xFFA48CF2),
-    c400: Color(0xFF8466E9),
-    c500: Color(0xFF6A45DC),
-    c600: Color(0xFF5A36C4),
-    c700: Color(0xFF4A2BA3),
-    c800: Color(0xFF3A2180),
-    c900: Color(0xFF29175C),
-    onAccent: Color(0xFFFFFFFF),
+    dsPrimary: Color(0xFF175A61),
+    pageBackground: Color(0xFFEFF6F8),
+    pageBackgroundMuted: Color(0xFFF0F5F7),
   );
 
   static const _pinkDark = AppPalette(
-    c50: Color(0xFF28111D),
-    c100: Color(0xFF371727),
-    c200: Color(0xFF55223D),
-    c300: Color(0xFFA9487A),
-    c400: Color(0xFFE668A4),
-    c500: Color(0xFFFF7AB6),
-    c600: Color(0xFFFF92C4),
-    c700: Color(0xFFFFAAD1),
-    c800: Color(0xFFFFC7E1),
-    c900: Color(0xFFFFE2EF),
+    c50: Color(0xFF26131D),
+    c100: Color(0xFF351927),
+    c200: Color(0xFF51263D),
+    c300: Color(0xFF9B567A),
+    c400: Color(0xFFD47AA5),
+    c500: Color(0xFFEC8DB8),
+    c600: Color(0xFFF0A1C5),
+    c700: Color(0xFFF3B6D2),
+    c800: Color(0xFFF7CFE2),
+    c900: Color(0xFFFBE6EF),
     onAccent: Color(0xFF3A0A22),
+    dsPrimary: Color(0xFFD47AA5),
+    pageBackground: Color(0xFF0E090C),
+    pageBackgroundMuted: Color(0xFF0A080A),
   );
   static const _pinkLight = AppPalette(
-    c50: Color(0xFFFCEBF2),
-    c100: Color(0xFFF9D5E5),
-    c200: Color(0xFFF2A9C9),
-    c300: Color(0xFFE873A6),
-    c400: Color(0xFFD94585),
-    c500: Color(0xFFC2185B),
-    c600: Color(0xFFA5134D),
-    c700: Color(0xFF86103F),
-    c800: Color(0xFF680C31),
-    c900: Color(0xFF4A0823),
+    c50: Color(0xFFFBECF2),
+    c100: Color(0xFFF6D8E5),
+    c200: Color(0xFFEDAECA),
+    c300: Color(0xFFD883A8),
+    c400: Color(0xFFE49FBA),
+    c500: Color(0xFFD66F98),
+    c600: Color(0xFF912751),
+    c700: Color(0xFF752142),
+    c800: Color(0xFF5B1934),
+    c900: Color(0xFF411125),
     onAccent: Color(0xFFFFFFFF),
+    dsPrimary: Color(0xFF912751),
+    pageBackground: Color(0xFFF9F2F6),
+    pageBackgroundMuted: Color(0xFFF7F3F6),
   );
 
   /// Electric indigo.
   static const _indigoDark = AppPalette(
-    c50: Color(0xFF16173A),
-    c100: Color(0xFF1E2050),
-    c200: Color(0xFF2D2F75),
-    c300: Color(0xFF4F52B8),
-    c400: Color(0xFF6D72E6),
-    c500: Color(0xFF818CF8),
-    c600: Color(0xFFA5B4FC),
-    c700: Color(0xFFC7D2FE),
-    c800: Color(0xFFE0E7FF),
-    c900: Color(0xFFEEF2FF),
+    c50: Color(0xFF191A37),
+    c100: Color(0xFF22234C),
+    c200: Color(0xFF323470),
+    c300: Color(0xFF5E60A9),
+    c400: Color(0xFF7E82D5),
+    c500: Color(0xFF929AE7),
+    c600: Color(0xFFB1BCF0),
+    c700: Color(0xFFCFD7F6),
+    c800: Color(0xFFE4E9FB),
+    c900: Color(0xFFF0F3FD),
     onAccent: Color(0xFF1E1B4B),
+    dsPrimary: Color(0xFF7E82D5),
+    pageBackground: Color(0xFF090A14),
+    pageBackgroundMuted: Color(0xFF08090F),
   );
   static const _indigoLight = AppPalette(
-    c50: Color(0xFFEEF2FF),
-    c100: Color(0xFFE0E7FF),
-    c200: Color(0xFFC7D2FE),
-    c300: Color(0xFFA5B4FC),
-    c400: Color(0xFF818CF8),
-    c500: Color(0xFF4F46E5),
-    c600: Color(0xFF4338CA),
-    c700: Color(0xFF3730A3),
-    c800: Color(0xFF312E81),
-    c900: Color(0xFF1E1B4B),
+    c50: Color(0xFFEFF3FE),
+    c100: Color(0xFFE2E8FD),
+    c200: Color(0xFFCBD4FA),
+    c300: Color(0xFFB1BCF0),
+    c400: Color(0xFF929AE7),
+    c500: Color(0xFF8C87DC),
+    c600: Color(0xFF544CB6),
+    c700: Color(0xFF454093),
+    c800: Color(0xFF3C3A75),
+    c900: Color(0xFF242244),
     onAccent: Color(0xFFFFFFFF),
-  );
-
-  /// Warm orange. Bright enough that its fill takes dark text in both modes.
-  static const _orangeDark = AppPalette(
-    c50: Color(0xFF2A150C),
-    c100: Color(0xFF3A1D10),
-    c200: Color(0xFF5A2C17),
-    c300: Color(0xFFA84A24),
-    c400: Color(0xFFE8703F),
-    c500: Color(0xFFFF8A5B),
-    c600: Color(0xFFFFA582),
-    c700: Color(0xFFFFBFA3),
-    c800: Color(0xFFFFD8C7),
-    c900: Color(0xFFFFEDE5),
-    onAccent: Color(0xFF3B0D02),
-  );
-  static const _orangeLight = AppPalette(
-    c50: Color(0xFFFFF3ED),
-    c100: Color(0xFFFFE4D6),
-    c200: Color(0xFFFFC7AD),
-    c300: Color(0xFFFFA27F),
-    c400: Color(0xFFFF8659),
-    c500: Color(0xFFFF6B3D),
-    c600: Color(0xFFC2410C),
-    c700: Color(0xFF9A3412),
-    c800: Color(0xFF7C2D12),
-    c900: Color(0xFF431407),
-    onAccent: Color(0xFF3B0D02),
-  );
-
-  /// Bright fintech green, with dark text on the fill.
-  static const _greenDark = AppPalette(
-    c50: Color(0xFF0B2416),
-    c100: Color(0xFF0F3320),
-    c200: Color(0xFF17502F),
-    c300: Color(0xFF238A4E),
-    c400: Color(0xFF36C06C),
-    c500: Color(0xFF4ADE80),
-    c600: Color(0xFF6EE7A0),
-    c700: Color(0xFF9AF0BD),
-    c800: Color(0xFFC6F7D9),
-    c900: Color(0xFFE6FCEF),
-    onAccent: Color(0xFF052E16),
-  );
-  static const _greenLight = AppPalette(
-    c50: Color(0xFFECFDF3),
-    c100: Color(0xFFD1FADF),
-    c200: Color(0xFFA6F0C0),
-    c300: Color(0xFF6EE39A),
-    c400: Color(0xFF3DD47A),
-    c500: Color(0xFF22C55E),
-    c600: Color(0xFF15803D),
-    c700: Color(0xFF166534),
-    c800: Color(0xFF14532D),
-    c900: Color(0xFF052E16),
-    onAccent: Color(0xFF052E16),
+    dsPrimary: Color(0xFF544CB6),
+    pageBackground: Color(0xFFF3F5FC),
+    pageBackgroundMuted: Color(0xFFF3F5FA),
   );
 
   /// Neon lime, with dark text on the fill.
   static const _limeDark = AppPalette(
-    c50: Color(0xFF1A230B),
-    c100: Color(0xFF243112),
-    c200: Color(0xFF36491A),
-    c300: Color(0xFF5E7F24),
-    c400: Color(0xFFA6D12F),
-    c500: Color(0xFFC6F432),
-    c600: Color(0xFFD4F75F),
-    c700: Color(0xFFE0FA8A),
-    c800: Color(0xFFECFCB8),
-    c900: Color(0xFFF6FEE0),
+    c50: Color(0xFF1A210D),
+    c100: Color(0xFF242F14),
+    c200: Color(0xFF35451E),
+    c300: Color(0xFF5A7231),
+    c400: Color(0xFF9BBA46),
+    c500: Color(0xFFB8D94D),
+    c600: Color(0xFFC9E274),
+    c700: Color(0xFFD8EA9A),
+    c800: Color(0xFFE7F2C2),
+    c900: Color(0xFFF4FAE4),
     onAccent: Color(0xFF1A2E05),
+    dsPrimary: Color(0xFF9BBA46),
+    pageBackground: Color(0xFF0A0D08),
+    pageBackgroundMuted: Color(0xFF080A08),
   );
   static const _limeLight = AppPalette(
-    c50: Color(0xFFF5FCE7),
-    c100: Color(0xFFEAF8CC),
-    c200: Color(0xFFD4F09A),
-    c300: Color(0xFFBEE868),
-    c400: Color(0xFFAEE343),
-    c500: Color(0xFFA3E635),
-    c600: Color(0xFF4D7C0F),
-    c700: Color(0xFF3F6212),
-    c800: Color(0xFF365314),
-    c900: Color(0xFF1A2E05),
+    c50: Color(0xFFF4FAE9),
+    c100: Color(0xFFE9F5CF),
+    c200: Color(0xFFD2EAA0),
+    c300: Color(0xFFB8D67A),
+    c400: Color(0xFFA6CD59),
+    c500: Color(0xFF9DCD4E),
+    c600: Color(0xFF4B6D1E),
+    c700: Color(0xFF3E571D),
+    c800: Color(0xFF354A1D),
+    c900: Color(0xFF1A280B),
     onAccent: Color(0xFF1A2E05),
+    dsPrimary: Color(0xFF4B6D1E),
+    pageBackground: Color(0xFFF6FAF1),
+    pageBackgroundMuted: Color(0xFFF5F8F3),
   );
 
   /// Graphite: the ink itself is the accent. White on the dark canvas,
@@ -299,6 +249,9 @@ class AppPalette {
     c800: Color(0xFFFFFFFF),
     c900: Color(0xFFFFFFFF),
     onAccent: Color(0xFF0B0C0E),
+    dsPrimary: Color(0xFFA9ADB5),
+    pageBackground: Color(0xFF0A0C0E),
+    pageBackgroundMuted: Color(0xFF08090B),
   );
   static const _monoLight = AppPalette(
     c50: Color(0xFFEEEFF2),
@@ -312,12 +265,15 @@ class AppPalette {
     c800: Color(0xFF0B0C0E),
     c900: Color(0xFF0B0C0E),
     onAccent: Color(0xFFFFFFFF),
+    dsPrimary: Color(0xFF0B0C0E),
+    pageBackground: Color(0xFFF3F4F6),
+    pageBackgroundMuted: Color(0xFFF3F4F6),
   );
 }
 
 /// The active accent. `ArdKidsApp` rebuilds the whole tree when it changes,
 /// so every `AppColors` read picks up the new palette.
-final appThemeChoice = ValueNotifier(AppThemeChoice.blue);
+final appThemeChoice = ValueNotifier(AppThemeChoice.sky);
 
 /// The active canvas. Like [appThemeChoice], a change rebuilds everything.
 final appBrightness = ValueNotifier(AppBrightness.system);
@@ -511,8 +467,9 @@ abstract final class AppColors {
     bool dark,
   ) {
     final s = dark ? _Scheme.dark : _Scheme.light;
+    final p = AppPalette.of(appThemeChoice.value, dark: dark);
     return (
-      surface: s.surface,
+      surface: p.pageBackground,
       card: s.card,
       line: s.slate[2],
       text: s.slate[9],
@@ -521,8 +478,8 @@ abstract final class AppColors {
 
   static AppPalette get _p => AppPalette.of(appThemeChoice.value);
 
-  /// The page canvas.
-  static Color get surface => _s.surface;
+  /// The page canvas, in the accent's own tint.
+  static Color get surface => _p.pageBackground;
 
   /// A card or sheet on the canvas.
   static Color get card => _s.card;
@@ -540,17 +497,19 @@ abstract final class AppColors {
   static Color get onBright => _s.onBright;
 
   // Material 3 tokens generated by Stitch for the design system.
-  static Color get dsPrimary => _p.c500;
+  static Color get dsPrimary => _p.dsPrimary;
   static Color get dsPrimaryContainer => _p.c500;
-  static Color get dsSurface => _s.surface;
+  static Color get dsSurface => surface;
   static Color get dsSurfaceContainerLow => _s.card;
   static Color get dsSurfaceContainerHigh => _s.slate[0];
   static Color get dsOnSurface => _s.slate[9];
   static Color get dsOnSurfaceVariant => _s.slate[5];
   static Color get dsOutlineVariant => _s.slate[2];
 
-  static Color get pageBackground => _s.surface;
-  static Color get pageBackgroundMuted => _s.surface;
+  static Color get pageBackground => surface;
+
+  /// The quieter canvas for Profile and settings pages.
+  static Color get pageBackgroundMuted => _p.pageBackgroundMuted;
 
   static Color get sky50 => _p.c50;
   static Color get sky100 => _p.c100;

@@ -70,7 +70,12 @@ void main() {
   test('Every 10–13 sticker file exists', () {
     for (final set in ['fox', 'bear', 'rabbit', 'cat']) {
       final dir = Directory('assets/images/teenegars/$set');
-      final files = dir.listSync().whereType<File>().toList();
+      // Finder drops .DS_Store files into folders that are opened.
+      final files = dir
+          .listSync()
+          .whereType<File>()
+          .where((f) => !f.uri.pathSegments.last.startsWith('.'))
+          .toList();
       expect(files, isNotEmpty, reason: set);
       for (final f in files) {
         expect(f.path, endsWith('.png'));
@@ -116,16 +121,39 @@ void main() {
       ]) {
         final art = accountCardArt(account);
         expect(art, isNotNull, reason: account);
-        expect(File(art!.asset).existsSync(), isTrue, reason: art.asset);
+        expect(File(art!).existsSync(), isTrue, reason: art);
       }
     }
     appAvatar.value = AppAvatar.bunny;
     expect(
-      accountCardArt(Accounts.savings)!.asset,
+      accountCardArt(Accounts.savings),
       'assets/images/teenegars/rabbit/cards/savings.webp',
     );
 
-    // The penguin is kids-only, so it never has card art.
+    // Under 10, every cartoon has card art.
+    appAgeGroup.value = AgeGroup.under10;
+    for (final (avatar, set) in [
+      (AppAvatar.fox, 'fox'),
+      (AppAvatar.bear, 'bear'),
+      (AppAvatar.bunny, 'rabbit'),
+      (AppAvatar.penguin, 'penguin'),
+    ]) {
+      for (final account in [
+        Accounts.main,
+        Accounts.savings,
+        Accounts.stocks,
+        Accounts.rewards,
+        Accounts.coin,
+      ]) {
+        appAvatar.value = avatar;
+        final art = accountCardArt(account);
+        expect(art, startsWith('assets/images/kids/$set/cards/'));
+        expect(File(art!).existsSync(), isTrue, reason: art);
+      }
+    }
+    appAgeGroup.value = AgeGroup.tween;
+
+    // The penguin is kids-only, so above 10 it has no card art.
     appAvatar.value = AppAvatar.penguin;
     expect(accountCardArt(Accounts.main), isNull);
     appAvatar.value = AppAvatar.fox;

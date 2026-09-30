@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_theme.dart';
 import '../app_text.dart';
+import '../avatar_card_art.dart';
 import 'interaction.dart';
 
 /// Page background shared by the in-app screens. Follows the theme.
@@ -49,7 +50,12 @@ class AppCard extends StatelessWidget {
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
-        color: color ?? AppColors.card,
+        // Transparent on a character's card art (AvatarCardArt).
+        color:
+            color ??
+            (AvatarCardArt.artUnder(context)
+                ? Colors.transparent
+                : AppColors.card),
         borderRadius: BorderRadius.circular(radius),
         border: dashed || borderColor == null
             ? null

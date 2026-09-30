@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
@@ -227,6 +228,7 @@ class _TransferScreenState extends State<TransferScreen> {
                 children: EntranceItem.list([
                   AvatarCardArt(
                     sticker: Stickers.transfer,
+                    account: Accounts.main,
                     area: 118,
                     child: SourceCard(amount: _amountValue),
                   ),

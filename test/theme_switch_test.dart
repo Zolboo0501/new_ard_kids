@@ -22,7 +22,7 @@ Set<Color> _colors(WidgetTester tester) => {
 
 void main() {
   void reset() {
-    appThemeChoice.value = AppThemeChoice.blue;
+    appThemeChoice.value = AppThemeChoice.sky;
     appBrightness.value = AppBrightness.light;
   }
 
@@ -31,7 +31,7 @@ void main() {
     FlutterSecureStorage.setMockInitialValues({});
   });
   tearDown(() {
-    appThemeChoice.value = AppThemeChoice.blue;
+    appThemeChoice.value = AppThemeChoice.sky;
     appBrightness.value = AppBrightness.system;
   });
 
@@ -60,9 +60,11 @@ void main() {
       appBrightness.value = mode;
       for (final choice in AppThemeChoice.values) {
         appThemeChoice.value = choice;
+        // The fills are soft: the text on them is large and bold (buttons)
+        // or a control, where 3:1 is the bar.
         expect(
           contrast(AppColors.onAccent, AppColors.sky500),
-          greaterThanOrEqualTo(4.5),
+          greaterThanOrEqualTo(3),
           reason: '$choice on $mode',
         );
       }
@@ -72,7 +74,7 @@ void main() {
   });
 
   test('Tab styles follow the accent', () {
-    expect(AppTabsStyle.card.dotColor, AppPalette.of(AppThemeChoice.blue).c500);
+    expect(AppTabsStyle.card.dotColor, AppPalette.of(AppThemeChoice.sky).c500);
     appThemeChoice.value = AppThemeChoice.pink;
     final pink = AppPalette.of(AppThemeChoice.pink);
     expect(AppTabsStyle.card.dotColor, pink.c500);
@@ -97,11 +99,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    // The accent cards are a list; Ягаан is below the fold on a phone.
+    await tester.scrollUntilVisible(find.bySemanticsLabel('Ягаан'), 200);
     await tester.tap(find.bySemanticsLabel('Ягаан'));
     await tester.pumpAndSettle();
     expect(appThemeChoice.value, AppThemeChoice.pink);
     expect(await const FlutterSecureStorage().read(key: 'app_theme'), 'pink');
 
+    // The mode tiles scrolled off the top; go back to the top so the tile is
+    // fully clear of the header before tapping it.
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 2000));
+    await tester.pumpAndSettle();
     await tester.tap(find.bySemanticsLabel('Харанхуй'));
     await tester.pumpAndSettle();
     expect(appBrightness.value, AppBrightness.dark);
@@ -114,11 +122,11 @@ void main() {
 
   test('The saved choices are restored on launch', () async {
     FlutterSecureStorage.setMockInitialValues({
-      'app_theme': 'violet',
+      'app_theme': 'indigo',
       'app_brightness': 'dark',
     });
     await ThemeStore.load();
-    expect(appThemeChoice.value, AppThemeChoice.violet);
+    expect(appThemeChoice.value, AppThemeChoice.indigo);
     expect(appBrightness.value, AppBrightness.dark);
   });
 
@@ -129,7 +137,7 @@ void main() {
       'app_brightness': 'dim',
     });
     await ThemeStore.load();
-    expect(appThemeChoice.value, AppThemeChoice.blue);
+    expect(appThemeChoice.value, AppThemeChoice.sky);
     expect(appBrightness.value, AppBrightness.system);
   });
 
@@ -139,7 +147,7 @@ void main() {
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
     final lightCanvas = AppColors.surface;
-    expect(_colors(tester), contains(AppPalette.of(AppThemeChoice.blue).c500));
+    expect(_colors(tester), contains(AppPalette.of(AppThemeChoice.sky).c500));
 
     appBrightness.value = AppBrightness.dark;
     appThemeChoice.value = AppThemeChoice.pink;
@@ -148,7 +156,7 @@ void main() {
     final colors = _colors(tester);
     final pinkDark = AppPalette.of(AppThemeChoice.pink, dark: true).c500;
     expect(colors, contains(pinkDark));
-    expect(colors, isNot(contains(AppPalette.of(AppThemeChoice.blue).c500)));
+    expect(colors, isNot(contains(AppPalette.of(AppThemeChoice.sky).c500)));
     expect(AppColors.surface, isNot(lightCanvas));
   });
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
@@ -90,6 +91,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                       children: EntranceItem.list([
                         AvatarCardArt(
                           sticker: Stickers.coin,
+                          account: Accounts.savings,
                           size: 80,
                           child: AppCard(
                             // The amount is centred in the space left of
