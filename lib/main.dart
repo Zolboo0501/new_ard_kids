@@ -82,12 +82,16 @@ class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
   /// state are kept.
   void _rebuildAll() {
     setState(() {});
-    void rebuild(Element element) {
+    // Iterative, not recursive: the tree is thousands of elements deep on
+    // Home (lists, card art, stickers), and a recursive visit overflowed
+    // the Dart stack, taking the app down on a theme or age change.
+    final pending = <Element>[];
+    (context as Element).visitChildren(pending.add);
+    while (pending.isNotEmpty) {
+      final element = pending.removeLast();
       element.markNeedsBuild();
-      element.visitChildren(rebuild);
+      element.visitChildren(pending.add);
     }
-
-    (context as Element).visitChildren(rebuild);
   }
 
   @override

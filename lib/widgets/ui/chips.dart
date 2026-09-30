@@ -9,7 +9,8 @@ import 'interaction.dart';
 import 'money.dart';
 import 'mascots.dart';
 
-/// Small filter chip (filled when selected).
+/// Small filter chip: filled in the accent when selected, so it follows
+/// the theme on both canvases.
 class FilterChipPill extends StatelessWidget {
   const FilterChipPill({
     super.key,
@@ -40,10 +41,10 @@ class FilterChipPill extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 36),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: selected ? AppColors.slate900 : AppColors.card,
+            color: selected ? AppColors.sky500 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.slate900 : AppColors.line,
+              color: selected ? AppColors.sky500 : AppColors.line,
             ),
           ),
           child: Row(
@@ -53,7 +54,7 @@ class FilterChipPill extends StatelessWidget {
                 Icon(
                   icon,
                   size: 14,
-                  color: selected ? AppColors.surface : AppColors.slate500,
+                  color: selected ? AppColors.onAccent : AppColors.slate500,
                 ),
                 const SizedBox(width: 4),
               ],
@@ -65,7 +66,7 @@ class FilterChipPill extends StatelessWidget {
                 label,
                 size: 13,
                 weight: selected ? FontWeight.w600 : FontWeight.w500,
-                color: selected ? AppColors.surface : AppColors.slate600,
+                color: selected ? AppColors.onAccent : AppColors.slate600,
               ),
             ],
           ),
@@ -181,12 +182,12 @@ class QuickAmountChips extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: selected == amounts[i]
-                      ? AppColors.slate900
+                      ? AppColors.sky500
                       : AppColors.card,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: selected == amounts[i]
-                        ? AppColors.slate900
+                        ? AppColors.sky500
                         : AppColors.line,
                   ),
                 ),
@@ -196,7 +197,7 @@ class QuickAmountChips extends StatelessWidget {
                     size: 13,
                     weight: FontWeight.w600,
                     color: selected == amounts[i]
-                        ? AppColors.surface
+                        ? AppColors.onAccent
                         : AppColors.slate800,
                   ),
                 ),

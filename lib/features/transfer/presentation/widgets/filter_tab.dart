@@ -4,7 +4,8 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
-/// A request-list filter: a neutral pill with an optional count.
+/// A request-list filter: a pill with an optional count, filled in the
+/// accent when selected.
 class FilterTab extends StatelessWidget {
   const FilterTab({
     super.key,
@@ -21,7 +22,7 @@ class FilterTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ink = selected ? AppColors.surface : AppColors.slate700;
+    final ink = selected ? AppColors.onAccent : AppColors.slate700;
     return Semantics(
       button: true,
       selected: selected,
@@ -31,10 +32,10 @@ class FilterTab extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.slate900 : AppColors.card,
+            color: selected ? AppColors.sky500 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.slate900 : AppColors.line,
+              color: selected ? AppColors.sky500 : AppColors.line,
             ),
           ),
           child: Row(
@@ -52,7 +53,9 @@ class FilterTab extends StatelessWidget {
                   '$count',
                   size: 13,
                   weight: FontWeight.w600,
-                  color: selected ? AppColors.surface : AppColors.slate500,
+                  color: selected
+                      ? AppColors.onAccent.withValues(alpha: 0.85)
+                      : AppColors.slate500,
                 ),
               ],
             ],

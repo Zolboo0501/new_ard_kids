@@ -349,7 +349,7 @@ class _AuthScreenState extends State<AuthScreen>
         Entrance(
           t: _titleIn,
           child: AppText(
-            isLogin ? 'Мөнгөө өөрөө\nудирд.' : 'Бүртгэл\nүүсгэе.',
+            isLogin ? 'Нэвтрэх' : 'Бүртгэл үүсгэх',
             size: compact ? 30 : 36,
             weight: FontWeight.w700,
             color: AppColors.slate900,
@@ -362,10 +362,8 @@ class _AuthScreenState extends State<AuthScreen>
           t: _subtitleIn,
           child: AppText(
             isLogin
-                ? 'Хадгаламж, карт, хувьцаа, урамшуулал — бүгд нэг дор. '
-                      'Нэвтрээд эхэлцгээе.'
-                : 'Регистрийн дугаар, нэвтрэх нэр, утасны дугаар — '
-                      'гуравхан алхам.',
+                ? 'Хадгаламж, карт, хувьцаа, урамшуулал бүгд нэг дор. '
+                : 'Бүртгэл үүсгэж, өөрийн хадгаламж, карт, хувьцаа, урамшууллын эрхээ аваарай',
             size: 15,
             color: AppColors.slate500,
             height: 1.45,

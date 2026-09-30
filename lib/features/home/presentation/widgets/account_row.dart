@@ -39,9 +39,9 @@ class AccountRow extends StatelessWidget {
   /// A banner behind the row, its glyph hue and its tile tint.
   final ({String asset, Color ink, Color tint})? background;
 
-  /// The banners are about 3.3:1 (blank left end and decorative right end
-  /// trimmed); at this height one spans most of a phone row.
-  static const _bannerRowHeight = 92.0;
+  /// Two lines (name, balance) and the icon tile, with the row's padding;
+  /// the banner is fitted to this height.
+  static const _bannerRowHeight = 72.0;
 
   @override
   Widget build(BuildContext context) {
@@ -96,14 +96,18 @@ class AccountRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 2),
-                AppText(
-                  subtitle,
-                  size: 12,
-                  color: art == null ? AppColors.slate500 : AppColors.slate600,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                // On a banner the art says what the account is; the row
+                // shows the name and the balance only.
+                if (art == null) ...[
+                  const SizedBox(height: 2),
+                  AppText(
+                    subtitle,
+                    size: 12,
+                    color: AppColors.slate500,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
                 if (art != null && amount != null && !locked) ...[
                   const SizedBox(height: 4),
                   BalanceText(

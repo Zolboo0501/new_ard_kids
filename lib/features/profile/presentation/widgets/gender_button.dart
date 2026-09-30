@@ -32,7 +32,7 @@ class GenderButton extends StatelessWidget {
             color: selected ? AppColors.card : AppColors.slate50,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.slate900 : AppColors.line,
+              color: selected ? AppColors.sky500 : AppColors.line,
               width: selected ? 1.5 : 1,
             ),
           ),
@@ -40,7 +40,7 @@ class GenderButton extends StatelessWidget {
             label,
             size: 14,
             weight: selected ? FontWeight.w600 : FontWeight.w500,
-            color: selected ? AppColors.slate900 : AppColors.slate600,
+            color: selected ? AppColors.sky700 : AppColors.slate600,
           ),
         ),
       ),
