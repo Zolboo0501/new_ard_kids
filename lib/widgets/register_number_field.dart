@@ -19,7 +19,12 @@ class RegisterNumberField extends StatelessWidget {
     this.hasError = false,
     this.textInputAction = TextInputAction.done,
     this.onSubmitted,
+    this.fill,
   });
+
+  /// The resting fill of the boxes and the digit field, for a form on the
+  /// canvas (see `AppInputShell.fill`).
+  final Color? fill;
 
   static const digitCount = 8;
 
@@ -80,6 +85,7 @@ class RegisterNumberField extends StatelessWidget {
               letter: letters[i],
               placeholder: _placeholders[i],
               hasError: hasError && letters[i] == null,
+              fill: fill,
               semanticLabel: 'Регистрийн ${i + 1}-р үсэг',
               onTap: () => _openSheet(context, i),
             ),
@@ -88,6 +94,7 @@ class RegisterNumberField extends StatelessWidget {
           const SizedBox(width: 2),
           Expanded(
             child: AppInputShell(
+              fill: fill,
               hasError: hasError && !digitsValid,
               valid: digitsValid,
               trailing: AppFieldTick(
@@ -121,6 +128,7 @@ class _LetterBox extends StatelessWidget {
     required this.letter,
     required this.placeholder,
     required this.hasError,
+    this.fill,
     required this.semanticLabel,
     required this.onTap,
   });
@@ -128,6 +136,7 @@ class _LetterBox extends StatelessWidget {
   final String? letter;
   final String placeholder;
   final bool hasError;
+  final Color? fill;
   final String semanticLabel;
   final VoidCallback onTap;
 
@@ -145,7 +154,7 @@ class _LetterBox extends StatelessWidget {
           width: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: filled ? AppColors.card : AppColors.slate50,
+            color: filled ? AppColors.card : fill ?? AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError

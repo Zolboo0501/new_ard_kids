@@ -13,7 +13,7 @@ import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/age_group_option.dart';
 
 /// "Насаа сонгох" (registration step 3/7, right after the phone is
-/// verified): under 10, 10–13 or 14+. Saved as [appAgeGroup], which picks
+/// verified): under 10, 10–13 or 14–18. Saved as [appAgeGroup], which picks
 /// the avatar art offered on the next step.
 ///
 /// With [editing] (opened from Profile) it starts on the saved age, has no
@@ -74,12 +74,12 @@ class _AgeGroupScreenState extends State<AgeGroupScreen> {
                     ),
                     const SizedBox(height: 8),
                     AppText(
-                      'Насандаа тохирох ангиллыг сонгоно уу.',
+                      'Насаа сонгоорой. Дараа нь өөрийн дүрээ сонгоно.',
                       size: 15,
                       color: AppColors.slate500,
                       height: 1.45,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     for (final (i, group) in AgeGroup.values.indexed) ...[
                       if (i > 0) const SizedBox(height: 12),
                       AgeGroupOption(
@@ -88,6 +88,13 @@ class _AgeGroupScreenState extends State<AgeGroupScreen> {
                         onTap: () => setState(() => _selected = group),
                       ),
                     ],
+                    const SizedBox(height: 24),
+                    AppText(
+                      'Насаа дараа нь Профайл хэсгээс засаж болно.',
+                      size: 13,
+                      height: 1.5,
+                      color: AppColors.slate500,
+                    ),
                   ]),
                 ),
               ),

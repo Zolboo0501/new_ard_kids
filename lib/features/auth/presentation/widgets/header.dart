@@ -6,36 +6,63 @@ import '../../../../widgets/app_text.dart';
 class Header extends StatelessWidget {
   const Header({super.key, this.step, this.trailing});
 
-  /// The registration step pill ("Алхам 2/7"). Leave it null outside the
-  /// sign-up flow and only the back button (and [trailing]) show.
+  /// Registration progress, omitted when editing an existing profile.
   final String? step;
-
-  /// Optional action pinned to the right of the step pill, for screens that
-  /// offer something alongside going back (a skip, for instance).
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
+    final match = RegExp(r'(\d+)/(\d+)').firstMatch(step ?? '');
+    final current = match == null ? 0 : int.parse(match.group(1)!);
+    final total = match == null ? 0 : int.parse(match.group(2)!);
     return Padding(
-      // No horizontal padding: the screens that use this already inset their
-      // own content, so the back button lines up with it.
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Stack(
-        alignment: Alignment.center,
+      child: Column(
         children: [
-          const Align(
-            alignment: Alignment.centerLeft,
-            child: CircleBackButton(),
+          Row(
+            children: [
+              const CircleBackButton(),
+              const SizedBox(width: 12),
+              Expanded(
+                child: step == null
+                    ? const SizedBox.shrink()
+                    : AppText(
+                        step!,
+                        size: 13,
+                        weight: FontWeight.w600,
+                        color: AppColors.slate600,
+                      ),
+              ),
+              ?trailing,
+            ],
           ),
-          if (step case final step?)
-            AppText(
-              step,
-              size: 13,
-              weight: FontWeight.w600,
-              color: AppColors.slate500,
+          if (total > 0) ...[
+            const SizedBox(height: 16),
+            Semantics(
+              label: 'Бүртгэлийн явц',
+              value: '$total алхмын $current',
+              child: ExcludeSemantics(
+                child: Row(
+                  children: [
+                    for (var i = 0; i < total; i++) ...[
+                      if (i > 0) const SizedBox(width: 5),
+                      Expanded(
+                        child: Container(
+                          height: 3,
+                          decoration: BoxDecoration(
+                            color: i < current
+                                ? AppColors.sky500
+                                : AppColors.line,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
             ),
-          if (trailing != null)
-            Align(alignment: Alignment.centerRight, child: trailing),
+          ],
         ],
       ),
     );

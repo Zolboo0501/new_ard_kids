@@ -141,7 +141,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _subtitleIn,
                           child: AppText(
-                            'Дараа нь Профайл хэсгээс солих боломжтой.',
+                            'Өөрийн дүр, өнгөө сонго. Дараа нь Профайл хэсгээс сольж болно.',
                             size: 15,
                             color: AppColors.slate500,
                             height: 1.45,
@@ -152,9 +152,10 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                           crossAxisCount: columns,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 24,
+                          mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
-                          childAspectRatio: 0.82,
+                          mainAxisExtent:
+                              184 + MediaQuery.textScalerOf(context).scale(24),
                           children: [
                             for (final (i, a) in _avatars.indexed)
                               Entrance(

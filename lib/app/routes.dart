@@ -35,6 +35,7 @@ import '../features/transfer/presentation/screens/request_money_screen.dart';
 import '../features/transfer/presentation/screens/transfer_screen.dart';
 import '../features/transfer/data/transfer_receipt.dart';
 import '../features/transfer/presentation/screens/transfer_success_screen.dart';
+import '../features/onboarding/presentation/screens/welcome_screen.dart';
 import 'page_transitions.dart';
 
 /// Route paths for every screen in the app.
@@ -44,6 +45,8 @@ import 'page_transitions.dart';
 /// and pass data through `extra` (see [otp] and [transferSuccess]).
 abstract final class AppRoutes {
   static const auth = '/';
+  static const welcome = '/welcome';
+  static const register = '/?mode=register';
 
   /// `extra`: the 8-digit phone number as a [String].
   static const otp = '/otp';
@@ -109,7 +112,12 @@ abstract final class AppRoutes {
   static const themeSettings = '/profile/theme';
 
   static final Map<String, GoRouterWidgetBuilder> _builders = {
-    auth: (_, _) => const AuthScreen(),
+    welcome: (_, _) => const WelcomeScreen(),
+    auth: (_, state) => AuthScreen(
+      initialMode: state.uri.queryParameters['mode'] == 'register'
+          ? AuthMode.register
+          : AuthMode.login,
+    ),
     otp: (_, state) => OtpScreen(phone: state.extra as String? ?? ''),
     ageGroup: (_, state) =>
         AgeGroupScreen(editing: state.uri.queryParameters['edit'] == 'true'),
@@ -153,6 +161,7 @@ abstract final class AppRoutes {
   static const Map<String, AppTransition> _transitions = {
     // Stack resets via `context.go`.
     auth: AppTransition.fade,
+    welcome: AppTransition.fade,
     // Task-style screens opened and dismissed as a unit.
     qrScan: AppTransition.rise,
     transferSuccess: AppTransition.rise,

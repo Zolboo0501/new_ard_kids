@@ -9,9 +9,11 @@ void main() {
   ) async {
     await tester.pumpWidget(const ArdKidsApp());
 
-    expect(find.text('Тавтай морил'), findsOneWidget);
+    expect(find.text('Мөнгөө өөрөө\nудирд.'), findsOneWidget);
     expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
 
+    // The mode link sits at the bottom of the screen.
+    await tester.ensureVisible(find.text('Бүртгүүлэх'));
     await tester.tap(find.text('Бүртгүүлэх'));
     await tester.pumpAndSettle();
 

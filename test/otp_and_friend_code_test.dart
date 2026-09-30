@@ -89,7 +89,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(AgeGroupScreen), findsOneWidget);
 
-    await tester.tap(find.text('14+ нас'));
+    await tester.tap(find.text('14–18 нас'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Хадгалах'));
     await tester.pumpAndSettle();
@@ -100,7 +100,7 @@ void main() {
       'teen',
     );
     expect(router.state.uri.path, AppRoutes.profile);
-    expect(find.text('14+ нас'), findsOneWidget);
+    expect(find.text('14–18 нас'), findsOneWidget);
   });
 
   testWidgets('Age: continue waits for a choice, saves it, opens the avatars', (

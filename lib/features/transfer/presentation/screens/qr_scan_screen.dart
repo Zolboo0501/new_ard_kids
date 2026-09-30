@@ -24,10 +24,15 @@ import '../widgets/scan_result_sheet.dart';
 /// "QR уншуулах": a live camera QR scanner (mobile_scanner) plus the
 /// "Миний QR" tab.
 ///
-/// The camera runs only while the scan tab is showing: [MobileScanner] starts
-/// it when mounted and stops it when the tab switches away, and it pauses and
-/// resumes with the app lifecycle on its own. Only codes inside the on-screen
-/// frame are read ([QrScanViewfinder.frame]).
+/// The screen owns the camera (`autoStart: false`): it starts it once the
+/// scanner is on screen, stops it when the tab switches to "Миний QR" and
+/// starts it again on the way back, and follows the app lifecycle (stopped
+/// while the app is not in the foreground, which includes the iOS permission
+/// prompt). The [MobileScanner] widget can't do this itself here: the tab
+/// view keeps the outgoing pane mounted while the incoming one appears, so
+/// its own start-on-mount ran before the old pane's stop-on-dispose and the
+/// preview came back dead. Only codes inside the on-screen frame are read
+/// ([QrScanViewfinder.frame]).
 class QrScanScreen extends StatefulWidget {
   const QrScanScreen({super.key});
 
@@ -36,13 +41,14 @@ class QrScanScreen extends StatefulWidget {
 }
 
 class _QrScanScreenState extends State<QrScanScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late final _scan = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 2200),
   )..repeat(reverse: true);
 
   final _camera = MobileScannerController(
+    autoStart: false,
     detectionSpeed: DetectionSpeed.noDuplicates,
     formats: const [BarcodeFormat.qrCode],
   );
@@ -54,10 +60,79 @@ class _QrScanScreenState extends State<QrScanScreen>
   bool _handling = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // After the first frame, so the scanner widget is attached.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startCamera());
+  }
+
+  /// Starts the camera unless it is already running or starting (a second
+  /// start() while one is in progress throws). Errors surface through the
+  /// scanner's own error state, so the screen shows [CameraError].
+  Future<void> _startCamera() async {
+    if (!mounted || _tab != 0 || _handling) return;
+    final state = _camera.value;
+    if (state.isRunning || state.isStarting) return;
+    try {
+      await _camera.start();
+    } on MobileScannerException catch (e) {
+      debugPrint('QR camera start failed: ${e.errorCode} ${e.errorDetails}');
+    }
+  }
+
+  Future<void> _stopCamera() async {
+    if (!_camera.value.isInitialized) return;
+    try {
+      await _camera.stop();
+    } on MobileScannerException catch (e) {
+      debugPrint('QR camera stop failed: ${e.errorCode}');
+    }
+  }
+
+  /// "Дахин оролдох": a clean stop before the start, so a controller left
+  /// in a failed state can start again.
+  Future<void> _retryCamera() async {
+    await _stopCamera();
+    await _startCamera();
+  }
+
+  void _setTab(int i) {
+    if (i == _tab) return;
+    setState(() => _tab = i);
+    if (i == 0) {
+      // The scan pane is mounted on the next frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startCamera());
+    } else {
+      unawaited(_stopCamera());
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _scan.dispose();
     unawaited(_camera.dispose());
     super.dispose();
+  }
+
+  /// The pattern mobile_scanner documents: stop while the app is not in the
+  /// foreground, start again when it is. Before permission is granted the
+  /// controller is left alone, so the first start (which asks for it) isn't
+  /// interrupted.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!_camera.value.hasCameraPermission) return;
+    switch (state) {
+      case AppLifecycleState.resumed:
+        unawaited(_startCamera());
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+        unawaited(_stopCamera());
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   Future<void> _onDetect(BarcodeCapture capture) async {
@@ -86,7 +161,7 @@ class _QrScanScreenState extends State<QrScanScreen>
       if (!mounted) return;
     }
     _handling = false;
-    if (_tab == 0) unawaited(_camera.start());
+    unawaited(_startCamera());
   }
 
   @override
@@ -134,7 +209,7 @@ class _QrScanScreenState extends State<QrScanScreen>
               ],
               index: _tab,
               style: AppTabsStyle.solid,
-              onChanged: (i) => setState(() => _tab = i),
+              onChanged: _setTab,
             ),
             const SizedBox(height: 16),
             AppTabView(
@@ -172,10 +247,13 @@ class _QrScanScreenState extends State<QrScanScreen>
                     ),
                     onDetect: _onDetect,
                     placeholderBuilder: (_) => const CameraBackdrop(),
-                    errorBuilder: (_, error) => CameraError(
-                      error: error,
-                      onRetry: () => unawaited(_camera.start()),
-                    ),
+                    errorBuilder: (_, error) {
+                      debugPrint('QR camera: ${error.errorCode} $error');
+                      return CameraError(
+                        error: error,
+                        onRetry: () => unawaited(_retryCamera()),
+                      );
+                    },
                   ),
                 ),
               ),

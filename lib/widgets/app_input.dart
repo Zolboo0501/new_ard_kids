@@ -40,6 +40,7 @@ class AppInputShell extends StatefulWidget {
     this.trailing,
     this.hasError = false,
     this.valid = false,
+    this.fill,
   });
 
   final Widget? leading;
@@ -52,6 +53,11 @@ class AppInputShell extends StatefulWidget {
   /// Keeps a white fill and sky border once the value is complete, so it
   /// reads as done.
   final bool valid;
+
+  /// The resting fill, for a field that sits on the canvas rather than in a
+  /// card (the sign-in form uses the card colour there). Null keeps the
+  /// raised `slate50`.
+  final Color? fill;
 
   @override
   State<AppInputShell> createState() => _AppInputShellState();
@@ -110,7 +116,9 @@ class _AppInputShellState extends State<AppInputShell>
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: _focused || widget.valid ? AppColors.card : AppColors.slate50,
+          color: _focused || widget.valid
+              ? AppColors.card
+              : widget.fill ?? AppColors.slate50,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.hasError

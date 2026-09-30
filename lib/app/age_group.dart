@@ -7,7 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 enum AgeGroup {
   under10('10-аас доош', 'Бага ангийн сурагч'),
   tween('10–13 нас', 'Дунд ангийн сурагч'),
-  teen('14+ нас', 'Ахлах ангийн сурагч');
+  teen('14–18 нас', 'Ахлах ангийн сурагч');
 
   const AgeGroup(this.label, this.hint);
 

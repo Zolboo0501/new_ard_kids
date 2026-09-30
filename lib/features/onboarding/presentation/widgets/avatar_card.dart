@@ -75,100 +75,114 @@ class _AvatarCardState extends State<AvatarCard>
         onTap: widget.onTap,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final side = (constraints.maxWidth - 8).clamp(64.0, 132.0);
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox.square(
-                  dimension: side,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Positioned.fill(
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          curve: appEmphasizedDecelerate,
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: selected ? p.c500 : p.c200,
-                              width: selected ? 2.5 : 1,
-                            ),
-                          ),
-                          child: DecoratedBox(
+            final side = (constraints.maxWidth - 24).clamp(64.0, 128.0);
+            return AnimatedContainer(
+              duration: Duration(
+                milliseconds: MediaQuery.disableAnimationsOf(context) ? 0 : 180,
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
+              decoration: BoxDecoration(
+                color: selected ? p.c50 : AppColors.card,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: selected ? p.c500 : AppColors.line,
+                  width: selected ? 2 : 1,
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox.square(
+                    dimension: side,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned.fill(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            curve: appEmphasizedDecelerate,
+                            padding: const EdgeInsets.all(4),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: p.c50,
+                              border: Border.all(
+                                color: selected ? p.c500 : p.c200,
+                                width: selected ? 2.5 : 1,
+                              ),
                             ),
-                            child: ClipOval(
-                              child: ScaleTransition(
-                                scale: _pop,
-                                child: Center(
-                                  child: MascotImage(
-                                    asset: widget.asset,
-                                    size: side * 0.78,
-                                    background: p.c50,
-                                    semanticLabel: widget.name,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: p.c50,
+                              ),
+                              child: ClipOval(
+                                child: ScaleTransition(
+                                  scale: _pop,
+                                  child: Center(
+                                    child: MascotImage(
+                                      asset: widget.asset,
+                                      size: side * 0.78,
+                                      background: p.c50,
+                                      semanticLabel: widget.name,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        right: side * 0.04,
-                        bottom: side * 0.04,
-                        child: ValueSwitcher(
-                          value: selected,
-                          duration: const Duration(milliseconds: 200),
-                          transitionBuilder: (child, animation, _) =>
-                              ScaleTransition(
-                                scale: animation,
-                                child: FadeTransition(
-                                  opacity: animation,
-                                  child: child,
+                        Positioned(
+                          right: side * 0.04,
+                          bottom: side * 0.04,
+                          child: ValueSwitcher(
+                            value: selected,
+                            duration: const Duration(milliseconds: 200),
+                            transitionBuilder: (child, animation, _) =>
+                                ScaleTransition(
+                                  scale: animation,
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
                                 ),
-                              ),
-                          child: selected
-                              ? Container(
-                                  key: const ValueKey('tick'),
-                                  width: 28,
-                                  height: 28,
-                                  decoration: BoxDecoration(
-                                    color: p.c500,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: AppColors.surface,
-                                      width: 2,
+                            child: selected
+                                ? Container(
+                                    key: const ValueKey('tick'),
+                                    width: 28,
+                                    height: 28,
+                                    decoration: BoxDecoration(
+                                      color: p.c500,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.surface,
+                                        width: 2,
+                                      ),
                                     ),
-                                  ),
-                                  child: Center(
-                                    child: LineIcon(
-                                      LineGlyph.check,
-                                      size: 16,
-                                      stroke: 2,
-                                      color: p.onAccent,
+                                    child: Center(
+                                      child: LineIcon(
+                                        LineGlyph.check,
+                                        size: 16,
+                                        stroke: 2,
+                                        color: p.onAccent,
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(key: ValueKey('none')),
+                                  )
+                                : const SizedBox.shrink(key: ValueKey('none')),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                AppText(
-                  widget.name,
-                  size: 14,
-                  weight: selected ? FontWeight.w600 : FontWeight.w500,
-                  color: selected ? AppColors.slate900 : AppColors.slate600,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  AppText(
+                    widget.name,
+                    size: 14,
+                    weight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected ? AppColors.slate900 : AppColors.slate600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             );
           },
         ),

@@ -9,11 +9,11 @@ import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_input.dart';
-import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
+import '../../../../widgets/value_switcher.dart';
 import '../../data/sign_up_draft.dart';
 import '../widgets/helper_note.dart';
 import '../widgets/mode_switch.dart';
@@ -21,9 +21,12 @@ import '../widgets/submit_button.dart';
 
 enum AuthMode { login, register }
 
-/// "Нэвтрэх & Бүртгүүлэх" screen from the Stitch project.
+/// "Нэвтрэх & Бүртгүүлэх": the sign-in screen. An open form on the canvas
+/// under the mode's heading, with the other mode a link at the bottom.
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+  const AuthScreen({super.key, this.initialMode = AuthMode.login});
+
+  final AuthMode initialMode;
 
   /// Whether the biometric prompt has opened by itself this launch. Only the
   /// first sign-in screen prompts; after a logout the kid taps the button.
@@ -69,7 +72,7 @@ class _AuthScreenState extends State<AuthScreen>
   late final Animation<double> _subtitleIn;
   late final Animation<double> _cardIn;
 
-  AuthMode _mode = AuthMode.login;
+  late AuthMode _mode = widget.initialMode;
   SubmitState _submitState = SubmitState.idle;
 
   /// Set when biometric sign-in is on (Security screen) and the device has an
@@ -134,7 +137,7 @@ class _AuthScreenState extends State<AuthScreen>
     _subtitleIn = _stagger.slice(0.16);
     _cardIn = _stagger.slice(0.24);
     _entrance.forward();
-    if (appBiometricLogin.value) _checkBiometric();
+    if (appBiometricLogin.value && _mode == AuthMode.login) _checkBiometric();
   }
 
   Future<void> _checkBiometric() async {
@@ -254,10 +257,16 @@ class _AuthScreenState extends State<AuthScreen>
     if (mounted) setState(() => _submitState = SubmitState.idle);
   }
 
+  void _setMode(AuthMode mode) {
+    if (_mode == mode || _submitState != SubmitState.idle) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _mode = mode);
+  }
+
   @override
   Widget build(BuildContext context) {
     final padding = MediaQuery.paddingOf(context);
-    final bottomGap = 16 + padding.bottom;
+    final bottomGap = 20 + padding.bottom;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -265,110 +274,161 @@ class _AuthScreenState extends State<AuthScreen>
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: LayoutBuilder(
-            builder: (context, constraints) => SingleChildScrollView(
-              padding: AppLayout.centered(
-                EdgeInsets.fromLTRB(20, 16, 20, bottomGap),
-                constraints.maxWidth,
-              ),
-              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              child: ConstrainedBox(
-                // At least the visible height, so the title stays at the top
-                // and the form sits low, in thumb reach, on tall screens.
-                constraints: BoxConstraints(
-                  minHeight: (constraints.maxHeight - 16 - bottomGap).clamp(
-                    0.0,
-                    double.infinity,
+            builder: (context, constraints) {
+              // On a short screen (iPhone SE) the heading compacts so the
+              // fields are in view on arrival.
+              final compact = constraints.maxHeight < 700;
+              return SingleChildScrollView(
+                padding: AppLayout.centered(
+                  EdgeInsets.fromLTRB(24, 16, 24, bottomGap),
+                  constraints.maxWidth,
+                ),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                child: ConstrainedBox(
+                  // At least the visible height, so the mode link sits at
+                  // the bottom on tall screens and the form reads top-down.
+                  constraints: BoxConstraints(
+                    minHeight: (constraints.maxHeight - 16 - bottomGap).clamp(
+                      0.0,
+                      double.infinity,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Entrance(
+                            t: _logoIn,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Image.asset(
+                                'assets/images/ard_logo.png',
+                                height: 28,
+                                fit: BoxFit.contain,
+                                // The mark is black on transparent; tint it
+                                // so it follows the canvas in both modes.
+                                color: AppColors.slate900,
+                                semanticLabel: 'Ard',
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: compact ? 24 : 40),
+                          // The heading and the form travel together when
+                          // the mode switches.
+                          ModeSwitch(
+                            index: _mode.index,
+                            builder: (shown) =>
+                                _buildBody(AuthMode.values[shown], compact),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+                      Entrance(t: _cardIn, child: _buildModeLink()),
+                    ],
                   ),
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Entrance(
-                          t: _logoIn,
-                          child: Image.asset(
-                            'assets/images/ard_logo.png',
-                            height: 28,
-                            fit: BoxFit.contain,
-                            // The mark is black on transparent; tint it so
-                            // it follows the canvas in both modes.
-                            color: AppColors.slate900,
-                            semanticLabel: 'Ard',
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                        Entrance(
-                          t: _titleIn,
-                          child: AppText(
-                            'Тавтай морил',
-                            size: 32,
-                            weight: FontWeight.w700,
-                            color: AppColors.slate900,
-                            height: 1.15,
-                            letterSpacing: -0.8,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Entrance(
-                          t: _subtitleIn,
-                          child: AppText(
-                            'Данс, карт, хадгаламжаа нэг дороос удирд.',
-                            size: 15,
-                            color: AppColors.slate500,
-                            height: 1.45,
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                      ],
-                    ),
-                    Entrance(
-                      t: _cardIn,
-                      // Travels a little further, so the card reads as
-                      // settling into place under the heading.
-                      offsetY: 24,
-                      child: _buildFormCard(),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFormCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 20),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppTabs(
-            tabs: const [AppTab('Нэвтрэх'), AppTab('Бүртгүүлэх')],
-            index: _mode.index,
-            onChanged: (i) => setState(() => _mode = AuthMode.values[i]),
+  /// The mode's heading, a line under it, and its form, straight on the
+  /// canvas.
+  Widget _buildBody(AuthMode mode, bool compact) {
+    final isLogin = mode == AuthMode.login;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Entrance(
+          t: _titleIn,
+          child: AppText(
+            isLogin ? 'Мөнгөө өөрөө\nудирд.' : 'Бүртгэл\nүүсгэе.',
+            size: compact ? 30 : 36,
+            weight: FontWeight.w700,
+            color: AppColors.slate900,
+            height: 1.08,
+            letterSpacing: -0.9,
           ),
-          const SizedBox(height: 18),
-          ModeSwitch(
-            index: _mode.index,
-            builder: (shown) => _buildFields(AuthMode.values[shown]),
+        ),
+        SizedBox(height: compact ? 8 : 12),
+        Entrance(
+          t: _subtitleIn,
+          child: AppText(
+            isLogin
+                ? 'Хадгаламж, карт, хувьцаа, урамшуулал — бүгд нэг дор. '
+                      'Нэвтрээд эхэлцгээе.'
+                : 'Регистрийн дугаар, нэвтрэх нэр, утасны дугаар — '
+                      'гуравхан алхам.',
+            size: 15,
+            color: AppColors.slate500,
+            height: 1.45,
+          ),
+        ),
+        SizedBox(height: compact ? 24 : 32),
+        Entrance(
+          t: _cardIn,
+          // Travels a little further, so the form reads as settling into
+          // place under the heading.
+          offsetY: 24,
+          child: _buildFields(mode),
+        ),
+      ],
+    );
+  }
+
+  /// "Бүртгэл байхгүй юу? Бүртгүүлэх" under the form (and the reverse):
+  /// the way to the other mode, as a link rather than a control. The link
+  /// is its own text widget so it reads as a button to assistive tech.
+  Widget _buildModeLink() {
+    final isLogin = _mode == AuthMode.login;
+    return ValueSwitcher(
+      value: _mode,
+      duration: const Duration(milliseconds: 200),
+      child: Row(
+        key: ValueKey(_mode),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppText(
+            isLogin ? 'Бүртгэл байхгүй юу?' : 'Бүртгэлтэй юу?',
+            size: 14,
+            color: AppColors.slate500,
+          ),
+          const SizedBox(width: 6),
+          Semantics(
+            button: true,
+            child: Pressable(
+              onTap: () =>
+                  _setMode(isLogin ? AuthMode.register : AuthMode.login),
+              scale: 0.96,
+              child: Padding(
+                // A comfortable target around a short word.
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 10,
+                ),
+                child: AppText(
+                  isLogin ? 'Бүртгүүлэх' : 'Нэвтрэх',
+                  size: 14,
+                  weight: FontWeight.w700,
+                  color: AppColors.sky600,
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
 
-  /// Everything under the tabs; [mode] is the one currently shown, which
-  /// trails [_mode] by half a switch (see [ModeSwitch]).
+  /// The mode's fields, note and button; [mode] is the one currently shown,
+  /// which trails [_mode] by half a switch (see [ModeSwitch]).
   Widget _buildFields(AuthMode mode) {
     final isLogin = mode == AuthMode.login;
     return Column(
@@ -378,6 +438,7 @@ class _AuthScreenState extends State<AuthScreen>
           const AppFieldLabel('Регистрийн дугаар'),
           const SizedBox(height: 6),
           RegisterNumberField(
+            fill: AppColors.card,
             letters: _registerLetters,
             onLettersChanged: (letters) => setState(() {
               _registerLetters = letters;
@@ -395,6 +456,7 @@ class _AuthScreenState extends State<AuthScreen>
         const AppFieldLabel('Нэвтрэх нэр'),
         const SizedBox(height: 6),
         AppInputShell(
+          fill: AppColors.card,
           hasError: _nameError != null,
           leading: LineIcon(
             LineGlyph.profile,
@@ -421,6 +483,7 @@ class _AuthScreenState extends State<AuthScreen>
         const AppFieldLabel('Гар утасны дугаар'),
         const SizedBox(height: 6),
         AppInputShell(
+          fill: AppColors.card,
           hasError: _phoneError != null,
           leading: AppText(
             '+976',

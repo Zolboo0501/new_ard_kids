@@ -31,11 +31,13 @@ class AgeGroupOption extends StatelessWidget {
         onTap: onTap,
         scale: 0.98,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 160),
-          constraints: const BoxConstraints(minHeight: 76),
+          duration: Duration(
+            milliseconds: MediaQuery.disableAnimationsOf(context) ? 0 : 160,
+          ),
+          constraints: const BoxConstraints(minHeight: 112),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.card,
+            color: selected ? AppColors.sky50 : AppColors.card,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: selected ? accent : AppColors.line,
@@ -51,7 +53,7 @@ class AgeGroupOption extends StatelessWidget {
                   children: [
                     AppText(
                       group.label,
-                      size: 20,
+                      size: 28,
                       weight: FontWeight.w700,
                       color: AppColors.slate900,
                       letterSpacing: -0.3,
@@ -62,7 +64,11 @@ class AgeGroupOption extends StatelessWidget {
                 ),
               ),
               AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
+                duration: Duration(
+                  milliseconds: MediaQuery.disableAnimationsOf(context)
+                      ? 0
+                      : 160,
+                ),
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(

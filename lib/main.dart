@@ -7,6 +7,7 @@ import 'app/app_loader.dart';
 import 'app/avatar.dart';
 import 'app/biometrics.dart';
 import 'app/routes.dart';
+import 'app/onboarding_store.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_store.dart';
 import 'widgets/adaptive.dart';
@@ -34,21 +35,30 @@ void main() {
               (_) => appAvatar.value = appAvatar.value.inAge(appAgeGroup.value),
             ),
         BiometricStore.load(),
+        OnboardingStore.load(),
       ]),
-      builder: (_) => const ArdKidsApp(),
+      builder: (_) => ArdKidsApp(
+        initialLocation: OnboardingStore.seen
+            ? AppRoutes.auth
+            : AppRoutes.welcome,
+      ),
     ),
   );
 }
 
 class ArdKidsApp extends StatefulWidget {
-  const ArdKidsApp({super.key});
+  const ArdKidsApp({super.key, this.initialLocation = AppRoutes.auth});
+
+  final String initialLocation;
 
   @override
   State<ArdKidsApp> createState() => _ArdKidsAppState();
 }
 
 class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
-  late final GoRouter _router = AppRoutes.createRouter();
+  late final GoRouter _router = AppRoutes.createRouter(
+    initialLocation: widget.initialLocation,
+  );
 
   @override
   void initState() {
