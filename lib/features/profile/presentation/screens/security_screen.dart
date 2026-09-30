@@ -146,14 +146,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
-            const InfoNote(
-              tone: BadgeTone.amber,
-              icon: Icons.sms_outlined,
-              text:
-                  'ПИН код шинэчлэхэд асран хамгаалагч Ээж (Б. Саруул)-ийн '
-                  'утсанд 6 оронтой баталгаажуулах код очно.',
-            ),
             const SizedBox(height: 24),
             const GroupLabel('Нэвтэрсэн төхөөрөмж', trailing: '1 төхөөрөмж'),
             const SettingsGroup(

@@ -79,6 +79,16 @@ flutter:
     - assets/images/kids/rabbit/buttons/revenue.webp
     - assets/images/kids/rabbit/buttons/invite-friend.webp
     - assets/images/kids/penguin/rows/
+    - assets/images/kids/invoices/
+    - assets/images/kids/card_tab/
+    - assets/images/teenegars/fox/buttons/
+    - assets/images/teenegars/fox/rows/
+    - assets/images/teenegars/rabbit/buttons/
+    - assets/images/teenegars/rabbit/rows/
+    - assets/images/teenegars/bear/buttons/
+    - assets/images/teenegars/bear/rows/
+    - assets/images/teenegars/cat/buttons/
+    - assets/images/teenegars/cat/rows/
     - assets/images/kids/penguin/buttons/transaction.webp
     - assets/images/kids/penguin/buttons/charge.webp
     - assets/images/kids/penguin/buttons/detail.webp

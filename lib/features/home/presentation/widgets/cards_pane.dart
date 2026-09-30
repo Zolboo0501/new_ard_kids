@@ -6,9 +6,10 @@ import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/card_art.dart';
 
 /// Home's Карт tab: the active card, the one waiting on the parent, and a
-/// row to order a new one.
+/// row to order a new one, as text rows without icon tiles.
 class CardsPane extends StatelessWidget {
   const CardsPane({super.key, required this.onOpen});
 
@@ -26,11 +27,10 @@ class CardsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: AppCard(
             shadow: false,
+            image: cardTabArt('active'),
             onTap: () => onOpen(AppRoutes.card),
             child: Row(
               children: [
-                const _IconTile(icon: LineGlyph.card),
-                const SizedBox(width: 12),
                 const Expanded(
                   child: _TwoLine(title: 'Үндсэн карт', subtitle: '•••• 5521'),
                 ),
@@ -53,13 +53,12 @@ class CardsPane extends StatelessWidget {
           delay: AppTabView.incomingDelay,
           child: AppCard(
             shadow: false,
+            image: cardTabArt('pending'),
             onTap: () => onOpen(AppRoutes.cardOrder),
             child: Column(
               children: [
                 const Row(
                   children: [
-                    _IconTile(icon: LineGlyph.card),
-                    SizedBox(width: 12),
                     Expanded(
                       child: _TwoLine(
                         title: 'Шинэ карт',
@@ -103,11 +102,10 @@ class CardsPane extends StatelessWidget {
             excludeSemantics: true,
             child: AppCard(
               shadow: false,
+              image: cardTabArt('order'),
               onTap: () => onOpen(AppRoutes.cardOrder),
               child: Row(
                 children: [
-                  const _IconTile(icon: LineGlyph.cardAdd),
-                  const SizedBox(width: 12),
                   const Expanded(
                     child: _TwoLine(
                       title: 'Карт захиалах',
@@ -125,28 +123,6 @@ class CardsPane extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _IconTile extends StatelessWidget {
-  const _IconTile({required this.icon});
-
-  final LineGlyph icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return ExcludeSemantics(
-      child: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: AppColors.slate50,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: LineIcon(icon, color: AppColors.slate800, size: 21),
-      ),
     );
   }
 }

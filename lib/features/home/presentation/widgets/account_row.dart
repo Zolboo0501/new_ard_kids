@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
@@ -166,35 +168,60 @@ class AccountRow extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(child: ColoredBox(color: card)),
+              // Frosted glass under the whole row: the same art, blurred and
+              // stretched edge to edge, so the labels sit on a soft haze of
+              // its colours instead of a flat block with a hard seam.
               Positioned.fill(
-                child: ShaderMask(
-                  shaderCallback: (rect) => const LinearGradient(
-                    colors: [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
-                    stops: [0.1, 0.45],
-                  ).createShader(rect),
-                  blendMode: BlendMode.dstIn,
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(
+                    sigmaX: 14,
+                    sigmaY: 14,
+                    tileMode: TileMode.clamp,
+                  ),
                   child: Image.asset(
                     art.asset,
-                    fit: BoxFit.fitHeight,
+                    fit: BoxFit.cover,
                     alignment: Alignment.centerRight,
-                    filterQuality: FilterQuality.high,
                     excludeFromSemantics: true,
                     errorBuilder: (_, _, _) => const SizedBox.shrink(),
                   ),
                 ),
               ),
-              // The name's side stays clear of the art; on the dark canvas a
-              // scrim keeps the light text readable.
+              // The sharp banner on the right, its own left end fading into
+              // the haze.
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: ShaderMask(
+                    shaderCallback: (rect) => const LinearGradient(
+                      colors: [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
+                      stops: [0, 0.35],
+                    ).createShader(rect),
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      art.asset,
+                      height: _bannerRowHeight,
+                      fit: BoxFit.fitHeight,
+                      filterQuality: FilterQuality.high,
+                      excludeFromSemantics: true,
+                      errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                    ),
+                  ),
+                ),
+              ),
+              // The white wash of the frost, strongest under the labels; on
+              // the dark canvas a scrim keeps the light text readable.
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: dark ? card.withValues(alpha: 0.7) : null,
+                    color: dark ? card.withValues(alpha: 0.55) : null,
                     gradient: LinearGradient(
                       colors: [
-                        card.withValues(alpha: dark ? 0.85 : 0.6),
+                        card.withValues(alpha: dark ? 0.85 : 0.72),
+                        card.withValues(alpha: dark ? 0.6 : 0.45),
                         card.withValues(alpha: 0),
                       ],
-                      stops: const [0.35, 0.6],
+                      stops: const [0, 0.38, 0.62],
                     ),
                   ),
                 ),

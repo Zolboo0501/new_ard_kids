@@ -151,23 +151,27 @@ void main() {
         expect(File(art!).existsSync(), isTrue, reason: art);
       }
     }
-    // Row banners: every under-10 cartoon's three, none above 10.
-    for (final avatar in AppAvatar.forAge(AgeGroup.under10)) {
-      appAvatar.value = avatar;
-      for (final account in [
-        Accounts.savings,
-        Accounts.stocks,
-        Accounts.rewards,
-      ]) {
-        final art = accountRowArt(account);
-        expect(art, isNotNull, reason: '$avatar $account');
-        expect(File(art!.asset).existsSync(), isTrue, reason: art.asset);
+    // Row banners: every under-10 and 10–13 character's three, none at 14+.
+    for (final age in [AgeGroup.under10, AgeGroup.tween]) {
+      appAgeGroup.value = age;
+      for (final avatar in AppAvatar.forAge(age)) {
+        appAvatar.value = avatar;
+        for (final account in [
+          Accounts.savings,
+          Accounts.stocks,
+          Accounts.rewards,
+        ]) {
+          final art = accountRowArt(account);
+          expect(art, isNotNull, reason: '$age $avatar $account');
+          expect(File(art!.asset).existsSync(), isTrue, reason: art.asset);
+        }
+        expect(accountRowArt(Accounts.main), isNull);
       }
-      expect(accountRowArt(Accounts.main), isNull);
     }
     appAvatar.value = AppAvatar.bunny;
-    appAgeGroup.value = AgeGroup.tween;
+    appAgeGroup.value = AgeGroup.teen;
     expect(accountRowArt(Accounts.savings), isNull);
+    appAgeGroup.value = AgeGroup.tween;
 
     // The penguin is kids-only, so above 10 it has no card art.
     appAvatar.value = AppAvatar.penguin;

@@ -85,21 +85,12 @@ class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
     // Iterative, not recursive: the tree is thousands of elements deep on
     // Home (lists, card art, stickers), and a recursive visit overflowed
     // the Dart stack, taking the app down on a theme or age change.
-    // Each element is marked once: some elements (overlays, portals) report
-    // the same children through more than one parent, and without the
-    // visited set the walk could revisit them without end and freeze the
-    // app on an avatar or age change.
-    final seen = Set<Element>.identity();
     final pending = <Element>[];
-    void enqueue(Element child) {
-      if (seen.add(child)) pending.add(child);
-    }
-
-    (context as Element).visitChildren(enqueue);
+    (context as Element).visitChildren(pending.add);
     while (pending.isNotEmpty) {
       final element = pending.removeLast();
       element.markNeedsBuild();
-      element.visitChildren(enqueue);
+      element.visitChildren(pending.add);
     }
   }
 

@@ -25,6 +25,7 @@ class AppCard extends StatelessWidget {
     this.onTap,
     this.margin,
     this.shadow = true,
+    this.image,
   });
 
   final Widget child;
@@ -42,6 +43,9 @@ class AppCard extends StatelessWidget {
   /// canvas, so cards are flat.
   final bool shadow;
 
+  /// Art behind the content, clipped to the card's rounded shape.
+  final DecorationImage? image;
+
   @override
   Widget build(BuildContext context) {
     final borderColor =
@@ -56,6 +60,7 @@ class AppCard extends StatelessWidget {
             (AvatarCardArt.artUnder(context)
                 ? Colors.transparent
                 : AppColors.card),
+        image: image,
         borderRadius: BorderRadius.circular(radius),
         border: dashed || borderColor == null
             ? null

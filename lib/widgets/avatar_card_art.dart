@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import '../app/avatar.dart';
@@ -8,8 +10,9 @@ import '../theme/app_theme.dart';
 ///
 /// Where the character has card art (`accountCardArt`, the 10–13 fox, bear,
 /// rabbit and cat), the card's own background is replaced by the art for
-/// [account]: the character stays in view on the right, and a wash of the
-/// card colour runs in from the left so the text side stays clear. On the
+/// [account]: the character stays in view on the right, and the text side
+/// is frosted glass (the art blurred, under a wash of the card colour) so
+/// the words read clearly. On the
 /// dark canvas the art sits under a scrim so light text still reads. The
 /// card inside (`AppCard`, `AccountHeroPanel`) goes transparent on its own
 /// by reading [artUnder].
@@ -94,6 +97,33 @@ class AvatarCardArt extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(child: ColoredBox(color: card)),
+          // Frosted glass under the text: the same art, blurred, across the
+          // whole art area, so the words sit on a soft haze of its colours
+          // instead of on the busy picture.
+          Positioned(
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: band == null ? 0 : null,
+            height: band,
+            // Clipped: a blur paints past its own box, which would spill a
+            // coloured strip under a band's rows.
+            child: ClipRect(
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(
+                  sigmaX: 16,
+                  sigmaY: 16,
+                  tileMode: TileMode.clamp,
+                ),
+                child: Image.asset(
+                  art,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
+                  excludeFromSemantics: true,
+                ),
+              ),
+            ),
+          ),
           // The art fills the card, or only its top [area] band on a card
           // with rows below, scaled to the band's height and kept to the
           // right so the character stands beside the headline, not under
@@ -107,9 +137,12 @@ class AvatarCardArt extends StatelessWidget {
             // The art's left edge fades out, so a band narrower than the
             // card doesn't cut a hard line into it.
             child: ShaderMask(
-              shaderCallback: (rect) => const LinearGradient(
-                colors: [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
-                stops: [0, 0.45],
+              // On a whole-card art the text runs further right (a centred
+              // amount, a full-width stat row), so the character comes in
+              // later there.
+              shaderCallback: (rect) => LinearGradient(
+                colors: const [Color(0x00FFFFFF), Color(0xFFFFFFFF)],
+                stops: band == null ? const [0.55, 0.9] : const [0, 0.45],
               ).createShader(rect),
               blendMode: BlendMode.dstIn,
               child: Image.asset(
@@ -131,13 +164,18 @@ class AvatarCardArt extends StatelessWidget {
             height: band,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: dark ? card.withValues(alpha: 0.78) : null,
+                color: dark ? card.withValues(alpha: 0.7) : null,
+                // The frost's white wash: strongest under the text, clear
+                // by the character.
                 gradient: LinearGradient(
                   colors: [
-                    card.withValues(alpha: dark ? 0.9 : 0.85),
+                    card.withValues(alpha: dark ? 0.88 : 0.72),
+                    card.withValues(alpha: dark ? 0.6 : 0.5),
                     card.withValues(alpha: 0),
                   ],
-                  stops: const [0.3, 0.7],
+                  stops: band == null
+                      ? const [0, 0.68, 0.9]
+                      : const [0, 0.42, 0.7],
                 ),
               ),
               child: band == null

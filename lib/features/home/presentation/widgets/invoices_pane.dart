@@ -5,6 +5,7 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/card_art.dart';
 import '../../data/invoice.dart';
 import 'invoice_card.dart';
 
@@ -52,7 +53,11 @@ class InvoicesPane extends StatelessWidget {
             id: inv.title,
             index: i,
             group: filter,
-            child: InvoiceCard(invoice: inv),
+            child: InvoiceCard(
+              invoice: inv,
+              background: invoiceCardArt(inv),
+              showIcon: false,
+            ),
           ),
           const SizedBox(height: 10),
         ],

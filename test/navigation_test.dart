@@ -62,7 +62,8 @@ void main() {
     final router = await _pumpApp(tester, AppRoutes.home);
     expect(find.byType(FloatingNavBar), findsOneWidget);
 
-    await tester.tap(find.text('Гүйлгээ').first);
+    // By its label: the 10–13 fox's button is a picture with the word drawn in.
+    await tester.tap(_semantic('Гүйлгээ').first);
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.transfer);
     expect(find.byType(FloatingNavBar), findsNothing);
