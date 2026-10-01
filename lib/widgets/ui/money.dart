@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../theme/app_theme.dart';
 import '../value_switcher.dart';
@@ -497,10 +498,11 @@ class _RollingDigitState extends State<_RollingDigit>
   }
 }
 
-/// A balance the screen's eye button can hide. Hiding fades the balance out
-/// quickly as the dots rise in; showing fades the dots out as the balance
-/// fades in. Give [balance] `animateFrom: 0` and its digits roll in again
-/// when revealed.
+/// A balance the screen's eye button can hide, with a playful, gentle
+/// switch for kids: hiding shrinks the amount softly away while the dots pop
+/// in one after another with a little bounce, like bubbles; showing shrinks
+/// the dots away while the amount rises in and its digits roll (give
+/// [balance] `animateFrom: 0`). Reduced motion swaps instantly.
 class HideableBalance extends StatelessWidget {
   const HideableBalance({
     super.key,
@@ -513,54 +515,149 @@ class HideableBalance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueSwitcher(
-      value: hidden,
-      duration: MediaQuery.disableAnimationsOf(context)
-          ? Duration.zero
-          : const Duration(milliseconds: 320),
-      switchInCurve: appEmphasizedDecelerate,
-      switchOutCurve: Curves.easeOut,
-      layoutBuilder: (current, previous) => Stack(
-        alignment: Alignment.centerLeft,
-        children: [...previous, ?current],
-      ),
-      transitionBuilder: (child, animation, incoming) {
-        // The outgoing face is gone within the first third, so it never
-        // overlaps the digits rolling in.
-        final opacity = incoming
-            ? animation
-            : CurvedAnimation(
-                parent: animation,
-                curve: const Interval(0.66, 1),
-              );
-        // A revealed balance rolls its own digits in, so it only fades;
-        // the dots rise in when hiding.
-        if (incoming && !hidden) {
-          return FadeTransition(opacity: opacity, child: child);
-        }
-        return FadeTransition(
-          opacity: opacity,
-          child: SlideTransition(
-            position: Tween(
-              begin: Offset(0, incoming ? 0.35 : -0.35),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: hidden
-          ? Text(
-              '••••••••',
-              key: const ValueKey(true),
-              semanticsLabel: 'Үлдэгдэл нуусан',
-              style: moneyStyle(
+    final still = MediaQuery.disableAnimationsOf(context);
+    // The two faces differ in width; the width glides from one to the other
+    // (and both stay centred) so nothing around the balance jumps.
+    return AnimatedSize(
+      duration: still ? Duration.zero : const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      child: ValueSwitcher(
+        value: hidden,
+        duration: still ? Duration.zero : const Duration(milliseconds: 260),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        layoutBuilder: (current, previous) => Stack(
+          alignment: Alignment.center,
+          children: [...previous, ?current],
+        ),
+        transitionBuilder: (child, animation, incoming) {
+          // The face leaving shrinks a little and fades in the first half;
+          // the face arriving fades in and, for the amount, rises a touch.
+          // (FadeTransition, not Opacity: the shell test reads the lowest
+          // Opacity on screen as the tab fade.)
+          final t = incoming
+              ? animation
+              : CurvedAnimation(
+                  parent: animation,
+                  curve: const Interval(0.45, 1),
+                );
+          return FadeTransition(
+            opacity: t,
+            child: ScaleTransition(
+              scale: Tween(begin: incoming ? 1.0 : 0.88, end: 1.0).animate(t),
+              child: SlideTransition(
+                position: Tween(
+                  begin: Offset(0, incoming && !hidden ? 0.18 : 0),
+                  end: Offset.zero,
+                ).animate(t),
+                child: child,
+              ),
+            ),
+          );
+        },
+        child: hidden
+            ? _BubbleDots(
+                key: const ValueKey(true),
                 size: balance.size,
                 color: balance.color,
-                letterSpacing: 4,
+                animate: !still,
+              )
+            : KeyedSubtree(key: const ValueKey(false), child: balance),
+      ),
+    );
+  }
+}
+
+/// The hidden balance: eight dots that pop in left to right, each with a
+/// small soft bounce.
+class _BubbleDots extends StatefulWidget {
+  const _BubbleDots({
+    super.key,
+    required this.size,
+    required this.color,
+    required this.animate,
+  });
+
+  final double size;
+  final Color? color;
+  final bool animate;
+
+  static const count = 8;
+
+  @override
+  State<_BubbleDots> createState() => _BubbleDotsState();
+}
+
+class _BubbleDotsState extends State<_BubbleDots>
+    with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 340),
+  );
+
+  /// A gentle overshoot: each dot grows a little past its size and settles,
+  /// soft rather than springy.
+  static const _pop = Cubic(0.34, 1.45, 0.64, 1);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.animate) {
+      _controller.forward();
+    } else {
+      _controller.value = 1;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color =
+        widget.color ??
+        DefaultTextStyle.of(context).style.color ??
+        AppColors.slate900;
+    // Dot size and spacing follow the balance's font size, so the row is
+    // about as tall as the amount it hides.
+    final dot = widget.size * 0.28;
+    final gap = widget.size * 0.2;
+    return Semantics(
+      label: 'Үлдэгдэл нуусан',
+      excludeSemantics: true,
+      child: SizedBox(
+        height: widget.size * 1.2,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < _BubbleDots.count; i++) ...[
+              if (i > 0) SizedBox(width: gap),
+              ScaleTransition(
+                scale: CurvedAnimation(
+                  parent: _controller,
+                  // Each dot starts a little after the one to its left.
+                  curve: Interval(
+                    i * 0.04,
+                    (i * 0.04 + 0.7).clamp(0.0, 1.0),
+                    curve: _pop,
+                  ),
+                ),
+                child: Container(
+                  width: dot,
+                  height: dot,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
               ),
-            )
-          : KeyedSubtree(key: const ValueKey(false), child: balance),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }
@@ -622,9 +719,7 @@ class EyeToggle extends StatelessWidget {
                     color: lineColor!,
                   )
                 : Icon(
-                    hidden
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
+                    hidden ? Iconsax.eye_slash_copy : Iconsax.eye_copy,
                     key: ValueKey(hidden),
                     size: size,
                     color: highlighted ? AppColors.sky600 : AppColors.slate400,

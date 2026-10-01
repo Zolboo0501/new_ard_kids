@@ -12,6 +12,7 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progressColor = Theme.of(context).colorScheme.primary;
     final match = RegExp(r'(\d+)/(\d+)').firstMatch(step ?? '');
     final current = match == null ? 0 : int.parse(match.group(1)!);
     final total = match == null ? 0 : int.parse(match.group(2)!);
@@ -51,8 +52,8 @@ class Header extends StatelessWidget {
                           height: 3,
                           decoration: BoxDecoration(
                             color: i < current
-                                ? AppColors.sky500
-                                : AppColors.line,
+                                ? progressColor
+                                : progressColor.withValues(alpha: 0.18),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),

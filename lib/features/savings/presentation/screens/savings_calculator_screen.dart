@@ -5,6 +5,7 @@ import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../widgets/adaptive.dart';
@@ -67,7 +68,7 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
         title: 'Хадгаламжийн тооцоолуур',
         background: AppColors.surface,
         trailing: CircleIconButton(
-          icon: Icons.refresh_rounded,
+          icon: Iconsax.refresh_copy,
           label: 'Шинэчлэх',
           color: AppColors.sky600,
           onPressed: () => setState(() {

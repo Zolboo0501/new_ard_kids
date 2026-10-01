@@ -125,7 +125,11 @@ class _HeaderIcon extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              LineIcon(icon, size: 24, color: AppColors.slate900),
+              // Iconsax at every age: header actions stay icons, not the
+              // companion's stickers.
+              PlainLineIcons(
+                child: LineIcon(icon, size: 24, color: AppColors.slate900),
+              ),
               if (badge)
                 Positioned(
                   top: 11,

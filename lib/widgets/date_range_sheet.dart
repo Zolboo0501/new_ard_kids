@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../theme/app_theme.dart';
 import 'app_text.dart';
@@ -255,11 +256,11 @@ class _DateRangeSheetState extends State<DateRangeSheet> {
                   color: AppColors.slate800,
                 ),
                 lastMonthIcon: Icon(
-                  Icons.chevron_left_rounded,
+                  Iconsax.arrow_left_2_copy,
                   color: AppColors.sky600,
                 ),
                 nextMonthIcon: Icon(
-                  Icons.chevron_right_rounded,
+                  Iconsax.arrow_right_3_copy,
                   color: AppColors.sky600,
                 ),
                 dayTextStyle: dayStyle,
@@ -297,7 +298,7 @@ class _DateRangeSheetState extends State<DateRangeSheet> {
                   Expanded(
                     child: SoftButton(
                       label: 'Цэвэрлэх',
-                      icon: Icons.restart_alt_rounded,
+                      icon: Iconsax.refresh_copy,
                       height: 52,
                       onPressed: () => Navigator.of(
                         context,

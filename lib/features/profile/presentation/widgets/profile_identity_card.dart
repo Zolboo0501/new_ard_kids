@@ -33,7 +33,34 @@ class ProfileIdentityCard extends StatelessWidget {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: withHaptic(onAvatarTap),
-          child: avatar,
+          // A small pen on the ring says the picture can be changed.
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              avatar,
+              Positioned(
+                right: -2,
+                bottom: -2,
+                child: ExcludeSemantics(
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: AppColors.sky500,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppColors.card, width: 2.5),
+                    ),
+                    child: LineIcon(
+                      LineGlyph.edit,
+                      size: 13,
+                      color: AppColors.onAccent,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -52,26 +79,56 @@ class ProfileIdentityCard extends StatelessWidget {
                 AppText(subtitle, size: 14, color: AppColors.slate500),
                 if (status != null) ...[
                   const SizedBox(height: 10),
-                  Row(
+                  // Each part of the status ("Баталгаажсан", "Эцэг эх
+                  // холбогдсон") is its own chip, so a narrow card wraps
+                  // between them instead of mid-phrase.
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
                     children: [
-                      LineIcon(
-                        LineGlyph.checkCircle,
-                        size: 16,
-                        color: AppColors.emerald600,
-                      ),
-                      const SizedBox(width: 6),
-                      Flexible(
-                        child: AppText(
-                          status!,
-                          size: 13,
-                          weight: FontWeight.w500,
-                          color: AppColors.slate600,
-                        ),
-                      ),
+                      for (final part in status!.split(' · '))
+                        _StatusChip(part),
                     ],
                   ),
                 ],
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(6, 4, 10, 4),
+      decoration: BoxDecoration(
+        color: AppColors.emerald50,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LineIcon(
+            LineGlyph.checkCircle,
+            size: 14,
+            color: AppColors.emerald600,
+          ),
+          const SizedBox(width: 4),
+          // Wraps inside the chip on the narrowest phones.
+          Flexible(
+            child: AppText(
+              label,
+              size: 12,
+              weight: FontWeight.w600,
+              color: AppColors.emerald700,
             ),
           ),
         ],

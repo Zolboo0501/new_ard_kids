@@ -122,7 +122,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('MN32 •••• •••• •••• 1900'), findsOneWidget);
     expect(find.text('MN32 0460 0050 4982 1900'), findsNothing);
-    expect(find.text('••••••••'), findsOneWidget);
+    expect(_labelled('Үлдэгдэл нуусан'), findsOneWidget);
     expect(find.text('₮567,930.00'), findsNothing);
 
     await tester.tap(_labelled('Данс, үлдэгдэл харах'));

@@ -110,7 +110,7 @@ void main() {
     // fully clear of the header before tapping it.
     await tester.drag(find.byType(Scrollable).first, const Offset(0, 2000));
     await tester.pumpAndSettle();
-    await tester.tap(find.bySemanticsLabel('Харанхуй'));
+    await tester.tap(find.bySemanticsLabel('Dark'));
     await tester.pumpAndSettle();
     expect(appBrightness.value, AppBrightness.dark);
     expect(AppColors.isDark, isTrue);

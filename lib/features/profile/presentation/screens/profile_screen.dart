@@ -84,7 +84,7 @@ class ProfileScreen extends StatelessWidget {
           ProfileIdentityCard(
             name: Kid.shortName,
             subtitle: Kid.handle,
-            status: 'Баталгаажсан · Эцэг эх холбогдсон',
+            status: 'Эцэг эх холбогдсон',
             onAvatarTap: () => go(AppRoutes.avatarPickerEdit),
           ),
           const SizedBox(height: 24),
@@ -98,21 +98,22 @@ class ProfileScreen extends StatelessWidget {
               SettingTile(
                 glyph: LineGlyph.profile,
                 title: 'Хувийн мэдээлэл',
-                subtitle: 'Нэр, сургууль, утасны дугаар',
                 onTap: () => go(AppRoutes.personalInfo),
               ),
               SettingTile(
                 glyph: LineGlyph.camera,
                 title: 'Аватар',
-                subtitle: 'Профайл зургаа солих',
                 onTap: () => go(AppRoutes.avatarPickerEdit),
               ),
               ValueListenableBuilder(
                 valueListenable: appAgeGroup,
                 builder: (_, age, _) => SettingTile(
-                  glyph: LineGlyph.calendar,
+                  // Under 10 the graduation cap, which shows the companion's
+                  // "study" sticker; the calendar has none.
+                  glyph: age == AgeGroup.under10
+                      ? LineGlyph.graduation
+                      : LineGlyph.calendar,
                   title: 'Нас',
-                  subtitle: age.label,
                   onTap: () => go(AppRoutes.ageGroupEdit),
                 ),
               ),
@@ -125,8 +126,7 @@ class ProfileScreen extends StatelessWidget {
               // ),
               SettingTile(
                 glyph: LineGlyph.palette,
-                title: 'Харагдац',
-                subtitle: 'Гэрэл, харанхуй, өнгө',
+                title: 'Миний өнгө',
                 onTap: () => go(AppRoutes.themeSettings),
               ),
               // SettingTile(
@@ -144,13 +144,15 @@ class ProfileScreen extends StatelessWidget {
                 glyph: LineGlyph.gift,
                 title: 'Найз урих',
                 subtitle:
-                    'Урилгаар бүртгүүлбэл та хоёр тус бүр '
+                    // A no-break space keeps "тус бүр" together.
+                    'Урилгаар бүртгүүлбэл та хоёр тус\u00A0бүр '
                     '${formatMnt(Limits.inviteBonus)} авна',
                 onTap: () => go(AppRoutes.inviteFriends),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          // Sign-out sits apart from the settings above it.
+          const SizedBox(height: 28),
           SettingsGroup(
             children: [
               SettingTile(

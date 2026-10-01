@@ -183,7 +183,7 @@ class HomeActions extends StatelessWidget {
   /// side, and the gap between them (wider under 10, whose cartoon pills
   /// run to the edge of their art): the pictures are wide pills whose
   /// height follows their width, so every point of width makes them taller.
-  static const _artBleed = 12.0;
+  static const _artBleed = 0.0;
   static double get _artGap =>
       appAgeGroup.value == AgeGroup.under10 ? 20.0 : 12.0;
 

@@ -37,9 +37,9 @@ class InvoicesPane extends StatelessWidget {
           spacing: 6,
           runSpacing: 6,
           children: [
-            for (final (i, (label, test)) in invoiceFilters.indexed)
+            for (final (i, (label, _)) in invoiceFilters.indexed)
               FilterChipPill(
-                label: '$label (${recent.where(test).length})',
+                label: label,
                 selected: filter == i,
                 onTap: () => onFilter(i),
               ),

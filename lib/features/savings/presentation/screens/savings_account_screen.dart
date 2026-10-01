@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/age_group.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
@@ -89,7 +90,11 @@ class SavingsAccountScreen extends StatelessWidget {
               children: [
                 SavingsAccountShortcut(
                   label: 'Орлого хийх',
-                  glyph: LineGlyph.plus,
+                  // Under 10 the piggy bank, which shows the companion's
+                  // piggy sticker; the plus never becomes a sticker.
+                  glyph: appAgeGroup.value == AgeGroup.under10
+                      ? LineGlyph.piggy
+                      : LineGlyph.plus,
                   onTap: () => go(AppRoutes.savingsDeposit),
                 ),
                 const SizedBox(width: 8),

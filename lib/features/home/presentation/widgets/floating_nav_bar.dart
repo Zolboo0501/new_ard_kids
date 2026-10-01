@@ -234,24 +234,11 @@ class _NavItemState extends State<_NavItem> {
               duration: _duration,
               curve: appEmphasizedDecelerate,
               tween: ColorTween(end: color),
-              builder: (context, tint, _) => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // One line glyph whose colour follows the pill: accent ink
-                  // on the tinted pill, grey off it.
-                  LineIcon(widget.icon, size: 24, color: tint ?? color),
-                  const SizedBox(height: 2),
-                  AnimatedDefaultTextStyle(
-                    duration: _duration,
-                    curve: appEmphasizedDecelerate,
-                    style: inter(
-                      size: 12,
-                      weight: selected ? FontWeight.w600 : FontWeight.w500,
-                      color: tint ?? color,
-                    ),
-                    child: Text(widget.label),
-                  ),
-                ],
+              // Icon only: the glyph's colour follows the pill (accent ink
+              // on the tinted pill, grey off it), and the name is the
+              // screen-reader label.
+              builder: (context, tint, _) => Center(
+                child: LineIcon(widget.icon, size: 26, color: tint ?? color),
               ),
             ),
           ),

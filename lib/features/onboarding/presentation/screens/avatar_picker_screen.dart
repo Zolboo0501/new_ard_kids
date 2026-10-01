@@ -129,7 +129,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _titleIn,
                           child: AppText(
-                            'Аватараа сонго',
+                            'Аватараа сонгоорой',
                             size: 28,
                             weight: FontWeight.w700,
                             color: AppColors.slate900,
@@ -141,7 +141,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _subtitleIn,
                           child: AppText(
-                            'Өөрийн дүр, өнгөө сонго. Дараа нь Профайл хэсгээс сольж болно.',
+                            'Өөрийн дүр, өнгөө сонгоорой. Дараа нь Профайл хэсгээс сольж болно.',
                             size: 15,
                             color: AppColors.slate500,
                             height: 1.45,

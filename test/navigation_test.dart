@@ -9,6 +9,14 @@ import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_pic
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/common.dart';
 
+/// A bottom-bar tab, by its screen-reader label (the bar shows icons only).
+Finder _navTab(String label) => find.descendant(
+  of: find.byType(FloatingNavBar),
+  matching: find.byWidgetPredicate(
+    (w) => w is Semantics && w.properties.label == label,
+  ),
+);
+
 Future<GoRouter> _pumpApp(WidgetTester tester, String location) async {
   tester.view.physicalSize = const Size(390 * 3, 844 * 3);
   tester.view.devicePixelRatio = 3;
@@ -45,12 +53,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('•••• 5521'), findsOneWidget);
 
-    await tester.tap(find.text('Профайл'));
+    await tester.tap(_navTab('Профайл'));
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.profile);
     expect(find.text('Миний профайл'), findsOneWidget);
 
-    await tester.tap(find.text('Нүүр'));
+    await tester.tap(_navTab('Нүүр'));
     await tester.pumpAndSettle();
     expect(_location(router), AppRoutes.home);
     expect(find.text('•••• 5521'), findsOneWidget);

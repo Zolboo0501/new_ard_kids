@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../theme/app_theme.dart';
 import 'app_text.dart';
@@ -213,7 +214,7 @@ class AppFieldError extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.error_outline_rounded,
+                      Iconsax.danger_copy,
                       size: 15,
                       color: AppColors.rose500,
                     ),
@@ -250,7 +251,7 @@ class AppFieldTick extends StatelessWidget {
         width: 32,
         height: 32,
         child: Icon(
-          Icons.check_circle_rounded,
+          Iconsax.tick_circle_copy,
           size: 20,
           color: AppColors.emerald500,
         ),

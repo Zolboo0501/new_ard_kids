@@ -124,8 +124,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                                     height: 8,
                                     decoration: BoxDecoration(
                                       color: _page == i
-                                          ? AppColors.sky500
-                                          : AppColors.slate300,
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: 0.18),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                   ),

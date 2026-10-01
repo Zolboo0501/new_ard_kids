@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -118,7 +119,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             ),
             const SizedBox(height: 16),
             const InfoNote(
-              icon: Icons.lock_outline_rounded,
+              icon: Iconsax.lock_copy,
               text:
                   'Хувийн мэдээллийг өөрчлөхөд эцэг эхийн зөвшөөрөл шаардлагатай.',
             ),

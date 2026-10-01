@@ -16,5 +16,10 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   await (FontLoader(
     'Nunito',
   )..addFont(rootBundle.load('assets/fonts/Nunito-Variable.ttf'))).load();
+  // The icon font (Iconsax Outline), so icons render as on a device.
+  await (FontLoader('packages/iconsax_flutter/FlutterIconsax')..addFont(
+        rootBundle.load('packages/iconsax_flutter/fonts/FlutterIconsax.ttf'),
+      ))
+      .load();
   await testMain();
 }

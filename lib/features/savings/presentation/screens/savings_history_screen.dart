@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
@@ -128,7 +129,7 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
         title: 'Хадгаламжийн түүх',
         background: AppColors.surface,
         trailing: CircleIconButton(
-          icon: Icons.tune_rounded,
+          icon: Iconsax.setting_4_copy,
           label: 'Хугацаагаар шүүх',
           onPressed: _pickRange,
         ),

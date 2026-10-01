@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 /// The biometric the device offers for sign-in. Face wins when a device has
 /// both, as on the Security screen and the sign-in button.
 enum BiometricKind {
   face(
     name: 'Face ID',
-    icon: Icons.face_retouching_natural_rounded,
+    icon: Iconsax.emoji_happy_copy,
     loginLabel: 'Face ID-аар нэвтрэх',
     description: 'Царай таньж шууд нэвтрэх',
   ),
   fingerprint(
     name: 'Хурууны хээ',
-    icon: Icons.fingerprint_rounded,
+    icon: Iconsax.finger_scan_copy,
     loginLabel: 'Хурууны хээгээр нэвтрэх',
     description: 'Хурууны хээгээ уншуулж шууд нэвтрэх',
   );

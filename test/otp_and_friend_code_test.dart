@@ -10,6 +10,7 @@ import 'package:new_ard_kids/features/onboarding/presentation/screens/age_group_
 import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
 import 'package:new_ard_kids/features/onboarding/presentation/screens/parent_link_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 /// Starts the real router at [location] so navigation behaves as in the app.
 Widget _wrap(String location, {Object? extra}) => MaterialApp.router(
@@ -48,7 +49,7 @@ void main() {
       // Fifth digit is ignored.
       expect(find.text('1'), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.backspace_outlined));
+      await tester.tap(find.byIcon(Iconsax.arrow_left_copy));
       await tester.pump();
       await tester.tap(find.text('3').last);
       await tester.pump(const Duration(milliseconds: 300));
@@ -138,6 +139,44 @@ void main() {
     // The penguin is only in the kids' set; the older sets have the cat.
     expect(appAvatar.value, AppAvatar.cat);
     expect(find.byType(AvatarPickerScreen), findsOneWidget);
+  });
+
+  testWidgets('Age: under ten opens kids avatars after an older selection', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    FlutterSecureStorage.setMockInitialValues({});
+    appAgeGroup.value = AgeGroup.teen;
+    appAvatar.value = AppAvatar.cat;
+    addTearDown(() {
+      appAgeGroup.value = AgeGroup.tween;
+      appAvatar.value = AppAvatar.fox;
+    });
+    await tester.pumpWidget(_wrap(AppRoutes.ageGroup));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('10-аас доош'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Үргэлжлүүлэх'));
+    await tester.pumpAndSettle();
+    expect(appAgeGroup.value, AgeGroup.under10);
+    expect(appAvatar.value, AppAvatar.penguin);
+    for (final name in ['Үнэгхэн', 'Бамбарууш', 'Бүжинхэн', 'Шувуухай']) {
+      expect(find.text(name), findsOneWidget);
+    }
+    final assets = tester
+        .widgetList<Image>(find.byType(Image))
+        .map((image) => image.image)
+        .whereType<AssetImage>()
+        .map((asset) => asset.assetName)
+        .toList();
+    expect(assets, hasLength(4));
+    expect(assets, everyElement(startsWith('assets/images/kids/')));
+    expect(
+      await const FlutterSecureStorage().read(key: 'app_age_group'),
+      'under10',
+    );
   });
 
   testWidgets('OTP: resend appears after countdown ends', (tester) async {

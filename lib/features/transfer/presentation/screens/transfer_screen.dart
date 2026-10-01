@@ -5,6 +5,7 @@ import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -214,7 +215,7 @@ class _TransferScreenState extends State<TransferScreen> {
         title: 'Гүйлгээ хийх',
         background: AppColors.surface,
         trailing: CircleIconButton(
-          icon: Icons.qr_code_scanner_rounded,
+          icon: Iconsax.scan_barcode_copy,
           label: 'QR код уншуулах',
           onPressed: () => context.push(AppRoutes.qrScan),
         ),

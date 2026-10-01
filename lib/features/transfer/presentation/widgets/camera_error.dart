@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
@@ -17,17 +18,17 @@ class CameraError extends StatelessWidget {
   Widget build(BuildContext context) {
     final (icon, title, body) = switch (error.errorCode) {
       MobileScannerErrorCode.permissionDenied => (
-        Icons.no_photography_outlined,
+        Iconsax.camera_slash_copy,
         'Камерын зөвшөөрөл хэрэгтэй',
         'Тохиргоо руу орж камер ашиглахыг зөвшөөрнө үү.',
       ),
       MobileScannerErrorCode.unsupported => (
-        Icons.videocam_off_outlined,
+        Iconsax.video_remove_copy,
         'Камер дэмжигдэхгүй байна',
         'Энэ төхөөрөмж дээр QR уншигч ажиллахгүй байна.',
       ),
       _ => (
-        Icons.error_outline_rounded,
+        Iconsax.danger_copy,
         'Камер нээж чадсангүй',
         'Түр хүлээгээд дахин оролдоно уу.',
       ),
@@ -59,7 +60,7 @@ class CameraError extends StatelessWidget {
               const SizedBox(height: 16),
               SoftButton(
                 label: 'Дахин оролдох',
-                icon: Icons.refresh_rounded,
+                icon: Iconsax.refresh_copy,
                 height: 40,
                 onPressed: onRetry,
               ),

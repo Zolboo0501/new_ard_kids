@@ -9,7 +9,7 @@ import '../../../../widgets/ui.dart';
 import '../widgets/accent_card.dart';
 import '../widgets/theme_mode_tile.dart';
 
-/// "Харагдац": light / dark / system canvas and the accent colour. Every
+/// "Миний өнгө": day / night / like-the-phone canvas and the accent colour. Every
 /// choice applies at once and is saved, like the phone's own settings.
 class ThemeSettingsScreen extends StatefulWidget {
   const ThemeSettingsScreen({super.key});
@@ -19,56 +19,21 @@ class ThemeSettingsScreen extends StatefulWidget {
 }
 
 class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
+  // Words a child uses: day, night, and "like my phone" for the system
+  // setting.
   static const _modes = [
-    (AppBrightness.system, 'Систем'),
-    (AppBrightness.light, 'Гэрэл'),
-    (AppBrightness.dark, 'Харанхуй'),
+    (AppBrightness.system, 'System'),
+    (AppBrightness.light, 'Light'),
+    (AppBrightness.dark, 'Dark'),
   ];
 
-  /// Choice, name, English name, a line about it, and the tile's glyph.
   static const _accents = [
-    (
-      AppThemeChoice.sky,
-      'Тэнгэр',
-      'Sky',
-      'Цэлмэг, эрч хүчтэй цэнхэр. Үндсэн сэдэв.',
-      LineGlyph.sun,
-    ),
-    (
-      AppThemeChoice.blue,
-      'Цэнхэр',
-      'Ocean',
-      'Тайван, гүн далайн цэнхэр.',
-      LineGlyph.pocket,
-    ),
-    (
-      AppThemeChoice.indigo,
-      'Индиго',
-      'Indigo',
-      'Орчин үеийн, тод индиго.',
-      LineGlyph.bolt,
-    ),
-    (
-      AppThemeChoice.pink,
-      'Ягаан',
-      'Bloom',
-      'Дулаахан, зөөлөн ягаан.',
-      LineGlyph.heart,
-    ),
-    (
-      AppThemeChoice.lime,
-      'Шар ногоон',
-      'Lime',
-      'Тод, шинэ маягийн шар ногоон.',
-      LineGlyph.ball,
-    ),
-    (
-      AppThemeChoice.mono,
-      'Монохром',
-      'Mono',
-      'Хар цагаан, цэвэрхэн харагдац.',
-      LineGlyph.moon,
-    ),
+    (AppThemeChoice.sky, 'Цэнхэр'),
+    (AppThemeChoice.blue, 'Ногоон'),
+    (AppThemeChoice.indigo, 'Нил хөх'),
+    (AppThemeChoice.pink, 'Ягаан'),
+    (AppThemeChoice.lime, 'Шар ногоон'),
+    (AppThemeChoice.mono, 'Хар цагаан'),
   ];
 
   void _setMode(AppBrightness mode) {
@@ -83,16 +48,9 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
     ThemeStore.save(choice);
   }
 
-  Widget _heading(String title, String note) => Padding(
+  Widget _heading(String title) => Padding(
     padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppText(title, size: 16, weight: FontWeight.w700),
-        const SizedBox(height: 4),
-        AppText(note, size: 13, color: AppColors.slate500, height: 1.4),
-      ],
-    ),
+    child: AppText(title, size: 17, weight: FontWeight.w700),
   );
 
   @override
@@ -100,7 +58,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
     final bg = AppColors.surface;
     return Scaffold(
       backgroundColor: bg,
-      appBar: SubPageHeader(title: 'Харагдац', background: bg),
+      appBar: SubPageHeader(title: 'Миний өнгө', background: bg),
       body: EntranceScope(
         child: AdaptiveListView(
           padding: EdgeInsets.fromLTRB(
@@ -110,7 +68,6 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            _heading('Горим', 'Системийг сонговол утасныхаа тохиргоог дагана.'),
             Row(
               children: [
                 for (final (i, (mode, label)) in _modes.indexed) ...[
@@ -127,19 +84,13 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
               ],
             ),
             const SizedBox(height: 32),
-            _heading(
-              'Өнгө',
-              'Товч, сонголт, тэмдэглэгээ болон дэвсгэрийн өнгө.',
-            ),
-            for (final (i, (choice, label, subtitle, note, glyph))
-                in _accents.indexed) ...[
-              if (i > 0) const SizedBox(height: 10),
+            _heading('Дуртай өнгөө сонгоорой'),
+            for (final (i, (choice, label)) in _accents.indexed) ...[
+              // Room for the chosen card's tag above its edge.
+              if (i > 0) const SizedBox(height: 18),
               AccentCard(
                 choice: choice,
                 label: label,
-                subtitle: subtitle,
-                description: note,
-                glyph: glyph,
                 selected: appThemeChoice.value == choice,
                 onTap: () => _setAccent(choice),
               ),

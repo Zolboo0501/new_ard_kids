@@ -10,6 +10,14 @@ import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/adaptive.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
+/// A bottom-bar tab, by its screen-reader label (the bar shows icons only).
+Finder _navTab(String label) => find.descendant(
+  of: find.byType(FloatingNavBar),
+  matching: find.byWidgetPredicate(
+    (w) => w is Semantics && w.properties.label == label,
+  ),
+);
+
 Future<GoRouter> _pump(WidgetTester tester, String route, Size size) async {
   tester.view.physicalSize = size * 3;
   tester.view.devicePixelRatio = 3;
@@ -57,11 +65,11 @@ void main() {
 
     testWidgets('the bar switches tabs and opens QR on iPad', (tester) async {
       final router = await _pump(tester, AppRoutes.home, _ipadLandscape);
-      await tester.tap(find.text('Профайл'));
+      await tester.tap(_navTab('Профайл'));
       await tester.pumpAndSettle();
       expect(find.text('Миний профайл'), findsOneWidget);
 
-      await tester.tap(find.text('Нүүр'));
+      await tester.tap(_navTab('Нүүр'));
       await tester.pumpAndSettle();
       expect(find.text('Тэмүүлэн'), findsOneWidget);
 

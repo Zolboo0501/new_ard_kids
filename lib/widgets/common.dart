@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../theme/app_theme.dart';
 
@@ -28,7 +29,7 @@ class CircleBackButton extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.chevron_left_rounded,
+            Iconsax.arrow_left_2_copy,
             size: 26,
             color: AppColors.slate700,
           ),

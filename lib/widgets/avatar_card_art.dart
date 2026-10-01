@@ -164,15 +164,23 @@ class AvatarCardArt extends StatelessWidget {
             height: band,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: dark ? card.withValues(alpha: 0.7) : null,
-                // The frost's white wash: strongest under the text, clear
-                // by the character.
+                // The frost's wash: strongest under the text, clear by the
+                // character. A BoxDecoration's colour is ignored under a
+                // gradient, so on the dark canvas the dimming is part of the
+                // gradient: near opaque under the text, still dimming the
+                // character so light text never sits on bright art.
                 gradient: LinearGradient(
-                  colors: [
-                    card.withValues(alpha: dark ? 0.88 : 0.72),
-                    card.withValues(alpha: dark ? 0.6 : 0.5),
-                    card.withValues(alpha: 0),
-                  ],
+                  colors: dark
+                      ? [
+                          card.withValues(alpha: 0.94),
+                          card.withValues(alpha: 0.85),
+                          card.withValues(alpha: 0.35),
+                        ]
+                      : [
+                          card.withValues(alpha: 0.72),
+                          card.withValues(alpha: 0.5),
+                          card.withValues(alpha: 0),
+                        ],
                   stops: band == null
                       ? const [0, 0.68, 0.9]
                       : const [0, 0.42, 0.7],

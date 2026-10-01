@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -74,7 +75,7 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
         title: 'Урамшуулал',
         subtitle: 'Оноо цуглуулах саналууд',
         trailing: CircleIconButton(
-          icon: Icons.help_outline_rounded,
+          icon: Iconsax.message_question_copy,
           label: 'Мэдээлэл',
           onPressed: () => showAppSnack(context, '1 оноо = ₮1'),
         ),

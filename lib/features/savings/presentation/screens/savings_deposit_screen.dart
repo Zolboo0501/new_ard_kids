@@ -4,6 +4,7 @@ import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
@@ -69,7 +70,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
         subtitle: 'Хадгаламжийн данс',
         background: bg,
         trailing: CircleIconButton(
-          icon: Icons.info_outline_rounded,
+          icon: Iconsax.info_circle_copy,
           label: 'Мэдээлэл',
           onPressed: () => showAppSnack(
             context,

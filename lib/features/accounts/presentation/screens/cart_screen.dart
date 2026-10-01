@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../theme/app_theme.dart';
@@ -71,7 +72,7 @@ class _CartScreenState extends State<CartScreen> {
         trailing: _items.isEmpty
             ? null
             : CircleIconButton(
-                icon: Icons.delete_outline_rounded,
+                icon: Iconsax.trash_copy,
                 label: 'Хоослох',
                 color: AppColors.rose500,
                 onPressed: () => setState(_items.clear),

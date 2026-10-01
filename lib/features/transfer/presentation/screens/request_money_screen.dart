@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
@@ -68,7 +69,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
         title: 'Мөнгө хүсэх',
         background: AppColors.surface,
         trailing: CircleIconButton(
-          icon: Icons.history_rounded,
+          icon: Iconsax.clock_copy,
           label: 'Хүсэлтийн жагсаалт',
           onPressed: () => context.push(AppRoutes.requestList),
         ),
@@ -163,7 +164,7 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                   ),
                   const SizedBox(height: 12),
                   const InfoNote(
-                    icon: Icons.notifications_none_rounded,
+                    icon: Iconsax.notification_copy,
                     text:
                         'Хүсэлт эцэг эхийн утсанд мэдэгдлээр очно. Хариуг '
                         'Хүсэлтийн жагсаалтаас харна.',

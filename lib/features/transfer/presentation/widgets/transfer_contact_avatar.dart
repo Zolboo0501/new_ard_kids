@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/age_group.dart';
+import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
@@ -23,6 +25,17 @@ class TransferContactAvatar extends StatelessWidget {
   final VoidCallback onTap;
 
   static const _size = 48.0;
+
+  /// The companion sticker for a saved contact, by how they were saved:
+  /// dad, mom, a sibling, or a friend.
+  static String _sticker(String name) {
+    if (name.contains('Аав')) return Stickers.dad;
+    if (name.contains('Ээж')) return Stickers.mom;
+    if (name.contains('Дүү') || name.contains('Ах') || name.contains('Эгч')) {
+      return Stickers.siblings;
+    }
+    return Stickers.friends;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +75,25 @@ class TransferContactAvatar extends StatelessWidget {
                           LineGlyph.plus,
                           size: 20,
                           color: AppColors.slate800,
+                        ),
+                      )
+                    : appAgeGroup.value == AgeGroup.under10
+                    // Under 10 a companion sticker for who they are, in
+                    // place of the initials.
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.sky50,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(3),
+                        child: ClipOval(
+                          child: Image.asset(
+                            _sticker(label),
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
+                            errorBuilder: (_, _, _) =>
+                                TransferInitials(initials!, size: _size),
+                          ),
                         ),
                       )
                     : TransferInitials(initials!, size: _size),

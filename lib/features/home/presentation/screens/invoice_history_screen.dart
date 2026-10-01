@@ -64,9 +64,9 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
               spacing: 6,
               runSpacing: 6,
               children: [
-                for (final (i, (label, test)) in invoiceFilters.indexed)
+                for (final (i, (label, _)) in invoiceFilters.indexed)
                   FilterChipPill(
-                    label: '$label (${inRange.where(test).length})',
+                    label: label,
                     selected: _filter == i,
                     onTap: () => setState(() => _filter = i),
                   ),

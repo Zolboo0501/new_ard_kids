@@ -5,6 +5,14 @@ import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
+/// A bottom-bar tab, by its screen-reader label (the bar shows icons only).
+Finder _navTab(String label) => find.descendant(
+  of: find.byType(FloatingNavBar),
+  matching: find.byWidgetPredicate(
+    (w) => w is Semantics && w.properties.label == label,
+  ),
+);
+
 Future<void> _pumpShell(
   WidgetTester tester, {
   bool disableAnimations = false,
@@ -49,11 +57,11 @@ void main() {
     await _pumpShell(tester);
     expect(_pillX(tester), -1);
 
-    await tester.tap(find.text('Профайл'));
+    await tester.tap(_navTab('Профайл'));
     await tester.pumpAndSettle();
     expect(_pillX(tester), 1);
 
-    await tester.tap(find.text('Нүүр'));
+    await tester.tap(_navTab('Нүүр'));
     await tester.pumpAndSettle();
     expect(_pillX(tester), -1);
   });
@@ -62,7 +70,7 @@ void main() {
     await _pumpShell(tester);
     expect(_bodyOpacity(tester), 1);
 
-    await tester.tap(find.text('Профайл'));
+    await tester.tap(_navTab('Профайл'));
     await tester.pump();
     // One frame in, the arriving branch is still on its way.
     await tester.pump(const Duration(milliseconds: 80));
@@ -78,7 +86,7 @@ void main() {
   ) async {
     await _pumpShell(tester, disableAnimations: true);
 
-    await tester.tap(find.text('Профайл'));
+    await tester.tap(_navTab('Профайл'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 80));
 

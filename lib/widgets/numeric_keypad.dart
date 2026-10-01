@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../theme/app_theme.dart';
 import '../widgets/app_text.dart';
@@ -72,7 +73,7 @@ class NumericKeypad extends StatelessWidget {
           onTap: onBackspace,
           semanticLabel: 'Устгах',
           child: Icon(
-            Icons.backspace_outlined,
+            Iconsax.arrow_left_copy,
             size: 22,
             color: AppColors.slate700,
           ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
@@ -177,9 +178,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 builder: (context, state, _) {
                   final on = state.torchState == TorchState.on;
                   return CircleIconButton(
-                    icon: on
-                        ? Icons.flashlight_on_rounded
-                        : Icons.highlight_rounded,
+                    icon: on ? Iconsax.flash_copy : Iconsax.flash_slash_copy,
                     label: 'Гэрэл асаах/унтраах',
                     color: on ? AppColors.amber500 : AppColors.slate600,
                     // No flash (or no camera yet): the button does nothing.
@@ -204,8 +203,8 @@ class _QrScanScreenState extends State<QrScanScreen>
           children: EntranceItem.list([
             AppTabs(
               tabs: const [
-                AppTab('QR унших', icon: Icons.qr_code_scanner_rounded),
-                AppTab('Миний QR', icon: Icons.qr_code_2_rounded),
+                AppTab('QR унших', icon: Iconsax.scan_barcode_copy),
+                AppTab('Миний QR', icon: Iconsax.scanner_copy),
               ],
               index: _tab,
               style: AppTabsStyle.solid,
@@ -272,7 +271,7 @@ class _QrScanScreenState extends State<QrScanScreen>
       ),
       const SizedBox(height: 16),
       InfoNote(
-        icon: Icons.shield_outlined,
+        icon: Iconsax.shield_tick_copy,
         text:
             'Өдрийн шилжүүлгийн эрх ${formatMnt(Limits.dailyTransfer)}. '
             'Өнөөдөр ${formatMnt(Limits.leftToday)} үлдсэн.',
@@ -366,7 +365,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                       border: Border.all(color: Colors.white, width: 4),
                     ),
                     child: Icon(
-                      Icons.wallet_rounded,
+                      Iconsax.wallet_2_copy,
                       size: 22,
                       color: AppColors.onAccent,
                     ),
@@ -384,7 +383,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 Expanded(
                   child: PrimaryButton(
                     label: 'QR Хуваалцах',
-                    leadingIcon: Icons.share_rounded,
+                    leadingIcon: Iconsax.share_copy,
                     height: 48,
                     onPressed: () => showAppSnack(context, 'QR хуваалцах'),
                   ),
@@ -393,7 +392,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                 Expanded(
                   child: SoftButton(
                     label: 'Зураг хадгалах',
-                    icon: Icons.download_rounded,
+                    icon: Iconsax.document_download_copy,
                     height: 48,
                     onPressed: () =>
                         showAppSnack(context, 'Зураг хадгалагдлаа'),

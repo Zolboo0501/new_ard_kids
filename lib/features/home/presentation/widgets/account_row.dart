@@ -39,7 +39,7 @@ class AccountRow extends StatelessWidget {
   final bool locked;
 
   /// A banner behind the row (its `ink`/`tint` are unused now the tile is
-  /// dropped on banner rows).
+  /// dropped and the name is neutral).
   final ({String asset, Color ink, Color tint})? background;
 
   /// Two lines (name, balance) with the row's padding; the banner is
@@ -93,11 +93,18 @@ class AccountRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // On a banner: a quiet neutral label over the balance, which
+                // leads; on a plain row the name leads.
                 AppText(
                   title,
-                  size: art == null ? 14 : 15,
-                  weight: FontWeight.w600,
-                  color: locked ? AppColors.slate500 : AppColors.slate900,
+                  size: art == null ? 14 : 13,
+                  weight: art == null ? FontWeight.w600 : FontWeight.w500,
+                  height: art == null ? null : 1.2,
+                  color: locked
+                      ? AppColors.slate500
+                      : art == null
+                      ? AppColors.slate900
+                      : AppColors.slate600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -114,12 +121,17 @@ class AccountRow extends StatelessWidget {
                   ),
                 ],
                 if (art != null && amount != null && !locked) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   BalanceText(
                     amount!,
-                    size: 15,
+                    size: 20,
                     weight: FontWeight.w700,
+                    letterSpacing: -0.4,
+                    height: 1.15,
                     color: AppColors.slate900,
+                    // The ₮ steps back so the digits read first.
+                    currencyWeight: FontWeight.w500,
+                    currencyColor: AppColors.slate400,
                   ),
                 ],
               ],
@@ -213,15 +225,26 @@ class AccountRow extends StatelessWidget {
               // the dark canvas a scrim keeps the light text readable.
               Positioned.fill(
                 child: DecoratedBox(
+                  // (A BoxDecoration's colour is ignored under a gradient, so
+                  // the dark canvas's dimming is part of the gradient: near
+                  // opaque under the text, still dimming the art on the
+                  // right so it doesn't glare.)
                   decoration: BoxDecoration(
-                    color: dark ? card.withValues(alpha: 0.55) : null,
                     gradient: LinearGradient(
-                      colors: [
-                        card.withValues(alpha: dark ? 0.85 : 0.72),
-                        card.withValues(alpha: dark ? 0.6 : 0.45),
-                        card.withValues(alpha: 0),
-                      ],
-                      stops: const [0, 0.38, 0.62],
+                      colors: dark
+                          ? [
+                              card.withValues(alpha: 0.94),
+                              card.withValues(alpha: 0.86),
+                              card.withValues(alpha: 0.3),
+                            ]
+                          : [
+                              card.withValues(alpha: 0.72),
+                              card.withValues(alpha: 0.45),
+                              card.withValues(alpha: 0),
+                            ],
+                      stops: dark
+                          ? const [0, 0.42, 0.7]
+                          : const [0, 0.38, 0.62],
                     ),
                   ),
                 ),

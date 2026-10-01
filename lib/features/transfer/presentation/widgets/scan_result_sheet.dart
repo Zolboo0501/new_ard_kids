@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
@@ -47,10 +48,7 @@ class ScanResultSheet extends StatelessWidget {
                   color: AppColors.emerald50,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  Icons.qr_code_2_rounded,
-                  color: AppColors.emerald600,
-                ),
+                child: Icon(Iconsax.scanner_copy, color: AppColors.emerald600),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -80,13 +78,13 @@ class ScanResultSheet extends StatelessWidget {
           const SizedBox(height: 16),
           PrimaryButton(
             label: 'Гүйлгээ хийх',
-            icon: Icons.arrow_forward_rounded,
+            icon: Iconsax.arrow_right_1_copy,
             onPressed: () => Navigator.pop(context, true),
           ),
           const SizedBox(height: 8),
           SoftButton(
             label: 'Дахин унших',
-            icon: Icons.qr_code_scanner_rounded,
+            icon: Iconsax.scan_barcode_copy,
             onPressed: () => Navigator.pop(context, false),
           ),
         ],

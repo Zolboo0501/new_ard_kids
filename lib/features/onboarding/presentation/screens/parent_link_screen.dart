@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -12,8 +11,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../../../auth/presentation/widgets/header_skip_button.dart';
-import '../widgets/parent_link_access_row.dart';
-import '../widgets/parent_link_limit_row.dart';
+import '../widgets/parent_link_highlight.dart';
 import '../widgets/role_button.dart';
 import '../widgets/success_sheet.dart';
 
@@ -124,23 +122,14 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 height: 1.2,
                 letterSpacing: -0.6,
               ),
-              const SizedBox(height: 8),
-              AppText(
-                'Холбосны дараа өдрийн гүйлгээний эрх '
-                '${formatMnt(Limits.unlinkedDaily)}-с '
-                '${formatMnt(Limits.dailyTransfer)} болно.',
-                size: 15,
-                color: AppColors.slate500,
-                height: 1.45,
-              ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
+              ParentLinkHighlight(dad: _role == 1),
+              const SizedBox(height: 16),
               AppCard(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const AppFieldLabel('Хэнтэй холбох вэ'),
-                    const SizedBox(height: 8),
                     Row(
                       children: [
                         for (final (i, r) in _roles.indexed) ...[
@@ -197,51 +186,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
                 color: _phoneValid ? null : AppColors.slate100,
                 foreground: _phoneValid ? null : AppColors.slate500,
                 onPressed: _submit,
-              ),
-              const SizedBox(height: 10),
-              AppText(
-                'Хүсэлт эцэг эхийн апп руу очно. Зөвшөөрмөгц эрх шууд нэмэгдэнэ.',
-                size: 13,
-                color: AppColors.slate500,
-                height: 1.4,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              const AppText(
-                'Эрх хэрхэн өөрчлөгдөх вэ',
-                size: 16,
-                weight: FontWeight.w700,
-              ),
-              const SizedBox(height: 4),
-              ParentLinkLimitRow(
-                label: 'Өдрийн гүйлгээний эрх',
-                before: formatMnt(Limits.unlinkedDaily),
-                after: formatMnt(Limits.dailyTransfer),
-              ),
-              Divider(height: 1, thickness: 1, color: AppColors.line),
-              const ParentLinkLimitRow(
-                label: 'Өдрийн гүйлгээний тоо',
-                before: '2 удаа',
-                after: 'Хязгааргүй',
-              ),
-              const SizedBox(height: 28),
-              const AppText(
-                'Эцэг эх чинь юу харах вэ',
-                size: 16,
-                weight: FontWeight.w700,
-              ),
-              const SizedBox(height: 8),
-              const ParentLinkAccessRow(
-                text: 'Дансны үлдэгдэл, гүйлгээний түүх',
-                visible: true,
-              ),
-              const ParentLinkAccessRow(
-                text: 'Чиний мөнгөний хүсэлтийг зөвшөөрөх, татгалзах',
-                visible: true,
-              ),
-              const ParentLinkAccessRow(
-                text: 'Нууц код, нэвтрэх мэдээлэл чинь харагдахгүй',
-                visible: false,
               ),
             ]),
           ),

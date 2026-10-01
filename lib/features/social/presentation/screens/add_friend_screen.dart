@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
@@ -83,7 +84,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
         title: 'Найз нэмэх',
         background: AppColors.surface,
         trailing: CircleIconButton(
-          icon: Icons.qr_code_scanner_rounded,
+          icon: Iconsax.scan_barcode_copy,
           label: 'QR код уншуулах',
           onPressed: () => context.push(AppRoutes.qrScan),
         ),

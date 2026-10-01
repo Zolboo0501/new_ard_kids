@@ -2,6 +2,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../theme/app_theme.dart';
 import '../app_text.dart';
@@ -15,7 +16,7 @@ class InfoNote extends StatelessWidget {
   const InfoNote({
     super.key,
     required this.text,
-    this.icon = Icons.info_outline_rounded,
+    this.icon = Iconsax.info_circle_copy,
     this.tone = BadgeTone.sky,
     this.title,
     this.mascot,
