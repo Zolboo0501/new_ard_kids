@@ -134,7 +134,7 @@ class _RewardsPaneState extends State<RewardsPane> {
                   'Нийт үлдэгдэл',
                   size: 13,
                   weight: FontWeight.w500,
-                  color: AppColors.slate500,
+                  color: AvatarCardArt.mutedInk(context),
                 ),
                 const SizedBox(height: 4),
                 FittedBox(
@@ -153,7 +153,7 @@ class _RewardsPaneState extends State<RewardsPane> {
                       ? '1 оноо = ₮1'
                       : '≈ ${formatMnt(Balances.rewards)} · 1 оноо = ₮1',
                   size: 13,
-                  color: AppColors.slate500,
+                  color: AvatarCardArt.mutedInk(context),
                 ),
                 Divider(height: 32, thickness: 1, color: AppColors.line),
                 AccountTotals(

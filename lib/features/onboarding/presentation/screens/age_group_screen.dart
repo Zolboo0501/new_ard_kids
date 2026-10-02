@@ -62,7 +62,7 @@ class _AgeGroupScreenState extends State<AgeGroupScreen> {
                 child: AdaptiveListView(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   children: EntranceItem.list([
-                    Header(step: widget.editing ? null : 'Алхам 3/7'),
+                    Header(step: widget.editing ? null : 'Алхам 3/6'),
                     const SizedBox(height: 20),
                     AppText(
                       'Хэдэн настай вэ?',

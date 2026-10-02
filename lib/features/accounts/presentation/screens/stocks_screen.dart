@@ -100,13 +100,6 @@ class StocksScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    AppText(
-                      'Ногдол ашиг: компани ашгаасаа хувьцаа эзэмшигчдэд тараадаг мөнгө.',
-                      size: 12,
-                      color: AppColors.slate500,
-                      height: 1.45,
-                    ),
                   ],
                 ),
               ),

@@ -196,22 +196,24 @@ class HomeActions extends StatelessWidget {
         final width = constraints.maxWidth + _artBleed * 2;
         final slot = (width - _artGap * (actions.length - 1)) / actions.length;
         // One shape for the whole row, the mean of the pictures' own, so
-        // the buttons match in size (each drawn filling it, stretched by a
-        // few percent at most); capped like a lone button. Only the width
-        // spills past the padding.
+        // the buttons match in size. Only the width spills past the padding.
         final aspect =
             assets
                 .map((a) => actionArtAspect[a] ?? 4.0)
                 .reduce((x, y) => x + y) /
             assets.length;
-        final height = (slot / aspect).clamp(0.0, _ArtAction.maxHeight);
+        // A pair is capped so the row stays button-sized. A lone button
+        // (Миний өв, Ард койн) takes the height its own picture needs to
+        // reach across the full width, so nothing is cropped or stretched.
+        final height = actions.length > 1
+            ? (slot / aspect).clamp(0.0, _ArtAction.maxHeight)
+            : slot / aspect;
         return SizedBox(
           height: height,
           child: OverflowBox(
             minWidth: width,
             maxWidth: width,
-            // A lone button (Миний өв, Ард койн) keeps its own proportions.
-            child: _row(_artGap, assets, actions.length > 1 ? height : null),
+            child: _row(_artGap, assets, height),
           ),
         );
       },
@@ -231,6 +233,7 @@ class HomeActions extends StatelessWidget {
                 asset: asset,
                 onTap: onTap,
                 fillHeight: fillHeight,
+                stretch: fillHeight != null && actions.length > 1,
               ),
               null => _BigAction(
                 label: label,
@@ -254,6 +257,7 @@ class _ArtAction extends StatelessWidget {
     required this.asset,
     required this.onTap,
     this.fillHeight,
+    this.stretch = false,
   });
 
   final String label;
@@ -263,6 +267,12 @@ class _ArtAction extends StatelessWidget {
   /// Fill a box this tall (and the slot's width), matching the other
   /// button in the row; null keeps the picture's own shape.
   final double? fillHeight;
+
+  /// Whether the picture may be pulled to the box's shape. True only for a
+  /// matched pair, whose box is within a few percent of the picture's own
+  /// shape; a lone button's box is far wider than its picture, so stretching
+  /// it there would smear the character.
+  final bool stretch;
 
   static const maxHeight = 72.0;
 
@@ -275,15 +285,15 @@ class _ArtAction extends StatelessWidget {
       child: Pressable(
         onTap: onTap,
         scale: 0.96,
-        // In a pair, the row's shared shape; alone, the art's own pill
-        // shape, capped so a full-width one (Миний өв, Ард койн) stays
-        // button-sized.
+        // The row's box, so the tap target spans the slot either way; the
+        // picture is drawn whole inside it unless the pair's shared shape
+        // is already its own.
         child: SizedBox(
           height: fillHeight ?? maxHeight,
           width: fillHeight == null ? null : double.infinity,
           child: Image.asset(
             asset,
-            fit: fillHeight == null ? BoxFit.contain : BoxFit.fill,
+            fit: stretch ? BoxFit.fill : BoxFit.contain,
             filterQuality: FilterQuality.high,
             errorBuilder: (_, _, _) => Center(
               child: AppText(

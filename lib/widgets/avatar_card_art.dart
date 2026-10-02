@@ -53,6 +53,13 @@ class AvatarCardArt extends StatelessWidget {
   static bool artUnder(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_ArtScope>() != null;
 
+  /// The colour for a card's secondary lines (labels, the account number, a
+  /// footnote). On card art they sit on a wash of the character's colours
+  /// rather than on the flat card, where the faintest grey loses its edge,
+  /// so they step up a shade.
+  static Color mutedInk(BuildContext context) =>
+      artUnder(context) ? AppColors.slate700 : AppColors.slate500;
+
   @override
   Widget build(BuildContext context) {
     if (!Stickers.onCards) return child;
@@ -177,13 +184,20 @@ class AvatarCardArt extends StatelessWidget {
                           card.withValues(alpha: 0.35),
                         ]
                       : [
-                          card.withValues(alpha: 0.72),
-                          card.withValues(alpha: 0.5),
+                          card.withValues(alpha: 0.94),
+                          card.withValues(alpha: 0.82),
                           card.withValues(alpha: 0),
                         ],
-                  stops: band == null
-                      ? const [0, 0.68, 0.9]
-                      : const [0, 0.42, 0.7],
+                  // The wash has to still be strong where the longest line
+                  // ends — the account number runs past half the card — so
+                  // it only clears over the last third, where the character
+                  // stands.
+                  stops: switch ((dark, band == null)) {
+                    (true, true) => const [0, 0.68, 0.9],
+                    (true, false) => const [0, 0.42, 0.7],
+                    (false, true) => const [0, 0.74, 0.95],
+                    (false, false) => const [0, 0.6, 0.88],
+                  },
                 ),
               ),
               child: band == null

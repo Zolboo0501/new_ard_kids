@@ -8,7 +8,7 @@ import 'package:new_ard_kids/app/age_group.dart';
 import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/features/onboarding/presentation/screens/age_group_screen.dart';
 import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
-import 'package:new_ard_kids/features/onboarding/presentation/screens/parent_link_screen.dart';
+import 'package:new_ard_kids/features/home/presentation/screens/home_shell.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -85,7 +85,7 @@ void main() {
     await tester.pumpAndSettle();
     // Opened from Profile: no step counter, the saved age is picked, and
     // saving waits for a different one.
-    expect(find.text('Алхам 3/7'), findsNothing);
+    expect(find.text('Алхам 3/6'), findsNothing);
     await tester.tap(find.text('Хадгалах'));
     await tester.pumpAndSettle();
     expect(find.byType(AgeGroupScreen), findsOneWidget);
@@ -119,7 +119,7 @@ void main() {
 
     await tester.pumpWidget(_wrap(AppRoutes.ageGroup));
     await tester.pumpAndSettle();
-    expect(find.text('Алхам 3/7'), findsOneWidget);
+    expect(find.text('Алхам 3/6'), findsOneWidget);
 
     // Nothing picked yet: the button does nothing.
     await tester.tap(find.text('Үргэлжлүүлэх'));
@@ -220,9 +220,10 @@ void main() {
         findsOneWidget,
       );
 
-      // Without a biometric sensor it goes straight on to the parent link.
+      // Without a biometric sensor that was the last step, so it ends
+      // registration on Home.
       await tester.pumpAndSettle();
-      expect(find.byType(ParentLinkScreen), findsOneWidget);
+      expect(find.byType(HomeShell), findsOneWidget);
     });
 
     testWidgets('the field keeps only username characters, capped at 20', (

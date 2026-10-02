@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:new_ard_kids/app/onboarding_store.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/features/onboarding/data/welcome_slide.dart';
 
 void main() {
   setUp(() {
@@ -11,6 +12,14 @@ void main() {
     OnboardingStore.seen = false;
   });
   tearDown(() => OnboardingStore.seen = false);
+
+  test('Welcome has four slides without parent connection', () {
+    expect(welcomeSlides, hasLength(4));
+    expect(
+      welcomeSlides.map((slide) => slide.asset),
+      isNot(contains('assets/images/onboarding_connection.png')),
+    );
+  });
 
   test('Introduction completion survives a new load', () async {
     await OnboardingStore.load();
@@ -35,7 +44,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       if (register) {
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < welcomeSlides.length - 1; i++) {
           expect(OnboardingStore.seen, isFalse);
           await tester.tap(find.text('Дараах'));
           await tester.pumpAndSettle();
@@ -102,7 +111,9 @@ void main() {
       findsOneWidget,
     );
     expect(OnboardingStore.seen, isFalse);
-    await tester.tap(find.bySemanticsLabel('3 хуудасны 1'));
+    await tester.tap(
+      find.bySemanticsLabel('${welcomeSlides.length} хуудасны 1'),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Мөнгөө\nцуглуулаарай.').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Алгасах'));
@@ -130,7 +141,7 @@ void main() {
             routerConfig: router,
           ),
         );
-        for (var i = 0; i < 3; i++) {
+        for (var i = 0; i < welcomeSlides.length; i++) {
           await tester.pumpAndSettle();
           if (const bool.fromEnvironment('CAPTURE_SPLASH')) {
             await tester.runAsync(() async {
@@ -148,10 +159,14 @@ void main() {
           }
           expect(tester.takeException(), isNull);
           expect(
-            find.text(i == 2 ? 'Эхлэх' : 'Дараах').hitTestable(),
+            find
+                .text(i == welcomeSlides.length - 1 ? 'Эхлэх' : 'Дараах')
+                .hitTestable(),
             findsOneWidget,
           );
-          if (i < 2) await tester.tap(find.text('Дараах'));
+          if (i < welcomeSlides.length - 1) {
+            await tester.tap(find.text('Дараах'));
+          }
         }
         await tester.pumpWidget(const SizedBox());
       });

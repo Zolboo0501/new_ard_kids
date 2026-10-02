@@ -175,9 +175,10 @@ class _TodayLimit extends StatelessWidget {
   }
 }
 
-/// The parent's picture: the chosen companion's "mom" sticker (so it is
-/// theirs, but not the teen's own portrait) on a soft accent disc; 14+ has
-/// no companion stickers on cards, so it shows the parent's initials.
+/// The parent's picture: the chosen character's own mother (so it is theirs,
+/// but not the teen's own portrait) on a soft accent disc. Where the
+/// character has no parent art it falls back to the companion's "mom"
+/// sticker, and where it has neither, to the parent's initials.
 class _ParentPicture extends StatelessWidget {
   const _ParentPicture();
 
@@ -185,6 +186,7 @@ class _ParentPicture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final face = appAvatar.value.parentFace(dad: false);
     return Container(
       width: _size,
       height: _size,
@@ -193,13 +195,14 @@ class _ParentPicture extends StatelessWidget {
         color: AppColors.sky100,
         shape: BoxShape.circle,
       ),
-      child: Stickers.onCards
+      child: face != null || Stickers.onCards
           ? ClipOval(
               child: Padding(
-                padding: const EdgeInsets.all(4),
+                // The head crop fills the disc; a sticker sits inside it.
+                padding: EdgeInsets.all(face == null ? 4 : 0),
                 child: Image.asset(
-                  Stickers.mom,
-                  fit: BoxFit.contain,
+                  face ?? Stickers.mom,
+                  fit: face == null ? BoxFit.contain : BoxFit.cover,
                   filterQuality: FilterQuality.high,
                   cacheWidth: (_size * 3).round(),
                   errorBuilder: (_, _, _) => const _Initials(),

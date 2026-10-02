@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -46,10 +45,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 color: AppColors.card,
                 shape: BoxShape.circle,
               ),
-              child: LineIcon(
-                LineGlyph.edit,
-                size: 20,
-                color: AppColors.slate800,
+              // Header chrome, so it stays the Iconsax line even under 10,
+              // where `edit` would otherwise draw the companion's sticker.
+              child: PlainLineIcons(
+                child: LineIcon(
+                  LineGlyph.edit,
+                  size: 20,
+                  color: AppColors.slate800,
+                ),
               ),
             ),
           ),
@@ -116,12 +119,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   value: '+976 ${Kid.phone}',
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
-            const InfoNote(
-              icon: Iconsax.lock_copy,
-              text:
-                  'Хувийн мэдээллийг өөрчлөхөд эцэг эхийн зөвшөөрөл шаардлагатай.',
             ),
           ]),
         ),

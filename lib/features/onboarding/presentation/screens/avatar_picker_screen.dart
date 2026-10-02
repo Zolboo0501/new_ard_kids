@@ -122,7 +122,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                         Entrance(
                           t: _headerIn,
                           child: Header(
-                            step: widget.editing ? null : 'Алхам 4/7',
+                            step: widget.editing ? null : 'Алхам 4/6',
                           ),
                         ),
                         const SizedBox(height: 12),

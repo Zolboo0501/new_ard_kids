@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../app/accounts.dart';
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import '../../../../widgets/ui.dart';
 
 /// An account's IBAN, printed in full in blocks of four, with a button that
@@ -30,6 +31,12 @@ class CopyAccountNumber extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // On card art the number sits on a wash of the character's colours
+    // rather than on the flat card, so the faintest grey loses its edge:
+    // step it up so it reads as clearly as it does on a plain card.
+    final ink = AvatarCardArt.artUnder(context)
+        ? AppColors.slate700
+        : AppColors.slate500;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -50,11 +57,7 @@ class CopyAccountNumber extends StatelessWidget {
                 key: ValueKey(hidden),
                 style:
                     style ??
-                    moneyStyle(
-                      size: 13,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
-                    ),
+                    moneyStyle(size: 13, weight: FontWeight.w500, color: ink),
               ),
             ),
           ),
@@ -74,11 +77,7 @@ class CopyAccountNumber extends StatelessWidget {
             child: SizedBox.square(
               dimension: 44,
               child: Center(
-                child: LineIcon(
-                  LineGlyph.copy,
-                  size: 16,
-                  color: AppColors.slate500,
-                ),
+                child: LineIcon(LineGlyph.copy, size: 16, color: ink),
               ),
             ),
           ),
@@ -88,7 +87,7 @@ class CopyAccountNumber extends StatelessWidget {
             hidden: hidden,
             onTap: onToggleHidden!,
             size: 18,
-            lineColor: AppColors.slate500,
+            lineColor: ink,
           ),
       ],
     );

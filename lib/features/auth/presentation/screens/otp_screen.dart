@@ -134,7 +134,7 @@ class _OtpScreenState extends State<OtpScreen>
         // screens.
         child: Column(
           children: [
-            const Header(step: 'Алхам 2/7'),
+            const Header(step: 'Алхам 2/6'),
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(

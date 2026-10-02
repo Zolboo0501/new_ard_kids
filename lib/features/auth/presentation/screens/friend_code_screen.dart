@@ -136,12 +136,15 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
           ),
         );
     }
-    // Offers biometric sign-in next, unless the phone has no sensor for it.
+    // Offers biometric sign-in next, unless the phone has no sensor for it;
+    // that is the last step, so without one registration is already done.
     final hasSensor = await Biometrics.instance.hasSensor();
     if (!mounted) return;
-    context.push(
-      hasSensor ? AppRoutes.biometricSetup : AppRoutes.parentLinkOnboarding,
-    );
+    if (hasSensor) {
+      context.push(AppRoutes.biometricSetup);
+    } else {
+      context.go(AppRoutes.home);
+    }
   }
 
   @override
@@ -169,7 +172,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
         Entrance(
           t: _headerIn,
           child: Header(
-            step: 'Алхам 5/7',
+            step: 'Алхам 5/6',
             trailing: HeaderSkipButton(onPressed: () => _finish(skipped: true)),
           ),
         ),

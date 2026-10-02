@@ -24,9 +24,15 @@ const welcomeSlides = [
     asset: 'assets/images/onboarding_wallet.png',
   ),
   WelcomeSlide(
-    title: 'Аав, ээжтэйгээ\nхамт эхэл.',
+    title: 'Код уншуулаад,\nтөлбөрөө төл.',
     description:
-        'Аав, ээжтэйгээ апп дотор холбогдоорой. Мөнгө хэрэгтэй үедээ тэдэнд хүсэлт явуулж болно.',
-    asset: 'assets/images/onboarding_connection.png',
+        'QR кодыг утсаараа уншуулаарай. Төлөх мөнгө, хүлээн авах хүний нэрийг шалгаад баталгаажуулаарай.',
+    asset: 'assets/images/onboarding_qr.png',
+  ),
+  WelcomeSlide(
+    title: 'Оноогоо\nцуглуулаарай.',
+    description:
+        'Хэдэн оноотой болсноо хараарай. Бас оноо авах ямар боломж байгааг олж мэдээрэй.',
+    asset: 'assets/images/onboarding_rewards.png',
   ),
 ];

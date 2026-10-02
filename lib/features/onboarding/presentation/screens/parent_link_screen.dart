@@ -10,19 +10,16 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
-import '../../../auth/presentation/widgets/header_skip_button.dart';
 import '../widgets/parent_link_highlight.dart';
 import '../widgets/role_button.dart';
 import '../widgets/success_sheet.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 ///
-/// With [onboarding] (the last registration step) the header shows the step
-/// pill; opened later from Home or Profile it has none.
+/// Opened from Home or Profile; it is no longer a registration step, so the
+/// header carries neither a step pill nor a skip button.
 class ParentLinkScreen extends StatefulWidget {
-  const ParentLinkScreen({super.key, this.onboarding = false});
-
-  final bool onboarding;
+  const ParentLinkScreen({super.key});
 
   @override
   State<ParentLinkScreen> createState() => _ParentLinkScreenState();
@@ -70,10 +67,6 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
     return null;
   }
 
-  void _goHome({required bool linked}) {
-    context.go(linked ? AppRoutes.home : AppRoutes.homeUnlinked);
-  }
-
   Future<void> _submit() async {
     final phoneError = _validatePhone();
     setState(() => _phoneError = phoneError);
@@ -91,7 +84,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => const SuccessSheet(),
     );
-    if (mounted) _goHome(linked: true);
+    if (mounted) context.go(AppRoutes.home);
   }
 
   @override
@@ -107,12 +100,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
           child: AdaptiveListView(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             children: EntranceItem.list([
-              Header(
-                step: widget.onboarding ? 'Алхам 7/7' : null,
-                trailing: HeaderSkipButton(
-                  onPressed: () => _goHome(linked: false),
-                ),
-              ),
+              const Header(),
               const SizedBox(height: 12),
               AppText(
                 'Эцэг эхтэйгээ холбох',

@@ -1,5 +1,3 @@
-import 'dart:ui' show ImageFilter;
-
 import 'package:flutter/material.dart';
 
 import '../../../../theme/app_theme.dart';
@@ -180,27 +178,8 @@ class AccountRow extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(child: ColoredBox(color: card)),
-              // Frosted glass under the whole row: the same art, blurred and
-              // stretched edge to edge, so the labels sit on a soft haze of
-              // its colours instead of a flat block with a hard seam.
-              Positioned.fill(
-                child: ImageFiltered(
-                  imageFilter: ImageFilter.blur(
-                    sigmaX: 14,
-                    sigmaY: 14,
-                    tileMode: TileMode.clamp,
-                  ),
-                  child: Image.asset(
-                    art.asset,
-                    fit: BoxFit.cover,
-                    alignment: Alignment.centerRight,
-                    excludeFromSemantics: true,
-                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
-                  ),
-                ),
-              ),
-              // The sharp banner on the right, its own left end fading into
-              // the haze.
+              // The banner on the right, its own left end fading into the
+              // card colour.
               Positioned.fill(
                 child: Align(
                   alignment: Alignment.centerRight,
@@ -221,8 +200,8 @@ class AccountRow extends StatelessWidget {
                   ),
                 ),
               ),
-              // The white wash of the frost, strongest under the labels; on
-              // the dark canvas a scrim keeps the light text readable.
+              // A wash of the card colour, strongest under the labels; on the
+              // dark canvas it also dims the art so light text reads.
               Positioned.fill(
                 child: DecoratedBox(
                   // (A BoxDecoration's colour is ignored under a gradient, so

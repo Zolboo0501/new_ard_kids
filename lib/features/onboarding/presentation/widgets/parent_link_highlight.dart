@@ -8,8 +8,9 @@ import 'parent_link_limit_row.dart';
 
 /// The top of [ParentLinkScreen]: the teen's avatar and the parent's picture
 /// joined by a link, then what the link changes (the daily limit and how
-/// many transfers a day). [dad] picks the parent's picture: under 10 the
-/// companion's mom or dad sticker, above that a plain person glyph.
+/// many transfers a day). [dad] picks the parent's picture: the character's
+/// own mother or father, falling back to the companion's mom/dad sticker
+/// and then a plain person glyph.
 class ParentLinkHighlight extends StatelessWidget {
   const ParentLinkHighlight({super.key, required this.dad});
 
@@ -149,6 +150,17 @@ class _ParentPicture extends StatelessWidget {
     final glyph = Center(
       child: LineIcon(LineGlyph.profile, size: 28, color: AppColors.sky600),
     );
+    // The character's own parent, where it has one; it fills the circle the
+    // way the teen's portrait beside it does.
+    if (appAvatar.value.parentFace(dad: dad) case final face?) {
+      return Image.asset(
+        face,
+        fit: BoxFit.cover,
+        filterQuality: FilterQuality.high,
+        cacheWidth: (ParentLinkHighlight._size * 3).round(),
+        errorBuilder: (_, _, _) => glyph,
+      );
+    }
     // 14+ has no companion stickers (see `Stickers.onCards`).
     if (!Stickers.onCards) return glyph;
     return Padding(

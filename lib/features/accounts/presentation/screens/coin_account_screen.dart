@@ -134,7 +134,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                   'Нийт койны үлдэгдэл',
                   size: 13,
                   weight: FontWeight.w500,
-                  color: AppColors.slate500,
+                  color: AvatarCardArt.mutedInk(context),
                 ),
                 const SizedBox(height: 4),
                 Row(
@@ -166,7 +166,7 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
                       ? '1 койн = ₮1'
                       : '≈ ${formatMnt(Balances.coins)} · 1 койн = ₮1',
                   size: 13,
-                  color: AppColors.slate500,
+                  color: AvatarCardArt.mutedInk(context),
                 ),
                 Divider(height: 32, thickness: 1, color: AppColors.line),
                 AccountTotals(

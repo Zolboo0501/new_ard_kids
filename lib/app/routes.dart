@@ -65,19 +65,17 @@ abstract final class AppRoutes {
   /// The age screen opened from Profile: saves and returns.
   static const ageGroupEdit = '$ageGroup?edit=true';
   static const avatarPicker = '/onboarding/avatar';
+  /// The parent link, opened from Home or Profile. Registration no longer
+  /// walks through it.
   static const parentLink = '/onboarding/parent';
 
-  /// Offers biometric sign-in during registration, between the avatar and
-  /// the parent link. Skipped when the device has no biometric sensor.
+  /// Offers biometric sign-in as the last registration step. Skipped when
+  /// the device has no biometric sensor.
   static const biometricSetup = '/onboarding/biometric';
 
   /// Avatar picker opened from Profile: saves and returns instead of
   /// continuing onboarding.
   static const avatarPickerEdit = '$avatarPicker?edit=true';
-
-  /// Parent link as the last registration step: shows the step pill. Opened
-  /// from Home or Profile ([parentLink]) it has no step.
-  static const parentLinkOnboarding = '$parentLink?onboarding=true';
 
   static const transfer = '/transfer';
 
@@ -130,9 +128,7 @@ abstract final class AppRoutes {
       editing: state.uri.queryParameters['edit'] == 'true',
     ),
     biometricSetup: (_, _) => const BiometricSetupScreen(),
-    parentLink: (_, state) => ParentLinkScreen(
-      onboarding: state.uri.queryParameters['onboarding'] == 'true',
-    ),
+    parentLink: (_, _) => const ParentLinkScreen(),
     transfer: (_, _) => const TransferScreen(),
     transferSuccess: (_, state) =>
         TransferSuccessScreen(receipt: state.extra as TransferReceipt?),
@@ -177,14 +173,13 @@ abstract final class AppRoutes {
     ..._builders.keys,
     home,
     homeUnlinked,
-    parentLinkOnboarding,
     profile,
   ];
 
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: initialLocation,
+      initialLocation: 'welcome',
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

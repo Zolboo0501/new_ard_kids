@@ -209,7 +209,7 @@ void main() {
       pulsing: true,
     );
 
-    expect(find.text('Алхам 6/7'), findsOneWidget);
+    expect(find.text('Алхам 6/6'), findsOneWidget);
     expect(find.text('Face ID-аар нэвтрэх үү?'), findsOneWidget);
 
     await tester.tap(find.text('Face ID идэвхжүүлэх'));
@@ -220,7 +220,7 @@ void main() {
       await const FlutterSecureStorage().read(key: 'biometric_login'),
       'true',
     );
-    expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
+    expect(router.state.uri.toString(), AppRoutes.home);
   });
 
   testWidgets('Register: a failed scan stays on the step', (tester) async {
@@ -251,7 +251,7 @@ void main() {
     await settle(tester);
     expect(fake.prompts, 0);
     expect(appBiometricLogin.value, isFalse);
-    expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
+    expect(router.state.uri.toString(), AppRoutes.home);
   });
 
   testWidgets('Register: the avatar step leads to the friend step', (
@@ -275,7 +275,7 @@ void main() {
     expect(router.state.uri.path, AppRoutes.biometricSetup);
   });
 
-  testWidgets('Register: no sensor skips straight to the parent link', (
+  testWidgets('Register: no sensor ends registration at Home', (
     tester,
   ) async {
     Biometrics.instance = _FakeBiometrics(kind: null, sensor: false);
@@ -283,6 +283,6 @@ void main() {
 
     await tester.tap(find.text('Алгасах'));
     await settle(tester);
-    expect(router.state.uri.toString(), AppRoutes.parentLinkOnboarding);
+    expect(router.state.uri.toString(), AppRoutes.home);
   });
 }

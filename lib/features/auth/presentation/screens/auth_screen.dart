@@ -304,7 +304,7 @@ class _AuthScreenState extends State<AuthScreen>
                           Entrance(
                             t: _logoIn,
                             child: Align(
-                              alignment: Alignment.centerLeft,
+                              alignment: Alignment.centerRight,
                               child: Image.asset(
                                 'assets/images/ard_logo.png',
                                 height: 28,

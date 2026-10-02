@@ -11,9 +11,10 @@ import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
 import '../widgets/biometric_benefit_row.dart';
 
-/// "Биометрээр нэвтрэх" (onboarding step 5/6): offers Face ID or fingerprint
-/// sign-in. Confirming scans once and turns it on (the same switch as
-/// Profile › Аюулгүй байдал); either way the flow goes on to the parent link.
+/// "Биометрээр нэвтрэх" (the last registration step): offers Face ID or
+/// fingerprint sign-in. Confirming scans once and turns it on (the same
+/// switch as Profile › Аюулгүй байдал); either way registration ends here
+/// and the teen lands on Home.
 class BiometricSetupScreen extends StatefulWidget {
   const BiometricSetupScreen({super.key});
 
@@ -35,7 +36,7 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
     });
   }
 
-  void _next() => context.push(AppRoutes.parentLinkOnboarding);
+  void _next() => context.go(AppRoutes.home);
 
   Future<void> _enable() async {
     if (appBiometricLogin.value) return _next();
@@ -81,7 +82,7 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
                 child: AdaptiveListView(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   children: EntranceItem.list([
-                    const Header(step: 'Алхам 6/7'),
+                    const Header(step: 'Алхам 6/6'),
                     const SizedBox(height: 12),
                     Row(
                       children: [

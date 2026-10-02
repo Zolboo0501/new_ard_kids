@@ -145,6 +145,19 @@ enum AppAvatar {
     _ => kidsPortrait,
   };
 
+  /// The character's mother or father as a round head crop, for the parent
+  /// pictures on the parent-link and profile screens. Cut from the full-body
+  /// art beside it in `assets/images/teenegars/<art>/parent/`.
+  ///
+  /// Only for the older sets: it is drawn in the same streetwear style as
+  /// their portraits, so under 10 it would sit oddly beside the cartoon
+  /// companions, which keep their own mom/dad stickers. Null there, and for
+  /// the kids-only penguin, which has no streetwear art.
+  String? parentFace({required bool dad}) =>
+      art == null || appAgeGroup.value == AgeGroup.under10
+      ? null
+      : 'assets/images/teenegars/$art/parent/${dad ? 'dad' : 'mom'}_head.png';
+
   /// The avatars offered for [age]: the penguin for under 10, the cat above.
   static List<AppAvatar> forAge(AgeGroup age) => age == AgeGroup.under10
       ? const [fox, bear, bunny, penguin]
