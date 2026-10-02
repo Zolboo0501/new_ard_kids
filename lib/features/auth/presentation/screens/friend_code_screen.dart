@@ -172,7 +172,7 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
         Entrance(
           t: _headerIn,
           child: Header(
-            step: 'Алхам 5/6',
+            step: 'Алхам 4/5',
             trailing: HeaderSkipButton(onPressed: () => _finish(skipped: true)),
           ),
         ),

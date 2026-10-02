@@ -209,7 +209,7 @@ void main() {
       pulsing: true,
     );
 
-    expect(find.text('Алхам 6/6'), findsOneWidget);
+    expect(find.text('Алхам 5/5'), findsOneWidget);
     expect(find.text('Face ID-аар нэвтрэх үү?'), findsOneWidget);
 
     await tester.tap(find.text('Face ID идэвхжүүлэх'));

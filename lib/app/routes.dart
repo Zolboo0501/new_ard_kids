@@ -65,6 +65,7 @@ abstract final class AppRoutes {
   /// The age screen opened from Profile: saves and returns.
   static const ageGroupEdit = '$ageGroup?edit=true';
   static const avatarPicker = '/onboarding/avatar';
+
   /// The parent link, opened from Home or Profile. Registration no longer
   /// walks through it.
   static const parentLink = '/onboarding/parent';

@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
       AppColors.amber500,
       LineGlyph.ardCoin,
       '1 Койн = 1₮',
-      Mascots.ardCoin3d,
+      null,
     ),
   ];
 

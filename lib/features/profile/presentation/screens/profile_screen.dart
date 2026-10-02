@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// ignore: unused_import — used by the commented-out "Нас" tile below.
 import '../../../../app/age_group.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -105,18 +106,20 @@ class ProfileScreen extends StatelessWidget {
                 title: 'Аватар',
                 onTap: () => go(AppRoutes.avatarPickerEdit),
               ),
-              ValueListenableBuilder(
-                valueListenable: appAgeGroup,
-                builder: (_, age, _) => SettingTile(
-                  // Under 10 the graduation cap, which shows the companion's
-                  // "study" sticker; the calendar has none.
-                  glyph: age == AgeGroup.under10
-                      ? LineGlyph.graduation
-                      : LineGlyph.calendar,
-                  title: 'Нас',
-                  onTap: () => go(AppRoutes.ageGroupEdit),
-                ),
-              ),
+              // Hidden for now: registration no longer asks for the age, so
+              // every account stays on the 14–18 set.
+              // ValueListenableBuilder(
+              //   valueListenable: appAgeGroup,
+              //   builder: (_, age, _) => SettingTile(
+              //     // Under 10 the graduation cap, which shows the
+              //     // companion's "study" sticker; the calendar has none.
+              //     glyph: age == AgeGroup.under10
+              //         ? LineGlyph.graduation
+              //         : LineGlyph.calendar,
+              //     title: 'Нас',
+              //     onTap: () => go(AppRoutes.ageGroupEdit),
+              //   ),
+              // ),
               // Hidden for now: both open from the Home header (gear, bell).
               // SettingTile(
               //   glyph: LineGlyph.shield,

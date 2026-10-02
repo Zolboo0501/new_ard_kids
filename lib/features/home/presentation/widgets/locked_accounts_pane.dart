@@ -59,9 +59,8 @@ class LockedAccountsPane extends StatelessWidget {
       ),
       (
         'Ард койн',
-        AccountRow(
+        const AccountRow(
           icon: LineGlyph.ardCoin,
-          image: Mascots.ardCoin3d,
           title: 'Ард койн',
           subtitle: locked,
           locked: true,

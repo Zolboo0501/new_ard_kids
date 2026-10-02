@@ -17,7 +17,10 @@ enum AgeGroup {
 
 /// The teen's age range. `ArdKidsApp` rebuilds the tree when it changes, so
 /// avatars already on screen switch to the new set.
-final appAgeGroup = ValueNotifier(AgeGroup.tween);
+///
+/// Registration does not ask for it any more, so every new account starts on
+/// [AgeGroup.teen]; only a saved value moves it.
+final appAgeGroup = ValueNotifier(AgeGroup.teen);
 
 /// Keeps [appAgeGroup] in secure storage so it survives an app restart.
 ///

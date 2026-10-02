@@ -31,7 +31,7 @@ class _NoSensor implements Biometrics {
 
 void main() {
   testWidgets(
-    'OTP: keypad fills 4 digits, backspace, then opens the age step',
+    'OTP: keypad fills 4 digits, backspace, then opens the avatar step',
     (tester) async {
       tester.view.physicalSize = const Size(390 * 3, 900 * 3);
       tester.view.devicePixelRatio = 3;
@@ -58,13 +58,16 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.byType(AgeGroupScreen), findsOneWidget);
+      expect(find.byType(AvatarPickerScreen), findsOneWidget);
     },
   );
 
-  testWidgets('Age: changing it from Profile saves and returns', (
+  testWidgets('Age: changing it from Profile saves and returns', skip: true, (
     tester,
   ) async {
+    // Skipped while Profile's "Нас" tile is commented out: registration no
+    // longer asks for the age, so there is no way into this screen. Unskip
+    // with the tile.
     tester.view.physicalSize = const Size(390 * 3, 844 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -85,7 +88,7 @@ void main() {
     await tester.pumpAndSettle();
     // Opened from Profile: no step counter, the saved age is picked, and
     // saving waits for a different one.
-    expect(find.text('Алхам 3/6'), findsNothing);
+    expect(find.text('Алхам 3/5'), findsNothing);
     await tester.tap(find.text('Хадгалах'));
     await tester.pumpAndSettle();
     expect(find.byType(AgeGroupScreen), findsOneWidget);
@@ -119,7 +122,9 @@ void main() {
 
     await tester.pumpWidget(_wrap(AppRoutes.ageGroup));
     await tester.pumpAndSettle();
-    expect(find.text('Алхам 3/6'), findsOneWidget);
+    // Registration skips this screen now, so it carries no step pill even
+    // when opened on its own path.
+    expect(find.textContaining('Алхам'), findsNothing);
 
     // Nothing picked yet: the button does nothing.
     await tester.tap(find.text('Үргэлжлүүлэх'));
