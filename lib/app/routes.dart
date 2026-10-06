@@ -33,6 +33,7 @@ import '../features/social/presentation/screens/invite_friends_screen.dart';
 import '../features/transfer/presentation/screens/qr_scan_screen.dart';
 import '../features/transfer/presentation/screens/request_list_screen.dart';
 import '../features/transfer/presentation/screens/request_money_screen.dart';
+import '../features/transfer/presentation/screens/transfer_amount_screen.dart';
 import '../features/transfer/presentation/screens/transfer_screen.dart';
 import '../features/transfer/data/transfer_receipt.dart';
 import '../features/transfer/presentation/screens/transfer_success_screen.dart';
@@ -66,23 +67,36 @@ abstract final class AppRoutes {
   static const ageGroupEdit = '$ageGroup?edit=true';
   static const avatarPicker = '/onboarding/avatar';
 
-  /// The parent link, opened from Home or Profile. Registration no longer
-  /// walks through it.
+  /// The parent link, the last registration step; also opened later from
+  /// Home or Profile, where it has no step pill.
   static const parentLink = '/onboarding/parent';
 
-  /// Offers biometric sign-in as the last registration step. Skipped when
-  /// the device has no biometric sensor.
+  /// Offers biometric sign-in during registration, between the friend code
+  /// and the parent link. Skipped when the device has no biometric sensor.
   static const biometricSetup = '/onboarding/biometric';
 
   /// Avatar picker opened from Profile: saves and returns instead of
   /// continuing onboarding.
   static const avatarPickerEdit = '$avatarPicker?edit=true';
 
+  /// Parent link as the last registration step: shows the step pill and the
+  /// skip button. Opened from Home or Profile ([parentLink]) it has neither.
+  static const parentLinkOnboarding = '$parentLink?onboarding=true';
+
+  /// "Гүйлгээний дүн": the keypad step before [transfer], opened from Home.
+  static const transferAmount = '/transfer/amount';
+
+  /// `extra`: the amount (an [int]) typed on [transferAmount], if any.
   static const transfer = '/transfer';
 
   /// `extra`: a [TransferReceipt]; a sample receipt is shown without one.
   static const transferSuccess = '/transfer/success';
   static const qrScan = '/qr';
+
+  /// The keypad step before [requestMoney], opened from Home.
+  static const requestAmount = '/request/amount';
+
+  /// `extra`: the amount (an [int]) typed on [requestAmount], if any.
   static const requestMoney = '/request';
   static const requestList = '/request/list';
   static const invoiceHistory = '/invoices/history';
@@ -129,12 +143,17 @@ abstract final class AppRoutes {
       editing: state.uri.queryParameters['edit'] == 'true',
     ),
     biometricSetup: (_, _) => const BiometricSetupScreen(),
-    parentLink: (_, _) => const ParentLinkScreen(),
-    transfer: (_, _) => const TransferScreen(),
+    parentLink: (_, state) => ParentLinkScreen(
+      onboarding: state.uri.queryParameters['onboarding'] == 'true',
+    ),
+    transferAmount: (_, _) => const TransferAmountScreen(),
+    transfer: (_, state) => TransferScreen(initialAmount: state.extra as int?),
     transferSuccess: (_, state) =>
         TransferSuccessScreen(receipt: state.extra as TransferReceipt?),
     qrScan: (_, _) => const QrScanScreen(),
-    requestMoney: (_, _) => const RequestMoneyScreen(),
+    requestAmount: (_, _) => const TransferAmountScreen(request: true),
+    requestMoney: (_, state) =>
+        RequestMoneyScreen(initialAmount: state.extra as int?),
     requestList: (_, _) => const RequestListScreen(),
     invoiceHistory: (_, _) => const InvoiceHistoryScreen(),
     savingsAccount: (_, _) => const SavingsAccountScreen(),
@@ -174,13 +193,14 @@ abstract final class AppRoutes {
     ..._builders.keys,
     home,
     homeUnlinked,
+    parentLinkOnboarding,
     profile,
   ];
 
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: 'welcome',
+      initialLocation: initialLocation,
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

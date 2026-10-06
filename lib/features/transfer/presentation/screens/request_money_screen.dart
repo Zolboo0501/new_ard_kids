@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
+import '../../../../app/accounts.dart';
+import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/avatar_card_art.dart';
 import '../../../../widgets/entrance.dart';
-import '../../../../widgets/input_formatters.dart';
 import '../../../../widgets/ui.dart';
-import '../widgets/clear_button.dart';
 import '../widgets/parent_card.dart';
+import '../widgets/source_card.dart';
 import '../widgets/transfer_label.dart';
 
-/// "Мөнгө хүсэх": ask a parent to top up the account.
+/// "Мөнгө хүсэх": ask a parent to top up the account. The amount is typed on
+/// [AppRoutes.requestAmount] and only shown here.
 class RequestMoneyScreen extends StatefulWidget {
-  const RequestMoneyScreen({super.key});
+  const RequestMoneyScreen({super.key, this.initialAmount});
+
+  /// The amount typed on [AppRoutes.requestAmount]; shown, not edited, here.
+  final int? initialAmount;
 
   @override
   State<RequestMoneyScreen> createState() => _RequestMoneyScreenState();
@@ -29,27 +34,17 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
   ];
   static const _types = ['Хоол', 'Тээвэр', 'Сургууль', 'Хувцас', 'Бусад'];
 
-  final _amount = TextEditingController(text: '20,000');
   final _note = TextEditingController(text: 'Долоо хоногийн өдрийн хоол');
   int _parent = 0;
-  int? _quick = 20000;
   int _type = 0;
 
   @override
-  void initState() {
-    super.initState();
-    _amount.addListener(() => setState(() {}));
-  }
-
-  @override
   void dispose() {
-    _amount.dispose();
     _note.dispose();
     super.dispose();
   }
 
-  int get _value =>
-      int.tryParse(_amount.text.replaceAll(RegExp(r'\D'), '')) ?? 0;
+  int get _value => widget.initialAmount ?? 20000;
 
   void _submit() {
     FocusScope.of(context).unfocus();
@@ -81,6 +76,12 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               child: AdaptiveListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 children: EntranceItem.list([
+                  AvatarCardArt(
+                    sticker: Stickers.coin,
+                    account: Accounts.main,
+                    child: SourceCard(amount: _value, label: 'Хүсэх дүн'),
+                  ),
+                  const SizedBox(height: 16),
                   AppText(
                     'Эцэг эхдээ хүсэлт илгээх',
                     size: 16,
@@ -115,32 +116,6 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const TransferLabel('Дүн'),
-                        AppTextField(
-                          controller: _amount,
-                          prefixText: '₮',
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            ThousandsFormatter(),
-                          ],
-                          textStyle: moneyStyle(
-                            size: 20,
-                            color: AppColors.slate900,
-                          ),
-                          onChanged: (_) => setState(() => _quick = null),
-                          suffix: ClearButton(onTap: _amount.clear),
-                        ),
-                        const SizedBox(height: 10),
-                        QuickAmountChips(
-                          amounts: const [5000, 10000, 20000, 50000],
-                          selected: _quick,
-                          onSelected: (v) {
-                            _amount.text = formatMnt(v).substring(1);
-                            setState(() => _quick = v);
-                          },
-                        ),
-                        const SizedBox(height: 20),
                         const TransferLabel('Юунд хэрэгтэй вэ'),
                         AppTextField(
                           controller: _note,

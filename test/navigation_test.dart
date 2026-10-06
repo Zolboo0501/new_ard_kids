@@ -73,7 +73,7 @@ void main() {
     // By its label: the 10–13 fox's button is a picture with the word drawn in.
     await tester.tap(_semantic('Гүйлгээ').first);
     await tester.pumpAndSettle();
-    expect(_location(router), AppRoutes.transfer);
+    expect(_location(router), AppRoutes.transferAmount);
     expect(find.byType(FloatingNavBar), findsNothing);
 
     await tester.tap(find.byType(CircleBackButton).first);

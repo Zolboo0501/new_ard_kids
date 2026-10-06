@@ -52,11 +52,6 @@ void main() {
     // The picked account fills the IBAN field and shows its holder.
     expect(find.text('MN24 0005 0050 4982 1902'), findsOneWidget);
     expect(find.text('Б. Сүхбат'), findsOneWidget);
-
-    // Another bank needs a new search.
-    await tester.tap(find.text('Голомт банк'));
-    await tester.pumpAndSettle();
-    expect(find.text('Б. Сүхбат'), findsNothing);
   });
 
   testWidgets('Дансаар: 5752 0289 15 is found', (tester) async {

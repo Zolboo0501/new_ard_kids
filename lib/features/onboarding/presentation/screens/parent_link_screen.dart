@@ -10,16 +10,20 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
+import '../../../auth/presentation/widgets/header_skip_button.dart';
 import '../widgets/parent_link_highlight.dart';
 import '../widgets/role_button.dart';
 import '../widgets/success_sheet.dart';
 
 /// "Эцэг эхийн холболт": send a link request to a parent/guardian.
 ///
-/// Opened from Home or Profile; it is no longer a registration step, so the
-/// header carries neither a step pill nor a skip button.
+/// With [onboarding] (the last registration step) the header shows the step
+/// pill and a skip button that lands on the unlinked Home; opened later from
+/// Home or Profile it has neither.
 class ParentLinkScreen extends StatefulWidget {
-  const ParentLinkScreen({super.key});
+  const ParentLinkScreen({super.key, this.onboarding = false});
+
+  final bool onboarding;
 
   @override
   State<ParentLinkScreen> createState() => _ParentLinkScreenState();
@@ -67,6 +71,10 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
     return null;
   }
 
+  void _goHome({required bool linked}) {
+    context.go(linked ? AppRoutes.home : AppRoutes.homeUnlinked);
+  }
+
   Future<void> _submit() async {
     final phoneError = _validatePhone();
     setState(() => _phoneError = phoneError);
@@ -84,7 +92,7 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => const SuccessSheet(),
     );
-    if (mounted) context.go(AppRoutes.home);
+    if (mounted) _goHome(linked: true);
   }
 
   @override
@@ -100,7 +108,12 @@ class _ParentLinkScreenState extends State<ParentLinkScreen> {
           child: AdaptiveListView(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             children: EntranceItem.list([
-              const Header(),
+              Header(
+                step: widget.onboarding ? 'Алхам 6/6' : null,
+                trailing: widget.onboarding
+                    ? HeaderSkipButton(onPressed: () => _goHome(linked: false))
+                    : null,
+              ),
               const SizedBox(height: 12),
               AppText(
                 'Эцэг эхтэйгээ холбох',

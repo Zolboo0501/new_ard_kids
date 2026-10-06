@@ -95,7 +95,7 @@ class InvoicesPane extends StatelessWidget {
                   background: AppColors.card,
                   foreground: AppColors.slate900,
                   border: AppColors.line,
-                  onPressed: () => onOpen(AppRoutes.requestMoney),
+                  onPressed: () => onOpen(AppRoutes.requestAmount),
                 ),
               ),
             ],

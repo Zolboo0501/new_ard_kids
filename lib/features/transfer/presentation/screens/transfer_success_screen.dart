@@ -187,7 +187,7 @@ class TransferSuccessScreen extends StatelessWidget {
                     foreground: AppColors.slate900,
                     border: Colors.transparent,
                     onPressed: () =>
-                        context.pushReplacement(AppRoutes.transfer),
+                        context.pushReplacement(AppRoutes.transferAmount),
                   ),
                 ],
               ),

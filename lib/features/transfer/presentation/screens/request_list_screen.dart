@@ -178,7 +178,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
               child: PrimaryButton(
                 label: 'Шинэ хүсэлт',
                 onPressed: () =>
-                    context.pushReplacement(AppRoutes.requestMoney),
+                    context.pushReplacement(AppRoutes.requestAmount),
               ),
             ),
           ),

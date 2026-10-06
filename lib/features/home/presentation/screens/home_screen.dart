@@ -133,11 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
       ('Дэлгэрэнгүй', LineGlyph.arrowRight, () => _go(AppRoutes.coinAccount)),
     ],
     _ => [
-      ('Гүйлгээ', LineGlyph.paperPlane, () => _go(AppRoutes.transfer)),
+      ('Гүйлгээ', LineGlyph.paperPlane, () => _go(AppRoutes.transferAmount)),
       (
         'Мөнгө хүсэх',
         LineGlyph.arrowDownLeft,
-        () => _go(AppRoutes.requestMoney),
+        () => _go(AppRoutes.requestAmount),
       ),
     ],
   };

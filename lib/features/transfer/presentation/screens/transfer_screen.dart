@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -35,13 +34,21 @@ enum TransferMode { friends, account, phone }
 /// "Гүйлгээ хийх": send money to a saved contact, a bank account or a phone
 /// number.
 ///
-/// Safety: an amount must fit both the balance and what is left of today's
-/// limit ([Limits.leftToday]), and the recipient shown in the PIN sheet is
-/// always derived from the number in the field, so the two can't disagree.
+/// The amount is typed on [AppRoutes.transferAmount] (which checks it against
+/// the balance and [Limits.leftToday]) and only shown here. The recipient
+/// shown in the PIN sheet is always derived from the number in the field, so
+/// the two can't disagree.
 class TransferScreen extends StatefulWidget {
-  const TransferScreen({super.key, this.initialMode = TransferMode.friends});
+  const TransferScreen({
+    super.key,
+    this.initialMode = TransferMode.friends,
+    this.initialAmount,
+  });
 
   final TransferMode initialMode;
+
+  /// The amount typed on [AppRoutes.transferAmount]; shown, not edited, here.
+  final int? initialAmount;
 
   @override
   State<TransferScreen> createState() => _TransferScreenState();
@@ -54,7 +61,6 @@ class _TransferScreenState extends State<TransferScreen> {
 
   late TransferMode _mode = widget.initialMode;
   int _bank = 0;
-  int? _quick;
   int? _purpose = 0;
 
   /// The saved-contact tab's account number. The contact it belongs to (if
@@ -64,7 +70,6 @@ class _TransferScreenState extends State<TransferScreen> {
   /// The Дансаар tab's account number, as an IBAN; the search sheet fills it.
   final _iban = TextEditingController();
   final _phone = TextEditingController(text: _contacts.last.phone);
-  final _amount = TextEditingController(text: '15,000');
   final _note = TextEditingController(text: _purposes.first);
 
   /// Who holds the account the teen picked in the search sheet.
@@ -73,14 +78,14 @@ class _TransferScreenState extends State<TransferScreen> {
   @override
   void initState() {
     super.initState();
-    for (final c in [_recipient, _phone, _amount, _iban]) {
+    for (final c in [_recipient, _phone, _iban]) {
       c.addListener(() => setState(() {}));
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_recipient, _phone, _amount, _note, _iban]) {
+    for (final c in [_recipient, _phone, _note, _iban]) {
       c.dispose();
     }
     super.dispose();
@@ -88,7 +93,7 @@ class _TransferScreenState extends State<TransferScreen> {
 
   static String _digits(String s) => s.replaceAll(RegExp(r'\D'), '');
 
-  int get _amountValue => int.tryParse(_digits(_amount.text)) ?? 0;
+  int get _amountValue => widget.initialAmount ?? 15000;
 
   /// The saved contact whose account is in the field, if any.
   TransferContact? get _contact {
@@ -106,14 +111,6 @@ class _TransferScreenState extends State<TransferScreen> {
       if (_digits(c.phone) == digits) return c;
     }
     return null;
-  }
-
-  void _setAmount(int v) {
-    final text = formatMnt(v).substring(1);
-    _amount.value = TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-    );
   }
 
   /// Opens the sheet that finds an account by its plain number; the one the
@@ -147,18 +144,12 @@ class _TransferScreenState extends State<TransferScreen> {
     TransferMode.phone => _phoneContact?.name ?? '',
   };
 
-  /// Why the amount can't be sent, shown under the field.
-  String? get _amountError {
-    final amount = _amountValue;
-    if (amount > Balances.main) return 'Үлдэгдэл хүрэлцэхгүй байна';
-    if (amount > Limits.leftToday) {
-      return 'Өнөөдрийн үлдэгдэл эрх ${formatMnt(Limits.leftToday)}';
-    }
-    return null;
-  }
-
   bool get _valid {
-    if (_amountValue <= 0 || _amountError != null) return false;
+    // The amount screen already checks these; kept as a last guard.
+    final amount = _amountValue;
+    if (amount <= 0 || amount > Balances.main || amount > Limits.leftToday) {
+      return false;
+    }
     return switch (_mode) {
       TransferMode.phone => _phoneContact != null,
       TransferMode.account => _accountHolder != null,
@@ -230,7 +221,6 @@ class _TransferScreenState extends State<TransferScreen> {
                   AvatarCardArt(
                     sticker: Stickers.transfer,
                     account: Accounts.main,
-                    area: 118,
                     child: SourceCard(amount: _amountValue),
                   ),
                   const SizedBox(height: 12),
@@ -258,7 +248,7 @@ class _TransferScreenState extends State<TransferScreen> {
                   const SizedBox(height: 12),
                   AppCard(
                     padding: const EdgeInsets.all(16),
-                    child: _buildAmount(),
+                    child: _buildNote(),
                   ),
                 ]),
               ),
@@ -288,55 +278,10 @@ class _TransferScreenState extends State<TransferScreen> {
     );
   }
 
-  Widget _buildAmount() {
-    final error = _amountError;
+  Widget _buildNote() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const TransferLabel('Дүн'),
-        AppTextField(
-          controller: _amount,
-          prefixText: '₮',
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            ThousandsFormatter(),
-          ],
-          textStyle: moneyStyle(size: 20, color: AppColors.slate900),
-          onChanged: (_) => setState(() => _quick = null),
-          suffix: ClearButton(onTap: () => _amount.clear()),
-        ),
-        if (error != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8, left: 4),
-            child: Semantics(
-              liveRegion: true,
-              child: Row(
-                children: [
-                  LineIcon(LineGlyph.alert, size: 16, color: AppColors.rose600),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: AppText(
-                      error,
-                      size: 12,
-                      weight: FontWeight.w500,
-                      color: AppColors.rose600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        const SizedBox(height: 10),
-        QuickAmountChips(
-          amounts: const [5000, 10000, 20000, 50000],
-          selected: _quick,
-          onSelected: (v) {
-            _setAmount(v);
-            setState(() => _quick = v);
-          },
-        ),
-        const SizedBox(height: 20),
         const TransferLabel('Гүйлгээний утга'),
         AppTextField(controller: _note, hint: 'Жишээ нь: Өдрийн хоол'),
         const SizedBox(height: 10),
@@ -415,23 +360,14 @@ class _TransferScreenState extends State<TransferScreen> {
             ? null
             : ClearButton(onTap: () => _recipient.clear()),
       ),
-      // A saved contact's account shows its verified holder; any other
-      // number needs its bank.
+      // A saved contact's account shows its verified holder.
       if (contact != null)
-        VerifiedName(name: contact.holder, detail: contact.bank)
-      else ...[
-        const SizedBox(height: 12),
-        const TransferLabel('Банк'),
-        _buildBankChips(),
-      ],
+        VerifiedName(name: contact.holder, detail: contact.bank),
     ];
   }
 
   List<Widget> _buildAccount() {
     return [
-      const TransferLabel('Банк'),
-      _buildBankChips(),
-      const SizedBox(height: 14),
       const TransferLabel('Дансны дугаар'),
       AppTextField(
         controller: _iban,
@@ -501,17 +437,5 @@ class _TransferScreenState extends State<TransferScreen> {
           ),
         ),
     ];
-  }
-
-  Widget _buildBankChips() {
-    return _chipRow(
-      count: _banks.length,
-      label: (i) => _banks[i],
-      selected: (i) => _bank == i,
-      onTap: (i) {
-        setState(() => _bank = i);
-        if (_mode == TransferMode.account) _clearAccount();
-      },
-    );
   }
 }

@@ -158,7 +158,7 @@ class _QrScanScreenState extends State<QrScanScreen>
     if (!mounted) return;
     if (transfer ?? false) {
       // TODO: parse the recipient from [value] and prefill the transfer.
-      await context.push(AppRoutes.transfer);
+      await context.push(AppRoutes.transferAmount);
       if (!mounted) return;
     }
     _handling = false;
