@@ -72,4 +72,22 @@ void main() {
     expect(find.text('Хүсэх дүн'), findsOneWidget);
     expect(find.bySemanticsLabel(RegExp('90,000')), findsWidgets);
   });
+
+  testWidgets('Request amount: history button opens the request list', (
+    tester,
+  ) async {
+    final router = await _pump(tester, AppRoutes.requestAmount);
+    await tester.tap(find.bySemanticsLabel('Хүсэлтийн жагсаалт'));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.toString(), AppRoutes.requestList);
+  });
+
+  testWidgets('Request money: history button opens the request list', (
+    tester,
+  ) async {
+    final router = await _pump(tester, AppRoutes.requestMoney);
+    await tester.tap(find.widgetWithText(SoftButton, 'Хүсэлтийн түүх'));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.toString(), AppRoutes.requestList);
+  });
 }

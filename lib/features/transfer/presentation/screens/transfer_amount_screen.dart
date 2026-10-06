@@ -4,6 +4,7 @@ import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
@@ -91,6 +92,14 @@ class _TransferAmountScreenState extends State<TransferAmountScreen> {
         title: request ? 'Мөнгө хүсэх' : 'Гүйлгээний дүн',
         subtitle: request ? 'Эцэг эхээсээ' : 'Үндсэн данс',
         background: bg,
+        // The requests already sent and their answers.
+        trailing: request
+            ? CircleIconButton(
+                icon: Iconsax.clock_copy,
+                label: 'Хүсэлтийн жагсаалт',
+                onPressed: () => context.push(AppRoutes.requestList),
+              )
+            : null,
       ),
       body: SafeArea(
         top: false,

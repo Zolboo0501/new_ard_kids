@@ -63,11 +63,6 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
       appBar: SubPageHeader(
         title: 'Мөнгө хүсэх',
         background: AppColors.surface,
-        trailing: CircleIconButton(
-          icon: Iconsax.clock_copy,
-          label: 'Хүсэлтийн жагсаалт',
-          onPressed: () => context.push(AppRoutes.requestList),
-        ),
       ),
       body: Column(
         children: [
@@ -160,9 +155,15 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
               12 + MediaQuery.paddingOf(context).bottom,
             ),
             child: AdaptiveCenter(
-              child: PrimaryButton(
-                label: 'Хүсэлт илгээх',
-                onPressed: _value > 0 ? _submit : null,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  PrimaryButton(
+                    label: 'Хүсэлт илгээх',
+                    onPressed: _value > 0 ? _submit : null,
+                  ),
+                ],
               ),
             ),
           ),
