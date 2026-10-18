@@ -20,13 +20,23 @@ void main() {
     expect(find.byType(AppLoadingScreen), findsOneWidget);
     expect(find.text('ready'), findsNothing);
 
-    // The spinner fades in only after a short delay.
+    // The spinner fades in only once the splash animation has played.
     await tester.pump(const Duration(milliseconds: 500));
+    expect(
+      tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+      0,
+    );
+    await tester.pump(const Duration(milliseconds: 1600));
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(
+      tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).opacity,
+      1,
+    );
 
     load.complete();
     await tester.pump();
-    await tester.pump(const Duration(milliseconds: 400));
+    // The app fades in over the loading screen.
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('ready'), findsOneWidget);
     expect(find.byType(AppLoadingScreen), findsNothing);

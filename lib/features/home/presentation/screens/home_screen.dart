@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
+import '../../../../app/home_tour_store.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
@@ -18,6 +21,9 @@ import '../widgets/cards_pane.dart';
 import '../widgets/home_header.dart';
 import '../widgets/invoices_pane.dart';
 import '../widgets/locked_accounts_pane.dart';
+import '../../data/spending_stats.dart';
+import '../widgets/home_spending_card.dart';
+import '../widgets/home_tour.dart';
 import '../widgets/page_dots.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,6 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   int _invoiceFilter = 0;
   bool _hideBalance = false;
 
+  /// What the first-visit tour points at.
+  final _balanceKey = GlobalKey();
+  final _actionsKey = GlobalKey();
+  final _spendingKey = GlobalKey();
+  final _tabsKey = GlobalKey();
+
   /// Every account the balance swipes through: label, number, balance.
   static List<(String, String, int)> get _accounts => [
     ('Харилцах данс', Accounts.main, Balances.main),
@@ -49,6 +61,50 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     appAvatar.addListener(_onAvatarChanged);
+    // The first visit: the avatar walks the teen through Home as soon as it
+    // opens. Its greeting points at nothing, so the screen's entrance
+    // finishes behind it before the first spotlight.
+    if (HomeTourStore.pending) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _startTour());
+    }
+  }
+
+  Future<void> _startTour() async {
+    if (!mounted || !HomeTourStore.pending) return;
+    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+    // Marked done up front, so it can't open twice.
+    unawaited(HomeTourStore.complete());
+    final name = appAvatar.value.name;
+    await showHomeTour(
+      context,
+      steps: [
+        HomeTourStep(
+          text:
+              'Сайн уу! Би $name. Ard Kids-ийн нүүр хуудастай хамт '
+              'танилцъя!',
+        ),
+        HomeTourStep(
+          target: _balanceKey,
+          text:
+              'Энд дансны үлдэгдэл чинь харагдана. Хажуу тийш гүйлгээд '
+              'бусад дансаа хараарай.',
+        ),
+        HomeTourStep(
+          target: _actionsKey,
+          text:
+              'Эндээс мөнгө шилжүүлж, эцэг эхээсээ мөнгө хүсэх '
+              'боломжтой.',
+        ),
+        HomeTourStep(
+          target: _spendingKey,
+          text: 'Энэ 7 хоногт хэдийг юунд зарцуулснаа эндээс хараарай.',
+        ),
+        HomeTourStep(
+          target: _tabsKey,
+          text: 'Данс, нэхэмжлэх, картаа эндээс солиод үзээрэй.',
+        ),
+      ],
+    );
   }
 
   void _onAvatarChanged() => setState(() {});
@@ -142,19 +198,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: [
                     // The balance itself is the carousel: swipe it to move
                     // between accounts, with the dots under it.
-                    _balances(count, linked),
+                    KeyedSubtree(
+                      key: _balanceKey,
+                      child: _balances(count, linked),
+                    ),
                     if (linked) ...[
                       const SizedBox(height: 12),
                       PageDots(count: count, index: _page),
                     ],
                     const SizedBox(height: 20),
                     HomeActions(
+                      key: _actionsKey,
                       actions: _actions(linked ? current.$2 : Accounts.main),
                       art: accountActionArt,
+                    ),
+                    const SizedBox(height: 20),
+                    // This week's spending at a glance.
+                    HomeSpendingCard(
+                      key: _spendingKey,
+                      days: weekSpending,
+                      dayLabels: weekdayLabels,
+                      today: DateTime.now().weekday - 1,
+                      lastWeek: lastWeekTotal,
+                      categories: weekCategories,
                     ),
                   ],
                   trailing: [
                     AppTabs(
+                      key: _tabsKey,
                       tabs: const [
                         AppTab('Данс'),
                         AppTab('Нэхэмжлэх'),

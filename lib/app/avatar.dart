@@ -139,6 +139,17 @@ enum AppAvatar {
         cat || penguin => 'purple',
       }}.png';
 
+  /// The whole bean character, a transparent cut-out (the art the welcome
+  /// slides use), for places that show the companion standing rather than
+  /// as a round head: the Home tour's guide.
+  String get fullBody =>
+      'assets/images/welcome/${switch (this) {
+        fox => 'qr',
+        bear => 'rewards',
+        bunny => 'spending',
+        cat || penguin => 'goal',
+      }}_bean.webp';
+
   /// The character's mother or father as a round head crop, for the parent
   /// pictures on the parent-link and profile screens. Cut from the full-body
   /// art beside it in `assets/images/teenegars/<art>/parent/`.

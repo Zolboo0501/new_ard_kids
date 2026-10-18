@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
@@ -51,9 +52,71 @@ class AppPalette {
   final Color pageBackground;
   final Color pageBackgroundMuted;
 
-  /// The accent scale for [choice] on the light or [dark] canvas.
+  /// The accent scale for [choice] on the light or [dark] canvas. On the
+  /// light canvas the scale is softened (see [_soft]).
   static AppPalette of(AppThemeChoice choice, {bool? dark}) {
     final d = dark ?? AppColors.isDark;
+    if (d) return _base(choice, dark: true);
+    return _softCache[choice] ??= _soft(_base(choice, dark: false));
+  }
+
+  static final _softCache = <AppThemeChoice, AppPalette>{};
+
+  /// The light canvas's soft pastel take on [p]: the same hues, with the
+  /// tints at gentle pastel lightness and capped saturation (lavender,
+  /// mint and peach rather than bright tints), the accent fill a touch
+  /// calmer, and the page tint quieter. The inks keep their contrast.
+  static AppPalette _soft(AppPalette p) {
+    Color tint(Color c, double lightness, double maxSaturation) {
+      final h = HSLColor.fromColor(c);
+      return h
+          .withLightness(lightness)
+          .withSaturation(h.saturation.clamp(0.0, maxSaturation))
+          .toColor();
+    }
+
+    Color calmer(Color c, double factor) {
+      final h = HSLColor.fromColor(c);
+      return h.withSaturation(h.saturation * factor).toColor();
+    }
+
+    // The accent fill calms only as far as the text printed on it still
+    // reads (3:1, the bar for the large bold text on buttons).
+    double contrast(Color a, Color b) {
+      final (la, lb) = (a.computeLuminance(), b.computeLuminance());
+      return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+    }
+
+    var fill = p.c500;
+    for (final factor in const [0.85, 0.9, 0.95]) {
+      final candidate = calmer(p.c500, factor);
+      if (contrast(candidate, p.onAccent) >= 3.05) {
+        fill = candidate;
+        break;
+      }
+    }
+
+    return AppPalette(
+      c50: tint(p.c50, 0.955, 0.55),
+      c100: tint(p.c100, 0.915, 0.55),
+      c200: tint(p.c200, 0.86, 0.5),
+      c300: tint(p.c300, 0.76, 0.5),
+      c400: calmer(p.c400, 0.85),
+      c500: fill,
+      c600: p.c600,
+      c700: p.c700,
+      c800: p.c800,
+      c900: p.c900,
+      onAccent: p.onAccent,
+      dsPrimary: p.dsPrimary,
+      pageBackground: calmer(p.pageBackground, 0.6),
+      pageBackgroundMuted: calmer(p.pageBackgroundMuted, 0.6),
+    );
+  }
+
+  /// The hand-tuned scale for [choice], before any softening.
+  static AppPalette _base(AppThemeChoice choice, {required bool dark}) {
+    final d = dark;
     return switch (choice) {
       AppThemeChoice.sky => d ? _skyDark : _skyLight,
       AppThemeChoice.blue => d ? _blueDark : _blueLight,

@@ -7,6 +7,7 @@ import 'app/app_loader.dart';
 import 'app/avatar.dart';
 import 'app/biometrics.dart';
 import 'app/routes.dart';
+import 'app/home_tour_store.dart';
 import 'app/onboarding_store.dart';
 import 'theme/app_theme.dart';
 import 'theme/theme_store.dart';
@@ -36,7 +37,10 @@ void main() {
             ),
         BiometricStore.load(),
         OnboardingStore.load(),
+        HomeTourStore.load(),
       ]),
+      // Long enough for the splash logo's entrance to play out.
+      minDuration: AppLoadingScreen.animation,
       builder: (_) => ArdKidsApp(
         initialLocation: OnboardingStore.seen
             ? AppRoutes.auth
