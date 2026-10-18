@@ -157,7 +157,6 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
                   decoration: BoxDecoration(
                     color: AppColors.slate50,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.line),
                   ),
                   child: Column(
                     children: [

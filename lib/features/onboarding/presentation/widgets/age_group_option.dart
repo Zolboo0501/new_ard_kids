@@ -37,10 +37,11 @@ class AgeGroupOption extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 112),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           decoration: BoxDecoration(
+            boxShadow: cardShadow,
             color: selected ? AppColors.sky50 : AppColors.card,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? accent : AppColors.line,
+              color: selected ? accent : Colors.transparent,
               width: selected ? 2 : 1,
             ),
           ),

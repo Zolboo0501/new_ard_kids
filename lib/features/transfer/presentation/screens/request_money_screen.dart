@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
@@ -72,7 +71,6 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 children: EntranceItem.list([
                   AvatarCardArt(
-                    sticker: Stickers.coin,
                     account: Accounts.main,
                     child: SourceCard(amount: _value, label: 'Хүсэх дүн'),
                   ),

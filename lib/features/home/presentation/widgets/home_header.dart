@@ -50,7 +50,7 @@ class HomeHeader extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.slate50,
                       shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.line),
+                      boxShadow: cardShadow,
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: Image.asset(

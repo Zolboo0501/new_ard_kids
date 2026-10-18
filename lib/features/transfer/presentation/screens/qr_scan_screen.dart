@@ -33,7 +33,7 @@ import '../widgets/scan_result_sheet.dart';
 /// view keeps the outgoing pane mounted while the incoming one appears, so
 /// its own start-on-mount ran before the old pane's stop-on-dispose and the
 /// preview came back dead. Only codes inside the on-screen frame are read
-/// ([QrScanViewfinder.frame]).
+/// ([QrScanViewfinder.frameFor]).
 class QrScanScreen extends StatefulWidget {
   const QrScanScreen({super.key});
 
@@ -226,48 +226,20 @@ class _QrScanScreenState extends State<QrScanScreen>
 
   List<Widget> _buildScan() {
     return [
-      AspectRatio(
-        aspectRatio: 0.82,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Only the scanner needs the size: its scan window is the
-              // centred frame, in its own coordinates.
-              Positioned.fill(
-                child: LayoutBuilder(
-                  builder: (context, constraints) => MobileScanner(
-                    controller: _camera,
-                    scanWindow: Rect.fromCenter(
-                      center: constraints.biggest.center(Offset.zero),
-                      width: QrScanViewfinder.frame,
-                      height: QrScanViewfinder.frame,
-                    ),
-                    onDetect: _onDetect,
-                    placeholderBuilder: (_) => const CameraBackdrop(),
-                    errorBuilder: (_, error) {
-                      debugPrint('QR camera: ${error.errorCode} $error');
-                      return CameraError(
-                        error: error,
-                        onRetry: () => unawaited(_retryCamera()),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              // The viewfinder only makes sense over a working camera.
-              Positioned.fill(
-                child: ValueListenableBuilder(
-                  valueListenable: _camera,
-                  builder: (context, state, child) =>
-                      state.error == null ? child! : const SizedBox.shrink(),
-                  child: QrScanViewfinder(scan: _scan),
-                ),
-              ),
-            ],
-          ),
-        ),
+      // The camera runs edge to edge, past the page's side padding; the
+      // frame inside takes 85% of its width.
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth + _bleed * 2;
+          return SizedBox(
+            height: width / 0.82,
+            child: OverflowBox(
+              minWidth: width,
+              maxWidth: width,
+              child: _cameraView(),
+            ),
+          );
+        },
       ),
       const SizedBox(height: 16),
       InfoNote(
@@ -277,6 +249,52 @@ class _QrScanScreenState extends State<QrScanScreen>
             'Өнөөдөр ${formatMnt(Limits.leftToday)} үлдсэн.',
       ),
     ];
+  }
+
+  /// How far the camera reaches past the page's side padding: all of it.
+  static const _bleed = 16.0;
+
+  Widget _cameraView() {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Only the scanner needs the size: its scan window is the centred
+        // frame, in its own coordinates.
+        Positioned.fill(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final frame = QrScanViewfinder.frameFor(constraints.biggest);
+              return MobileScanner(
+                controller: _camera,
+                scanWindow: Rect.fromCenter(
+                  center: constraints.biggest.center(Offset.zero),
+                  width: frame,
+                  height: frame,
+                ),
+                onDetect: _onDetect,
+                placeholderBuilder: (_) => const CameraBackdrop(),
+                errorBuilder: (_, error) {
+                  debugPrint('QR camera: ${error.errorCode} $error');
+                  return CameraError(
+                    error: error,
+                    onRetry: () => unawaited(_retryCamera()),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+        // The viewfinder only makes sense over a working camera.
+        Positioned.fill(
+          child: ValueListenableBuilder(
+            valueListenable: _camera,
+            builder: (context, state, child) =>
+                state.error == null ? child! : const SizedBox.shrink(),
+            child: QrScanViewfinder(scan: _scan),
+          ),
+        ),
+      ],
+    );
   }
 
   List<Widget> _buildMyQr() {

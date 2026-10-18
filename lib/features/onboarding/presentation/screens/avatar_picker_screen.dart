@@ -154,8 +154,10 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                           physics: const NeverScrollableScrollPhysics(),
                           mainAxisSpacing: 16,
                           crossAxisSpacing: 16,
+                          // Circle and padding, then the name, the position
+                          // and two lines of description.
                           mainAxisExtent:
-                              184 + MediaQuery.textScalerOf(context).scale(24),
+                              190 + MediaQuery.textScalerOf(context).scale(74),
                           children: [
                             for (final (i, a) in _avatars.indexed)
                               Entrance(
@@ -163,6 +165,8 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                                 offsetY: 16,
                                 child: AvatarCard(
                                   name: a.name,
+                                  role: a.role,
+                                  description: a.description,
                                   asset: a.portrait,
                                   accent: a.accent,
                                   selected: _selected == i,

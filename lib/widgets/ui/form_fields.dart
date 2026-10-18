@@ -102,7 +102,7 @@ class _AppTextFieldState extends State<AppTextField> {
           color: widget.enabled ? AppColors.card : AppColors.slate50,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: focused ? AppColors.sky400 : AppColors.slate200,
+            color: focused ? AppColors.sky400 : Colors.transparent,
             width: focused ? 1.6 : 1,
           ),
           boxShadow: focused

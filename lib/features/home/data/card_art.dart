@@ -8,10 +8,12 @@ import 'invoice.dart';
 
 /// The chosen character's card art for an account on Home and the summary
 /// cards, or null where the character has none (the plain card is drawn).
+/// The character art below is off while [Stickers.companionArt] is.
 /// All four 10–13 characters (fox, rabbit, bear, cat) have sets, in
 /// `assets/images/teenegars/<art>/cards/`; and all four under-10 cartoons
 /// (fox, bear, rabbit, penguin) in `assets/images/kids/<set>/cards/`.
 String? accountCardArt(String account) {
+  if (!Stickers.companionArt) return null;
   final folder = switch (appAgeGroup.value) {
     AgeGroup.tween when _sets.contains(appAvatar.value.art) =>
       'teenegars/${appAvatar.value.art}',
@@ -41,6 +43,7 @@ const _kidsSets = {'fox', 'bear', 'rabbit', 'penguin'};
 /// `assets/images/kids/<set>/rows/{savings,stocks,rewards}.webp`; all
 /// four 10–13 characters have them, in `assets/images/teenegars/<art>/rows/`.
 ({String asset, Color ink, Color tint})? accountRowArt(String account) {
+  if (!Stickers.companionArt) return null;
   final avatar = appAvatar.value;
   final folder = switch (appAgeGroup.value) {
     AgeGroup.under10 when _kidsRowSets.contains(avatar.stickerSet) =>
@@ -88,6 +91,7 @@ const _teenRowSets = {'fox', 'bear', 'cat', 'rabbit'};
 /// `assets/images/kids/<set>/buttons/`; all four 10–13
 /// characters have them, in `assets/images/teenegars/<art>/buttons/`.
 String? accountActionArt(String label) {
+  if (!Stickers.companionArt) return null;
   final avatar = appAvatar.value;
   final folder = switch (appAgeGroup.value) {
     AgeGroup.under10 when _kidsButtonSets.contains(avatar.stickerSet) =>

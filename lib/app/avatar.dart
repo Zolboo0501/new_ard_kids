@@ -7,23 +7,23 @@ import '../theme/app_theme.dart';
 
 /// The avatar the teen picks in "Аватараа сонго", shown on Home and Profile.
 ///
-/// The art follows [appAgeGroup]: under 10 gets the cartoon companions
-/// (fox, bear, bunny, penguin), 10–13 and 14+ get the streetwear characters
-/// (fox, bear, bunny, cat) from `assets/images/avatars/teen` and `/mature`.
-/// The penguin only exists in the kids' set and the cat only in the older
-/// ones; [forAge] swaps one for the other when the age range changes.
+/// Its picture ([portrait]) is a bean character for every age. The rest of
+/// the art follows [appAgeGroup]: under 10 gets the cartoon companions' stickers
+/// (fox, bear, bunny, penguin), 10–13 and 14+ the streetwear characters
+/// (fox, bear, bunny, cat). The penguin only exists in the kids' set and the
+/// cat only in the older ones; [forAge] swaps one for the other when the age
+/// range changes.
 enum AppAvatar {
   fox(
     id: 'fox',
     stickerSet: 'fox',
     art: 'fox',
-    kidsName: 'Үнэгхэн',
-    olderName: 'Үнэг',
-    role: 'Гүйлгээний мастер',
-    description: 'Мөнгөө хурдан, ухаалгаар тооцоолно!',
+    kidsName: 'Гангаа',
+    olderName: 'Гангаа',
+    role: 'QR төлбөрийн мастер',
+    description: 'Утсаараа хурдан, аюулгүй төлнө!',
     tone: BadgeTone.sky,
     pick: FoxStickers.transfer,
-    kidsPortrait: FoxStickers.avatar,
     savings: FoxStickers.piggy,
     stocks: FoxStickers.growth,
     rewards: FoxStickers.gift,
@@ -32,13 +32,12 @@ enum AppAvatar {
     id: 'bear',
     stickerSet: 'bear',
     art: 'bear',
-    kidsName: 'Бамбарууш',
-    olderName: 'Баавгай',
-    role: 'Хадгаламж сахигч',
-    description: 'Мөнгөө зорилгодоо хүртэл найдвартай хадгална!',
+    kidsName: 'Цахиа',
+    olderName: 'Цахиа',
+    role: 'Оноо цуглуулагч',
+    description: 'Даалгавраа биелүүлж, оноо цуглуулна!',
     tone: BadgeTone.emerald,
     pick: BearStickers.jar,
-    kidsPortrait: BearStickers.avatar,
     savings: BearStickers.piggy,
     stocks: BearStickers.growth,
     rewards: BearStickers.gift,
@@ -47,13 +46,12 @@ enum AppAvatar {
     id: 'bunny',
     stickerSet: 'rabbit',
     art: 'rabbit',
-    kidsName: 'Бүжинхэн',
-    olderName: 'Туулай',
-    role: 'Данс цэнэглэгч',
-    description: 'Эрч хүчтэйгээр өдөр бүр даалгавар биелүүлнэ!',
+    kidsName: 'Хөөсөө',
+    olderName: 'Хөөсөө',
+    role: 'Зарлага хянагч',
+    description: 'Мөнгөө юунд зарцуулснаа тэмдэглэнэ!',
     tone: BadgeTone.amber,
     pick: RabbitStickers.receive,
-    kidsPortrait: RabbitStickers.avatar,
     savings: RabbitStickers.piggy,
     stocks: RabbitStickers.growth,
     rewards: RabbitStickers.gift,
@@ -62,13 +60,12 @@ enum AppAvatar {
     id: 'penguin',
     stickerSet: 'penguin',
     art: null,
-    kidsName: 'Шувуухай',
-    olderName: 'Шувуухай',
-    role: 'Хяналтын нярав',
-    description: 'Зарцуулалт ба тайлангаа нямбай тэмдэглэнэ!',
+    kidsName: 'Вайбаа',
+    olderName: 'Вайбаа',
+    role: 'Хадгаламжийн баатар',
+    description: 'Мөнгөө зорилгодоо хүртэл хуримтлуулна!',
     tone: BadgeTone.slate,
     pick: PenguinStickers.report,
-    kidsPortrait: PenguinStickers.avatar,
     savings: PenguinStickers.piggy,
     stocks: PenguinStickers.growth,
     rewards: PenguinStickers.gift,
@@ -80,13 +77,12 @@ enum AppAvatar {
     id: 'cat',
     stickerSet: 'penguin',
     art: 'cat',
-    kidsName: 'Муур',
-    olderName: 'Муур',
-    role: '',
-    description: '',
+    kidsName: 'Вайбаа',
+    olderName: 'Вайбаа',
+    role: 'Хадгаламжийн баатар',
+    description: 'Мөнгөө зорилгодоо хүртэл хуримтлуулна!',
     tone: BadgeTone.slate,
     pick: PenguinStickers.report,
-    kidsPortrait: PenguinStickers.avatar,
     savings: PenguinStickers.piggy,
     stocks: PenguinStickers.growth,
     rewards: PenguinStickers.gift,
@@ -102,7 +98,6 @@ enum AppAvatar {
     required this.description,
     required this.tone,
     required this.pick,
-    required this.kidsPortrait,
     required this.savings,
     required this.stocks,
     required this.rewards,
@@ -132,18 +127,17 @@ enum AppAvatar {
   /// Shown on its picker card, and on Home for the main account.
   final String pick;
 
-  /// The cartoon set's waving head-and-shoulders.
-  final String kidsPortrait;
-
-  /// Head and shoulders for the round profile pictures, in the set for
-  /// [appAgeGroup].
-  String get portrait => switch ((appAgeGroup.value, art)) {
-    (AgeGroup.tween, final art?) =>
-      'assets/images/avatars/teen/${art}_avatar.png',
-    (AgeGroup.teen, final art?) =>
-      'assets/images/avatars/mature/${art}_avatar.png',
-    _ => kidsPortrait,
-  };
+  /// The bean character as the teen's own picture, the same for every age:
+  /// the avatar picker, the Home header, Profile and every other round
+  /// profile picture. Head-and-shoulders cutouts of the full-body art in
+  /// `assets/images/avatars/bean/` (only `picker/` is bundled).
+  String get portrait =>
+      'assets/images/avatars/bean/picker/${switch (this) {
+        fox => 'orange',
+        bear => 'green',
+        bunny => 'pink',
+        cat || penguin => 'purple',
+      }}.png';
 
   /// The character's mother or father as a round head crop, for the parent
   /// pictures on the parent-link and profile screens. Cut from the full-body
@@ -154,7 +148,9 @@ enum AppAvatar {
   /// companions, which keep their own mom/dad stickers. Null there, and for
   /// the kids-only penguin, which has no streetwear art.
   String? parentFace({required bool dad}) =>
-      art == null || appAgeGroup.value == AgeGroup.under10
+      !Stickers.companionArt ||
+          art == null ||
+          appAgeGroup.value == AgeGroup.under10
       ? null
       : 'assets/images/teenegars/$art/parent/${dad ? 'dad' : 'mom'}_head.png';
 
@@ -211,10 +207,18 @@ abstract final class Stickers {
   static String named(String name, {required String fallback}) =>
       _hasOwn(name) ? _path(name) : fallback;
 
-  /// Whether screens may stand the character's sticker on their summary
-  /// card (`AvatarCardArt`): under 10 and 10–13 have their own sticker sets,
-  /// 14+ has none and the kids' cartoons would undo its grown-up look.
+  /// Whether screens may stand the teen's avatar on their summary card
+  /// (`AvatarCardArt`): under 10 and 10–13 do, 14+ keeps the plain card for
+  /// its grown-up look.
   static bool get onCards => appAgeGroup.value != AgeGroup.teen;
+
+  /// Whether the old companions' own art is drawn: these stickers as icons
+  /// and people pictures, the Home card, row and button art, and the
+  /// parents' faces. Off since the bean characters replaced them as the
+  /// avatar; the bean set has none of that art yet, so the screens show the
+  /// plain cards, line icons and initials, and the bean portrait where the
+  /// avatar itself appears.
+  static const companionArt = false;
 
   /// The stickers each 10–13 set has, cut from its sheet.
   static const _teen = {

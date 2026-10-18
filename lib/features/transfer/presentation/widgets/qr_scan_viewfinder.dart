@@ -11,12 +11,23 @@ class QrScanViewfinder extends StatelessWidget {
 
   final Animation<double> scan;
 
-  /// Side of the square viewfinder; also the scan window.
-  static const frame = 224.0;
+  /// How much of the camera view's width the square frame takes.
+  static const fill = 0.85;
+
+  /// Side of the square viewfinder in a camera view of [size]; also the
+  /// scan window, so only what the frame shows is read.
+  static double frameFor(Size size) => size.shortestSide * fill;
+
   static const _inset = 24.0;
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => _build(frameFor(constraints.biggest)),
+    );
+  }
+
+  Widget _build(double frame) {
     return Stack(
       // Expand so the blur and the hint span the camera view, not just the
       // frame (a Stack otherwise sizes to its one non-positioned child).
@@ -79,8 +90,9 @@ class _OutsideBlur extends StatelessWidget {
   }
 }
 
-/// The whole area minus a centred [QrScanViewfinder.frame] square with
-/// the same rounded corners as [_CornerPainter].
+/// The whole area minus the centred frame square
+/// ([QrScanViewfinder.frameFor]) with the same rounded corners as
+/// [_CornerPainter].
 class _HoleClipper extends CustomClipper<Path> {
   const _HoleClipper();
 
@@ -94,8 +106,8 @@ class _HoleClipper extends CustomClipper<Path> {
       RRect.fromRectAndRadius(
         Rect.fromCenter(
           center: size.center(Offset.zero),
-          width: QrScanViewfinder.frame,
-          height: QrScanViewfinder.frame,
+          width: QrScanViewfinder.frameFor(size),
+          height: QrScanViewfinder.frameFor(size),
         ),
         _radius,
       ),

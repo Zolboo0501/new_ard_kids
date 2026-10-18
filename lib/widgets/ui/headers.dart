@@ -10,12 +10,13 @@ import 'interaction.dart';
 import 'surfaces.dart';
 import 'mascots.dart';
 
-/// Top bar for pushed screens: back button, centered title, optional action.
+/// Top bar for pushed screens: back button, centered title, optional
+/// action. No bottom line and no line under the title: the title alone
+/// names the screen.
 class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
   const SubPageHeader({
     super.key,
     required this.title,
-    this.subtitle,
     this.trailing,
     this.onBack,
     this.background,
@@ -23,7 +24,6 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
   });
 
   final String title;
-  final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onBack;
 
@@ -43,9 +43,6 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
         child: Container(
           height: 64,
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: AppColors.line)),
-          ),
           child: Row(
             children: [
               SizedBox(
@@ -58,28 +55,13 @@ class SubPageHeader extends StatelessWidget implements PreferredSizeWidget {
                     : null,
               ),
               Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AppText(
-                      title,
-                      size: 16,
-                      weight: FontWeight.w700,
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (subtitle != null)
-                      AppText(
-                        subtitle!,
-                        size: 12,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate400,
-                        textAlign: TextAlign.center,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                  ],
+                child: AppText(
+                  title,
+                  size: 16,
+                  weight: FontWeight.w700,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               SizedBox(

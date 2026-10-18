@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
+import '../../../../widgets/ui/surfaces.dart';
 import '../../../../widgets/value_switcher.dart';
 
 class OtpBox extends StatelessWidget {
@@ -19,10 +20,11 @@ class OtpBox extends StatelessWidget {
       height: 64,
       alignment: Alignment.center,
       decoration: BoxDecoration(
+        boxShadow: cardShadow,
         color: AppColors.slate50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: active ? AppColors.sky500 : AppColors.line,
+          color: active ? AppColors.sky500 : Colors.transparent,
           width: active ? 2 : 1,
         ),
       ),

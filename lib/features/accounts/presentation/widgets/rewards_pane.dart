@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 
 import '../../../../app/accounts.dart';
@@ -115,7 +114,6 @@ class _RewardsPaneState extends State<RewardsPane> {
         // totals) so switching tabs changes the content, not the layout;
         // the warm amber keeps the two accounts apart.
         AvatarCardArt(
-          sticker: Stickers.gift,
           account: Accounts.rewards,
           area: 150,
           size: 100,

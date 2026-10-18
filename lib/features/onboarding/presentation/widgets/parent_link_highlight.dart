@@ -161,8 +161,9 @@ class _ParentPicture extends StatelessWidget {
         errorBuilder: (_, _, _) => glyph,
       );
     }
-    // 14+ has no companion stickers (see `Stickers.onCards`).
-    if (!Stickers.onCards) return glyph;
+    // 14+ has no companion stickers (see `Stickers.onCards`), and the old
+    // companions' art is off (`Stickers.companionArt`).
+    if (!Stickers.companionArt || !Stickers.onCards) return glyph;
     return Padding(
       padding: const EdgeInsets.all(3),
       child: Image.asset(

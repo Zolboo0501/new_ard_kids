@@ -236,7 +236,6 @@ class _PinCodeSheetState extends State<PinCodeSheet>
                     radius: 30,
                     gap: 12,
                     fontSize: 24,
-                    border: AppColors.slate100,
                   ),
                   onDigit: _digit,
                   onBackspace: _backspace,

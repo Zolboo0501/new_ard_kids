@@ -29,10 +29,11 @@ class GenderButton extends StatelessWidget {
           height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
+            boxShadow: cardShadow,
             color: selected ? AppColors.card : AppColors.slate50,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.line,
+              color: selected ? AppColors.sky500 : Colors.transparent,
               width: selected ? 1.5 : 1,
             ),
           ),

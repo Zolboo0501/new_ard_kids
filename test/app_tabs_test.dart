@@ -249,7 +249,8 @@ void main() {
       final (track, pill) = chrome(tester);
 
       expect((track.borderRadius! as BorderRadius).topLeft.x, 999);
-      expect(track.border, isNotNull);
+      // Surfaces carry no outline any more.
+      expect(track.border, isNull);
       expect(pill.color, AppColors.sky500);
       expect((pill.borderRadius! as BorderRadius).topLeft.x, 999);
     });

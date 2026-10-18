@@ -68,7 +68,6 @@ class _CartScreenState extends State<CartScreen> {
       backgroundColor: kPageBackground,
       appBar: SubPageHeader(
         title: 'Миний сагс',
-        subtitle: '${_items.length} бараа сонгогдсон',
         trailing: _items.isEmpty
             ? null
             : CircleIconButton(

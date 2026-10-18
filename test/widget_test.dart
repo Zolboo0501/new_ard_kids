@@ -29,6 +29,7 @@ void main() {
     await tester.enterText(phone, '99ab1123456');
     await tester.pump();
 
-    expect(tester.widget<TextField>(phone).controller!.text, '99112345');
+    // The eight digits, grouped the way the hint reads.
+    expect(tester.widget<TextField>(phone).controller!.text, '9911 2345');
   });
 }

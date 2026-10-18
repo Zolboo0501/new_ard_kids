@@ -68,7 +68,6 @@ class TransferContactAvatar extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: AppColors.slate50,
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.line),
                         ),
                         alignment: Alignment.center,
                         child: LineIcon(
@@ -77,7 +76,8 @@ class TransferContactAvatar extends StatelessWidget {
                           color: AppColors.slate800,
                         ),
                       )
-                    : appAgeGroup.value == AgeGroup.under10
+                    : Stickers.companionArt &&
+                          appAgeGroup.value == AgeGroup.under10
                     // Under 10 a companion sticker for who they are, in
                     // place of the initials.
                     ? Container(

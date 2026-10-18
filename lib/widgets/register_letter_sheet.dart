@@ -165,7 +165,7 @@ class _Slot extends StatelessWidget {
             color: active ? AppColors.slate50 : AppColors.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: active ? AppColors.sky400 : AppColors.slate200,
+              color: active ? AppColors.sky400 : Colors.transparent,
               width: active ? 2 : 1,
             ),
             boxShadow: active

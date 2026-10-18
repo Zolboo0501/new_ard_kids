@@ -32,10 +32,11 @@ class RoleButton extends StatelessWidget {
           height: 48,
           alignment: Alignment.center,
           decoration: BoxDecoration(
+            boxShadow: cardShadow,
             color: selected ? AppColors.sky50 : AppColors.slate50,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.line,
+              color: selected ? AppColors.sky500 : Colors.transparent,
               width: selected ? 2 : 1,
             ),
           ),

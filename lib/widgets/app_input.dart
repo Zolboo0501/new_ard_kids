@@ -5,6 +5,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../theme/app_theme.dart';
 import 'app_text.dart';
+import 'ui/surfaces.dart';
 import 'value_switcher.dart';
 
 /// The label sitting above an [AppInputShell].
@@ -126,7 +127,7 @@ class _AppInputShellState extends State<AppInputShell>
                 ? AppColors.rose400
                 : _focused || widget.valid
                 ? AppColors.sky400
-                : AppColors.slate200,
+                : Colors.transparent,
           ),
           boxShadow: widget.hasError || _focused
               ? [
@@ -137,6 +138,10 @@ class _AppInputShellState extends State<AppInputShell>
                     spreadRadius: 2,
                   ),
                 ]
+              // At rest there is no outline; a white field (on the page)
+              // takes the card's soft lift so it still stands out.
+              : widget.fill == AppColors.card
+              ? cardShadow
               : null,
         ),
         child: Row(
@@ -150,7 +155,6 @@ class _AppInputShellState extends State<AppInputShell>
                 decoration: BoxDecoration(
                   color: AppColors.slate50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.slate100),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),

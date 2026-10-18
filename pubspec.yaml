@@ -121,6 +121,8 @@ flutter:
     - assets/images/teenegars/cat/parent/
     - assets/images/avatars/teen/
     - assets/images/avatars/mature/
+    - assets/images/avatars/bean/picker/
+    - assets/images/welcome/
     - assets/svg/
     - shorebird.yaml
 

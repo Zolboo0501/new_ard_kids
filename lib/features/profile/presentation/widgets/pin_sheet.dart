@@ -105,8 +105,7 @@ class _PinSheetState extends State<PinSheet> {
                 radius: 16,
                 gap: 10,
                 fontSize: 20,
-                border: AppColors.slate100,
-              ),
+                              ),
               onDigit: _digit,
               onBackspace: () {
                 if (_pin.isEmpty) return;

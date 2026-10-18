@@ -16,7 +16,7 @@ void main() {
   test('Welcome has four slides without parent connection', () {
     expect(welcomeSlides, hasLength(4));
     expect(
-      welcomeSlides.map((slide) => slide.asset),
+      welcomeSlides.map((slide) => slide.character),
       isNot(contains('assets/images/onboarding_connection.png')),
     );
   });
@@ -30,37 +30,28 @@ void main() {
     expect(OnboardingStore.seen, isTrue);
   });
 
-  for (final register in [true, false]) {
-    testWidgets(register ? 'Start opens registration' : 'Sign in skips intro', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      final router = AppRoutes.createRouter(initialLocation: AppRoutes.welcome);
-      addTearDown(router.dispose);
-      await tester.pumpWidget(
-        MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
-      );
+  testWidgets('The arrow walks the slides, then opens sign-in', (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final router = AppRoutes.createRouter(initialLocation: AppRoutes.welcome);
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      MaterialApp.router(theme: buildAppTheme(), routerConfig: router),
+    );
+    await tester.pumpAndSettle();
+    for (var i = 0; i < welcomeSlides.length - 1; i++) {
+      expect(OnboardingStore.seen, isFalse);
+      await tester.tap(find.bySemanticsLabel('Дараах'));
       await tester.pumpAndSettle();
-      if (register) {
-        for (var i = 0; i < welcomeSlides.length - 1; i++) {
-          expect(OnboardingStore.seen, isFalse);
-          await tester.tap(find.text('Дараах'));
-          await tester.pumpAndSettle();
-        }
-      }
-      await tester.tap(find.text(register ? 'Эхлэх' : 'Нэвтрэх'));
-      await tester.pumpAndSettle();
-      expect(
-        router.state.uri.toString(),
-        register ? AppRoutes.register : AppRoutes.auth,
-      );
-      expect(find.text(register ? 'Код авах' : 'Үргэлжлүүлэх'), findsOneWidget);
-      expect(OnboardingStore.seen, isTrue);
-      await tester.pumpWidget(const SizedBox());
-    });
-  }
+    }
+    await tester.tap(find.bySemanticsLabel('Эхлэх'));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.toString(), AppRoutes.auth);
+    expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
+    expect(OnboardingStore.seen, isTrue);
+    await tester.pumpWidget(const SizedBox());
+  });
   for (final route in [
     AppRoutes.welcome,
     AppRoutes.ageGroup,
@@ -87,8 +78,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       expect(
-        find
-            .text(route == AppRoutes.welcome ? 'Дараах' : 'Үргэлжлүүлэх')
+        (route == AppRoutes.welcome
+                ? find.bySemanticsLabel('Дараах')
+                : find.text('Үргэлжлүүлэх'))
             .hitTestable(),
         findsOneWidget,
       );
@@ -118,7 +110,7 @@ void main() {
     expect(find.text('Мөнгөө\nцуглуулаарай.').hitTestable(), findsOneWidget);
     await tester.tap(find.text('Алгасах'));
     await tester.pumpAndSettle();
-    expect(router.state.uri.toString(), AppRoutes.register);
+    expect(router.state.uri.toString(), AppRoutes.auth);
     expect(OnboardingStore.seen, isTrue);
     await tester.pumpWidget(const SizedBox());
   });
@@ -160,12 +152,14 @@ void main() {
           expect(tester.takeException(), isNull);
           expect(
             find
-                .text(i == welcomeSlides.length - 1 ? 'Эхлэх' : 'Дараах')
+                .bySemanticsLabel(
+                  i == welcomeSlides.length - 1 ? 'Эхлэх' : 'Дараах',
+                )
                 .hitTestable(),
             findsOneWidget,
           );
           if (i < welcomeSlides.length - 1) {
-            await tester.tap(find.text('Дараах'));
+            await tester.tap(find.bySemanticsLabel('Дараах'));
           }
         }
         await tester.pumpWidget(const SizedBox());

@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../app_text.dart';
 import 'interaction.dart';
 import 'money.dart';
+import 'surfaces.dart';
 import 'mascots.dart';
 
 /// Small filter chip: filled in the accent when selected, so it follows
@@ -41,10 +42,11 @@ class FilterChipPill extends StatelessWidget {
           constraints: const BoxConstraints(minHeight: 36),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
+            boxShadow: cardShadow,
             color: selected ? AppColors.sky500 : AppColors.card,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.line,
+              color: selected ? AppColors.sky500 : Colors.transparent,
             ),
           ),
           child: Row(
@@ -93,13 +95,12 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg, border) = tone.colors;
+    final (bg, fg, _) = tone.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -181,6 +182,7 @@ class QuickAmountChips extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
+                  boxShadow: cardShadow,
                   color: selected == amounts[i]
                       ? AppColors.sky500
                       : AppColors.card,
@@ -188,7 +190,7 @@ class QuickAmountChips extends StatelessWidget {
                   border: Border.all(
                     color: selected == amounts[i]
                         ? AppColors.sky500
-                        : AppColors.line,
+                        : Colors.transparent,
                   ),
                 ),
                 child: FittedBox(

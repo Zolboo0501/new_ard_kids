@@ -200,7 +200,7 @@ abstract final class AppRoutes {
   /// Builds the app router. Tests pass [initialLocation] to start on a screen.
   static GoRouter createRouter({String initialLocation = auth, Object? extra}) {
     return GoRouter(
-      initialLocation: initialLocation,
+      initialLocation: 'welcome',
       initialExtra: extra,
       routes: [
         // Bottom-nav tabs. Each branch keeps its own navigator and state, so

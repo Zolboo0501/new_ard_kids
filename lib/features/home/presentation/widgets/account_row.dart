@@ -53,7 +53,8 @@ class AccountRow extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: art == null ? card : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(kCardRadius),
+        boxShadow: art == null ? cardShadow : null,
       ),
       child: Row(
         children: [
@@ -174,7 +175,7 @@ class AccountRow extends StatelessWidget {
       row = SizedBox(
         height: _bannerRowHeight,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kCardRadius),
           child: Stack(
             children: [
               Positioned.fill(child: ColoredBox(color: card)),

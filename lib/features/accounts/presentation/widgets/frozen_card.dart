@@ -46,8 +46,8 @@ class FrozenCard extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.surface.withValues(alpha: 0.85),
-                  border: Border.all(color: AppColors.line),
                   borderRadius: BorderRadius.circular(999),
+                  boxShadow: cardShadow,
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

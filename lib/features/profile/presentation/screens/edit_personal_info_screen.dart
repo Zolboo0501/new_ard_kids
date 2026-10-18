@@ -101,7 +101,6 @@ class _EditPersonalInfoScreenState extends State<EditPersonalInfoScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.slate50,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.line),
                         ),
                         child: Row(
                           children: [

@@ -73,7 +73,6 @@ class _RewardOpportunitiesScreenState extends State<RewardOpportunitiesScreen> {
       backgroundColor: kPageBackground,
       appBar: SubPageHeader(
         title: 'Урамшуулал',
-        subtitle: 'Оноо цуглуулах саналууд',
         trailing: CircleIconButton(
           icon: Iconsax.message_question_copy,
           label: 'Мэдээлэл',

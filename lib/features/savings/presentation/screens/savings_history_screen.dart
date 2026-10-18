@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 
 import '../../../../app/accounts.dart';
@@ -144,7 +143,6 @@ class _SavingsHistoryScreenState extends State<SavingsHistoryScreen> {
           ),
           children: EntranceItem.list([
             AvatarCardArt(
-              sticker: Stickers.report,
               account: Accounts.savings,
               size: 86,
               area: 118,

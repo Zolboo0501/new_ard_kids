@@ -195,7 +195,7 @@ class _ParentPicture extends StatelessWidget {
         color: AppColors.sky100,
         shape: BoxShape.circle,
       ),
-      child: face != null || Stickers.onCards
+      child: face != null || (Stickers.companionArt && Stickers.onCards)
           ? ClipOval(
               child: Padding(
                 // The head crop fills the disc; a sticker sits inside it.

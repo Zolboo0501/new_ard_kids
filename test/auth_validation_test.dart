@@ -151,8 +151,9 @@ void main() {
       await tester.enterText(_phoneField, '99a1b2!3 45');
       await tester.pump();
 
-      // '99a1b2!3 45' -> the seven digits it contains, under the 8 cap.
-      expect(_textOf(tester, _phoneField), '9912345');
+      // '99a1b2!3 45' -> the seven digits it contains, under the 8 cap,
+      // grouped the way the hint reads.
+      expect(_textOf(tester, _phoneField), '9912 345');
     });
 
     testWidgets('an empty phone shows the required message', (tester) async {

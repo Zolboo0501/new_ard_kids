@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
@@ -40,10 +39,9 @@ class ArdCardPreview extends StatelessWidget {
             excludeSemantics: true,
             child: Container(
               clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(borderRadius: radius),
-              foregroundDecoration: BoxDecoration(
+              decoration: BoxDecoration(
                 borderRadius: radius,
-                border: Border.all(color: AppColors.line),
+                boxShadow: cardShadow,
               ),
               child: Stack(
                 fit: StackFit.expand,

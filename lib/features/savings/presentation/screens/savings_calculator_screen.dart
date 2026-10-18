@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -213,7 +212,6 @@ class _SavingsCalculatorScreenState extends State<SavingsCalculatorScreen> {
             ),
             const SizedBox(height: 16),
             AvatarCardArt(
-              sticker: Stickers.growth,
               account: Accounts.savings,
               child: AppCard(
                 padding: const EdgeInsets.all(20),

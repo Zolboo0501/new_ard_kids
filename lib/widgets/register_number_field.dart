@@ -161,7 +161,7 @@ class _LetterBox extends StatelessWidget {
                   ? AppColors.rose400
                   : filled
                   ? AppColors.sky400
-                  : AppColors.slate200,
+                  : Colors.transparent,
             ),
           ),
           child: filled

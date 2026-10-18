@@ -7,12 +7,14 @@ import '../../../../widgets/ui.dart';
 import '../../../../widgets/value_switcher.dart';
 
 /// One choice in the avatar grid: the portrait in a circle tinted with the
-/// character's own [accent], the name under it, and a ring with a tick in
-/// that accent while it is the selected one.
+/// character's own [accent], the name, position and description under it,
+/// and a ring with a tick in that accent while it is the selected one.
 class AvatarCard extends StatefulWidget {
   const AvatarCard({
     super.key,
     required this.name,
+    required this.role,
+    required this.description,
     required this.asset,
     required this.accent,
     required this.selected,
@@ -20,6 +22,11 @@ class AvatarCard extends StatefulWidget {
   });
 
   final String name;
+
+  /// The character's position ("QR төлбөрийн мастер") and the line about it,
+  /// under the name.
+  final String role;
+  final String description;
   final String asset;
 
   /// The character's accent (see `AppAvatar.accent`).
@@ -82,10 +89,11 @@ class _AvatarCardState extends State<AvatarCard>
               ),
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 6),
               decoration: BoxDecoration(
+                boxShadow: cardShadow,
                 color: selected ? p.c50 : AppColors.card,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: selected ? p.c500 : AppColors.line,
+                  color: selected ? p.c500 : Colors.transparent,
                   width: selected ? 2 : 1,
                 ),
               ),
@@ -179,6 +187,26 @@ class _AvatarCardState extends State<AvatarCard>
                     weight: selected ? FontWeight.w600 : FontWeight.w500,
                     color: selected ? AppColors.slate900 : AppColors.slate600,
                     maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  AppText(
+                    widget.role,
+                    size: 12,
+                    weight: FontWeight.w600,
+                    color: p.c600,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  AppText(
+                    widget.description,
+                    size: 12,
+                    color: AppColors.slate500,
+                    height: 1.3,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

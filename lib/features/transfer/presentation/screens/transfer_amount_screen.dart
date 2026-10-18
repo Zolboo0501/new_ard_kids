@@ -90,7 +90,6 @@ class _TransferAmountScreenState extends State<TransferAmountScreen> {
       backgroundColor: bg,
       appBar: SubPageHeader(
         title: request ? 'Мөнгө хүсэх' : 'Гүйлгээний дүн',
-        subtitle: request ? 'Эцэг эхээсээ' : 'Үндсэн данс',
         background: bg,
         // The requests already sent and their answers.
         trailing: request
@@ -112,9 +111,10 @@ class _TransferAmountScreenState extends State<TransferAmountScreen> {
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                     child: Column(
+                      // Every box spans the page, the amount box included.
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: EntranceItem.list([
                         AvatarCardArt(
-                          sticker: request ? Stickers.coin : Stickers.transfer,
                           account: Accounts.main,
                           size: 80,
                           child: AppCard(

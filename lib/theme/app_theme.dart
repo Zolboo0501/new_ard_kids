@@ -383,9 +383,11 @@ class _Scheme {
     card: Color(0xFFFFFFFF),
     onBright: Color(0xFFFFFFFF),
     shadow: Color(0x140B0C0E),
+    // The two lightest steps (raised fills, quiet tracks) sit close to the
+    // page, so a grey fill reads as a soft tint rather than a block.
     slate: [
-      Color(0xFFF1F2F5),
-      Color(0xFFE9EBEF),
+      Color(0xFFF5F6F8),
+      Color(0xFFEEF0F3),
       Color(0xFFE1E3E8),
       Color(0xFFC3C7CF),
       Color(0xFF6A707D),

@@ -17,17 +17,15 @@ import '../theme/app_theme.dart';
 /// card inside (`AppCard`, `AccountHeroPanel`) goes transparent on its own
 /// by reading [artUnder].
 ///
-/// Otherwise (under 10, whose sets have no card art) the [sticker], a
-/// `Stickers.*` path, stands inside the card on the right, centred
+/// Otherwise (every character since the bean avatars replaced the old
+/// companions, see [Stickers.companionArt]) the teen's bean avatar
+/// ([AppAvatar.portrait]) stands inside the card on the right, centred
 /// vertically: on the whole card, or with [area] on the card's top [area]
-/// points, for a card whose lower rows run full width. Pick a sticker every
-/// set has (avatar, card, coin, gift, goal, growth, lesson, qr, report,
-/// study, success, transfer). 14+ has neither (see [Stickers.onCards]) and
-/// shows the plain card.
+/// points, for a card whose lower rows run full width. 14+ has neither (see
+/// [Stickers.onCards]) and shows the plain card.
 class AvatarCardArt extends StatelessWidget {
   const AvatarCardArt({
     super.key,
-    required this.sticker,
     required this.child,
     this.account,
     this.size = 96,
@@ -36,7 +34,6 @@ class AvatarCardArt extends StatelessWidget {
     this.radius = 16,
   });
 
-  final String sticker;
   final Widget child;
 
   /// The account (an `Accounts.*` IBAN) whose card art backs the card.
@@ -80,7 +77,7 @@ class AvatarCardArt extends StatelessWidget {
             child: Align(
               alignment: Alignment(1, alignY),
               child: Image.asset(
-                sticker,
+                appAvatar.value.portrait,
                 width: size,
                 height: size,
                 fit: BoxFit.contain,

@@ -67,7 +67,6 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
       backgroundColor: bg,
       appBar: SubPageHeader(
         title: 'Орлого хийх',
-        subtitle: 'Хадгаламжийн данс',
         background: bg,
         trailing: CircleIconButton(
           icon: Iconsax.info_circle_copy,
@@ -89,9 +88,10 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen> {
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
                     child: Column(
+                      // Every box spans the page, the amount box included.
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: EntranceItem.list([
                         AvatarCardArt(
-                          sticker: Stickers.coin,
                           account: Accounts.savings,
                           size: 80,
                           child: AppCard(

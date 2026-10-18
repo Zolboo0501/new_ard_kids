@@ -33,10 +33,11 @@ class RelationButton extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           padding: const EdgeInsets.fromLTRB(4, 12, 4, 10),
           decoration: BoxDecoration(
+            boxShadow: cardShadow,
             color: selected ? AppColors.sky50 : AppColors.card,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: selected ? AppColors.sky500 : AppColors.line,
+              color: selected ? AppColors.sky500 : Colors.transparent,
               width: 1.5,
             ),
           ),

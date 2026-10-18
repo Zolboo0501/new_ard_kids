@@ -84,14 +84,10 @@ void main() {
     tester,
   ) async {
     _usePhoneViewport(tester);
-    for (final (age, names, folder) in [
-      (
-        AgeGroup.under10,
-        ['Үнэгхэн', 'Бамбарууш', 'Бүжинхэн', 'Шувуухай'],
-        'kids/',
-      ),
-      (AgeGroup.tween, ['Үнэг', 'Баавгай', 'Туулай', 'Муур'], 'avatars/teen/'),
-      (AgeGroup.teen, ['Үнэг', 'Баавгай', 'Туулай', 'Муур'], 'avatars/mature/'),
+    for (final (age, names) in [
+      (AgeGroup.under10, ['Гангаа', 'Цахиа', 'Хөөсөө', 'Вайбаа']),
+      (AgeGroup.tween, ['Гангаа', 'Цахиа', 'Хөөсөө', 'Вайбаа']),
+      (AgeGroup.teen, ['Гангаа', 'Цахиа', 'Хөөсөө', 'Вайбаа']),
     ]) {
       appAgeGroup.value = age;
       await tester.pumpWidget(const SizedBox());
@@ -100,12 +96,14 @@ void main() {
       for (final name in names) {
         expect(find.text(name), findsOneWidget, reason: '$age $name');
       }
-      final portraits = tester
-          .widgetList<Image>(find.byType(Image))
-          .map((i) => i.image)
-          .whereType<AssetImage>()
-          .map((a) => a.assetName);
-      expect(portraits, everyElement(contains(folder)), reason: '$age');
+      // Every age shows the bean characters on the cards.
+      for (final avatar in AppAvatar.forAge(age)) {
+        expect(
+          _showsAsset(tester, avatar.portrait),
+          isTrue,
+          reason: '$age $avatar',
+        );
+      }
     }
   });
 
@@ -139,17 +137,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 900));
 
     // The first card is selected by default, so pick a different one.
-    expect(_mascotScale(tester, 'Баавгай'), 1);
+    expect(_mascotScale(tester, 'Цахиа'), 1);
 
-    await tester.tap(find.text('Баавгай'));
+    await tester.tap(find.text('Цахиа'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 120));
 
     // Mid-pop the mascot is larger than its resting size.
-    expect(_mascotScale(tester, 'Баавгай'), greaterThan(1));
+    expect(_mascotScale(tester, 'Цахиа'), greaterThan(1));
 
     await tester.pump(const Duration(milliseconds: 600));
-    expect(_mascotScale(tester, 'Баавгай'), 1);
+    expect(_mascotScale(tester, 'Цахиа'), 1);
 
     // Exactly one avatar carries the tick.
     expect(
@@ -176,7 +174,7 @@ void main() {
     router.push(AppRoutes.avatarPickerEdit);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 900));
-    await tester.tap(find.text('Баавгай'));
+    await tester.tap(find.text('Цахиа'));
     await tester.pump();
     final save = find.text('Аватараа хадгалах');
     await tester.ensureVisible(save);
@@ -215,7 +213,7 @@ void main() {
     }
   });
 
-  testWidgets('Avatar: summary cards carry the character\'s sticker, not 14+', (
+  testWidgets('Avatar: summary cards carry the bean avatar, not 14+', (
     tester,
   ) async {
     // The asset names on screen, unwrapping resized images.
@@ -227,30 +225,29 @@ void main() {
           _ => '',
         },
     ];
-    final companion = RegExp(r'/(fox|bear|rabbit|penguin|cat)/');
+    final oldCompanion = RegExp(r'/(fox|bear|rabbit|penguin|cat)/');
 
     _usePhoneViewport(tester);
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
-    // 10–13: the fox's card art backs the card.
-    for (final (route, art) in [
-      (AppRoutes.transfer, 'teenegars/fox/cards/main.webp'),
-      (AppRoutes.savingsAccount, 'teenegars/fox/cards/savings.webp'),
-    ]) {
+    // 10–13: the fox's bean stands on the card, with none of the old art.
+    for (final route in [AppRoutes.transfer, AppRoutes.savingsAccount]) {
       GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
       await tester.pumpAndSettle();
-      expect(assets(), contains(endsWith(art)), reason: route);
+      expect(assets(), contains(AppAvatar.fox.portrait), reason: route);
+      expect(assets().where(oldCompanion.hasMatch), isEmpty, reason: route);
     }
 
-    // Under 10 the cartoon's own card set backs the card.
+    // Under 10 too.
     appAgeGroup.value = AgeGroup.under10;
     appAvatar.value = AppAvatar.bunny;
     await tester.pumpAndSettle();
-    expect(assets(), contains(endsWith('kids/rabbit/cards/savings.webp')));
+    expect(assets(), contains(AppAvatar.bunny.portrait));
+    expect(assets().where(oldCompanion.hasMatch), isEmpty);
 
-    // 14+ has no stickers of its own, so no companion art at all.
+    // 14+ keeps the plain card.
     appAgeGroup.value = AgeGroup.teen;
     await tester.pumpAndSettle();
-    expect(assets().where(companion.hasMatch), isEmpty);
+    expect(assets(), isNot(contains(AppAvatar.bunny.portrait)));
   });
 }

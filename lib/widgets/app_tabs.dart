@@ -61,7 +61,6 @@ class AppTabsStyle {
   static AppTabsStyle get pill => AppTabsStyle(
     trackColor: AppColors.card,
     trackRadius: 999,
-    trackBorder: AppColors.line,
     pillColor: AppColors.sky500,
     pillRadius: 999,
     labelSize: 12,
@@ -80,7 +79,6 @@ class AppTabsStyle {
     trackRadius: 16,
     pillColor: AppColors.isDark ? AppColors.slate50 : AppColors.card,
     pillRadius: 12,
-    trackBorder: AppColors.line,
     labelSize: 13,
     selectedColor: AppColors.slate900,
     unselectedColor: AppColors.slate500,

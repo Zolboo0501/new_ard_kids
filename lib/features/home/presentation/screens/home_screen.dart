@@ -12,7 +12,6 @@ import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/entrance.dart';
 import '../../data/card_art.dart';
-import '../widgets/account_panel.dart';
 import '../widgets/accounts_pane.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/cards_pane.dart';
@@ -31,62 +30,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final _pages = PageController(viewportFraction: 0.92);
+  final _pages = PageController();
   int _page = 0;
   int _tab = 0;
   int _invoiceFilter = 0;
   bool _hideBalance = false;
 
-  /// Every account in the carousel: label, number, balance, the colour
-  /// its panel glows in, its glyph, a short line about what it is for and
-  /// an optional picture that replaces the glyph.
-  static List<(String, String, int, Color, LineGlyph, String, String?)>
-  get _cards => [
-    (
-      'Харилцах данс',
-      Accounts.main,
-      Balances.main,
-      AppColors.sky500,
-      LineGlyph.pocket,
-      'Өдөр тутмын зарлага',
-      null,
-    ),
-    (
-      'Хадгаламж данс',
-      Accounts.savings,
-      Balances.savings,
-      AppColors.violet500,
-      LineGlyph.piggy,
-      'Хуримтлал',
-      null,
-    ),
-    (
-      'Миний өв',
-      Accounts.stocks,
-      Balances.stocks,
-      AppColors.lime500,
-      LineGlyph.sprout,
-      'Хөрөнгө оруулалт',
-      null,
-    ),
-    (
-      'Урамшууллын данс',
-      Accounts.rewards,
-      Balances.rewards,
-      AppColors.pink500,
-      LineGlyph.gift,
-      'Оноо, урамшуулал',
-      null,
-    ),
-    (
-      'Ард койн данс',
-      Accounts.coin,
-      Balances.coins,
-      AppColors.amber500,
-      LineGlyph.ardCoin,
-      '1 Койн = 1₮',
-      null,
-    ),
+  /// Every account the balance swipes through: label, number, balance.
+  static List<(String, String, int)> get _accounts => [
+    ('Харилцах данс', Accounts.main, Balances.main),
+    ('Хадгаламж данс', Accounts.savings, Balances.savings),
+    ('Миний өв', Accounts.stocks, Balances.stocks),
+    ('Урамшууллын данс', Accounts.rewards, Balances.rewards),
+    ('Ард койн данс', Accounts.coin, Balances.coins),
   ];
 
   @override
@@ -142,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   };
 
-  /// How far card [i] sits from the centre of the carousel, in pages:
+  /// How far account [i] sits from the one showing, in pages:
   /// 0 when it's showing, ±1 one swipe away. Before the PageView has a size
   /// (first frame) the settled page is used.
   double _pageOffset(int i) {
@@ -157,8 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final linked = widget.parentLinked;
     final avatar = appAvatar.value;
-    final count = linked ? _cards.length : 1;
-    final current = _cards[linked ? _page : 0];
+    final count = linked ? _accounts.length : 1;
+    final current = _accounts[linked ? _page : 0];
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: AppColors.isDark
           ? SystemUiOverlayStyle.light
@@ -173,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onSettings: () => _go(AppRoutes.security),
             ),
             Expanded(
-              // Split on wide windows: the card and balance stay on the left
+              // Split on wide windows: the balance and its actions stay on the left
               // while the accounts, invoices and cards scroll on the right.
               child: EntranceScope(
                 child: AdaptiveSplit(
@@ -184,21 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     AppLayout.navClearance(context),
                   ),
                   leading: [
-                    _carousel(count, linked),
+                    // The balance itself is the carousel: swipe it to move
+                    // between accounts, with the dots under it.
+                    _balances(count, linked),
                     if (linked) ...[
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       PageDots(count: count, index: _page),
                     ],
-                    const SizedBox(height: 18),
-                    HomeBalance(
-                      label: current.$1,
-                      account: linked ? current.$2 : Accounts.main,
-                      balance: linked ? current.$3 : Balances.main,
-                      hidden: _hideBalance,
-                      limited: !linked,
-                      onToggleHidden: () =>
-                          setState(() => _hideBalance = !_hideBalance),
-                    ),
                     const SizedBox(height: 20),
                     HomeActions(
                       actions: _actions(linked ? current.$2 : Accounts.main),
@@ -245,98 +193,43 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// The account panels over a soft glow in the selected account's colour.
-  /// Each panel spans most of the width at a fixed height; neighbours peek
-  /// in at the sides and shrink as they leave.
-  Widget _carousel(int count, bool linked) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // The height a bank-card-shaped panel at 80% of the width would
-        // have; the panels themselves are wider (92%) at that height.
-        final height = (constraints.maxWidth * 0.8 - 28) / 1.586 + 24;
-        final glow = _cards[linked ? _page : 0].$4;
-        return SizedBox(
-          height: height,
-          child: Stack(
-            // The glow spills past the carousel, into the page around it.
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              // The glow, cross-fading to the next account's colour. It is
-              // positioned past the carousel's bounds so it spills around
-              // the card instead of hiding under it.
-              Positioned(
-                left: 0,
-                right: 0,
-                top: -14,
-                bottom: -14,
-                child: TweenAnimationBuilder<Color?>(
-                  duration: const Duration(milliseconds: 420),
-                  curve: appEmphasizedDecelerate,
-                  tween: ColorTween(end: glow),
-                  // A soft light behind the card, brightest at its centre and
-                  // spilling well past its edges.
-                  // A circle stretched sideways into a wide ellipse, so the
-                  // light reaches past the card's sides but has fully faded
-                  // before the list's top and bottom edges.
-                  builder: (context, c, _) => IgnorePointer(
-                    child: Transform.scale(
-                      scaleX: 1.9,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: RadialGradient(
-                            center: const Alignment(-0.04, 0),
-                            radius: 0.5,
-                            colors: [
-                              (c ?? glow).withValues(alpha: 0.28),
-                              (c ?? glow).withValues(alpha: 0.1),
-                              (c ?? glow).withValues(alpha: 0),
-                            ],
-                            stops: const [0.35, 0.7, 1],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+  /// One balance per account in a swipeable pager. The account in view
+  /// sits at full strength; a neighbour dims and shrinks as it leaves.
+  Widget _balances(int count, bool linked) {
+    final scaler = MediaQuery.textScalerOf(context);
+    // The label, the amount, the optional limit line and the number row.
+    final height =
+        scaler.scale(20) + 4 + 56 + (linked ? 0 : scaler.scale(16) + 6) + 48;
+    return SizedBox(
+      height: height,
+      child: PageView.builder(
+        controller: _pages,
+        itemCount: count,
+        onPageChanged: (i) => setState(() => _page = i),
+        itemBuilder: (_, i) => AnimatedBuilder(
+          animation: _pages,
+          builder: (context, child) {
+            final t = _pageOffset(i).abs().clamp(0.0, 1.0);
+            // Dimmed toward the canvas with a colour filter rather than
+            // Opacity, which the shell's fade test reads.
+            return ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                AppColors.surface.withValues(alpha: 0.7 * t),
+                BlendMode.srcATop,
               ),
-              PageView.builder(
-                controller: _pages,
-                itemCount: count,
-                onPageChanged: (i) => setState(() => _page = i),
-                itemBuilder: (_, i) => AnimatedBuilder(
-                  animation: _pages,
-                  builder: (context, child) {
-                    final t = _pageOffset(i).abs().clamp(0.0, 1.0);
-                    // Dimmed toward the canvas with a colour filter
-                    // rather than Opacity, which the shell's fade test reads.
-                    return ColorFiltered(
-                      colorFilter: ColorFilter.mode(
-                        AppColors.surface.withValues(alpha: 0.55 * t),
-                        BlendMode.srcATop,
-                      ),
-                      child: Transform.scale(scale: 1 - 0.1 * t, child: child),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(6, 12, 6, 12),
-                    child: HomeAccountPanel(
-                      aspectRatio: null,
-                      label: _cards[i].$1,
-                      account: _cards[i].$2,
-                      accent: _cards[i].$4,
-                      icon: _cards[i].$5,
-                      subtitle: _cards[i].$6,
-                      image: _cards[i].$7,
-                      background: accountCardArt(_cards[i].$2),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              child: Transform.scale(scale: 1 - 0.08 * t, child: child),
+            );
+          },
+          child: HomeBalance(
+            label: _accounts[i].$1,
+            account: linked ? _accounts[i].$2 : Accounts.main,
+            balance: linked ? _accounts[i].$3 : Balances.main,
+            hidden: _hideBalance,
+            limited: !linked,
+            onToggleHidden: () => setState(() => _hideBalance = !_hideBalance),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

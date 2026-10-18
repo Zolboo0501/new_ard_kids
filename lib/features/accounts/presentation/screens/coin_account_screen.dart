@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 
 import '../../../../app/accounts.dart';
@@ -115,7 +114,6 @@ class _CoinAccountPaneState extends State<CoinAccountPane> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AvatarCardArt(
-          sticker: Stickers.coin,
           account: Accounts.coin,
           area: 150,
           size: 100,

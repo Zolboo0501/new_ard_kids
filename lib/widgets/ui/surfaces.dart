@@ -11,14 +11,33 @@ import 'interaction.dart';
 /// Page background shared by the in-app screens. Follows the theme.
 Color get kPageBackground => AppColors.pageBackground;
 
-/// A rounded card on the night canvas: flat [AppColors.card], no border
-/// unless one is asked for (a dashed card always draws its outline).
+/// The corner every card shares: large and soft, so a card reads as one
+/// smooth object rather than a framed box.
+const kCardRadius = 28.0;
+
+/// The card's lift on the light canvas: a wide, faint shadow that sits a
+/// little below it, with no outline. On the dark canvas shadows don't read,
+/// so cards stay flat there.
+List<BoxShadow>? get cardShadow => AppColors.isDark
+    ? null
+    : [
+        BoxShadow(
+          color: AppColors.shadow,
+          blurRadius: 32,
+          spreadRadius: -6,
+          offset: const Offset(0, 12),
+        ),
+      ];
+
+/// A card: [AppColors.card] with the shared large corner ([kCardRadius])
+/// and a soft lift on the light canvas ([cardShadow]); no border unless one
+/// is asked for (a dashed card always draws its outline).
 class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(14),
-    this.radius = 16,
+    this.radius = kCardRadius,
     this.color,
     this.borderColor,
     this.dashed = false,
@@ -39,8 +58,8 @@ class AppCard extends StatelessWidget {
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
 
-  /// Kept so existing callers still build; shadows don't read on the dark
-  /// canvas, so cards are flat.
+  /// The soft lift ([cardShadow]); off for a card inside another surface
+  /// or over art. Always flat on the dark canvas.
   final bool shadow;
 
   /// Art behind the content, clipped to the card's rounded shape.
@@ -50,18 +69,16 @@ class AppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final borderColor =
         this.borderColor ?? (dashed ? AppColors.slate300 : null);
+    final onArt = AvatarCardArt.artUnder(context);
     Widget box = Container(
       margin: margin,
       padding: padding,
       decoration: BoxDecoration(
         // Transparent on a character's card art (AvatarCardArt).
-        color:
-            color ??
-            (AvatarCardArt.artUnder(context)
-                ? Colors.transparent
-                : AppColors.card),
+        color: color ?? (onArt ? Colors.transparent : AppColors.card),
         image: image,
         borderRadius: BorderRadius.circular(radius),
+        boxShadow: shadow && !dashed && !onArt ? cardShadow : null,
         border: dashed || borderColor == null
             ? null
             : Border.all(color: borderColor),
@@ -214,8 +231,9 @@ class SoftButton extends StatelessWidget {
   final Widget? leading;
   final double height;
 
-  /// The colors default to the theme accent (`AppColors.sky50`/`sky600`/
-  /// `sky100`). Pass [Colors.transparent] as [border] for no border.
+  /// The colors default to the theme accent (`AppColors.sky50`/`sky600`),
+  /// with no outline: the tinted fill marks the button. Pass a [border] to
+  /// draw one.
   final Color? background;
   final Color? foreground;
   final Color? border;
@@ -223,7 +241,7 @@ class SoftButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final foreground = this.foreground ?? AppColors.sky600;
-    final border = this.border ?? AppColors.sky100;
+    final border = this.border ?? Colors.transparent;
     return Semantics(
       button: true,
       child: Pressable(

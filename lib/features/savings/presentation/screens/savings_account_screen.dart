@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/age_group.dart';
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 
@@ -42,7 +41,6 @@ class SavingsAccountScreen extends StatelessWidget {
           gap: 16,
           leading: [
             AvatarCardArt(
-              sticker: Stickers.goal,
               account: Accounts.savings,
               size: 86,
               area: 118,

@@ -19,7 +19,6 @@ class PinSummary extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.slate50,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.slate100),
       ),
       child: Column(
         children: [

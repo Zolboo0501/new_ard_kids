@@ -210,7 +210,9 @@ class LineIcon extends StatelessWidget {
   /// Screens under [PlainLineIcons] (sign-in and the auth steps) keep the
   /// lines.
   static String? kidsSticker(LineGlyph glyph, double size) {
-    if (appAgeGroup.value != AgeGroup.under10 || size < _stickerMin) {
+    if (!Stickers.companionArt ||
+        appAgeGroup.value != AgeGroup.under10 ||
+        size < _stickerMin) {
       return null;
     }
     return switch (glyph) {

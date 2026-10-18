@@ -167,7 +167,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(appAgeGroup.value, AgeGroup.under10);
     expect(appAvatar.value, AppAvatar.penguin);
-    for (final name in ['Үнэгхэн', 'Бамбарууш', 'Бүжинхэн', 'Шувуухай']) {
+    for (final name in ['Гангаа', 'Цахиа', 'Хөөсөө', 'Вайбаа']) {
       expect(find.text(name), findsOneWidget);
     }
     final assets = tester
@@ -177,7 +177,7 @@ void main() {
         .map((asset) => asset.assetName)
         .toList();
     expect(assets, hasLength(4));
-    expect(assets, everyElement(startsWith('assets/images/kids/')));
+    expect(assets, everyElement(startsWith('assets/images/avatars/bean/')));
     expect(
       await const FlutterSecureStorage().read(key: 'app_age_group'),
       'under10',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../app/avatar.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -219,7 +218,6 @@ class _TransferScreenState extends State<TransferScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 children: EntranceItem.list([
                   AvatarCardArt(
-                    sticker: Stickers.transfer,
                     account: Accounts.main,
                     child: SourceCard(amount: _amountValue),
                   ),

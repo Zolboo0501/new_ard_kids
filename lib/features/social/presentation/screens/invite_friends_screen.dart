@@ -275,7 +275,7 @@ class _InvitePair extends StatelessWidget {
             ),
           ),
           _circle(
-            Stickers.onCards
+            Stickers.companionArt && Stickers.onCards
                 ? Padding(
                     padding: const EdgeInsets.all(3),
                     child: Image.asset(

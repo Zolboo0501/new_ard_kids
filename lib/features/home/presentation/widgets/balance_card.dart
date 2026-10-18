@@ -86,7 +86,7 @@ class HomeBalance extends StatelessWidget {
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.line),
+                boxShadow: cardShadow,
               ),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 220),
@@ -335,12 +335,12 @@ class _BigAction extends StatelessWidget {
         scale: 0.96,
         child: Container(
           height: 64,
+          // The card style: the large shared corner and the soft lift, no
+          // outline.
           decoration: BoxDecoration(
             color: primary ? AppColors.sky500 : AppColors.card,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: primary ? AppColors.sky500 : AppColors.line,
-            ),
+            borderRadius: BorderRadius.circular(kCardRadius),
+            boxShadow: cardShadow,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

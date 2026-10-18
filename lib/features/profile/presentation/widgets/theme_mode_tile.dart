@@ -39,9 +39,10 @@ class ThemeModeTile extends StatelessWidget {
               height: 112,
               padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
+                boxShadow: cardShadow,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: selected ? accent : AppColors.line,
+                  color: selected ? accent : Colors.transparent,
                   width: selected ? 2 : 1,
                 ),
               ),
