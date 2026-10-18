@@ -9,6 +9,8 @@ import '../widgets/group_label.dart';
 import '../widgets/pin_sheet.dart';
 import '../widgets/setting_tile.dart';
 import '../widgets/settings_group.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Аюулгүй байдал": PIN, biometrics and device settings.
 class SecurityScreen extends StatefulWidget {
@@ -18,7 +20,11 @@ class SecurityScreen extends StatefulWidget {
   State<SecurityScreen> createState() => _SecurityScreenState();
 }
 
-class _SecurityScreenState extends State<SecurityScreen> {
+class _SecurityScreenState extends State<SecurityScreen> with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _pinKey = GlobalKey();
+  final _biometricKey = GlobalKey();
+
   bool _parentApproval = true;
 
   /// The device's enrolled biometric, or null while checking or when there
@@ -36,6 +42,21 @@ class _SecurityScreenState extends State<SecurityScreen> {
   @override
   void initState() {
     super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('security', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Данс чинь аюулгүй байхад туслъя!'),
+        AvatarTourStep(
+          target: _pinKey,
+          text: 'ПИН код, нууц үгээ эндээс сольж болно.',
+        ),
+        AvatarTourStep(
+          target: _biometricKey,
+          text: 'Царай эсвэл хурууны хээгээр хурдан нэвтрэхийг эндээс асаана.',
+        ),
+      ];
+    });
     _lifecycle;
     _checkBiometric();
   }
@@ -115,23 +136,29 @@ class _SecurityScreenState extends State<SecurityScreen> {
           ),
           children: EntranceItem.list([
             const GroupLabel('ПИН код ба нууц үг'),
-            SettingsGroup(
-              children: [
-                SettingTile(
-                  glyph: LineGlyph.lock,
-                  title: 'ПИН код солих',
-                  onTap: _changePin,
-                ),
-                SettingTile(
-                  glyph: LineGlyph.shield,
-                  title: 'Нэвтрэх нууц үг',
-                  onTap: () => showAppSnack(context, 'Нууц үг солих'),
-                ),
-              ],
+            KeyedSubtree(
+              key: _pinKey,
+              child: SettingsGroup(
+                children: [
+                  SettingTile(
+                    glyph: LineGlyph.lock,
+                    title: 'ПИН код солих',
+                    onTap: _changePin,
+                  ),
+                  SettingTile(
+                    glyph: LineGlyph.shield,
+                    title: 'Нэвтрэх нууц үг',
+                    onTap: () => showAppSnack(context, 'Нууц үг солих'),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             const GroupLabel('Биометр'),
-            SettingsGroup(children: [_buildBiometricTile()]),
+            KeyedSubtree(
+              key: _biometricKey,
+              child: SettingsGroup(children: [_buildBiometricTile()]),
+            ),
             const SizedBox(height: 24),
             const GroupLabel('Эцэг эхийн баталгаажуулалт'),
             SettingsGroup(

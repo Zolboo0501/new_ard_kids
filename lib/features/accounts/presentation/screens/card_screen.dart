@@ -17,6 +17,8 @@ import '../widgets/card_summary.dart';
 import '../widgets/frozen_card.dart';
 import '../widgets/info_row.dart';
 import '../widgets/transaction_list.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Миний карт": the teen's active Ard Card, opened from Home's Карт tab.
 /// Shows the card, its details and limits, lets them freeze it, and lists
@@ -28,7 +30,36 @@ class CardScreen extends StatefulWidget {
   State<CardScreen> createState() => _CardScreenState();
 }
 
-class _CardScreenState extends State<CardScreen> {
+class _CardScreenState extends State<CardScreen> with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _cardKey = GlobalKey();
+  final _actionsKey = GlobalKey();
+  final _infoKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('card', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Энэ бол чиний Ard карт!'),
+        AvatarTourStep(
+          target: _cardKey,
+          text: 'Картаа энд харна. Түр хаасан үед энд тэмдэглэгдэнэ.',
+        ),
+        AvatarTourStep(
+          target: _actionsKey,
+          text: 'Дугаараа харах, хуулах, картаа түр хаах товчнууд.',
+        ),
+        AvatarTourStep(
+          target: _infoKey,
+          text: 'Картын дугаар, хугацаа, лимит энд бичигдсэн.',
+        ),
+      ];
+    });
+  }
+
   // Mock card until it comes from the API.
   static const _number = '4000123456785521';
   static const _holder = Kid.cardName;
@@ -93,58 +124,67 @@ class _CardScreenState extends State<CardScreen> {
           ),
           gap: 16,
           leading: [
-            FrozenCard(
-              frozen: _frozen,
-              child: ArdCardPreview(holder: _holder, number: _printedNumber),
+            KeyedSubtree(
+              key: _cardKey,
+              child: FrozenCard(
+                frozen: _frozen,
+                child: ArdCardPreview(holder: _holder, number: _printedNumber),
+              ),
             ),
             const SizedBox(height: 16),
             CardSummary(frozen: _frozen),
             const SizedBox(height: 14),
-            Row(
-              children: [
-                Expanded(
-                  child: CardActionTile(
-                    glyph: _showNumber ? LineGlyph.eyeOff : LineGlyph.eye,
-                    label: _showNumber ? 'Дугаар нуух' : 'Дугаар харах',
-                    onTap: () => setState(() => _showNumber = !_showNumber),
+            KeyedSubtree(
+              key: _actionsKey,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CardActionTile(
+                      glyph: _showNumber ? LineGlyph.eyeOff : LineGlyph.eye,
+                      label: _showNumber ? 'Дугаар нуух' : 'Дугаар харах',
+                      onTap: () => setState(() => _showNumber = !_showNumber),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: CardActionTile(
-                    glyph: _frozen ? LineGlyph.lock : LineGlyph.snowflake,
-                    label: _frozen ? 'Карт нээх' : 'Түр хаах',
-                    highlighted: _frozen,
-                    onTap: _toggleFrozen,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CardActionTile(
+                      glyph: _frozen ? LineGlyph.lock : LineGlyph.snowflake,
+                      label: _frozen ? 'Карт нээх' : 'Түр хаах',
+                      highlighted: _frozen,
+                      onTap: _toggleFrozen,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: CardActionTile(
-                    glyph: LineGlyph.copy,
-                    label: 'Дугаар хуулах',
-                    onTap: () {
-                      Clipboard.setData(const ClipboardData(text: _number));
-                      showAppSnack(context, 'Картын дугаар хуулагдлаа');
-                    },
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CardActionTile(
+                      glyph: LineGlyph.copy,
+                      label: 'Дугаар хуулах',
+                      onTap: () {
+                        Clipboard.setData(const ClipboardData(text: _number));
+                        showAppSnack(context, 'Картын дугаар хуулагдлаа');
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
           trailing: [
-            CardSection(
-              title: 'Картын мэдээлэл',
-              children: [
-                InfoRow(label: 'Картын дугаар', value: _printedNumber),
-                const InfoRow(label: 'Дуусах хугацаа', value: _expiry),
-                const InfoRow(label: 'Эзэмшигч', value: _holder),
-                InfoRow(
-                  label: 'Холбосон данс',
-                  value: maskIban(Accounts.main),
-                  last: true,
-                ),
-              ],
+            KeyedSubtree(
+              key: _infoKey,
+              child: CardSection(
+                title: 'Картын мэдээлэл',
+                children: [
+                  InfoRow(label: 'Картын дугаар', value: _printedNumber),
+                  const InfoRow(label: 'Дуусах хугацаа', value: _expiry),
+                  const InfoRow(label: 'Эзэмшигч', value: _holder),
+                  InfoRow(
+                    label: 'Холбосон данс',
+                    value: maskIban(Accounts.main),
+                    last: true,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             CardSection(

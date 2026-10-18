@@ -21,6 +21,7 @@ import '../widgets/camera_error.dart';
 import '../widgets/fake_qr_painter.dart';
 import '../widgets/qr_scan_viewfinder.dart';
 import '../widgets/scan_result_sheet.dart';
+import '../../../../widgets/avatar_tour.dart';
 
 /// "QR уншуулах": a live camera QR scanner (mobile_scanner) plus the
 /// "Миний QR" tab.
@@ -42,7 +43,14 @@ class QrScanScreen extends StatefulWidget {
 }
 
 class _QrScanScreenState extends State<QrScanScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with
+        SingleTickerProviderStateMixin,
+        WidgetsBindingObserver,
+        AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _tabsKey = GlobalKey();
+  final _cameraKey = GlobalKey();
+
   late final _scan = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 2200),
@@ -63,6 +71,22 @@ class _QrScanScreenState extends State<QrScanScreen>
   @override
   void initState() {
     super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('qr_scan', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. QR кодоор хурдан төлөхийг хамт үзье!'),
+        AvatarTourStep(
+          target: _tabsKey,
+          text:
+              'QR унших — дэлгүүрийн кодыг уншуулна. Миний QR — өөрийн кодоо бусдад харуулна.',
+        ),
+        AvatarTourStep(
+          target: _cameraKey,
+          text: 'Кодыг хүрээн дотор байлгахад автоматаар уншина.',
+        ),
+      ];
+    });
     WidgetsBinding.instance.addObserver(this);
     // After the first frame, so the scanner widget is attached.
     WidgetsBinding.instance.addPostFrameCallback((_) => _startCamera());
@@ -201,14 +225,17 @@ class _QrScanScreenState extends State<QrScanScreen>
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AppTabs(
-              tabs: const [
-                AppTab('QR унших', icon: Iconsax.scan_barcode_copy),
-                AppTab('Миний QR', icon: Iconsax.scanner_copy),
-              ],
-              index: _tab,
-              style: AppTabsStyle.solid,
-              onChanged: _setTab,
+            KeyedSubtree(
+              key: _tabsKey,
+              child: AppTabs(
+                tabs: const [
+                  AppTab('QR унших', icon: Iconsax.scan_barcode_copy),
+                  AppTab('Миний QR', icon: Iconsax.scanner_copy),
+                ],
+                index: _tab,
+                style: AppTabsStyle.solid,
+                onChanged: _setTab,
+              ),
             ),
             const SizedBox(height: 16),
             AppTabView(
@@ -228,18 +255,21 @@ class _QrScanScreenState extends State<QrScanScreen>
     return [
       // The camera runs edge to edge, past the page's side padding; the
       // frame inside takes 85% of its width.
-      LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth + _bleed * 2;
-          return SizedBox(
-            height: width / 0.82,
-            child: OverflowBox(
-              minWidth: width,
-              maxWidth: width,
-              child: _cameraView(),
-            ),
-          );
-        },
+      KeyedSubtree(
+        key: _cameraKey,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth + _bleed * 2;
+            return SizedBox(
+              height: width / 0.82,
+              child: OverflowBox(
+                minWidth: width,
+                maxWidth: width,
+                child: _cameraView(),
+              ),
+            );
+          },
+        ),
       ),
       const SizedBox(height: 16),
       InfoNote(

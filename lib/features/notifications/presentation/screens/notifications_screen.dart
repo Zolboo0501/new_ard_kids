@@ -11,6 +11,8 @@ import '../../../../widgets/ui.dart';
 import '../../data/app_notification.dart';
 import '../widgets/group_header.dart';
 import '../widgets/notification_card.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Мэдэгдэл": notification feed with category filters.
 class NotificationsScreen extends StatefulWidget {
@@ -20,7 +22,27 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class _NotificationsScreenState extends State<NotificationsScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _filtersKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('notifications', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Шинэ мэдэгдэл бүр энд ирнэ.'),
+        AvatarTourStep(
+          target: _filtersKey,
+          text: 'Гүйлгээ, хүсэлт, зорилго гэх мэтээр шүүж харж болно.',
+        ),
+      ];
+    });
+  }
+
   late final _items = [
     AppNotification(
       route: AppRoutes.home,
@@ -157,28 +179,31 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            SizedBox(
-              height: 44,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (final (i, l) in [
-                    'Бүгд',
-                    'Гүйлгээ',
-                    'Хүсэлт',
-                    'Зорилго, шагнал',
-                  ].indexed)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Center(
-                        child: FilterChipPill(
-                          label: l,
-                          selected: _filter == i,
-                          onTap: () => setState(() => _filter = i),
+            KeyedSubtree(
+              key: _filtersKey,
+              child: SizedBox(
+                height: 44,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    for (final (i, l) in [
+                      'Бүгд',
+                      'Гүйлгээ',
+                      'Хүсэлт',
+                      'Зорилго, шагнал',
+                    ].indexed)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: Center(
+                          child: FilterChipPill(
+                            label: l,
+                            selected: _filter == i,
+                            onTap: () => setState(() => _filter = i),
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),

@@ -1,16 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
-import '../../../../app/home_tour_store.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
+import '../../../../widgets/avatar_tour.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../widgets/entrance.dart';
@@ -23,7 +21,6 @@ import '../widgets/invoices_pane.dart';
 import '../widgets/locked_accounts_pane.dart';
 import '../../data/spending_stats.dart';
 import '../widgets/home_spending_card.dart';
-import '../widgets/home_tour.dart';
 import '../widgets/page_dots.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -35,7 +32,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with AvatarTourHost {
   final _pages = PageController();
   int _page = 0;
   int _tab = 0;
@@ -61,50 +58,37 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     appAvatar.addListener(_onAvatarChanged);
-    // The first visit: the avatar walks the teen through Home as soon as it
-    // opens. Its greeting points at nothing, so the screen's entrance
-    // finishes behind it before the first spotlight.
-    if (HomeTourStore.pending) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _startTour());
-    }
-  }
-
-  Future<void> _startTour() async {
-    if (!mounted || !HomeTourStore.pending) return;
-    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
-    // Marked done up front, so it can't open twice.
-    unawaited(HomeTourStore.complete());
-    final name = appAvatar.value.name;
-    await showHomeTour(
-      context,
-      steps: [
-        HomeTourStep(
+    // The first visit: the avatar walks the teen through Home.
+    startAvatarTour('home', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(
           text:
               'Сайн уу! Би $name. Ard Kids-ийн нүүр хуудастай хамт '
               'танилцъя!',
         ),
-        HomeTourStep(
+        AvatarTourStep(
           target: _balanceKey,
           text:
               'Энд дансны үлдэгдэл чинь харагдана. Хажуу тийш гүйлгээд '
               'бусад дансаа хараарай.',
         ),
-        HomeTourStep(
+        AvatarTourStep(
           target: _actionsKey,
           text:
               'Эндээс мөнгө шилжүүлж, эцэг эхээсээ мөнгө хүсэх '
               'боломжтой.',
         ),
-        HomeTourStep(
+        AvatarTourStep(
           target: _spendingKey,
           text: 'Энэ 7 хоногт хэдийг юунд зарцуулснаа эндээс хараарай.',
         ),
-        HomeTourStep(
+        AvatarTourStep(
           target: _tabsKey,
           text: 'Данс, нэхэмжлэх, картаа эндээс солиод үзээрэй.',
         ),
-      ],
-    );
+      ];
+    });
   }
 
   void _onAvatarChanged() => setState(() {});

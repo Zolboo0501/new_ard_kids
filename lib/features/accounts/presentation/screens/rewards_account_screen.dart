@@ -8,6 +8,8 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import 'coin_account_screen.dart';
 import '../widgets/rewards_pane.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Урамшууллын данс": reward points balance and history, with the coin
 /// account ([CoinAccountPane]) as a second tab. [initialTab] 1 opens straight
@@ -21,7 +23,32 @@ class RewardsAccountScreen extends StatefulWidget {
   State<RewardsAccountScreen> createState() => _RewardsAccountScreenState();
 }
 
-class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
+class _RewardsAccountScreenState extends State<RewardsAccountScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _tabsKey = GlobalKey();
+  final _paneKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('rewards_account', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Оноо, койноо энд цуглуулна!'),
+        AvatarTourStep(
+          target: _tabsKey,
+          text: 'Урамшуулал ба Ард койны хооронд эндээс шилжинэ.',
+        ),
+        AvatarTourStep(
+          target: _paneKey,
+          text: 'Хэдэн оноо, койнтой болсноо, юунаас авснаа эндээс хараарай.',
+        ),
+      ];
+    });
+  }
+
   late int _tab = widget.initialTab;
 
   /// The eye button's state, shared by both tabs: hides every account
@@ -48,26 +75,32 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AppTabs(
-              tabs: const [AppTab('Урамшуулал'), AppTab('Койн')],
-              index: _tab,
-              dotOnActive: true,
-              style: AppTabsStyle.card,
-              onChanged: (i) => setState(() => _tab = i),
+            KeyedSubtree(
+              key: _tabsKey,
+              child: AppTabs(
+                tabs: const [AppTab('Урамшуулал'), AppTab('Койн')],
+                index: _tab,
+                dotOnActive: true,
+                style: AppTabsStyle.card,
+                onChanged: (i) => setState(() => _tab = i),
+              ),
             ),
             const SizedBox(height: 14),
-            AppTabView(
-              index: _tab,
-              child: coins
-                  ? CoinAccountPane(
-                      hidden: _hidden,
-                      onToggleHidden: _toggleHidden,
-                    )
-                  : RewardsPane(
-                      hidden: _hidden,
-                      onToggleHidden: _toggleHidden,
-                      onOpen: (r) => context.push(r),
-                    ),
+            KeyedSubtree(
+              key: _paneKey,
+              child: AppTabView(
+                index: _tab,
+                child: coins
+                    ? CoinAccountPane(
+                        hidden: _hidden,
+                        onToggleHidden: _toggleHidden,
+                      )
+                    : RewardsPane(
+                        hidden: _hidden,
+                        onToggleHidden: _toggleHidden,
+                        onOpen: (r) => context.push(r),
+                      ),
+              ),
             ),
           ]),
         ),

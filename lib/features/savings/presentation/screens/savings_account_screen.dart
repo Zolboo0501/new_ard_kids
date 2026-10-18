@@ -16,10 +16,47 @@ import '../../data/savings_goal.dart';
 import '../widgets/goal_tile.dart';
 import '../widgets/savings_account_shortcut.dart';
 import '../widgets/stat_strip.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Хадгаламжийн данс": balance, interest summary, shortcuts and goals.
-class SavingsAccountScreen extends StatelessWidget {
+class SavingsAccountScreen extends StatefulWidget {
   const SavingsAccountScreen({super.key});
+
+  @override
+  State<SavingsAccountScreen> createState() => _SavingsAccountScreenState();
+}
+
+class _SavingsAccountScreenState extends State<SavingsAccountScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _summaryKey = GlobalKey();
+  final _actionsKey = GlobalKey();
+  final _goalsKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('savings_account', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Хадгаламжаа хамт өсгөцгөөе!'),
+        AvatarTourStep(
+          target: _summaryKey,
+          text: 'Нийт хуримтлал, хүү, дуусах огноо энд харагдана.',
+        ),
+        AvatarTourStep(
+          target: _actionsKey,
+          text: 'Эндээс мөнгө нэмж, хүүгээ тооцоолж, түүхээ харна.',
+        ),
+        AvatarTourStep(
+          target: _goalsKey,
+          text: 'Зорилгоо нэмээд, хэр ойртсоноо хараарай.',
+        ),
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,131 +77,140 @@ class SavingsAccountScreen extends StatelessWidget {
           ),
           gap: 16,
           leading: [
-            AvatarCardArt(
-              account: Accounts.savings,
-              size: 86,
-              area: 118,
-              child: AppCard(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(
-                      'Нийт хуримтлал',
-                      size: 13,
-                      weight: FontWeight.w500,
-                      color: AppColors.slate500,
-                    ),
-                    const SizedBox(height: 4),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: BalanceText(
-                        Balances.savings,
-                        size: 40,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate900,
+            KeyedSubtree(
+              key: _summaryKey,
+              child: AvatarCardArt(
+                account: Accounts.savings,
+                size: 86,
+                area: 118,
+                child: AppCard(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        'Нийт хуримтлал',
+                        size: 13,
+                        weight: FontWeight.w500,
+                        color: AppColors.slate500,
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      maskIban(Accounts.savings),
-                      style: moneyStyle(size: 13, color: AppColors.slate500),
-                    ),
-                    Divider(height: 32, color: AppColors.line),
-                    StatStrip(
-                      items: [
-                        ('Бодогдсон хүү', 48250, AppColors.emerald600),
-                        ('Жилийн хүү', '13.5%', AppColors.slate900),
-                        ('Дуусах огноо', '2026.12.31', AppColors.slate900),
-                      ],
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: BalanceText(
+                          Balances.savings,
+                          size: 40,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        maskIban(Accounts.savings),
+                        style: moneyStyle(size: 13, color: AppColors.slate500),
+                      ),
+                      Divider(height: 32, color: AppColors.line),
+                      StatStrip(
+                        items: [
+                          ('Бодогдсон хүү', 48250, AppColors.emerald600),
+                          ('Жилийн хүү', '13.5%', AppColors.slate900),
+                          ('Дуусах огноо', '2026.12.31', AppColors.slate900),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                SavingsAccountShortcut(
-                  label: 'Орлого хийх',
-                  // Under 10 the piggy bank, which shows the companion's
-                  // piggy sticker; the plus never becomes a sticker.
-                  glyph: appAgeGroup.value == AgeGroup.under10
-                      ? LineGlyph.piggy
-                      : LineGlyph.plus,
-                  onTap: () => go(AppRoutes.savingsDeposit),
-                ),
-                const SizedBox(width: 8),
-                SavingsAccountShortcut(
-                  label: 'Тооцоолуур',
-                  glyph: LineGlyph.calculator,
-                  onTap: () => go(AppRoutes.savingsCalculator),
-                ),
-                const SizedBox(width: 8),
-                SavingsAccountShortcut(
-                  label: 'Түүх',
-                  glyph: LineGlyph.history,
-                  onTap: () => go(AppRoutes.savingsHistory),
-                ),
-              ],
+            KeyedSubtree(
+              key: _actionsKey,
+              child: Row(
+                children: [
+                  SavingsAccountShortcut(
+                    label: 'Орлого хийх',
+                    // Under 10 the piggy bank, which shows the companion's
+                    // piggy sticker; the plus never becomes a sticker.
+                    glyph: appAgeGroup.value == AgeGroup.under10
+                        ? LineGlyph.piggy
+                        : LineGlyph.plus,
+                    onTap: () => go(AppRoutes.savingsDeposit),
+                  ),
+                  const SizedBox(width: 8),
+                  SavingsAccountShortcut(
+                    label: 'Тооцоолуур',
+                    glyph: LineGlyph.calculator,
+                    onTap: () => go(AppRoutes.savingsCalculator),
+                  ),
+                  const SizedBox(width: 8),
+                  SavingsAccountShortcut(
+                    label: 'Түүх',
+                    glyph: LineGlyph.history,
+                    onTap: () => go(AppRoutes.savingsHistory),
+                  ),
+                ],
+              ),
             ),
           ],
           trailing: [
-            AppCard(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          'Миний зорилтууд',
-                          size: 16,
-                          weight: FontWeight.w700,
-                          color: AppColors.slate900,
+            KeyedSubtree(
+              key: _goalsKey,
+              child: AppCard(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppText(
+                            'Миний зорилтууд',
+                            size: 16,
+                            weight: FontWeight.w700,
+                            color: AppColors.slate900,
+                          ),
                         ),
-                      ),
-                      Semantics(
-                        button: true,
-                        label: 'Шинэ зорилт нэмэх',
-                        excludeSemantics: true,
-                        child: Pressable(
-                          onTap: () => go(AppRoutes.newGoal),
-                          child: SizedBox(
-                            height: 44,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                LineIcon(
-                                  LineGlyph.plus,
-                                  size: 18,
-                                  color: AppColors.sky600,
-                                ),
-                                const SizedBox(width: 4),
-                                AppText(
-                                  'Шинэ зорилт',
-                                  size: 13,
-                                  weight: FontWeight.w600,
-                                  color: AppColors.sky600,
-                                ),
-                              ],
+                        Semantics(
+                          button: true,
+                          label: 'Шинэ зорилт нэмэх',
+                          excludeSemantics: true,
+                          child: Pressable(
+                            onTap: () => go(AppRoutes.newGoal),
+                            child: SizedBox(
+                              height: 44,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  LineIcon(
+                                    LineGlyph.plus,
+                                    size: 18,
+                                    color: AppColors.sky600,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  AppText(
+                                    'Шинэ зорилт',
+                                    size: 13,
+                                    weight: FontWeight.w600,
+                                    color: AppColors.sky600,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                    for (final (i, g) in kSampleGoals.indexed) ...[
+                      if (i > 0) Divider(height: 1, color: AppColors.line),
+                      ListItemEntrance(
+                        id: g.title,
+                        index: i,
+                        child: GoalTile(goal: g),
                       ),
                     ],
-                  ),
-                  for (final (i, g) in kSampleGoals.indexed) ...[
-                    if (i > 0) Divider(height: 1, color: AppColors.line),
-                    ListItemEntrance(
-                      id: g.title,
-                      index: i,
-                      child: GoalTile(goal: g),
-                    ),
                   ],
-                ],
+                ),
               ),
             ),
           ],

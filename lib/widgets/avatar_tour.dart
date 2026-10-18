@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/avatar.dart';
-import '../../../../theme/app_theme.dart';
-import '../../../../widgets/app_text.dart';
-import '../../../../widgets/ui.dart';
+import '../app/avatar.dart';
+import '../app/tour_store.dart';
+import '../theme/app_theme.dart';
+import 'app_text.dart';
+import 'ui.dart';
 
-/// One stop of [HomeTour]: the part of Home to spotlight (none for the
-/// greeting) and what the avatar says about it.
-class HomeTourStep {
-  const HomeTourStep({this.target, required this.text});
+/// One stop of [AvatarTour]: the part of the screen to spotlight (none for
+/// the greeting) and what the avatar says about it.
+class AvatarTourStep {
+  const AvatarTourStep({this.target, required this.text});
 
   final GlobalKey? target;
   final String text;
 }
 
-/// Opens [HomeTour] over the whole app, the bottom bar included.
-Future<void> showHomeTour(
+/// Opens [AvatarTour] over the whole app, the bottom bar included.
+Future<void> showAvatarTour(
   BuildContext context, {
-  required List<HomeTourStep> steps,
+  required List<AvatarTourStep> steps,
 }) {
   return showGeneralDialog(
     context: context,
@@ -25,26 +26,31 @@ Future<void> showHomeTour(
     barrierColor: Colors.transparent,
     barrierLabel: 'Танилцуулга',
     transitionDuration: const Duration(milliseconds: 250),
-    pageBuilder: (_, _, _) => HomeTour(steps: steps),
+    pageBuilder: (_, _, _) => AvatarTour(steps: steps),
     transitionBuilder: (_, animation, _, child) =>
         FadeTransition(opacity: animation, child: child),
   );
 }
 
-/// Home's first-visit tour, led by the teen's avatar: the screen dims, the
-/// part being explained sits in a soft spotlight (scrolled into view
+/// A screen's first-visit tour, led by the teen's avatar: the screen dims,
+/// the part being explained sits in a soft spotlight (scrolled into view
 /// first), and the avatar explains it in a speech bubble beside it. Дараах
-/// moves on, Алгасах ends it; both close the dialog when done.
-class HomeTour extends StatefulWidget {
-  const HomeTour({super.key, required this.steps});
+/// moves on, Алгасах ends it; both close the dialog when done. Screens start
+/// it with [AvatarTourHost].
+///
+/// The first step should be a greeting with no target: it opens while the
+/// screen may still be sliding in, and the first spotlight is measured only
+/// after the teen moves on.
+class AvatarTour extends StatefulWidget {
+  const AvatarTour({super.key, required this.steps});
 
-  final List<HomeTourStep> steps;
+  final List<AvatarTourStep> steps;
 
   @override
-  State<HomeTour> createState() => _HomeTourState();
+  State<AvatarTour> createState() => _AvatarTourState();
 }
 
-class _HomeTourState extends State<HomeTour> {
+class _AvatarTourState extends State<AvatarTour> {
   int _index = 0;
 
   /// The spotlight, in this overlay's coordinates; null for no spotlight.
@@ -56,7 +62,7 @@ class _HomeTourState extends State<HomeTour> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus());
   }
 
-  HomeTourStep get _step => widget.steps[_index];
+  AvatarTourStep get _step => widget.steps[_index];
   bool get _last => _index == widget.steps.length - 1;
 
   /// Scrolls the step's target into view, then spotlights it.
@@ -333,4 +339,21 @@ class _SpotlightPainter extends CustomPainter {
   @override
   bool shouldRepaint(_SpotlightPainter old) =>
       old.hole != hole || old.color != color;
+}
+
+/// Gives a screen its first-visit avatar tour: call [startAvatarTour] from
+/// `initState`. The tour opens after the first frame, once, if the screen
+/// is on top and its tour is still owed ([TourStore]); it is marked done as
+/// it opens, so leaving midway never brings it back.
+mixin AvatarTourHost<T extends StatefulWidget> on State<T> {
+  void startAvatarTour(String id, List<AvatarTourStep> Function() steps) {
+    if (!TourStore.pending(id)) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !TourStore.pending(id)) return;
+      if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      // Done up front, so it can't open twice.
+      TourStore.complete(id);
+      await showAvatarTour(context, steps: steps());
+    });
+  }
 }

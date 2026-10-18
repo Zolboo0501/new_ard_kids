@@ -9,11 +9,42 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/social_initials_avatar.dart';
+import '../../../../widgets/avatar_tour.dart';
 
 /// "Найз урих": the bonus both friends get, the invite code, and who has
 /// joined.
-class InviteFriendsScreen extends StatelessWidget {
+class InviteFriendsScreen extends StatefulWidget {
   const InviteFriendsScreen({super.key});
+
+  @override
+  State<InviteFriendsScreen> createState() => _InviteFriendsScreenState();
+}
+
+class _InviteFriendsScreenState extends State<InviteFriendsScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _codeKey = GlobalKey();
+  final _shareKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('invite_friends', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Найзаа урьж оноо цуглуулцгаая!'),
+        AvatarTourStep(
+          target: _codeKey,
+          text: 'Найз чинь бүртгүүлэхэд та хоёулаа шагнал авна.',
+        ),
+        AvatarTourStep(
+          target: _shareKey,
+          text: 'Урилгаа эндээс найздаа шууд илгээгээрэй.',
+        ),
+      ];
+    });
+  }
 
   static const _code = 'TEMU26';
 
@@ -57,77 +88,80 @@ class InviteFriendsScreen extends StatelessWidget {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            AppCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  const _InvitePair(),
-                  const SizedBox(height: 14),
-                  // The bonus each of the two gets.
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      AppText(
-                        'Хоёулаа',
-                        size: 15,
-                        weight: FontWeight.w600,
-                        color: AppColors.slate600,
-                      ),
-                      const SizedBox(width: 8),
-                      BalanceText(
-                        Limits.inviteBonus,
-                        size: 34,
-                        weight: FontWeight.w700,
-                        space: false,
-                        color: AppColors.emerald600,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  AppText(
-                    'Найз чинь энэ кодоор бүртгүүлбэл та хоёр урамшуулал авна.',
-                    size: 14,
-                    color: AppColors.slate500,
-                    height: 1.4,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 18),
-                  Container(
-                    padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.slate50,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
+            KeyedSubtree(
+              key: _codeKey,
+              child: AppCard(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  children: [
+                    const _InvitePair(),
+                    const SizedBox(height: 14),
+                    // The bonus each of the two gets.
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Expanded(
-                          child: SelectableText(
-                            _code,
-                            style: moneyStyle(
-                              size: 20,
-                              weight: FontWeight.w600,
-                              color: AppColors.slate900,
-                              letterSpacing: 2,
-                            ),
-                          ),
+                        AppText(
+                          'Хоёулаа',
+                          size: 15,
+                          weight: FontWeight.w600,
+                          color: AppColors.slate600,
                         ),
-                        SoftButton(
-                          label: 'Хуулах',
-                          leading: LineIcon(
-                            LineGlyph.copy,
-                            size: 18,
-                            color: AppColors.sky600,
-                          ),
-                          height: 44,
-                          border: Colors.transparent,
-                          onPressed: () => _copy(context),
+                        const SizedBox(width: 8),
+                        BalanceText(
+                          Limits.inviteBonus,
+                          size: 34,
+                          weight: FontWeight.w700,
+                          space: false,
+                          color: AppColors.emerald600,
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    AppText(
+                      'Найз чинь энэ кодоор бүртгүүлбэл та хоёр урамшуулал авна.',
+                      size: 14,
+                      color: AppColors.slate500,
+                      height: 1.4,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.slate50,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: SelectableText(
+                              _code,
+                              style: moneyStyle(
+                                size: 20,
+                                weight: FontWeight.w600,
+                                color: AppColors.slate900,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                          ),
+                          SoftButton(
+                            label: 'Хуулах',
+                            leading: LineIcon(
+                              LineGlyph.copy,
+                              size: 18,
+                              color: AppColors.sky600,
+                            ),
+                            height: 44,
+                            border: Colors.transparent,
+                            onPressed: () => _copy(context),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -202,9 +236,12 @@ class InviteFriendsScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            PrimaryButton(
-              label: 'Урилга хуваалцах',
-              onPressed: () => _copy(context),
+            KeyedSubtree(
+              key: _shareKey,
+              child: PrimaryButton(
+                label: 'Урилга хуваалцах',
+                onPressed: () => _copy(context),
+              ),
             ),
           ]),
         ),

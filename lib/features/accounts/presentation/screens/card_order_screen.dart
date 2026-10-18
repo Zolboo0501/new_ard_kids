@@ -12,6 +12,8 @@ import '../widgets/delivery_option.dart';
 import '../widgets/ard_card_preview.dart';
 import '../widgets/price_row.dart';
 import '../widgets/total_box.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Карт захиалга": order a physical Ard Card.
 class CardOrderScreen extends StatefulWidget {
@@ -21,7 +23,11 @@ class CardOrderScreen extends StatefulWidget {
   State<CardOrderScreen> createState() => _CardOrderScreenState();
 }
 
-class _CardOrderScreenState extends State<CardOrderScreen> {
+class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _previewKey = GlobalKey();
+  final _priceKey = GlobalKey();
+
   static const _printFee = 10000;
   static const _deliveryFee = 5000;
   static const _balance = Balances.main;
@@ -35,6 +41,21 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
   @override
   void initState() {
     super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('card_order', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Шинэ карт захиалъя!'),
+        AvatarTourStep(
+          target: _previewKey,
+          text: 'Карт дээрх нэр чинь энд яг ийм харагдана.',
+        ),
+        AvatarTourStep(
+          target: _priceKey,
+          text: 'Хураамж, үлдэгдлээ шалгаад, Карт захиалах дараарай.',
+        ),
+      ];
+    });
     _name.addListener(() => setState(() {}));
     _address.addListener(() => setState(() {}));
   }
@@ -72,10 +93,13 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            ArdCardPreview(
-              holder: _name.text.trim().isEmpty
-                  ? Kid.cardName
-                  : _name.text.trim().toUpperCase(),
+            KeyedSubtree(
+              key: _previewKey,
+              child: ArdCardPreview(
+                holder: _name.text.trim().isEmpty
+                    ? Kid.cardName
+                    : _name.text.trim().toUpperCase(),
+              ),
             ),
             const SizedBox(height: 16),
             CardOrderSection(
@@ -181,22 +205,25 @@ class _CardOrderScreenState extends State<CardOrderScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            CardOrderSection(
-              title: 'Төлбөрийн мэдээлэл',
-              children: [
-                PriceRow('Карт хэвлэх хураамж', _printFee),
-                PriceRow(
-                  'Хүргэлтийн төлбөр',
-                  _homeDelivery ? _deliveryFee : 'Үнэгүй',
-                ),
-                PriceRow('Боломжит үлдэгдэл', _balance),
-                const SizedBox(height: 12),
-                TotalBox(
-                  label: 'Нийт төлөх дүн',
-                  sub: 'Халаасны данснаас суутгана',
-                  total: _total,
-                ),
-              ],
+            KeyedSubtree(
+              key: _priceKey,
+              child: CardOrderSection(
+                title: 'Төлбөрийн мэдээлэл',
+                children: [
+                  PriceRow('Карт хэвлэх хураамж', _printFee),
+                  PriceRow(
+                    'Хүргэлтийн төлбөр',
+                    _homeDelivery ? _deliveryFee : 'Үнэгүй',
+                  ),
+                  PriceRow('Боломжит үлдэгдэл', _balance),
+                  const SizedBox(height: 12),
+                  TotalBox(
+                    label: 'Нийт төлөх дүн',
+                    sub: 'Халаасны данснаас суутгана',
+                    total: _total,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             PrimaryButton(

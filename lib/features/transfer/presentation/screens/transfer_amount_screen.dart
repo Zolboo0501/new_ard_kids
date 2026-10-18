@@ -16,6 +16,7 @@ import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
 import '../../../savings/presentation/widgets/quick_button.dart';
 import '../widgets/limit_note.dart';
+import '../../../../widgets/avatar_tour.dart';
 
 /// "Гүйлгээний дүн": the first step of a transfer. The teen types the amount
 /// on a keypad, then picks the recipient on [AppRoutes.transfer], which gets
@@ -36,7 +37,43 @@ class TransferAmountScreen extends StatefulWidget {
   State<TransferAmountScreen> createState() => _TransferAmountScreenState();
 }
 
-class _TransferAmountScreenState extends State<TransferAmountScreen> {
+class _TransferAmountScreenState extends State<TransferAmountScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _amountKey = GlobalKey();
+  final _quickKey = GlobalKey();
+  final _keypadKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour(widget.request ? 'request_amount' : 'transfer_amount', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(
+          text: widget.request
+              ? 'Би $name. Эцэг эхээсээ мөнгө хүсэх амархан, хамт хийцгээе!'
+              : 'Би $name. Найз, эцэг эхдээ мөнгө илгээхийг хамт хийцгээе!',
+        ),
+        AvatarTourStep(
+          target: _amountKey,
+          text: widget.request
+              ? 'Хүсэх дүн чинь энд харагдана.'
+              : 'Илгээх дүн энд харагдана. Боломжит үлдэгдлээсээ хэтрүүлж болохгүй шүү.',
+        ),
+        AvatarTourStep(
+          target: _quickKey,
+          text: 'Түгээмэл дүнгээс нэг товшоод сонгож болно.',
+        ),
+        AvatarTourStep(
+          target: _keypadKey,
+          text: 'Эсвэл дүнгээ энэ товчлуураар бичээд, Үргэлжлүүлэх дараарай.',
+        ),
+      ];
+    });
+  }
+
   static const _maxDigits = 9;
   static const _quick = [5000, 10000, 20000, 50000];
 
@@ -114,98 +151,105 @@ class _TransferAmountScreenState extends State<TransferAmountScreen> {
                       // Every box spans the page, the amount box included.
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: EntranceItem.list([
-                        AvatarCardArt(
-                          account: Accounts.main,
-                          size: 80,
-                          child: AppCard(
-                            // The amount is centred in the space left of
-                            // the sticker, not under it.
-                            padding: EdgeInsets.fromLTRB(
-                              20,
-                              20,
-                              Stickers.onCards ? 96 : 20,
-                              20,
-                            ),
-                            child: Column(
-                              children: [
-                                AppText(
-                                  request ? 'Хүсэх дүн' : 'Илгээх дүн',
-                                  size: 13,
-                                  weight: FontWeight.w500,
-                                  color: AppColors.slate500,
-                                ),
-                                const SizedBox(height: 4),
-                                FittedBox(
-                                  child: BalanceText(
-                                    _amount,
-                                    size: 40,
-                                    weight: FontWeight.w600,
-                                    currencyWeight: FontWeight.w600,
-                                    color: error != null
-                                        ? AppColors.rose600
-                                        : AppColors.slate900,
-                                    currencyColor: error != null
-                                        ? AppColors.rose600
-                                        : AppColors.slate500,
+                        KeyedSubtree(
+                          key: _amountKey,
+                          child: AvatarCardArt(
+                            account: Accounts.main,
+                            size: 80,
+                            child: AppCard(
+                              // The amount is centred in the space left of
+                              // the sticker, not under it.
+                              padding: EdgeInsets.fromLTRB(
+                                20,
+                                20,
+                                Stickers.onCards ? 96 : 20,
+                                20,
+                              ),
+                              child: Column(
+                                children: [
+                                  AppText(
+                                    request ? 'Хүсэх дүн' : 'Илгээх дүн',
+                                    size: 13,
+                                    weight: FontWeight.w500,
+                                    color: AppColors.slate500,
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Semantics(
-                                  liveRegion: true,
-                                  child: error != null
-                                      ? AppText(
-                                          error,
-                                          size: 13,
-                                          weight: FontWeight.w500,
-                                          color: AppColors.rose600,
-                                          textAlign: TextAlign.center,
-                                        )
-                                      : Text.rich(
-                                          TextSpan(
-                                            text: request
-                                                ? 'Үндсэн дансны үлдэгдэл '
-                                                : 'Боломжит үлдэгдэл ',
-                                            children: [
-                                              WidgetSpan(
-                                                alignment: PlaceholderAlignment
-                                                    .baseline,
-                                                baseline:
-                                                    TextBaseline.alphabetic,
-                                                child: BalanceText(
-                                                  Balances.main,
-                                                  size: 13,
-                                                  weight: FontWeight.w600,
-                                                  color: AppColors.slate700,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          style: inter(
+                                  const SizedBox(height: 4),
+                                  FittedBox(
+                                    child: BalanceText(
+                                      _amount,
+                                      size: 40,
+                                      weight: FontWeight.w600,
+                                      currencyWeight: FontWeight.w600,
+                                      color: error != null
+                                          ? AppColors.rose600
+                                          : AppColors.slate900,
+                                      currencyColor: error != null
+                                          ? AppColors.rose600
+                                          : AppColors.slate500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Semantics(
+                                    liveRegion: true,
+                                    child: error != null
+                                        ? AppText(
+                                            error,
                                             size: 13,
-                                            color: AppColors.slate500,
+                                            weight: FontWeight.w500,
+                                            color: AppColors.rose600,
+                                            textAlign: TextAlign.center,
+                                          )
+                                        : Text.rich(
+                                            TextSpan(
+                                              text: request
+                                                  ? 'Үндсэн дансны үлдэгдэл '
+                                                  : 'Боломжит үлдэгдэл ',
+                                              children: [
+                                                WidgetSpan(
+                                                  alignment:
+                                                      PlaceholderAlignment
+                                                          .baseline,
+                                                  baseline:
+                                                      TextBaseline.alphabetic,
+                                                  child: BalanceText(
+                                                    Balances.main,
+                                                    size: 13,
+                                                    weight: FontWeight.w600,
+                                                    color: AppColors.slate700,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            style: inter(
+                                              size: 13,
+                                              color: AppColors.slate500,
+                                            ),
                                           ),
-                                        ),
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            for (final (i, q) in _quick.indexed) ...[
-                              if (i > 0) const SizedBox(width: 8),
-                              Expanded(
-                                // Sets the amount (not adds to it); stays
-                                // selected until the keypad changes it.
-                                child: QuickButton(
-                                  label: '₮${q ~/ 1000}k',
-                                  selected: _amount == q,
-                                  onTap: () => setState(() => _amount = q),
+                        KeyedSubtree(
+                          key: _quickKey,
+                          child: Row(
+                            children: [
+                              for (final (i, q) in _quick.indexed) ...[
+                                if (i > 0) const SizedBox(width: 8),
+                                Expanded(
+                                  // Sets the amount (not adds to it); stays
+                                  // selected until the keypad changes it.
+                                  child: QuickButton(
+                                    label: '₮${q ~/ 1000}k',
+                                    selected: _amount == q,
+                                    onTap: () => setState(() => _amount = q),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                         if (!request) ...[
                           const SizedBox(height: 12),
@@ -227,20 +271,23 @@ class _TransferAmountScreenState extends State<TransferAmountScreen> {
                       children: [
                         ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 340),
-                          child: NumericKeypad(
-                            style: keyStyle,
-                            onDigit: _digit,
-                            onBackspace: _backspace,
-                            bottomLeft: KeypadKey(
+                          child: KeyedSubtree(
+                            key: _keypadKey,
+                            child: NumericKeypad(
                               style: keyStyle,
-                              background: AppColors.slate50,
-                              semanticLabel: 'Цэвэрлэх',
-                              onTap: () => setState(() => _amount = 0),
-                              child: AppText(
-                                'C',
-                                size: 18,
-                                weight: FontWeight.w700,
-                                color: AppColors.slate500,
+                              onDigit: _digit,
+                              onBackspace: _backspace,
+                              bottomLeft: KeypadKey(
+                                style: keyStyle,
+                                background: AppColors.slate50,
+                                semanticLabel: 'Цэвэрлэх',
+                                onTap: () => setState(() => _amount = 0),
+                                child: AppText(
+                                  'C',
+                                  size: 18,
+                                  weight: FontWeight.w700,
+                                  color: AppColors.slate500,
+                                ),
                               ),
                             ),
                           ),

@@ -9,6 +9,8 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/invoice_card.dart';
 import '../../data/invoice.dart';
+import '../../../../widgets/avatar_tour.dart';
+import '../../../../app/avatar.dart';
 
 /// "Нэхэмжлэхийн хуулга": every invoice, filtered by date and status. Opened
 /// from Хуулга харах on Home's Нэхэмжлэх tab, and built from the same parts
@@ -20,7 +22,32 @@ class InvoiceHistoryScreen extends StatefulWidget {
   State<InvoiceHistoryScreen> createState() => _InvoiceHistoryScreenState();
 }
 
-class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
+class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen>
+    with AvatarTourHost {
+  /// What the first-visit tour points at.
+  final _summaryKey = GlobalKey();
+  final _filterKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    // The first visit: the avatar walks the teen through this screen.
+    startAvatarTour('invoice_history', () {
+      final name = appAvatar.value.name;
+      return [
+        AvatarTourStep(text: 'Би $name. Бүх нэхэмжлэлээ энд харна.'),
+        AvatarTourStep(
+          target: _summaryKey,
+          text: 'Төлсөн болон төлөгдөөгүй нэхэмжлэлийн нийт дүн энд.',
+        ),
+        AvatarTourStep(
+          target: _filterKey,
+          text: 'Огноогоо сонгоод, тухайн хугацааны нэхэмжлэлээ шүүгээрэй.',
+        ),
+      ];
+    });
+  }
+
   DateTimeRange _range = thisMonthRange();
   int _filter = 0;
 
@@ -47,17 +74,23 @@ class _InvoiceHistoryScreenState extends State<InvoiceHistoryScreen> {
             24 + MediaQuery.paddingOf(context).bottom,
           ),
           children: EntranceItem.list([
-            _summary(
-              paid: paid.fold(0, (a, e) => a + e.amount),
-              paidCount: paid.length,
-              open: open.fold(0, (a, e) => a + e.amount),
-              openCount: open.length,
+            KeyedSubtree(
+              key: _summaryKey,
+              child: _summary(
+                paid: paid.fold(0, (a, e) => a + e.amount),
+                paidCount: paid.length,
+                open: open.fold(0, (a, e) => a + e.amount),
+                openCount: open.length,
+              ),
             ),
             const SizedBox(height: 16),
-            DateRangeFilterBar(
-              range: _range,
-              count: visible.length,
-              onChanged: (r) => setState(() => _range = r),
+            KeyedSubtree(
+              key: _filterKey,
+              child: DateRangeFilterBar(
+                range: _range,
+                count: visible.length,
+                onChanged: (r) => setState(() => _range = r),
+              ),
             ),
             const SizedBox(height: 12),
             Wrap(
