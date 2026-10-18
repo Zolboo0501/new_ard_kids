@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:new_ard_kids/features/auth/presentation/widgets/submit_button.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:new_ard_kids/app/kid_profile.dart';
@@ -8,7 +9,6 @@ import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar
 import 'package:new_ard_kids/features/home/presentation/widgets/home_header.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/adaptive.dart';
-import 'package:new_ard_kids/widgets/ui.dart';
 
 /// A bottom-bar tab, by its screen-reader label (the bar shows icons only).
 Finder _navTab(String label) => find.descendant(
@@ -36,7 +36,7 @@ Future<GoRouter> _pump(WidgetTester tester, String route, Size size) async {
 
 /// The transfer screen's submit button, scrolled into view.
 Future<Rect> _submitButton(WidgetTester tester) async {
-  final button = find.widgetWithText(PrimaryButton, 'Гүйлгээ хийх');
+  final button = find.widgetWithText(SubmitButton, 'Гүйлгээ хийх');
   await tester.scrollUntilVisible(
     button,
     300,

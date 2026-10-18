@@ -9,7 +9,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 import '../../../../app/kid_profile.dart';
 import '../../../../widgets/entrance.dart';
-import '../widgets/confirm_button.dart';
+import '../widgets/submit_button.dart';
 import '../widgets/field_error.dart';
 import '../widgets/header.dart';
 import '../widgets/header_skip_button.dart';
@@ -146,16 +146,32 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final bottomGap = 12 + MediaQuery.paddingOf(context).bottom;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
         bottom: false,
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: AdaptiveCenter(child: _buildContent()),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              padding: AppLayout.centered(
+                EdgeInsets.fromLTRB(24, 0, 24, bottomGap),
+                constraints.maxWidth,
+              ),
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              child: ConstrainedBox(
+                // At least the screen's height, so the button sits at the
+                // bottom (just above the keyboard while typing).
+                constraints: BoxConstraints(
+                  minHeight: (constraints.maxHeight - bottomGap).clamp(
+                    0.0,
+                    double.infinity,
+                  ),
+                ),
+                child: IntrinsicHeight(child: _buildContent()),
+              ),
+            ),
           ),
         ),
       ),
@@ -173,15 +189,17 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
             trailing: HeaderSkipButton(onPressed: () => _finish(skipped: true)),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
         Entrance(t: _heroIn, child: _buildIntro()),
+        const SizedBox(height: 32),
+        Entrance(t: _cardIn, offsetY: 22, child: _buildUsername()),
         const SizedBox(height: 24),
-        Entrance(t: _cardIn, offsetY: 22, child: _buildUsernameCard()),
-        const SizedBox(height: 16),
+        const Spacer(),
         Entrance(
           t: _buttonIn,
           offsetY: 22,
-          child: ConfirmButton(
+          child: SubmitButton(
+            label: 'Хүсэлт илгээх',
             // Always tappable: pressing it with an invalid name is how the
             // user finds out what is wrong, so gating it would hide the
             // message entirely.
@@ -199,13 +217,13 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
       children: [
         AppText(
           'Найзаа нэмэх',
-          size: 28,
+          size: 30,
           weight: FontWeight.w700,
           color: AppColors.slate900,
-          height: 1.2,
+          height: 1.15,
           letterSpacing: -0.6,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         AppText(
           'Найзынхаа нэвтрэх нэрийг оруулаад хүсэлт илгээ.',
           size: 15,
@@ -216,31 +234,27 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
     );
   }
 
-  Widget _buildUsernameCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          UsernameField(
-            controller: _username,
-            focusNode: _usernameFocus,
-            hasError: _error != null,
-            allowed: _allowed,
-            maxLength: _maxLength,
-            onSubmitted: () => _finish(skipped: false),
-          ),
-          FieldError(message: _error),
-          const SizedBox(height: 14),
-          Row(
+  /// The field and, under it, what the request earns.
+  Widget _buildUsername() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        UsernameField(
+          controller: _username,
+          focusNode: _usernameFocus,
+          hasError: _error != null,
+          allowed: _allowed,
+          maxLength: _maxLength,
+          onSubmitted: () => _finish(skipped: false),
+        ),
+        FieldError(message: _error),
+        const SizedBox(height: 14),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LineIcon(LineGlyph.gift, size: 18, color: AppColors.slate500),
+              LineIcon(LineGlyph.gift, size: 18, color: AppColors.sky600),
               const SizedBox(width: 10),
               Expanded(
                 child: AppText(
@@ -253,8 +267,8 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
               ),
             ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

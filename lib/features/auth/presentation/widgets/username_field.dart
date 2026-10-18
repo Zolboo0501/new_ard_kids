@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../theme/app_theme.dart';
+import '../../../../widgets/app_input.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/ui.dart';
 
@@ -43,10 +44,12 @@ class _UsernameFieldState extends State<UsernameField> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: appEmphasizedDecelerate,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        // White on the page with a tight lift, like the sign-up fields.
         decoration: BoxDecoration(
-          color: AppColors.slate50,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.card,
+          boxShadow: _focused || widget.hasError ? null : inputLift,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.hasError
                 ? AppColors.rose400

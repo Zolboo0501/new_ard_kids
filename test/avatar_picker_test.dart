@@ -231,7 +231,7 @@ void main() {
     await tester.pumpWidget(const ArdKidsApp());
     await tester.pumpAndSettle();
     // 10–13: the fox's bean stands on the card, with none of the old art.
-    for (final route in [AppRoutes.transfer, AppRoutes.savingsAccount]) {
+    for (final route in [AppRoutes.savingsDeposit, AppRoutes.savingsAccount]) {
       GoRouter.of(tester.element(find.byType(Scaffold).first)).go(route);
       await tester.pumpAndSettle();
       expect(assets(), contains(AppAvatar.fox.portrait), reason: route);

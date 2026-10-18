@@ -12,7 +12,7 @@ import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/header.dart';
 import '../widgets/otp_box.dart';
-import '../widgets/verify_button.dart';
+import '../widgets/submit_button.dart';
 
 /// "OTP Баталгаажуулалт" screen: enter the 4-digit code sent by SMS.
 class OtpScreen extends StatefulWidget {
@@ -129,43 +129,49 @@ class _OtpScreenState extends State<OtpScreen>
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
-        // The keypad is pinned to the bottom and never scrolls; only the
-        // content above it scrolls, so the keys stay reachable on short
-        // screens.
+        // The keypad and the button are pinned to the bottom and never
+        // scroll; only the content above them scrolls, so the keys stay
+        // reachable on short screens.
         child: Column(
           children: [
-            const Header(step: 'Алхам 2/6'),
+            AdaptiveCenter(
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Header(step: 'Алхам 2/6'),
+              ),
+            ),
             Expanded(
               child: LayoutBuilder(
                 builder: (context, constraints) => SingleChildScrollView(
                   padding: AppLayout.centered(
-                    const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                    const EdgeInsets.fromLTRB(24, 20, 24, 16),
                     constraints.maxWidth,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Entrance(t: _heroIn, child: _buildIntro()),
-                      const SizedBox(height: 24),
-                      Entrance(
-                        t: _cardIn,
-                        offsetY: 22,
-                        child: _buildCodeCard(),
-                      ),
-                      const SizedBox(height: 16),
-                      Entrance(
-                        t: _buttonIn,
-                        offsetY: 22,
-                        child: AnimatedScale(
-                          scale: _completePulse ? 1.02 : 1,
-                          duration: const Duration(milliseconds: 150),
-                          child: VerifyButton(
-                            enabled: _complete,
-                            onPressed: _verify,
-                          ),
-                        ),
-                      ),
+                      const SizedBox(height: 32),
+                      Entrance(t: _cardIn, offsetY: 22, child: _buildCode()),
                     ],
+                  ),
+                ),
+              ),
+            ),
+            Entrance(
+              t: _buttonIn,
+              offsetY: 22,
+              child: AdaptiveCenter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                  child: AnimatedScale(
+                    scale: _completePulse ? 1.02 : 1,
+                    duration: const Duration(milliseconds: 150),
+                    child: SubmitButton(
+                      label: 'Баталгаажуулах',
+                      dimmed: !_complete,
+                      onPressed: _verify,
+                    ),
                   ),
                 ),
               ),
@@ -184,10 +190,10 @@ class _OtpScreenState extends State<OtpScreen>
       children: [
         AppText(
           'Код баталгаажуулах',
-          size: 28,
+          size: 30,
           weight: FontWeight.w700,
           color: AppColors.slate900,
-          height: 1.2,
+          height: 1.15,
           letterSpacing: -0.6,
         ),
         const SizedBox(height: 8),
@@ -228,39 +234,29 @@ class _OtpScreenState extends State<OtpScreen>
     );
   }
 
-  /// The digit pad, pinned below the scrolling content.
+  /// The digit pad, pinned at the bottom, straight on the canvas.
   Widget _buildKeypad() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Center(
-        child: ConstrainedBox(
-          // Full width on iPad, like every other screen.
-          constraints: const BoxConstraints(maxWidth: AppLayout.contentMax),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: NumericKeypad(
-              style: KeypadStyle(
-                keyHeight: 56,
-                radius: 12,
-                gap: 4,
-                fontSize: 20,
-                textColor: AppColors.slate900,
-                pressedColor: AppColors.slate50,
-              ),
-              onDigit: _onDigit,
-              onBackspace: _onBackspace,
-            ),
+    return AdaptiveCenter(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        child: NumericKeypad(
+          style: KeypadStyle(
+            keyHeight: 58,
+            radius: 16,
+            gap: 4,
+            fontSize: 24,
+            textColor: AppColors.slate900,
+            pressedColor: AppColors.slate100,
           ),
+          onDigit: _onDigit,
+          onBackspace: _onBackspace,
         ),
       ),
     );
   }
 
-  Widget _buildCodeCard() {
+  /// The four boxes and, under them, the resend countdown.
+  Widget _buildCode() {
     final counting = _secondsLeft > 0;
     final label = inter(size: 13, color: AppColors.slate500);
     final accent = inter(
@@ -269,60 +265,52 @@ class _OtpScreenState extends State<OtpScreen>
       color: AppColors.sky600,
     );
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              for (var i = 0; i < _codeLength; i++) ...[
-                if (i > 0) const SizedBox(width: 8),
-                OtpBox(
-                  digit: i < _code.length ? _code[i] : null,
-                  active: i == _code.length,
-                ),
-              ],
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (var i = 0; i < _codeLength; i++) ...[
+              if (i > 0) const SizedBox(width: 12),
+              OtpBox(
+                digit: i < _code.length ? _code[i] : null,
+                active: i == _code.length,
+              ),
             ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              LineIcon(LineGlyph.clock, size: 16, color: AppColors.slate500),
-              const SizedBox(width: 6),
-              Text('Дахин код авах:', style: label),
-              const SizedBox(width: 4),
-              if (counting)
-                SizedBox(
-                  height: 44,
-                  child: Center(
-                    child: Text(
-                      _formatSeconds(_secondsLeft),
-                      style: accent.copyWith(
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            LineIcon(LineGlyph.clock, size: 16, color: AppColors.slate500),
+            const SizedBox(width: 6),
+            Text('Дахин код авах:', style: label),
+            const SizedBox(width: 4),
+            if (counting)
+              SizedBox(
+                height: 44,
+                child: Center(
+                  child: Text(
+                    _formatSeconds(_secondsLeft),
+                    style: accent.copyWith(
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
-                )
-              else
-                TextButton(
-                  onPressed: withHaptic(_resend),
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(44, 44),
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                  ),
-                  child: Text('Дахин илгээх', style: accent),
                 ),
-            ],
-          ),
-        ],
-      ),
+              )
+            else
+              TextButton(
+                onPressed: withHaptic(_resend),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(44, 44),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                child: Text('Дахин илгээх', style: accent),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

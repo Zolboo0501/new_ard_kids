@@ -9,7 +9,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
-import '../widgets/biometric_benefit_row.dart';
+import '../../../auth/presentation/widgets/submit_button.dart';
 
 /// "Биометрээр нэвтрэх": offers Face ID or fingerprint sign-in. Confirming
 /// scans once and turns it on (the same switch as Profile › Аюулгүй байдал);
@@ -38,6 +38,7 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
   void _next() => context.push(AppRoutes.parentLinkOnboarding);
 
   Future<void> _enable() async {
+    if (_busy) return;
     if (appBiometricLogin.value) return _next();
     setState(() => _busy = true);
     final result = await Biometrics.instance.authenticate(
@@ -79,23 +80,23 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
             Expanded(
               child: EntranceScope(
                 child: AdaptiveListView(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
                   children: EntranceItem.list([
                     const Header(step: 'Алхам 5/6'),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 24),
                     Row(
                       children: [
                         Container(
-                          width: 56,
-                          height: 56,
+                          width: 64,
+                          height: 64,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: AppColors.sky50,
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: LineIcon(
                             glyph,
-                            size: 30,
+                            size: 32,
                             color: AppColors.sky600,
                           ),
                         ),
@@ -107,47 +108,22 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     AppText(
                       '${kind?.loginLabel ?? 'Биометрээр нэвтрэх'} үү?',
-                      size: 28,
+                      size: 30,
                       weight: FontWeight.w700,
                       color: AppColors.slate900,
-                      height: 1.2,
+                      height: 1.15,
                       letterSpacing: -0.6,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     AppText(
-                      'Дараагийн удаа нэр, код бичихгүйгээр апп руугаа орно.',
+                      'Дараагийн удаа нэр, код бичихгүйгээр апп руугаа орно. '
+                      'Хүссэн үедээ Профайл › Аюулгүй байдал хэсгээс унтраана.',
                       size: 15,
                       color: AppColors.slate500,
                       height: 1.45,
-                    ),
-                    const SizedBox(height: 24),
-                    AppCard(
-                      padding: const EdgeInsets.all(16),
-                      child: const Column(
-                        children: [
-                          BiometricBenefitRow(
-                            glyph: LineGlyph.bolt,
-                            title: 'Хурдан нэвтэрнэ',
-                            subtitle: 'Нууц үг, код бичих шаардлагагүй',
-                          ),
-                          SizedBox(height: 16),
-                          BiometricBenefitRow(
-                            glyph: LineGlyph.lock,
-                            title: 'Зөвхөн чи нэвтэрнэ',
-                            subtitle:
-                                'Царай, хурууны хээ чинь зөвхөн утсандаа хадгалагдана',
-                          ),
-                          SizedBox(height: 16),
-                          BiometricBenefitRow(
-                            glyph: LineGlyph.settings,
-                            title: 'Хүссэн үедээ унтраана',
-                            subtitle: 'Профайл › Аюулгүй байдал хэсгээс',
-                          ),
-                        ],
-                      ),
                     ),
                   ]),
                 ),
@@ -155,29 +131,32 @@ class _BiometricSetupScreenState extends State<BiometricSetupScreen> {
             ),
             AdaptiveCenter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                padding: const EdgeInsets.fromLTRB(24, 4, 24, 12),
                 child: Column(
                   children: [
-                    PrimaryButton(
+                    SubmitButton(
                       label: enabled ? 'Үргэлжлүүлэх' : '$name идэвхжүүлэх',
-                      height: 56,
-                      onPressed: _busy ? null : _enable,
+                      onPressed: _enable,
                     ),
-                    if (!enabled) ...[
-                      const SizedBox(height: 4),
-                      TextButton(
-                        onPressed: _busy ? null : _next,
-                        style: TextButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                        ),
-                        child: AppText(
-                          'Дараа болъё',
-                          size: 15,
-                          weight: FontWeight.w600,
-                          color: AppColors.slate600,
-                        ),
-                      ),
-                    ],
+                    // Always the same height, so the button doesn't move
+                    // once it is turned on.
+                    SizedBox(
+                      height: 52,
+                      child: enabled
+                          ? null
+                          : TextButton(
+                              onPressed: _busy ? null : _next,
+                              style: TextButton.styleFrom(
+                                minimumSize: const Size(double.infinity, 48),
+                              ),
+                              child: AppText(
+                                'Дараа болъё',
+                                size: 15,
+                                weight: FontWeight.w600,
+                                color: AppColors.slate600,
+                              ),
+                            ),
+                    ),
                   ],
                 ),
               ),

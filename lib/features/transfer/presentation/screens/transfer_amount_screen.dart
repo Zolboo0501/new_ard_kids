@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/accounts.dart';
 import '../../../../app/avatar.dart';
-import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -15,7 +13,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
 import '../../../savings/presentation/widgets/quick_button.dart';
-import '../widgets/limit_note.dart';
+import '../../../auth/presentation/widgets/submit_button.dart';
 import '../../../../widgets/avatar_tour.dart';
 
 /// "Гүйлгээний дүн": the first step of a transfer. The teen types the amount
@@ -105,10 +103,13 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
 
   bool get _valid => _amount > 0 && _error == null;
 
-  void _continue() => context.push(
-    widget.request ? AppRoutes.requestMoney : AppRoutes.transfer,
-    extra: _amount,
-  );
+  void _continue() {
+    if (!_valid) return;
+    context.push(
+      widget.request ? AppRoutes.requestMoney : AppRoutes.transfer,
+      extra: _amount,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +117,11 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
     final error = _error;
     final request = widget.request;
     const keyStyle = KeypadStyle(
-      keyHeight: 48,
+      keyHeight: 52,
       // Fully rounded (pill-shaped) keys.
       radius: 999,
       gap: 10,
-      fontSize: 18,
+      fontSize: 22,
     );
 
     return Scaffold(
@@ -144,127 +145,47 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
           child: EntranceScope(
             child: Column(
               children: [
+                // The amount, big and alone in the middle of the free space:
+                // the one thing this step is about.
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-                    child: Column(
-                      // Every box spans the page, the amount box included.
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: EntranceItem.list([
-                        KeyedSubtree(
-                          key: _amountKey,
-                          child: AvatarCardArt(
-                            account: Accounts.main,
-                            size: 80,
-                            child: AppCard(
-                              // The amount is centred in the space left of
-                              // the sticker, not under it.
-                              padding: EdgeInsets.fromLTRB(
-                                20,
-                                20,
-                                Stickers.onCards ? 96 : 20,
-                                20,
-                              ),
-                              child: Column(
-                                children: [
-                                  AppText(
-                                    request ? 'Хүсэх дүн' : 'Илгээх дүн',
-                                    size: 13,
-                                    weight: FontWeight.w500,
-                                    color: AppColors.slate500,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  FittedBox(
-                                    child: BalanceText(
-                                      _amount,
-                                      size: 40,
-                                      weight: FontWeight.w600,
-                                      currencyWeight: FontWeight.w600,
-                                      color: error != null
-                                          ? AppColors.rose600
-                                          : AppColors.slate900,
-                                      currencyColor: error != null
-                                          ? AppColors.rose600
-                                          : AppColors.slate500,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: EntranceItem.list([
+                          KeyedSubtree(
+                            key: _amountKey,
+                            child: _buildAmount(error),
+                          ),
+                          const SizedBox(height: 24),
+                          KeyedSubtree(
+                            key: _quickKey,
+                            child: Row(
+                              children: [
+                                for (final (i, q) in _quick.indexed) ...[
+                                  if (i > 0) const SizedBox(width: 8),
+                                  Expanded(
+                                    // Sets the amount (not adds to it); stays
+                                    // selected until the keypad changes it.
+                                    child: QuickButton(
+                                      label: '₮${q ~/ 1000}k',
+                                      selected: _amount == q,
+                                      onTap: () => setState(() => _amount = q),
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Semantics(
-                                    liveRegion: true,
-                                    child: error != null
-                                        ? AppText(
-                                            error,
-                                            size: 13,
-                                            weight: FontWeight.w500,
-                                            color: AppColors.rose600,
-                                            textAlign: TextAlign.center,
-                                          )
-                                        : Text.rich(
-                                            TextSpan(
-                                              text: request
-                                                  ? 'Үндсэн дансны үлдэгдэл '
-                                                  : 'Боломжит үлдэгдэл ',
-                                              children: [
-                                                WidgetSpan(
-                                                  alignment:
-                                                      PlaceholderAlignment
-                                                          .baseline,
-                                                  baseline:
-                                                      TextBaseline.alphabetic,
-                                                  child: BalanceText(
-                                                    Balances.main,
-                                                    size: 13,
-                                                    weight: FontWeight.w600,
-                                                    color: AppColors.slate700,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            style: inter(
-                                              size: 13,
-                                              color: AppColors.slate500,
-                                            ),
-                                          ),
-                                  ),
                                 ],
-                              ),
+                              ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        KeyedSubtree(
-                          key: _quickKey,
-                          child: Row(
-                            children: [
-                              for (final (i, q) in _quick.indexed) ...[
-                                if (i > 0) const SizedBox(width: 8),
-                                Expanded(
-                                  // Sets the amount (not adds to it); stays
-                                  // selected until the keypad changes it.
-                                  child: QuickButton(
-                                    label: '₮${q ~/ 1000}k',
-                                    selected: _amount == q,
-                                    onTap: () => setState(() => _amount = q),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        if (!request) ...[
-                          const SizedBox(height: 12),
-                          AppCard(
-                            padding: const EdgeInsets.all(16),
-                            child: LimitNote(amount: _amount),
-                          ),
-                        ],
-                      ]),
+                        ]),
+                      ),
                     ),
                   ),
                 ),
-                // The keypad panel rises in last, after the amount card.
+                // The keypad rises in last, after the amount.
                 EntranceItem(
-                  index: 4,
+                  index: 3,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                     child: Column(
@@ -284,7 +205,7 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
                                 onTap: () => setState(() => _amount = 0),
                                 child: AppText(
                                   'C',
-                                  size: 18,
+                                  size: 20,
                                   weight: FontWeight.w700,
                                   color: AppColors.slate500,
                                 ),
@@ -292,10 +213,11 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
                             ),
                           ),
                         ),
-                        const SizedBox(height: 14),
-                        PrimaryButton(
+                        const SizedBox(height: 16),
+                        SubmitButton(
                           label: 'Үргэлжлүүлэх',
-                          onPressed: _valid ? _continue : null,
+                          dimmed: !_valid,
+                          onPressed: _continue,
                         ),
                       ],
                     ),
@@ -306,6 +228,73 @@ class _TransferAmountScreenState extends State<TransferAmountScreen>
           ),
         ),
       ),
+    );
+  }
+
+  /// The label, the amount, and one line under it: what is wrong, or what
+  /// can be sent (the balance, and for a transfer today's limit too).
+  Widget _buildAmount(String? error) {
+    final request = widget.request;
+    final ink = error != null ? AppColors.rose600 : AppColors.slate900;
+    final note = inter(size: 13, color: AppColors.slate500);
+    final strong = moneyStyle(
+      size: 13,
+      weight: FontWeight.w600,
+      color: AppColors.slate700,
+    );
+    return Column(
+      children: [
+        AppText(
+          request ? 'Хүсэх дүн' : 'Илгээх дүн',
+          size: 14,
+          weight: FontWeight.w500,
+          color: AppColors.slate500,
+        ),
+        const SizedBox(height: 6),
+        FittedBox(
+          child: BalanceText(
+            _amount,
+            size: 56,
+            weight: FontWeight.w700,
+            currencyWeight: FontWeight.w600,
+            color: ink,
+            currencyColor: error != null
+                ? AppColors.rose600
+                : AppColors.slate400,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Semantics(
+          liveRegion: true,
+          child: error != null
+              ? AppText(
+                  error,
+                  size: 13,
+                  weight: FontWeight.w600,
+                  color: AppColors.rose600,
+                  textAlign: TextAlign.center,
+                )
+              : Text.rich(
+                  TextSpan(
+                    text: request ? 'Үндсэн данс ' : 'Боломжит үлдэгдэл ',
+                    children: [
+                      TextSpan(text: formatMnt(Balances.main), style: strong),
+                      if (!request) ...[
+                        // Its own line, so neither half wraps mid-phrase.
+                        const TextSpan(text: '\nӨнөөдөр '),
+                        TextSpan(
+                          text: formatMnt(Limits.leftToday),
+                          style: strong,
+                        ),
+                        const TextSpan(text: ' илгээж болно'),
+                      ],
+                    ],
+                  ),
+                  style: note.copyWith(height: 1.6),
+                  textAlign: TextAlign.center,
+                ),
+        ),
+      ],
     );
   }
 }

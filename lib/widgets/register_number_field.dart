@@ -156,6 +156,7 @@ class _LetterBox extends StatelessWidget {
           decoration: BoxDecoration(
             color: filled ? AppColors.card : fill ?? AppColors.slate50,
             borderRadius: BorderRadius.circular(16),
+            boxShadow: fill == AppColors.card ? inputLift : null,
             border: Border.all(
               color: hasError
                   ? AppColors.rose400

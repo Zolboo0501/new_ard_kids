@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/avatar.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
+import '../../../../widgets/avatar_toast.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
@@ -12,10 +14,33 @@ import '../widgets/transfer_success_row.dart';
 
 /// "Гүйлгээ амжилттай" receipt: a calm confirmation, the amount, and the
 /// details a statement would carry.
-class TransferSuccessScreen extends StatelessWidget {
+///
+/// After a real transfer (a [receipt] was passed), the teen's avatar pops up
+/// at the top for a moment to say what the transfer earned ([rewardPoints]).
+class TransferSuccessScreen extends StatefulWidget {
   const TransferSuccessScreen({super.key, this.receipt});
 
   final TransferReceipt? receipt;
+
+  @override
+  State<TransferSuccessScreen> createState() => _TransferSuccessScreenState();
+}
+
+class _TransferSuccessScreenState extends State<TransferSuccessScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.receipt == null) return;
+    // Once the receipt has risen into place, so the two don't move at once.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future<void>.delayed(const Duration(milliseconds: 450));
+      if (!mounted || !(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      // At the top, under the header, gone on its own.
+      showRewardToast(context);
+    });
+  }
+
+  TransferReceipt? get receipt => widget.receipt;
 
   static final _sample = TransferReceipt(
     amount: 15000,
@@ -58,24 +83,48 @@ class TransferSuccessScreen extends StatelessWidget {
               child: AdaptiveListView(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 children: EntranceItem.list([
+                  // The kid's own companion celebrates the transfer, with
+                  // a small tick so it still reads as "done".
                   Center(
-                    child: Container(
-                      width: 56,
-                      height: 56,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.emerald50,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: LineIcon(
-                        LineGlyph.check,
-                        size: 28,
-                        stroke: 2,
-                        color: AppColors.emerald600,
+                    child: SizedBox(
+                      width: 128,
+                      height: 140,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: Image.asset(
+                              appAvatar.value.fullBody,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.medium,
+                              excludeFromSemantics: true,
+                            ),
+                          ),
+                          Positioned(
+                            right: 10,
+                            bottom: 6,
+                            child: Container(
+                              width: 34,
+                              height: 34,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: AppColors.emerald500,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: bg, width: 3),
+                              ),
+                              child: LineIcon(
+                                LineGlyph.check,
+                                size: 18,
+                                stroke: 2.4,
+                                color: AppColors.onBright,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   AppText(
                     'Гүйлгээ амжилттай',
                     size: 16,

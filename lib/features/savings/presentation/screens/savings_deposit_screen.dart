@@ -15,6 +15,7 @@ import '../../../../widgets/numeric_keypad.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/quick_button.dart';
 import '../../../../widgets/avatar_tour.dart';
+import '../../../../widgets/avatar_toast.dart';
 
 /// "Хадгаламжид орлого хийх - Keypad UI": deposit into savings.
 class SavingsDepositScreen extends StatefulWidget {
@@ -81,7 +82,7 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen>
 
   void _submit() {
     // TODO: call the savings deposit API.
-    showAppSnack(context, '${formatMnt(_amount)} хадгаламжид орлоо');
+    showRewardToast(context, lead: '${formatMnt(_amount)} хадгаламжид орлоо.');
     context.pop();
   }
 

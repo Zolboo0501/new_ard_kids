@@ -12,25 +12,33 @@ class HelperNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+    // A tinted note in the accent's lightest step, so it reads as help
+    // rather than as another field.
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: AppColors.sky50,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 1),
-            child: LineIcon(
-              LineGlyph.mail,
-              size: 18,
-              color: AppColors.slate500,
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(10),
             ),
+            alignment: Alignment.center,
+            child: LineIcon(LineGlyph.mail, size: 17, color: AppColors.sky600),
           ),
           const SizedBox(width: 10),
           Expanded(
             // The copy changes with the mode, so cross-fade it instead of
             // snapping to the new sentence.
             child: Padding(
-              padding: const EdgeInsets.only(top: 1),
+              padding: const EdgeInsets.only(top: 6),
               child: AnimatedSize(
                 duration: const Duration(milliseconds: 240),
                 curve: appEmphasizedDecelerate,
@@ -49,7 +57,7 @@ class HelperNote extends StatelessWidget {
                   child: AppText(
                     text,
                     size: 13,
-                    color: AppColors.slate500,
+                    color: AppColors.slate600,
                     height: 1.4,
                     key: ValueKey(text),
                   ),

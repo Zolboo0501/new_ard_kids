@@ -14,16 +14,21 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/input_formatters.dart';
 import '../../../../widgets/register_number_field.dart';
 import '../../../../widgets/ui.dart';
-import '../../../../widgets/value_switcher.dart';
 import '../../data/sign_up_draft.dart';
+import '../widgets/header.dart';
 import '../widgets/helper_note.dart';
 import '../widgets/mode_switch.dart';
 import '../widgets/submit_button.dart';
 
 enum AuthMode { login, register }
 
-/// "Нэвтрэх & Бүртгүүлэх": the sign-in screen. An open form on the canvas
-/// under the mode's heading, with the other mode a link at the bottom.
+/// Бүртгүүлэх asks one thing per page, in this order.
+enum _RegisterStep { registerNumber, name, phone }
+
+/// "Нэвтрэх & Бүртгүүлэх": the sign-in screen. Нэвтрэх is an open form
+/// under the Ard Kids logo; Бүртгүүлэх asks one question per page (register
+/// number, login name, phone) with the button at the bottom. The other mode
+/// is a link at the bottom of each.
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key, this.initialMode = AuthMode.login});
 
@@ -68,12 +73,11 @@ class _AuthScreenState extends State<AuthScreen>
 
   /// One curved slice per element, built once in [initState].
   late final EntranceStagger _stagger = EntranceStagger(_entrance);
-  late final Animation<double> _logoIn;
   late final Animation<double> _titleIn;
-  late final Animation<double> _subtitleIn;
   late final Animation<double> _cardIn;
 
   late AuthMode _mode = widget.initialMode;
+  _RegisterStep _step = _RegisterStep.registerNumber;
   SubmitState _submitState = SubmitState.idle;
 
   /// Set when biometric sign-in is on (Security screen) and the device has an
@@ -136,10 +140,8 @@ class _AuthScreenState extends State<AuthScreen>
         if (_registerValid) _registerError = null;
       });
     });
-    _logoIn = _stagger.slice(0);
-    _titleIn = _stagger.slice(0.1);
-    _subtitleIn = _stagger.slice(0.16);
-    _cardIn = _stagger.slice(0.24);
+    _titleIn = _stagger.slice(0);
+    _cardIn = _stagger.slice(0.16);
     _entrance.forward();
     if (appBiometricLogin.value && _mode == AuthMode.login) _checkBiometric();
   }
@@ -187,59 +189,93 @@ class _AuthScreenState extends State<AuthScreen>
     super.dispose();
   }
 
+  /// The reason the phone number is invalid, or null when it is fine.
+  String? _validatePhone() => _phoneValid
+      ? null
+      : _phoneDigits.isEmpty
+      ? 'Гар утасны дугаараа оруулна уу.'
+      : 'Утасны дугаар $_phoneLength оронтой байх ёстой.';
+
+  /// Нэвтрэх: validates both fields so every problem shows at once, focuses
+  /// the topmost offender, then signs in.
   void _submit() {
     if (_submitState != SubmitState.idle) return;
-
-    // Validate every field so every problem is shown at once, then focus the
-    // topmost offender. The register number is only asked for on Бүртгүүлэх.
     final nameError = _validateName();
-    final phoneError = _phoneValid
-        ? null
-        : _phoneDigits.isEmpty
-        ? 'Гар утасны дугаараа оруулна уу.'
-        : 'Утасны дугаар $_phoneLength оронтой байх ёстой.';
-    final registerError = _mode == AuthMode.login
-        ? null
-        : RegisterNumberField.validate(
-            _registerLetters,
-            _registerDigitsController.text,
-          );
-
+    final phoneError = _validatePhone();
     setState(() {
       _nameError = nameError;
       _phoneError = phoneError;
-      _registerError = registerError;
     });
-
-    if (registerError != null) {
-      // The letters open a sheet rather than take focus, so only the digit
-      // field is focused.
-      if (_registerLettersValid) _registerDigitsFocus.requestFocus();
-      return;
-    }
-    if (nameError != null) {
-      _nameFocus.requestFocus();
-      return;
-    }
-    if (phoneError != null) {
-      _phoneFocus.requestFocus();
-      return;
-    }
+    if (nameError != null) return _nameFocus.requestFocus();
+    if (phoneError != null) return _phoneFocus.requestFocus();
 
     FocusScope.of(context).unfocus();
     setState(() => _submitState = SubmitState.sending);
+    // TODO: replace the simulated delay with the real sign-in request.
+    _timers.add(
+      Timer(
+        const Duration(milliseconds: 900),
+        () => context.go(AppRoutes.home),
+      ),
+    );
+  }
 
-    // Нэвтрэх signs straight in; Бүртгүүлэх goes on to verify the phone.
-    if (_mode == AuthMode.login) {
-      // TODO: replace the simulated delay with the real sign-in request.
-      _timers.add(
-        Timer(
-          const Duration(milliseconds: 900),
-          () => context.go(AppRoutes.home),
-        ),
-      );
-      return;
+  /// Бүртгүүлэх's button: checks only the page's own question, then moves
+  /// on, and on the last page sends the code.
+  void _next() {
+    if (_submitState != SubmitState.idle) return;
+    switch (_step) {
+      case _RegisterStep.registerNumber:
+        final error = RegisterNumberField.validate(
+          _registerLetters,
+          _registerDigitsController.text,
+        );
+        setState(() => _registerError = error);
+        if (error == null) return _goTo(_RegisterStep.name);
+        // The letters open a sheet rather than take focus.
+        if (_registerLettersValid) _registerDigitsFocus.requestFocus();
+      case _RegisterStep.name:
+        final error = _validateName();
+        setState(() => _nameError = error);
+        if (error == null) return _goTo(_RegisterStep.phone);
+        _nameFocus.requestFocus();
+      case _RegisterStep.phone:
+        final error = _validatePhone();
+        setState(() => _phoneError = error);
+        if (error == null) return _sendCode();
+        _phoneFocus.requestFocus();
     }
+  }
+
+  /// The header's back on Бүртгүүлэх: the previous question, or Нэвтрэх
+  /// from the first.
+  void _back() {
+    if (_submitState != SubmitState.idle) return;
+    if (_step == _RegisterStep.registerNumber) return _setMode(AuthMode.login);
+    _goTo(_RegisterStep.values[_step.index - 1]);
+  }
+
+  void _goTo(_RegisterStep step) {
+    setState(() => _step = step);
+    // The field is only attached once the page has swapped in (see
+    // [ModeSwitch]), so focus it a moment later. The register number starts
+    // with the letter sheet, so it isn't focused.
+    final focus = switch (step) {
+      _RegisterStep.registerNumber => null,
+      _RegisterStep.name => _nameFocus,
+      _RegisterStep.phone => _phoneFocus,
+    };
+    if (focus == null) return FocusScope.of(context).unfocus();
+    _timers.add(
+      Timer(const Duration(milliseconds: 160), () {
+        if (mounted && _step == step) focus.requestFocus();
+      }),
+    );
+  }
+
+  void _sendCode() {
+    FocusScope.of(context).unfocus();
+    setState(() => _submitState = SubmitState.sending);
 
     // Kept so the parent-link step can prefill the same register number.
     SignUpDraft.registerNumber = RegisterNumber(
@@ -264,13 +300,15 @@ class _AuthScreenState extends State<AuthScreen>
   void _setMode(AuthMode mode) {
     if (_mode == mode || _submitState != SubmitState.idle) return;
     FocusScope.of(context).unfocus();
-    setState(() => _mode = mode);
+    setState(() {
+      _mode = mode;
+      _step = _RegisterStep.registerNumber;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final padding = MediaQuery.paddingOf(context);
-    final bottomGap = 20 + padding.bottom;
+    final bottomGap = 20 + MediaQuery.paddingOf(context).bottom;
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
@@ -278,196 +316,155 @@ class _AuthScreenState extends State<AuthScreen>
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: LayoutBuilder(
-            builder: (context, constraints) {
-              // On a short screen (iPhone SE) the heading compacts so the
-              // fields are in view on arrival.
-              final compact = constraints.maxHeight < 700;
-              return SingleChildScrollView(
-                padding: AppLayout.centered(
-                  EdgeInsets.fromLTRB(24, 16, 24, bottomGap),
-                  constraints.maxWidth,
-                ),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: ConstrainedBox(
-                  // At least the visible height, so the mode link sits at
-                  // the bottom on tall screens and the form reads top-down.
-                  constraints: BoxConstraints(
-                    minHeight: (constraints.maxHeight - 16 - bottomGap).clamp(
-                      0.0,
-                      double.infinity,
-                    ),
-                  ),
-                  // The logo and the form sit a little above the middle and
-                  // the mode link at the bottom: spare height on a tall
-                  // phone is shared out instead of piling up under the
-                  // button.
-                  child: IntrinsicHeight(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // The small mark in the corner, on Бүртгүүлэх only:
-                        // Нэвтрэх shows the big logo instead.
-                        Entrance(
-                          t: _logoIn,
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: SizedBox(
-                              height: 28,
-                              child: _mode == AuthMode.register
-                                  ? Image.asset(
-                                      'assets/images/ard_logo.png',
-                                      height: 28,
-                                      fit: BoxFit.contain,
-                                      // The mark is black on transparent;
-                                      // tint it so it follows the canvas.
-                                      color: AppColors.slate900,
-                                      semanticLabel: 'Ard',
-                                    )
-                                  : null,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: compact ? 8 : 16),
-                        const Spacer(),
-                        // The heading and the form travel together when
-                        // the mode switches.
-                        ModeSwitch(
-                          index: _mode.index,
-                          builder: (shown) => _buildBody(
-                            AuthMode.values[shown],
-                            compact,
-                            (constraints.maxHeight * 0.22).clamp(120.0, 200.0),
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        const Spacer(flex: 2),
-                        Entrance(t: _cardIn, child: _buildModeLink()),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
+            builder: (context, constraints) => ModeSwitch(
+              index: _mode.index,
+              builder: (shown) => _buildPage(
+                constraints,
+                bottomGap,
+                AuthMode.values[shown] == AuthMode.login
+                    ? _buildLogin(constraints)
+                    : _buildRegister(constraints),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  /// The mode's heading, a line under it, and its form, straight on the
-  /// canvas.
-  Widget _buildBody(AuthMode mode, bool compact, double logoHeight) {
-    final isLogin = mode == AuthMode.login;
+  /// A scrolling page at least the screen's height, so [children] can push
+  /// the mode link to the bottom with a [Spacer].
+  Widget _buildPage(
+    BoxConstraints constraints,
+    double bottomGap,
+    List<Widget> children,
+  ) {
+    return SingleChildScrollView(
+      padding: AppLayout.centered(
+        EdgeInsets.fromLTRB(24, 8, 24, bottomGap),
+        constraints.maxWidth,
+      ),
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: (constraints.maxHeight - 8 - bottomGap).clamp(
+            0.0,
+            double.infinity,
+          ),
+        ),
+        child: IntrinsicHeight(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Нэвтрэх: the Ard Kids logo and the form a little above the middle, the
+  /// link at the bottom. Spare height on a tall phone is shared out instead
+  /// of piling up under the button.
+  List<Widget> _buildLogin(BoxConstraints constraints) {
+    final compact = constraints.maxHeight < 700;
+    return [
+      SizedBox(height: compact ? 16 : 24),
+      const Spacer(),
+      Entrance(
+        t: _titleIn,
+        child: Center(
+          child: Image.asset(
+            'assets/images/ard_kids_logo.webp',
+            // Grows with the screen's height.
+            height: (constraints.maxHeight * 0.22).clamp(120.0, 200.0),
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            semanticLabel: 'Ard Kids',
+          ),
+        ),
+      ),
+      SizedBox(height: compact ? 24 : 32),
+      Entrance(
+        t: _cardIn,
+        // Travels a little further, so the form reads as settling into
+        // place under the logo.
+        offsetY: 24,
+        child: _buildLoginFields(),
+      ),
+      const SizedBox(height: 28),
+      const Spacer(flex: 2),
+      Entrance(t: _cardIn, child: _buildModeLink()),
+    ];
+  }
+
+  /// Бүртгүүлэх: the step bar, one question with its field, and the button
+  /// at the bottom, where the thumb is (and just above the keyboard).
+  List<Widget> _buildRegister(BoxConstraints constraints) {
+    final compact = constraints.maxHeight < 700;
+    final last = _step == _RegisterStep.phone;
+    return [
+      Header(
+        step: 'Алхам 1/6',
+        onBack: _back,
+        progress: (_step.index + 1) / _RegisterStep.values.length,
+      ),
+      SizedBox(height: compact ? 16 : 28),
+      // Each question slides in from the side, like turning a page.
+      ModeSwitch(
+        index: _step.index,
+        builder: (shown) =>
+            _buildQuestion(_RegisterStep.values[shown], compact),
+      ),
+      const SizedBox(height: 24),
+      const Spacer(),
+      SubmitButton(
+        state: _submitState,
+        label: last ? 'Код авах' : 'Дараах',
+        onPressed: _next,
+      ),
+      // The way back to Нэвтрэх, on the first question only; after that
+      // the back button walks the questions.
+      // Its space stays, so the button doesn't jump between questions.
+      const SizedBox(height: 4),
+      _step == _RegisterStep.registerNumber
+          ? _buildModeLink()
+          : const SizedBox(height: 44),
+    ];
+  }
+
+  /// One sign-up question: a heading that asks it, a line on why, and its
+  /// field.
+  Widget _buildQuestion(_RegisterStep step, bool compact) {
+    final (title, subtitle) = switch (step) {
+      _RegisterStep.registerNumber => (
+        'Регистрийн дугаараа оруулаарай',
+        'Хоёр үсгээ сонгоод, 8 оронтой тоогоо бичээрэй.',
+      ),
+      _RegisterStep.name => (
+        'Нэвтрэх нэрээ сонгоорой',
+        'Дараа нь энэ нэр, утасны дугаараараа нэвтэрнэ.',
+      ),
+      _RegisterStep.phone => (
+        'Утасны дугаараа оруулаарай',
+        'Энэ дугаар руу 4 оронтой баталгаажуулах код илгээнэ.',
+      ),
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (isLogin)
-          // Sign-in opens on the Ard Kids logo, centred, in place of a
-          // heading; it grows with the screen's height.
-          Entrance(
-            t: _titleIn,
-            child: Center(
-              child: Image.asset(
-                'assets/images/ard_kids_logo.webp',
-                height: logoHeight,
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-                semanticLabel: 'Ard Kids',
-              ),
-            ),
-          )
-        else ...[
-          Entrance(
-            t: _titleIn,
-            child: AppText(
-              'Бүртгэл үүсгэх',
-              size: compact ? 30 : 36,
-              weight: FontWeight.w700,
-              color: AppColors.slate900,
-              height: 1.08,
-              letterSpacing: -0.9,
-            ),
-          ),
-          SizedBox(height: compact ? 8 : 12),
-          Entrance(
-            t: _subtitleIn,
-            child: AppText(
-              'Бүртгэл үүсгэж, өөрийн хадгаламж, карт, хувьцаа, урамшууллын эрхээ аваарай',
-              size: 15,
-              color: AppColors.slate500,
-              height: 1.45,
-            ),
-          ),
-        ],
-        SizedBox(height: compact ? 24 : 32),
-        Entrance(
-          t: _cardIn,
-          // Travels a little further, so the form reads as settling into
-          // place under the heading.
-          offsetY: 24,
-          child: _buildFields(mode),
+        AppText(
+          title,
+          size: compact ? 26 : 30,
+          weight: FontWeight.w700,
+          color: AppColors.slate900,
+          height: 1.15,
+          letterSpacing: -0.6,
         ),
-      ],
-    );
-  }
-
-  /// "Бүртгэл байхгүй юу? Бүртгүүлэх" under the form (and the reverse):
-  /// the way to the other mode, as a link rather than a control. The link
-  /// is its own text widget so it reads as a button to assistive tech.
-  Widget _buildModeLink() {
-    final isLogin = _mode == AuthMode.login;
-    return ValueSwitcher(
-      value: _mode,
-      duration: const Duration(milliseconds: 200),
-      child: Row(
-        key: ValueKey(_mode),
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppText(
-            isLogin ? 'Бүртгэл байхгүй юу?' : 'Бүртгэлтэй юу?',
-            size: 14,
-            color: AppColors.slate500,
-          ),
-          const SizedBox(width: 6),
-          Semantics(
-            button: true,
-            child: Pressable(
-              onTap: () =>
-                  _setMode(isLogin ? AuthMode.register : AuthMode.login),
-              scale: 0.96,
-              child: Container(
-                // A full 44pt target around a short word.
-                constraints: const BoxConstraints(minHeight: 44),
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: AppText(
-                  isLogin ? 'Бүртгүүлэх' : 'Нэвтрэх',
-                  size: 14,
-                  weight: FontWeight.w700,
-                  color: AppColors.sky600,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// The mode's fields, note and button; [mode] is the one currently shown,
-  /// which trails [_mode] by half a switch (see [ModeSwitch]).
-  Widget _buildFields(AuthMode mode) {
-    final isLogin = mode == AuthMode.login;
-    // One autofill group, so the system can offer the saved name and phone
-    // together.
-    return AutofillGroup(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (!isLogin) ...[
-            const AppFieldLabel('Регистрийн дугаар'),
-            const SizedBox(height: 6),
+        const SizedBox(height: 10),
+        AppText(subtitle, size: 15, color: AppColors.slate500, height: 1.45),
+        SizedBox(height: compact ? 24 : 32),
+        ...switch (step) {
+          _RegisterStep.registerNumber => [
             RegisterNumberField(
               fill: AppColors.card,
               letters: _registerLetters,
@@ -479,86 +476,148 @@ class _AuthScreenState extends State<AuthScreen>
               digitsFocus: _registerDigitsFocus,
               hasError: _registerError != null,
               textInputAction: TextInputAction.next,
-              onSubmitted: (_) => _nameFocus.requestFocus(),
+              onSubmitted: (_) => _next(),
             ),
             AppFieldError(message: _registerError),
-            const SizedBox(height: 14),
           ],
+          _RegisterStep.name => [
+            _nameField(onSubmitted: _next),
+            AppFieldError(message: _nameError),
+          ],
+          _RegisterStep.phone => [
+            _phoneField(onSubmitted: _next),
+            AppFieldError(message: _phoneError),
+          ],
+        },
+      ],
+    );
+  }
+
+  /// "Бүртгэл байхгүй юу? Бүртгүүлэх" (and the reverse): the way to the
+  /// other mode, as a link rather than a control. The link is its own text
+  /// widget so it reads as a button to assistive tech.
+  Widget _buildModeLink() {
+    final isLogin = _mode == AuthMode.login;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AppText(
+          isLogin ? 'Бүртгэл байхгүй юу?' : 'Бүртгэлтэй юу?',
+          size: 14,
+          color: AppColors.slate500,
+        ),
+        const SizedBox(width: 6),
+        Semantics(
+          button: true,
+          child: Pressable(
+            onTap: () => _setMode(isLogin ? AuthMode.register : AuthMode.login),
+            scale: 0.96,
+            child: Container(
+              // A full 44pt target around a short word.
+              constraints: const BoxConstraints(minHeight: 44),
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: AppText(
+                isLogin ? 'Бүртгүүлэх' : 'Нэвтрэх',
+                size: 14,
+                weight: FontWeight.w700,
+                color: AppColors.sky600,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _nameField({required VoidCallback onSubmitted}) {
+    return AppInputShell(
+      fill: AppColors.card,
+      hasError: _nameError != null,
+      leading: LineIcon(LineGlyph.profile, size: 18, color: AppColors.slate500),
+      trailing: AppFieldTick(visible: _nameValid),
+      child: TextField(
+        controller: _nameController,
+        onTapOutside: dismissKeyboard,
+        focusNode: _nameFocus,
+        textInputAction: _mode == AuthMode.login
+            ? TextInputAction.next
+            : TextInputAction.done,
+        onSubmitted: (_) => onSubmitted(),
+        // A handle, not prose: nothing should "correct" it.
+        autocorrect: false,
+        enableSuggestions: false,
+        autofillHints: const [AutofillHints.username],
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(_nameAllowed),
+          LengthLimitingTextInputFormatter(_nameMaxLength),
+        ],
+        style: appInputStyle(),
+        decoration: appInputDecoration('Тэмүүлэн, Мишээл...'),
+      ),
+    );
+  }
+
+  Widget _phoneField({required VoidCallback onSubmitted}) {
+    return AppInputShell(
+      fill: AppColors.card,
+      hasError: _phoneError != null,
+      leading: AppText(
+        '+976',
+        size: 14,
+        weight: FontWeight.w600,
+        color: AppColors.slate600,
+      ),
+      trailing: AppFieldTick(visible: _phoneValid),
+      child: TextField(
+        controller: _phoneController,
+        onTapOutside: dismissKeyboard,
+        focusNode: _phoneFocus,
+        keyboardType: TextInputType.phone,
+        textInputAction: TextInputAction.done,
+        onSubmitted: (_) => onSubmitted(),
+        // Grouped as it is typed, the way the hint reads.
+        inputFormatters: [
+          DigitGroupFormatter(const [4, 4]),
+        ],
+        autofillHints: const [AutofillHints.telephoneNumberNational],
+        style: appInputStyle(letterSpacing: 0.8),
+        decoration: appInputDecoration('8800 2345'),
+      ),
+    );
+  }
+
+  /// Нэвтрэх's fields, note and button.
+  Widget _buildLoginFields() {
+    // One autofill group, so the system can offer the saved name and phone
+    // together.
+    return AutofillGroup(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           const AppFieldLabel('Нэвтрэх нэр'),
-          const SizedBox(height: 6),
-          AppInputShell(
-            fill: AppColors.card,
-            hasError: _nameError != null,
-            leading: LineIcon(
-              LineGlyph.profile,
-              size: 18,
-              color: AppColors.slate500,
-            ),
-            trailing: AppFieldTick(visible: _nameValid),
-            child: TextField(
-              controller: _nameController,
-              onTapOutside: dismissKeyboard,
-              focusNode: _nameFocus,
-              textInputAction: TextInputAction.next,
-              onSubmitted: (_) => _phoneFocus.requestFocus(),
-              // A handle, not prose: nothing should "correct" it.
-              autocorrect: false,
-              enableSuggestions: false,
-              autofillHints: const [AutofillHints.username],
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(_nameAllowed),
-                LengthLimitingTextInputFormatter(_nameMaxLength),
-              ],
-              style: appInputStyle(),
-              decoration: appInputDecoration('Тэмүүлэн, Мишээл...'),
-            ),
-          ),
+          const SizedBox(height: 8),
+          _nameField(onSubmitted: _phoneFocus.requestFocus),
           AppFieldError(message: _nameError),
-          const SizedBox(height: 14),
-          const AppFieldLabel('Гар утасны дугаар'),
-          const SizedBox(height: 6),
-          AppInputShell(
-            fill: AppColors.card,
-            hasError: _phoneError != null,
-            leading: AppText(
-              '+976',
-              size: 14,
-              weight: FontWeight.w600,
-              color: AppColors.slate600,
-            ),
-            trailing: AppFieldTick(visible: _phoneValid),
-            child: TextField(
-              controller: _phoneController,
-              onTapOutside: dismissKeyboard,
-              focusNode: _phoneFocus,
-              keyboardType: TextInputType.phone,
-              textInputAction: TextInputAction.done,
-              onSubmitted: (_) => _submit(),
-              // Grouped as it is typed, the way the hint reads.
-              inputFormatters: [
-                DigitGroupFormatter(const [4, 4]),
-              ],
-              autofillHints: const [AutofillHints.telephoneNumberNational],
-              style: appInputStyle(letterSpacing: 0.8),
-              decoration: appInputDecoration('8800 2345'),
-            ),
-          ),
-          AppFieldError(message: _phoneError),
-          const SizedBox(height: 12),
-          HelperNote(
-            text: isLogin
-                ? 'Таны утсанд 4 оронтой баталгаажуулах нууц код очно.'
-                : 'Шинэ бүртгэл үүсгэхэд таны утасны дугаарт баталгаажуулах код илгээнэ.',
-          ),
           const SizedBox(height: 16),
+          const AppFieldLabel('Гар утасны дугаар'),
+          const SizedBox(height: 8),
+          _phoneField(onSubmitted: _submit),
+          AppFieldError(message: _phoneError),
+          const SizedBox(height: 16),
+          const HelperNote(
+            text: 'Таны утсанд 4 оронтой баталгаажуулах нууц код очно.',
+          ),
+          const SizedBox(height: 20),
           SubmitButton(
             state: _submitState,
-            label: isLogin ? 'Үргэлжлүүлэх' : 'Код авах',
+            label: 'Үргэлжлүүлэх',
             onPressed: _submit,
           ),
-          if (_biometric case final kind? when isLogin) ...[
+          if (_biometric case final kind?) ...[
             const SizedBox(height: 10),
             SoftButton(
+              height: 52,
               label: kind.loginLabel,
               leading: LineIcon(
                 kind == BiometricKind.face

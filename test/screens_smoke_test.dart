@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:new_ard_kids/features/auth/presentation/widgets/submit_button.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/transfer/presentation/screens/transfer_success_screen.dart';
@@ -132,7 +133,7 @@ void main() {
   testWidgets('transfer submits and shows receipt', (tester) async {
     PinCodeSheet.resetLockout();
     await _pumpApp(tester, AppRoutes.transfer);
-    final button = find.widgetWithText(PrimaryButton, 'Гүйлгээ хийх');
+    final button = find.widgetWithText(SubmitButton, 'Гүйлгээ хийх');
     await tester.scrollUntilVisible(
       button,
       300,

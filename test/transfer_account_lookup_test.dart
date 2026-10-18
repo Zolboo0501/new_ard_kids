@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/features/transfer/presentation/widgets/account_search_sheet.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 Future<void> _openSearchSheet(WidgetTester tester) async {
@@ -61,20 +62,31 @@ void main() {
     expect(find.text('MN21 0005 0057 5202 8915'), findsOneWidget);
   });
 
-  testWidgets('Дансаар: an unknown number says so and cannot be picked', (
-    tester,
-  ) async {
+  testWidgets('Дансаар: any number is found and can be picked', (tester) async {
     await _openSearchSheet(tester);
 
     await _search(tester, '1234567890');
-    expect(find.text('Данс олдсонгүй. Дугаараа шалгана уу.'), findsOneWidget);
+    final account = AccountSearchSheet.lookup('1234567890');
+    expect(find.text('Данс олдсонгүй. Дугаараа шалгана уу.'), findsNothing);
+    expect(find.text(account.holder), findsOneWidget);
+    expect(find.text(account.iban), findsOneWidget);
 
     await tester.tap(find.text('Сонгох'));
     await tester.pumpAndSettle();
-    expect(find.text('Данс хайх'), findsOneWidget);
-
-    await tester.tap(find.text('Буцах'));
-    await tester.pumpAndSettle();
     expect(find.text('Данс хайх'), findsNothing);
+    expect(find.text(account.iban), findsOneWidget);
+  });
+
+  test('Дансаар: mock accounts get a valid IBAN', () {
+    for (final number in ['1234567890', '42', '9999999999']) {
+      final iban = AccountSearchSheet.lookup(number).iban.replaceAll(' ', '');
+      // ISO 13616: move the first four to the end, letters to numbers.
+      final digits = '${iban.substring(4)}2223${iban.substring(2, 4)}';
+      var rest = 0;
+      for (final c in digits.codeUnits) {
+        rest = (rest * 10 + c - 48) % 97;
+      }
+      expect(rest, 1, reason: iban);
+    }
   });
 }

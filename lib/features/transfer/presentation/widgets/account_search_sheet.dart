@@ -12,6 +12,9 @@ import 'transfer_label.dart';
 
 /// The bottom sheet Хайх opens: the kid types a plain account number (no
 /// IBAN), searches, and sees whose account it is. Pops the account on Сонгох.
+///
+/// Every search succeeds: a number in [accounts] shows its holder, any other
+/// number gets a mock holder ([lookup]) until the backend does the lookup.
 class AccountSearchSheet extends StatefulWidget {
   const AccountSearchSheet({super.key});
 
@@ -39,6 +42,47 @@ class AccountSearchSheet extends StatefulWidget {
     ),
   };
 
+  /// Mock holders for numbers not in [accounts].
+  static const _holders = [
+    'Б. Тэмүүлэн',
+    'О. Номин',
+    'Э. Билгүүн',
+    'С. Ану',
+    'Ц. Батзориг',
+  ];
+
+  /// The account behind [number] (any digits): a known one, or a mock Хаан
+  /// банк account with a valid IBAN, its holder picked from the number so
+  /// the same number always finds the same person.
+  static KnownAccount lookup(String number) {
+    final known = accounts[number];
+    if (known != null) return known;
+    final digits = number.padLeft(10, '0');
+    final account = digits.substring(digits.length - 10);
+    final bban = '000500$account';
+    final iban = 'MN${_checkDigits(bban)}$bban';
+    final seed = account.codeUnits.fold(0, (a, c) => a + c);
+    return KnownAccount(
+      holder: _holders[seed % _holders.length],
+      bank: 'Хаан банк',
+      iban: [
+        for (var i = 0; i < iban.length; i += 4)
+          iban.substring(i, (i + 4).clamp(0, iban.length)),
+      ].join(' '),
+    );
+  }
+
+  /// The two IBAN check digits for an MN [bban] (ISO 13616 mod-97).
+  static String _checkDigits(String bban) {
+    // M = 22, N = 23; the check digits start as 00.
+    final rearranged = '${bban}222300';
+    var rest = 0;
+    for (final c in rearranged.codeUnits) {
+      rest = (rest * 10 + c - 48) % 97;
+    }
+    return '${98 - rest}'.padLeft(2, '0');
+  }
+
   @override
   State<AccountSearchSheet> createState() => _AccountSearchSheetState();
 }
@@ -48,7 +92,6 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
   Timer? _timer;
   bool _searching = false;
   KnownAccount? _found;
-  bool _notFound = false;
 
   String get _digits => _number.text.replaceAll(RegExp(r'\D'), '');
 
@@ -65,15 +108,12 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
     setState(() {
       _searching = true;
       _found = null;
-      _notFound = false;
     });
     // TODO: look the account up with the backend.
     _timer = Timer(const Duration(milliseconds: 500), () {
-      final account = AccountSearchSheet.accounts[number];
       setState(() {
         _searching = false;
-        _found = account;
-        _notFound = account == null;
+        _found = AccountSearchSheet.lookup(number);
       });
     });
   }
@@ -84,7 +124,6 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
     setState(() {
       _searching = false;
       _found = null;
-      _notFound = false;
     });
   }
 
@@ -134,19 +173,9 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
                 onChanged: (_) => _reset(),
                 suffix: SearchButton(
                   loading: _searching,
-                  onTap: _digits.length == 10 ? _search : null,
+                  onTap: _digits.isEmpty ? null : _search,
                 ),
               ),
-              if (_notFound)
-                Padding(
-                  padding: const EdgeInsets.only(top: 6, left: 4),
-                  child: AppText(
-                    'Данс олдсонгүй. Дугаараа шалгана уу.',
-                    size: 12,
-                    weight: FontWeight.w600,
-                    color: AppColors.rose600,
-                  ),
-                ),
               if (found != null) ...[
                 const SizedBox(height: 14),
                 Container(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/common.dart';
-import '../../../../widgets/ui/surfaces.dart';
+import '../../../../widgets/app_input.dart';
 import '../../../../widgets/value_switcher.dart';
 
 class OtpBox extends StatelessWidget {
@@ -16,13 +16,13 @@ class OtpBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      width: 56,
-      height: 64,
+      width: 62,
+      height: 70,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        boxShadow: cardShadow,
-        color: AppColors.slate50,
-        borderRadius: BorderRadius.circular(12),
+        boxShadow: inputLift,
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: active ? AppColors.sky500 : Colors.transparent,
           width: active ? 2 : 1,
@@ -47,8 +47,8 @@ class OtpBox extends StatelessWidget {
         child: digit != null
             ? AppText(
                 digit!,
-                size: 24,
-                weight: FontWeight.w600,
+                size: 28,
+                weight: FontWeight.w700,
                 color: AppColors.slate900,
                 key: ValueKey('digit-$digit'),
               )

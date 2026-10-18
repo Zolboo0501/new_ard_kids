@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/accounts.dart';
-import '../../../../widgets/avatar_card_art.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
@@ -23,7 +22,7 @@ import '../widgets/clear_button.dart';
 import '../widgets/mode_tabs.dart';
 import '../widgets/pin_summary.dart';
 import '../widgets/search_button.dart';
-import '../widgets/source_card.dart';
+import '../../../auth/presentation/widgets/submit_button.dart';
 import '../widgets/transfer_contact_avatar.dart';
 import '../widgets/transfer_label.dart';
 import '../widgets/verified_name.dart';
@@ -217,11 +216,8 @@ class _TransferScreenState extends State<TransferScreen> {
               child: AdaptiveListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                 children: EntranceItem.list([
-                  AvatarCardArt(
-                    account: Accounts.main,
-                    child: SourceCard(amount: _amountValue),
-                  ),
-                  const SizedBox(height: 12),
+                  _buildAmountSummary(),
+                  const SizedBox(height: 20),
                   ModeTabs(
                     mode: _mode,
                     onChanged: (m) => setState(() => _mode = m),
@@ -243,31 +239,27 @@ class _TransferScreenState extends State<TransferScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  AppCard(
-                    padding: const EdgeInsets.all(16),
-                    child: _buildNote(),
-                  ),
+                  const SizedBox(height: 20),
+                  _buildNote(),
                 ]),
               ),
             ),
           ),
           // The action stays in reach however far the form scrolls.
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border(top: BorderSide(color: AppColors.line)),
-            ),
+          Padding(
             padding: EdgeInsets.fromLTRB(
               20,
-              12,
+              8,
               20,
               12 + MediaQuery.paddingOf(context).bottom,
             ),
             child: AdaptiveCenter(
-              child: PrimaryButton(
+              child: SubmitButton(
                 label: 'Гүйлгээ хийх',
-                onPressed: _valid ? _confirm : null,
+                dimmed: !_valid,
+                onPressed: () {
+                  if (_valid) _confirm();
+                },
               ),
             ),
           ),
@@ -276,13 +268,49 @@ class _TransferScreenState extends State<TransferScreen> {
     );
   }
 
+  /// The amount from the first step, with a way back to change it.
+  Widget _buildAmountSummary() {
+    final iban = Accounts.main;
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                'Илгээх дүн · Үндсэн данс ••${iban.substring(iban.length - 4)}',
+                size: 13,
+                color: AppColors.slate500,
+              ),
+              const SizedBox(height: 2),
+              BalanceText(
+                _amountValue,
+                size: 34,
+                weight: FontWeight.w700,
+                currencyWeight: FontWeight.w600,
+                color: AppColors.slate900,
+                currencyColor: AppColors.slate400,
+              ),
+            ],
+          ),
+        ),
+        SoftButton(
+          label: 'Өөрчлөх',
+          height: 40,
+          onPressed: () => context.pop(),
+        ),
+      ],
+    );
+  }
+
+  /// What the money is for: a tap on a common purpose, or Бусад to write
+  /// one.
   Widget _buildNote() {
+    final other = _purpose == _purposes.length - 1;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const TransferLabel('Гүйлгээний утга'),
-        AppTextField(controller: _note, hint: 'Жишээ нь: Өдрийн хоол'),
-        const SizedBox(height: 10),
         _chipRow(
           count: _purposes.length,
           label: (i) => _purposes[i],
@@ -292,6 +320,21 @@ class _TransferScreenState extends State<TransferScreen> {
             // Бусад leaves the note for the teen to write.
             _note.text = i == _purposes.length - 1 ? '' : _purposes[i];
           },
+        ),
+        // Only Бусад needs typing; the chips cover the rest.
+        AnimatedSize(
+          duration: const Duration(milliseconds: 240),
+          curve: appEmphasizedDecelerate,
+          alignment: Alignment.topCenter,
+          child: other
+              ? Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: AppTextField(
+                    controller: _note,
+                    hint: 'Жишээ нь: Төрсөн өдрийн бэлэг',
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
         ),
       ],
     );

@@ -9,6 +9,7 @@ import '../widgets/app_slider.dart';
 import '../widgets/icon_choice.dart';
 import '../widgets/new_goal_section.dart';
 import '../widgets/slider_scale.dart';
+import '../../../../widgets/avatar_toast.dart';
 
 /// "Шинэ зорилго": create a savings goal.
 class NewGoalScreen extends StatefulWidget {
@@ -58,7 +59,7 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
   void _submit() {
     // TODO: persist the goal.
-    showAppSnack(context, '"${_name.text.trim()}" зорилго үүслээ');
+    showRewardToast(context, lead: '"${_name.text.trim()}" зорилго үүслээ.');
     context.pop();
   }
 

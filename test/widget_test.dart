@@ -9,7 +9,6 @@ void main() {
   ) async {
     await tester.pumpWidget(const ArdKidsApp());
 
-    expect(find.text('Мөнгөө өөрөө\nудирд.'), findsOneWidget);
     expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
 
     // The mode link sits at the bottom of the screen.
@@ -17,7 +16,8 @@ void main() {
     await tester.tap(find.text('Бүртгүүлэх'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Код авах'), findsOneWidget);
+    expect(find.text('Регистрийн дугаараа оруулаарай'), findsOneWidget);
+    expect(find.text('Дараах'), findsOneWidget);
   });
 
   testWidgets('Phone field accepts digits only, max 8', (

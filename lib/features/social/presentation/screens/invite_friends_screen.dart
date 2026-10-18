@@ -10,6 +10,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../widgets/social_initials_avatar.dart';
 import '../../../../widgets/avatar_tour.dart';
+import '../../../../widgets/avatar_toast.dart';
 
 /// "Найз урих": the bonus both friends get, the invite code, and who has
 /// joined.
@@ -58,6 +59,13 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen>
   void _copy(BuildContext context) {
     Clipboard.setData(const ClipboardData(text: _code));
     showAppSnack(context, 'Урилгын код хуулагдлаа');
+  }
+
+  /// Shares the invite (for now, copies the code) and rewards it.
+  void _share(BuildContext context) {
+    // TODO: open the system share sheet with the invite link.
+    Clipboard.setData(const ClipboardData(text: _code));
+    showRewardToast(context, lead: 'Урилгын код хуулагдлаа.');
   }
 
   Widget _title(String text, {Widget? trailing}) => Row(
@@ -240,7 +248,7 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen>
               key: _shareKey,
               child: PrimaryButton(
                 label: 'Урилга хуваалцах',
-                onPressed: () => _copy(context),
+                onPressed: () => _share(context),
               ),
             ),
           ]),

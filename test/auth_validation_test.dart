@@ -190,19 +190,18 @@ void main() {
   });
 
   group('Регистрийн дугаар', () {
-    testWidgets('only shows on Бүртгүүлэх, above the other fields', (
+    testWidgets('Бүртгүүлэх opens on the register number, one question', (
       tester,
     ) async {
       _usePhoneViewport(tester);
       await tester.pumpWidget(_wrap(AppRoutes.auth));
 
-      expect(find.text('Регистрийн дугаар'), findsNothing);
+      expect(find.text('Регистрийн дугаараа оруулаарай'), findsNothing);
       await _openRegister(tester);
-      expect(find.text('Регистрийн дугаар'), findsOneWidget);
-      expect(
-        tester.getTopLeft(find.text('Регистрийн дугаар')).dy,
-        lessThan(tester.getTopLeft(find.text('Нэвтрэх нэр')).dy),
-      );
+      expect(find.text('Регистрийн дугаараа оруулаарай'), findsOneWidget);
+      // The name and phone wait for their own pages.
+      expect(_nameField, findsNothing);
+      expect(_phoneField, findsNothing);
     });
 
     testWidgets('the letter sheet fills both boxes, then closes', (
@@ -242,31 +241,54 @@ void main() {
       expect(_textOf(tester, _registerDigitsField), '12345678');
     });
 
-    testWidgets('missing letters or digits block Код авах', (tester) async {
+    testWidgets('missing letters or digits keep Дараах on the page', (
+      tester,
+    ) async {
       _usePhoneViewport(tester);
       await tester.pumpWidget(_wrap(AppRoutes.auth));
       await _openRegister(tester);
 
-      await _fillValid(tester);
-      await tester.tap(find.text('Код авах'));
+      await tester.tap(find.text('Дараах'));
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.text('Регистрийн дугаараа оруулна уу.'), findsOneWidget);
 
       await tester.enterText(_registerDigitsField, '12345678');
-      await tester.tap(find.text('Код авах'));
+      await tester.tap(find.text('Дараах'));
       await tester.pumpAndSettle();
       expect(find.text('Регистрийн 2 үсгээ сонгоно уу.'), findsOneWidget);
 
       await _pickLetters(tester, 'У', 'Б');
       await tester.enterText(_registerDigitsField, '1234');
-      await tester.tap(find.text('Код авах'));
+      await tester.tap(find.text('Дараах'));
       await tester.pumpAndSettle();
       expect(
         find.text('Регистрийн 8 оронтой тоог оруулна уу.'),
         findsOneWidget,
       );
-      expect(find.byType(OtpScreen), findsNothing);
+      expect(_nameField, findsNothing);
     });
+  });
+
+  testWidgets('Бүртгүүлэх: back walks the questions, then returns to Нэвтрэх', (
+    tester,
+  ) async {
+    _usePhoneViewport(tester);
+    await tester.pumpWidget(_wrap(AppRoutes.auth));
+    await _openRegister(tester);
+    await _pickLetters(tester, 'У', 'Б');
+    await tester.enterText(_registerDigitsField, '12345678');
+    await tester.tap(find.text('Дараах'));
+    await tester.pumpAndSettle();
+    expect(find.text('Нэвтрэх нэрээ сонгоорой'), findsOneWidget);
+
+    await tester.tap(find.bySemanticsLabel('Буцах'));
+    await tester.pumpAndSettle();
+    // The register number is still filled in.
+    expect(_textOf(tester, _registerDigitsField), '12345678');
+
+    await tester.tap(find.bySemanticsLabel('Буцах'));
+    await tester.pumpAndSettle();
+    expect(find.text('Үргэлжлүүлэх'), findsOneWidget);
   });
 
   testWidgets('Auth: an empty form reports both fields at once', (
@@ -312,9 +334,14 @@ void main() {
     await tester.pumpWidget(_wrap(AppRoutes.auth));
 
     await _openRegister(tester);
-    await _fillValid(tester);
     await _pickLetters(tester, 'У', 'Б');
     await tester.enterText(_registerDigitsField, '12345678');
+    await tester.tap(find.text('Дараах'));
+    await tester.pumpAndSettle();
+    await tester.enterText(_nameField, 'Тэмүүлэн');
+    await tester.tap(find.text('Дараах'));
+    await tester.pumpAndSettle();
+    await tester.enterText(_phoneField, '99112345');
     await tester.pump();
     await tester.tap(find.text('Код авах'));
 

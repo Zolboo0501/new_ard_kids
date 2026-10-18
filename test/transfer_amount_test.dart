@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/features/auth/presentation/widgets/submit_button.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
@@ -20,8 +21,8 @@ Future<GoRouter> _pump(
   return router;
 }
 
-PrimaryButton _continue(WidgetTester tester) => tester.widget<PrimaryButton>(
-  find.widgetWithText(PrimaryButton, 'Үргэлжлүүлэх'),
+SubmitButton _continue(WidgetTester tester) => tester.widget<SubmitButton>(
+  find.widgetWithText(SubmitButton, 'Үргэлжлүүлэх'),
 );
 
 void main() {
@@ -29,15 +30,19 @@ void main() {
     tester,
   ) async {
     final router = await _pump(tester);
-    expect(_continue(tester).onPressed, isNull);
+    expect(_continue(tester).dimmed, isTrue);
+    // Dimmed, a tap stays on the amount.
+    await tester.tap(find.text('Үргэлжлүүлэх'));
+    await tester.pumpAndSettle();
+    expect(router.state.uri.toString(), AppRoutes.transferAmount);
 
     for (final d in ['2', '5', '0', '0', '0']) {
       await tester.tap(find.text(d).last);
       await tester.pump();
     }
-    expect(_continue(tester).onPressed, isNotNull);
+    expect(_continue(tester).dimmed, isFalse);
 
-    await tester.tap(find.widgetWithText(PrimaryButton, 'Үргэлжлүүлэх'));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
     await tester.pumpAndSettle();
     expect(router.state.uri.toString(), AppRoutes.transfer);
     expect(find.bySemanticsLabel(RegExp('25,000')), findsWidgets);
@@ -52,7 +57,7 @@ void main() {
       await tester.pump();
     }
     expect(find.textContaining('Өнөөдрийн үлдэгдэл эрх'), findsOneWidget);
-    expect(_continue(tester).onPressed, isNull);
+    expect(_continue(tester).dimmed, isTrue);
   });
 
   testWidgets('Request amount: keypad amount carries into the request', (
@@ -66,7 +71,7 @@ void main() {
     }
     expect(find.textContaining('Өнөөдрийн үлдэгдэл эрх'), findsNothing);
 
-    await tester.tap(find.widgetWithText(PrimaryButton, 'Үргэлжлүүлэх'));
+    await tester.tap(find.text('Үргэлжлүүлэх'));
     await tester.pumpAndSettle();
     expect(router.state.uri.toString(), AppRoutes.requestMoney);
     expect(find.text('Хүсэх дүн'), findsOneWidget);

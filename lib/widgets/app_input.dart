@@ -8,6 +8,20 @@ import 'app_text.dart';
 import 'ui/surfaces.dart';
 import 'value_switcher.dart';
 
+/// The resting lift of a white field on the page: tighter than
+/// [cardShadow], so a stack of fields reads as edges, not floating slabs.
+/// Flat on the dark canvas.
+List<BoxShadow>? get inputLift => AppColors.isDark
+    ? null
+    : [
+        BoxShadow(
+          color: AppColors.shadow,
+          blurRadius: 14,
+          spreadRadius: -3,
+          offset: const Offset(0, 4),
+        ),
+      ];
+
 /// The label sitting above an [AppInputShell].
 class AppFieldLabel extends StatelessWidget {
   const AppFieldLabel(this.text, {super.key});
@@ -139,9 +153,9 @@ class _AppInputShellState extends State<AppInputShell>
                   ),
                 ]
               // At rest there is no outline; a white field (on the page)
-              // takes the card's soft lift so it still stands out.
+              // takes a tight lift so its edge still reads.
               : widget.fill == AppColors.card
-              ? cardShadow
+              ? inputLift
               : null,
         ),
         child: Row(

@@ -11,6 +11,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
 import '../../../auth/presentation/widgets/header.dart';
+import '../../../auth/presentation/widgets/submit_button.dart';
 import '../widgets/avatar_card.dart';
 
 /// "Аватараа сонго" (registration step 4/7, right after the age): pick a
@@ -125,19 +126,19 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
                             step: widget.editing ? null : 'Алхам 3/6',
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 20),
                         Entrance(
                           t: _titleIn,
                           child: AppText(
                             'Аватараа сонгоорой',
-                            size: 28,
+                            size: 30,
                             weight: FontWeight.w700,
                             color: AppColors.slate900,
-                            height: 1.2,
+                            height: 1.15,
                             letterSpacing: -0.6,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 10),
                         Entrance(
                           t: _subtitleIn,
                           child: AppText(
@@ -187,11 +188,10 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
               child: AdaptiveCenter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                  child: PrimaryButton(
+                  child: SubmitButton(
                     label: widget.editing
                         ? 'Аватараа хадгалах'
                         : 'Үргэлжлүүлэх',
-                    height: 56,
                     onPressed: _confirm,
                   ),
                 ),
