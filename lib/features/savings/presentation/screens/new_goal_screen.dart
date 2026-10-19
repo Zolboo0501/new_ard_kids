@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/avatar.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/entrance.dart';
@@ -59,7 +60,11 @@ class _NewGoalScreenState extends State<NewGoalScreen> {
 
   void _submit() {
     // TODO: persist the goal.
-    showRewardToast(context, lead: '"${_name.text.trim()}" зорилго үүслээ.');
+    showRewardToast(
+      context,
+      lead: '"${_name.text.trim()}" зорилго үүслээ.',
+      pose: RewardPose.savings,
+    );
     context.pop();
   }
 

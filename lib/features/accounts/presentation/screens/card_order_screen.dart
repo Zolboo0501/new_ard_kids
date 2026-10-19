@@ -10,6 +10,7 @@ import '../../../../widgets/ui.dart';
 import '../widgets/card_order_section.dart';
 import '../widgets/delivery_option.dart';
 import '../widgets/ard_card_preview.dart';
+import '../widgets/card_tilt.dart';
 import '../widgets/price_row.dart';
 import '../widgets/total_box.dart';
 import '../../../../widgets/avatar_tour.dart';
@@ -32,7 +33,6 @@ class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
   static const _deliveryFee = 5000;
   static const _balance = Balances.main;
 
-  final _name = TextEditingController(text: Kid.cardName);
   final _address = TextEditingController(
     text: 'Улаанбаатар, СБД, 1-р хороо, 24-р байр',
   );
@@ -56,22 +56,18 @@ class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
         ),
       ];
     });
-    _name.addListener(() => setState(() {}));
     _address.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
-    _name.dispose();
     _address.dispose();
     super.dispose();
   }
 
   int get _total => _printFee + (_homeDelivery ? _deliveryFee : 0);
 
-  bool get _valid =>
-      _name.text.trim().isNotEmpty &&
-      (!_homeDelivery || _address.text.trim().isNotEmpty);
+  bool get _valid => !_homeDelivery || _address.text.trim().isNotEmpty;
 
   void _submit() {
     // TODO: submit the card order for parent approval.
@@ -95,73 +91,17 @@ class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
           children: EntranceItem.list([
             KeyedSubtree(
               key: _previewKey,
-              child: ArdCardPreview(
-                holder: _name.text.trim().isEmpty
-                    ? Kid.cardName
-                    : _name.text.trim().toUpperCase(),
+              // In 3D, the name embossed, so the teen sees the card they
+              // are ordering as an object.
+              child: CardTilt(
+                radiusFraction: ArdCardPreview.radiusFraction,
+                child: const ArdCardPreview(
+                  embossed: true,
+                  holder: Kid.cardName,
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            CardOrderSection(
-              title: 'Картын мэдээлэл',
-              children: [
-                const FieldLabel('Дээр бичигдэх нэр (Латинаар)'),
-                AppTextField(
-                  controller: _name,
-                  textStyle: inter(
-                    size: 15,
-                    weight: FontWeight.w600,
-                    letterSpacing: 1,
-                  ),
-                  suffix: _name.text.trim().isEmpty
-                      ? null
-                      : LineIcon(
-                          LineGlyph.check,
-                          size: 18,
-                          color: AppColors.emerald600,
-                        ),
-                ),
-                const SizedBox(height: 6),
-                AppText(
-                  'Картын нүүрэн талд энэ нэр хэвлэгдэнэ.',
-                  size: 12,
-                  color: AppColors.slate500,
-                ),
-                const SizedBox(height: 14),
-                const FieldLabel('Холбогдох данс'),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.slate50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      LineIcon(
-                        LineGlyph.pocket,
-                        size: 22,
-                        color: AppColors.slate800,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: AppText(
-                          'Халаасны данс',
-                          size: 14,
-                          weight: FontWeight.w600,
-                        ),
-                      ),
-                      BalanceText(
-                        _balance,
-                        size: 14,
-                        weight: FontWeight.w500,
-                        color: AppColors.slate600,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
             CardOrderSection(
               title: 'Хүргэлтийн хэлбэр',
               trailing: AppText(
@@ -175,7 +115,6 @@ class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
                     Expanded(
                       child: DeliveryOption(
                         title: 'Салбараас',
-                        subtitle: 'Төв салбар дээр очиж авах',
                         price: 'Үнэгүй',
                         selected: !_homeDelivery,
                         onTap: () => setState(() => _homeDelivery = false),
@@ -185,7 +124,6 @@ class _CardOrderScreenState extends State<CardOrderScreen> with AvatarTourHost {
                     Expanded(
                       child: DeliveryOption(
                         title: 'Гэртээ хүргүүлэх',
-                        subtitle: 'Шуудангаар хүргэж өгнө',
                         price: _deliveryFee,
                         selected: _homeDelivery,
                         onTap: () => setState(() => _homeDelivery = true),

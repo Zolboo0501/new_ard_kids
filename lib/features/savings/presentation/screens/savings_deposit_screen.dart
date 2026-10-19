@@ -82,7 +82,11 @@ class _SavingsDepositScreenState extends State<SavingsDepositScreen>
 
   void _submit() {
     // TODO: call the savings deposit API.
-    showRewardToast(context, lead: '${formatMnt(_amount)} хадгаламжид орлоо.');
+    showRewardToast(
+      context,
+      lead: '${formatMnt(_amount)} хадгаламжид орлоо.',
+      pose: RewardPose.savings,
+    );
     context.pop();
   }
 

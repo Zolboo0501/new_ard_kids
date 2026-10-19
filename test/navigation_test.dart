@@ -8,6 +8,7 @@ import 'package:new_ard_kids/features/home/presentation/screens/home_shell.dart'
 import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
 import 'package:new_ard_kids/features/transfer/presentation/screens/qr_scan_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/slide_to_confirm.dart';
 import 'package:new_ard_kids/widgets/app_tabs.dart';
 import 'package:new_ard_kids/widgets/common.dart';
 
@@ -66,7 +67,7 @@ void main() {
     expect(find.text('•••• 5521'), findsOneWidget);
   });
 
-  testWidgets('sideways swipes move along Нүүр, QR and Профайл', (
+  testWidgets('sideways swipes move along Нүүр, QR, Чат and Профайл', (
     tester,
   ) async {
     final router = await _pumpApp(tester, AppRoutes.home);
@@ -82,12 +83,16 @@ void main() {
     await swipe(-200);
     expect(_location(router), AppRoutes.qrScan);
     await swipe(-200);
+    expect(_location(router), AppRoutes.chat);
+    await swipe(-200);
     expect(_location(router), AppRoutes.profile);
 
     // Nothing after Профайл: a further left swipe stays put.
     await swipe(-200);
     expect(_location(router), AppRoutes.profile);
 
+    await swipe(200);
+    expect(_location(router), AppRoutes.chat);
     await swipe(200);
     expect(_location(router), AppRoutes.qrScan);
     await swipe(200);
@@ -111,12 +116,13 @@ void main() {
     expect(discX(), -1);
 
     // A third of a tab to the left (a tab is half the 390pt width): the
-    // disc sits that far towards QR while the finger is down.
+    // disc sits that far towards QR while the finger is down (a tab is a
+    // third of the disc's -1…1 travel across the four tabs).
     final gesture = await tester.startGesture(tester.getCenter(bar));
     await gesture.moveBy(const Offset(-20, 0)); // past the drag slop
     await gesture.moveBy(const Offset(-65, 0));
     await tester.pump();
-    expect(discX(), closeTo(-1 + 1 / 3, 0.15));
+    expect(discX(), closeTo(-1 + 2 / 9, 0.12));
 
     // Let go slowly short of halfway: the disc settles back on Нүүр.
     await tester.pump(const Duration(seconds: 1));
@@ -227,7 +233,7 @@ void main() {
     expect(_location(router), AppRoutes.savingsAccount);
   });
 
-  testWidgets('profile avatar opens picker in edit mode and returns', (
+  testWidgets('profile avatar opens picker in edit mode and lands on Home', (
     tester,
   ) async {
     final router = await _pumpApp(tester, AppRoutes.profile);
@@ -245,9 +251,9 @@ void main() {
 
     final save = find.text('Аватараа хадгалах');
     await tester.ensureVisible(save);
-    await tester.tap(save);
+    await tester.drag(find.byType(SlideToConfirm), const Offset(400, 0));
     await tester.pumpAndSettle();
-    expect(_location(router), AppRoutes.profile);
+    expect(_location(router), AppRoutes.home);
     expect(find.byType(HomeShell), findsOneWidget);
   });
 

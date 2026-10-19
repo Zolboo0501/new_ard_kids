@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/avatar_toast.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
 const _reward = 'Танд 100 ардын эрх орлоо!';
@@ -50,7 +52,20 @@ Future<void> _expectRewardToast(WidgetTester tester, String lead) async {
   expect(find.textContaining(_reward), findsNothing);
 }
 
+/// Whether the toast's character is drawn from [path].
+Finder _art(String path) => find.descendant(
+  of: find.byType(AvatarToast),
+  matching: find.byWidgetPredicate(
+    (w) =>
+        w is Image &&
+        w.image is AssetImage &&
+        (w.image as AssetImage).assetName == path,
+  ),
+);
+
 void main() {
+  tearDown(() => appAvatar.value = AppAvatar.fox);
+
   testWidgets('Reward: a savings deposit earns it', (tester) async {
     await _pump(tester, AppRoutes.savingsDeposit);
     await tester.tap(find.text('₮10k'));
@@ -118,5 +133,54 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('Урилгын код хуулагдлаа'), findsNothing);
     expect(find.textContaining(_reward), findsOneWidget);
+  });
+
+  /// Deposits into savings as [avatar] and expects the toast to draw [art].
+  Future<void> expectDepositArt(
+    WidgetTester tester,
+    AppAvatar avatar,
+    String art,
+  ) async {
+    appAvatar.value = avatar;
+    await _pump(tester, AppRoutes.savingsDeposit);
+    await tester.tap(find.text('₮10k'));
+    await tester.pump();
+    await tester.tap(find.widgetWithText(PrimaryButton, 'Орлого хийх'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(_art(art), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('Reward: Гангаа greets it in its own pose', (tester) async {
+    await expectDepositArt(
+      tester,
+      AppAvatar.fox,
+      'assets/images/avatars/bean/orange/savings.webp',
+    );
+  });
+
+  testWidgets('Reward: Цахиа greets it in its own pose', (tester) async {
+    await expectDepositArt(
+      tester,
+      AppAvatar.bear,
+      'assets/images/avatars/bean/green/savings.webp',
+    );
+  });
+
+  testWidgets('Reward: Хөөсөө greets it in its own pose', (tester) async {
+    await expectDepositArt(
+      tester,
+      AppAvatar.bunny,
+      'assets/images/avatars/bean/pink/savings.webp',
+    );
+  });
+
+  testWidgets('Reward: Вайбаа greets it in its own pose', (tester) async {
+    await expectDepositArt(
+      tester,
+      AppAvatar.cat,
+      'assets/images/avatars/bean/purple/savings.webp',
+    );
   });
 }

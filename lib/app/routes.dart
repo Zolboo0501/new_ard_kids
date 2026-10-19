@@ -10,6 +10,9 @@ import '../features/accounts/presentation/screens/card_order_screen.dart';
 import '../features/accounts/presentation/screens/reward_opportunities_screen.dart';
 import '../features/accounts/presentation/screens/rewards_account_screen.dart';
 import '../features/accounts/presentation/screens/stocks_screen.dart';
+import '../features/chat/presentation/screens/chat_screen.dart';
+import '../features/chat/presentation/screens/chat_thread_screen.dart';
+import '../features/chat/presentation/screens/new_chat_screen.dart';
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/home/presentation/screens/invoice_history_screen.dart';
@@ -123,6 +126,16 @@ abstract final class AppRoutes {
   static const inviteFriends = '/friends/invite';
   static const notifications = '/notifications';
 
+  /// The Чат tab of the signed-in shell.
+  static const chat = '/chat';
+
+  /// One conversation, opened from [chat]; `?id=` picks the thread.
+  static const chatThread = '/chat/thread';
+  static String chatThreadOf(String id) => '$chatThread?id=$id';
+
+  /// "Шинэ чат": find someone by @username and start a conversation.
+  static const newChat = '/chat/new';
+
   static const profile = '/profile';
   static const personalInfo = '/profile/info';
   static const editPersonalInfo = '/profile/info/edit';
@@ -176,6 +189,9 @@ abstract final class AppRoutes {
     addFriend: (_, _) => const AddFriendScreen(),
     inviteFriends: (_, _) => const InviteFriendsScreen(),
     notifications: (_, _) => const NotificationsScreen(),
+    chatThread: (_, state) =>
+        ChatThreadScreen(threadId: state.uri.queryParameters['id']),
+    newChat: (_, _) => const NewChatScreen(),
     personalInfo: (_, _) => const PersonalInfoScreen(),
     editPersonalInfo: (_, _) => const EditPersonalInfoScreen(),
     security: (_, _) => const SecurityScreen(),
@@ -199,6 +215,7 @@ abstract final class AppRoutes {
     qrScan,
     homeUnlinked,
     parentLinkOnboarding,
+    chat,
     profile,
   ];
 
@@ -231,14 +248,23 @@ abstract final class AppRoutes {
                 ),
               ],
             ),
-            // QR sits between them, a tab like the other two so the bar
-            // stays put under it.
+            // QR sits after Home, a tab like the others so the bar stays
+            // put under it.
             StatefulShellBranch(
               routes: [
                 GoRoute(
                   path: qrScan,
                   pageBuilder: (context, state) =>
                       const NoTransitionPage(child: QrScanScreen()),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: chat,
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: ChatScreen()),
                 ),
               ],
             ),

@@ -10,14 +10,12 @@ class DeliveryOption extends StatelessWidget {
   const DeliveryOption({
     super.key,
     required this.title,
-    required this.subtitle,
     required this.price,
     required this.selected,
     required this.onTap,
   });
 
   final String title;
-  final String subtitle;
 
   /// An amount (shown with [BalanceText]) or text such as `Үнэгүй`.
   final Object price;
@@ -79,8 +77,6 @@ class DeliveryOption extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
-              AppText(subtitle, size: 12, color: AppColors.slate500),
               const SizedBox(height: 8),
               switch (price) {
                 final num amount => BalanceText(

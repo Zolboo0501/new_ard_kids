@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/ui.dart';
 
-/// The floating bottom bar: a pill in the theme's accent with three round
-/// buttons, Нүүр · QR · Профайл. Each button sits on a faint disc of its
+/// The floating bottom bar: a pill in the theme's accent with four round
+/// buttons, Нүүр · QR · Чат · Профайл. Each button sits on a faint disc of its
 /// own; a card-coloured disc carrying a small dot slides under the selected
 /// tab, and its icon takes the accent ink on it.
 ///
@@ -41,9 +41,12 @@ class FloatingNavBar extends StatelessWidget {
   static const _compactButton = 54.0;
   static const _gap = 6.0;
 
+  /// How many tabs the bar holds.
+  static const _tabs = 4;
+
   /// The widest the bar gets (full and compact).
-  static const _maxWidth = 236.0;
-  static const _compactMaxWidth = 212.0;
+  static const _maxWidth = 312.0;
+  static const _compactMaxWidth = 282.0;
 
   // Light canvas: a pill in the accent with a card-coloured disc under the
   // selected tab. Dark canvas: a dark raised pill with the accent disc
@@ -132,19 +135,22 @@ class FloatingNavBar extends StatelessWidget {
     final selected = drag?.round() ?? index;
     return Stack(
       children: [
-        // The light disc, sliding between the three tabs.
+        // The light disc, sliding between the tabs.
         Positioned.fill(
           child: AnimatedAlign(
             // Under the finger while dragging; eased into place otherwise,
             // from wherever the drag left it.
             duration: drag != null ? Duration.zero : _duration,
             curve: appEmphasizedDecelerate,
-            alignment: Alignment((drag ?? index.toDouble()) - 1, 0),
+            alignment: Alignment(
+              (drag ?? index.toDouble()) * 2 / (_tabs - 1) - 1,
+              0,
+            ),
             child: _SelectedDisc(color: _disc, ring: _dotRing, size: size),
           ),
         ),
-        // The three buttons spread across the bar; the disc's -1/0/1 land
-        // on them in turn.
+        // The buttons spread across the bar; the disc's alignment from -1
+        // to 1 lands on them in turn.
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -165,12 +171,20 @@ class FloatingNavBar extends StatelessWidget {
               onTap: () => onTab(1),
             ),
             _NavButton(
-              icon: LineGlyph.profile,
-              label: 'Профайл',
+              icon: LineGlyph.chat,
+              label: 'Чат',
               selected: selected == 2,
               size: size,
               iconSize: iconSize,
               onTap: () => onTab(2),
+            ),
+            _NavButton(
+              icon: LineGlyph.profile,
+              label: 'Профайл',
+              selected: selected == 3,
+              size: size,
+              iconSize: iconSize,
+              onTap: () => onTab(3),
             ),
           ],
         ),

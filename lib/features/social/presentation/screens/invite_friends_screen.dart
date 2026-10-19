@@ -65,7 +65,11 @@ class _InviteFriendsScreenState extends State<InviteFriendsScreen>
   void _share(BuildContext context) {
     // TODO: open the system share sheet with the invite link.
     Clipboard.setData(const ClipboardData(text: _code));
-    showRewardToast(context, lead: 'Урилгын код хуулагдлаа.');
+    showRewardToast(
+      context,
+      lead: 'Урилгын код хуулагдлаа.',
+      pose: RewardPose.coins,
+    );
   }
 
   Widget _title(String text, {Widget? trailing}) => Row(

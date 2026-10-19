@@ -9,6 +9,8 @@ import 'package:new_ard_kids/app/avatar.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/main.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/slide_to_confirm.dart';
+import 'package:new_ard_kids/widgets/avatar_reveal.dart';
 import 'package:new_ard_kids/widgets/common.dart';
 import 'package:new_ard_kids/widgets/ui.dart';
 
@@ -178,8 +180,14 @@ void main() {
     await tester.pump();
     final save = find.text('Аватараа хадгалах');
     await tester.ensureVisible(save);
-    await tester.tap(save);
+    await tester.drag(find.byType(SlideToConfirm), const Offset(400, 0));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1200));
+    // Saving lands on Home, which pops the new avatar up and fades it away.
+    expect(router.state.uri.toString(), AppRoutes.home);
+    expect(find.byType(AvatarReveal), findsOneWidget);
     await tester.pumpAndSettle();
+    expect(find.byType(AvatarReveal), findsNothing);
 
     expect(appAvatar.value, AppAvatar.bear);
     expect(await const FlutterSecureStorage().read(key: 'app_avatar'), 'bear');

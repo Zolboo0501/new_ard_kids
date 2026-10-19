@@ -38,11 +38,11 @@ class HomeHeader extends StatelessWidget {
                 label: 'Профайл',
                 excludeSemantics: true,
                 child: GestureDetector(
-                  // Switch to the Profile tab (branch 2) like the nav bar does,
+                  // Switch to the Profile tab (branch 3) like the nav bar does,
                   // so the bar's selection follows instead of a page on top.
                   onTap: () {
                     HapticFeedback.selectionClick();
-                    StatefulNavigationShell.of(context).goBranch(2);
+                    StatefulNavigationShell.of(context).goBranch(3);
                   },
                   child: Container(
                     width: 44,

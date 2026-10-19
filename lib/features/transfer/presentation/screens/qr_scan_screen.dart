@@ -276,7 +276,7 @@ class _QrScanScreenState extends State<QrScanScreen>
                   index: 1,
                   // Swiping the content moves between the two tabs; past
                   // them it goes on to the bar's neighbours, Нүүр and
-                  // Профайл.
+                  // Чат.
                   child: AppTabSwipe(
                     index: _tab,
                     count: 2,

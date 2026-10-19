@@ -8,10 +8,10 @@ import '../../../../theme/app_theme.dart';
 import '../../../../theme/theme_store.dart';
 import '../../../../widgets/adaptive.dart';
 import '../../../../widgets/app_text.dart';
+import '../../../../widgets/avatar_reveal.dart';
 import '../../../../widgets/entrance.dart';
-import '../../../../widgets/ui.dart';
+import '../../../../widgets/slide_to_confirm.dart';
 import '../../../auth/presentation/widgets/header.dart';
-import '../../../auth/presentation/widgets/submit_button.dart';
 import '../widgets/avatar_card.dart';
 
 /// "Аватараа сонго" (registration step 4/7, right after the age): pick a
@@ -20,7 +20,7 @@ import '../widgets/avatar_card.dart';
 /// theme too; Харагдац can change it afterwards.
 ///
 /// With [editing] (opened from Profile) there is no step indicator or skip,
-/// and confirming returns to the previous screen.
+/// and confirming goes to Home, which pops the new avatar up.
 class AvatarPickerScreen extends StatefulWidget {
   const AvatarPickerScreen({super.key, this.editing = false});
 
@@ -95,8 +95,9 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
       context.push(AppRoutes.friendCode);
       return;
     }
-    showAppSnack(context, 'Аватар солигдлоо');
-    context.pop();
+    // Home pops the new avatar up as it arrives.
+    pendingAvatarReveal.value = avatar;
+    context.go(AppRoutes.home);
   }
 
   @override
@@ -188,11 +189,13 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
               child: AdaptiveCenter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
-                  child: SubmitButton(
+                  // Slid, not tapped: picking the companion also sets the
+                  // theme, so it takes a deliberate move.
+                  child: SlideToConfirm(
                     label: widget.editing
                         ? 'Аватараа хадгалах'
                         : 'Үргэлжлүүлэх',
-                    onPressed: _confirm,
+                    onConfirmed: _confirm,
                   ),
                 ),
               ),

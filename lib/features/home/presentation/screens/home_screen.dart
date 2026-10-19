@@ -8,6 +8,7 @@ import '../../../../app/kid_profile.dart';
 import '../../../../app/routes.dart';
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/adaptive.dart';
+import '../../../../widgets/avatar_reveal.dart';
 import '../../../../widgets/avatar_tour.dart';
 import '../../../../widgets/app_tabs.dart';
 import '../../../../widgets/ui.dart';
@@ -96,6 +97,27 @@ class _HomeScreenState extends State<HomeScreen> with AvatarTourHost {
   }
 
   void _onAvatarChanged() => setState(() {});
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _maybeRevealAvatar();
+  }
+
+  /// Pops up an avatar just picked from Profile, once Home is the screen
+  /// on show: its tab selected and nothing pushed over it. Both lookups
+  /// make this run again when either changes.
+  void _maybeRevealAvatar() {
+    final visible =
+        TickerMode.valuesOf(context).enabled &&
+        (ModalRoute.isCurrentOf(context) ?? false);
+    final avatar = pendingAvatarReveal.value;
+    if (!visible || avatar == null) return;
+    pendingAvatarReveal.value = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) showAvatarReveal(context, avatar);
+    });
+  }
 
   @override
   void dispose() {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app/avatar.dart';
+import '../app/sounds.dart';
 import '../theme/app_theme.dart';
 import 'app_text.dart';
 
@@ -14,11 +15,13 @@ import 'app_text.dart';
 /// replaces the one showing.
 ///
 /// [top] is measured from under the status bar; by default it sits at the
-/// very top, over the screen's header.
+/// very top, over the screen's header. [art] replaces the character's
+/// [AppAvatar.fullBody].
 void showAvatarToast(
   BuildContext context,
   String text, {
   double top = 4,
+  String? art,
   Duration duration = const Duration(milliseconds: 4500),
 }) {
   final overlay = Overlay.of(context);
@@ -28,6 +31,7 @@ void showAvatarToast(
     builder: (_) => AvatarToast(
       text: text,
       top: top,
+      art: art,
       duration: duration,
       onDone: () {
         if (entry.mounted) entry.remove();
@@ -48,11 +52,20 @@ OverlayEntry? _current;
 const rewardPoints = 100;
 
 /// The avatar toast for a rewarded action: [lead] (what just happened, a
-/// full sentence) and what it earned.
-void showRewardToast(BuildContext context, {String? lead}) => showAvatarToast(
-  context,
-  [?lead, 'Танд $rewardPoints ардын эрх орлоо!'].join(' '),
-);
+/// full sentence) and what it earned, with the purchase sound. The
+/// character greets it in [pose] (see [AppAvatar.rewardArt]).
+void showRewardToast(
+  BuildContext context, {
+  String? lead,
+  RewardPose pose = RewardPose.success,
+}) {
+  AppSounds.instance.play(AppSounds.purchase);
+  showAvatarToast(
+    context,
+    [?lead, 'Танд $rewardPoints ардын эрх орлоо!'].join(' '),
+    art: appAvatar.value.rewardArt(pose),
+  );
+}
 
 /// The toast [showAvatarToast] puts up: the whole character standing at the
 /// left of a small card, dropping in from the top and rising away again.
@@ -61,12 +74,14 @@ class AvatarToast extends StatefulWidget {
     super.key,
     required this.text,
     required this.top,
+    this.art,
     required this.duration,
     required this.onDone,
   });
 
   final String text;
   final double top;
+  final String? art;
   final Duration duration;
   final VoidCallback onDone;
 
@@ -236,7 +251,7 @@ class _AvatarToastState extends State<AvatarToast>
                         width: _guideWidth,
                         height: _guideHeight,
                         child: Image.asset(
-                          avatar.fullBody,
+                          widget.art ?? avatar.fullBody,
                           fit: BoxFit.contain,
                           alignment: Alignment.bottomCenter,
                           filterQuality: FilterQuality.high,

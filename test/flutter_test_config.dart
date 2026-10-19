@@ -2,12 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:new_ard_kids/app/sounds.dart';
+
+/// No audio plugin in tests: sounds are skipped.
+class _SilentSounds extends AppSounds {
+  const _SilentSounds();
+
+  @override
+  Future<void> play(String asset) async {}
+}
 
 /// Loads the app fonts for every test so text is measured like on a device
 /// (the default test font renders each glyph as a wide square, which causes
 /// false layout overflows with Cyrillic copy).
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  AppSounds.instance = const _SilentSounds();
   await (FontLoader('Inter')..addFont(
         rootBundle.load('assets/fonts/Inter-VariableFont_opsz,wght.ttf'),
       ))

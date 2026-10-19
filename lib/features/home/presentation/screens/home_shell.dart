@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../theme/app_theme.dart';
 import '../widgets/floating_nav_bar.dart';
 
-/// Signed-in root built by go_router's `StatefulShellRoute`: the Home, QR and
-/// Profile tabs are branches of [navigationShell] (each keeps its own state
-/// and URL). The bar's order is Нүүр · QR · Профайл.
+/// Signed-in root built by go_router's `StatefulShellRoute`: the Home, QR,
+/// Chat and Profile tabs are branches of [navigationShell] (each keeps its
+/// own state and URL). The bar's order is Нүүр · QR · Чат · Профайл.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, required this.navigationShell});
 
@@ -49,7 +49,7 @@ class _HomeShellState extends State<HomeShell>
   bool _compact = false;
 
   /// Where the bar's disc sits while a sideways drag is under way, in tabs
-  /// (0 Нүүр … 2 Профайл, fractions in between); null otherwise.
+  /// (0 Нүүр … 3 Профайл, fractions in between); null otherwise.
   double? _drag;
 
   /// The tab a released drag is heading to, until the router reports it, so
@@ -112,7 +112,7 @@ class _HomeShellState extends State<HomeShell>
   int get _lastTab => widget.navigationShell.route.branches.length - 1;
 
   /// A sideways drag slides the bar's disc with the finger, Нүүр · QR ·
-  /// Профайл: left towards the next tab, right towards the one before.
+  /// Чат · Профайл: left towards the next tab, right towards the one before.
   /// Sideways lists inside a tab (the balance carousel, filter chips) sit
   /// deeper and win their own drags.
   void _onDragStart(DragStartDetails _) {

@@ -7,6 +7,7 @@ import 'package:new_ard_kids/app/biometrics.dart';
 import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/auth/presentation/screens/auth_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/slide_to_confirm.dart';
 
 class _FakeBiometrics implements Biometrics {
   _FakeBiometrics({
@@ -259,7 +260,7 @@ void main() {
   ) async {
     final router = await pumpAt(tester, AppRoutes.avatarPicker, pulsing: true);
 
-    await tester.tap(find.text('Үргэлжлүүлэх'));
+    await tester.drag(find.byType(SlideToConfirm), const Offset(400, 0));
     await settle(tester);
     expect(router.state.uri.path, AppRoutes.friendCode);
   });
@@ -275,9 +276,7 @@ void main() {
     expect(router.state.uri.path, AppRoutes.biometricSetup);
   });
 
-  testWidgets('Register: no sensor ends registration at Home', (
-    tester,
-  ) async {
+  testWidgets('Register: no sensor ends registration at Home', (tester) async {
     Biometrics.instance = _FakeBiometrics(kind: null, sensor: false);
     final router = await pumpAt(tester, AppRoutes.friendCode, pulsing: true);
 

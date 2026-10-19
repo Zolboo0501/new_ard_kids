@@ -131,13 +131,15 @@ enum AppAvatar {
   /// the avatar picker, the Home header, Profile and every other round
   /// profile picture. Head-and-shoulders cutouts of the full-body art in
   /// `assets/images/avatars/bean/` (only `picker/` is bundled).
-  String get portrait =>
-      'assets/images/avatars/bean/picker/${switch (this) {
-        fox => 'orange',
-        bear => 'green',
-        bunny => 'pink',
-        cat || penguin => 'purple',
-      }}.png';
+  String get portrait => 'assets/images/avatars/bean/picker/$_bean.png';
+
+  /// The colour of this character's bean, which names its art folders.
+  String get _bean => switch (this) {
+    fox => 'orange',
+    bear => 'green',
+    bunny => 'pink',
+    cat || penguin => 'purple',
+  };
 
   /// The whole bean character, a transparent cut-out (the art the welcome
   /// slides use), for places that show the companion standing rather than
@@ -149,6 +151,20 @@ enum AppAvatar {
         bunny => 'spending',
         cat || penguin => 'goal',
       }}_bean.webp';
+
+  /// What the popup shows when the avatar has just been changed (see
+  /// `showAvatarReveal`): Гангаа's own full-size picture (`orange.png` cut
+  /// out of its background, the original isn't bundled), [fullBody] for the
+  /// others.
+  String get revealArt => switch (this) {
+    fox => 'assets/images/avatars/bean/orange_cut.webp',
+    _ => fullBody,
+  };
+
+  /// What the reward toast (`showRewardToast`) shows for [pose]: the
+  /// character's own bean cheering, with coins or with its savings.
+  String rewardArt(RewardPose pose) =>
+      'assets/images/avatars/bean/$_bean/${pose.name}.webp';
 
   /// The character's mother or father as a round head crop, for the parent
   /// pictures on the parent-link and profile screens. Cut from the full-body
@@ -190,6 +206,11 @@ enum AppAvatar {
   final String stocks;
   final String rewards;
 }
+
+/// How the character greets a reward ([AppAvatar.rewardArt]): cheering for a
+/// transfer done, with coins for an invite, with its savings (a piggy bank,
+/// a coin stack) for a savings deposit or a new goal.
+enum RewardPose { success, coins, savings }
 
 /// Screen illustrations in the chosen companion's sticker set. Getters, like the
 /// `AppColors` accent, so they can't appear in `const` expressions;

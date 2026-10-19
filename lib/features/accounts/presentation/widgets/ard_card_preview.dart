@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../widgets/app_text.dart';
+import '../../../../theme/app_theme.dart';
 import '../../../../widgets/ui.dart';
+import 'card_tilt.dart';
 
 /// The Ard Card as a physical card: the white card art (chip and
 /// contactless mark included) with the number and holder's
 /// name printed along the bottom.
 class ArdCardPreview extends StatelessWidget {
-  const ArdCardPreview({super.key, required this.holder, this.number});
+  const ArdCardPreview({
+    super.key,
+    required this.holder,
+    this.number,
+    this.embossed = false,
+  });
 
   final String holder;
+
+  /// Raises the print off the card like real embossed letters: a light edge
+  /// above, a shadow below. Card order shows it, under [CardTilt]'s 3D.
+  final bool embossed;
+
+  /// The card's corner radius as a share of its width, for [CardTilt].
+  static const radiusFraction = _artRadius / _artWidth;
 
   /// The card number printed above the holder, e.g. `•••• •••• •••• 5521`;
   /// a card still being ordered has none.
@@ -27,6 +40,21 @@ class ArdCardPreview extends StatelessWidget {
     // chip and contactless mark; only the print goes on top, in
     // the card's own dark ink so they read on it in either mode.
     const print = Color(0xFF231F20);
+    // Embossed: the raised letters catch the light on top and cast a soft
+    // shadow below, both in the card's own fixed colours.
+    List<Shadow>? relief(double scale) => embossed
+        ? [
+            Shadow(
+              offset: Offset(-0.5 * scale, -0.6 * scale),
+              color: const Color(0xFFFFFFFF),
+            ),
+            Shadow(
+              offset: Offset(0.7 * scale, 1.1 * scale),
+              blurRadius: 1.2 * scale,
+              color: const Color(0x73000000),
+            ),
+          ]
+        : null;
     return AspectRatio(
       aspectRatio: _artWidth / _artHeight,
       child: LayoutBuilder(
@@ -66,18 +94,24 @@ class ArdCardPreview extends StatelessWidget {
                               weight: FontWeight.w500,
                               color: print,
                               letterSpacing: 1.5,
-                            ),
+                            ).copyWith(shadows: relief(scale)),
                           ),
                           SizedBox(height: 8 * scale),
                         ],
-                        AppText(
+                        Text(
                           holder,
-                          size: 13 * scale,
-                          weight: FontWeight.w600,
-                          color: print,
-                          letterSpacing: 1.2,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                          style: inter(
+                            // A touch bigger and bolder when embossed, as
+                            // raised card letters are.
+                            size: (embossed ? 14 : 13) * scale,
+                            weight: embossed
+                                ? FontWeight.w700
+                                : FontWeight.w600,
+                            color: embossed ? const Color(0xFF3B3739) : print,
+                            letterSpacing: 1.2,
+                          ).copyWith(shadows: relief(scale)),
                         ),
                       ],
                     ),
