@@ -1,5 +1,6 @@
+import 'dart:ui' show lerpDouble;
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/ui.dart';
@@ -7,8 +8,7 @@ import '../../../../widgets/ui.dart';
 /// The floating bottom bar: a pill in the theme's accent with three round
 /// buttons, Нүүр · QR · Профайл. Each button sits on a faint disc of its
 /// own; a card-coloured disc carrying a small dot slides under the selected
-/// tab, and its icon takes the accent ink on it. QR is an action, not a
-/// tab, so the disc never rests on it.
+/// tab, and its icon takes the accent ink on it.
 ///
 /// Every colour comes from the theme tokens, so the bar follows the accent
 /// picked in Харагдац. On the dark canvas it turns into a dark raised pill
@@ -18,21 +18,32 @@ class FloatingNavBar extends StatelessWidget {
     super.key,
     required this.index,
     required this.onTab,
-    required this.onQr,
+    this.dragPosition,
+    this.compact = false,
   });
 
   final int index;
   final ValueChanged<int> onTab;
-  final VoidCallback onQr;
+
+  /// Where the selected disc sits while the page is dragged sideways, in
+  /// tabs (fractions between them); it follows the finger instead of
+  /// animating. Null when no drag is under way.
+  final double? dragPosition;
+
+  /// Shrinks the pill while the page scrolls down, so it covers less of
+  /// the content; it grows back when the page scrolls up.
+  final bool compact;
 
   static const _duration = Duration(milliseconds: 320);
 
-  /// A button's diameter, and the gap around the buttons.
+  /// A button's diameter (full and compact), and the gap around the buttons.
   static const _button = 60.0;
+  static const _compactButton = 54.0;
   static const _gap = 6.0;
 
-  /// The widest the bar gets.
+  /// The widest the bar gets (full and compact).
   static const _maxWidth = 236.0;
+  static const _compactMaxWidth = 212.0;
 
   // Light canvas: a pill in the accent with a card-coloured disc under the
   // selected tab. Dark canvas: a dark raised pill with the accent disc
@@ -68,73 +79,102 @@ class FloatingNavBar extends StatelessWidget {
     return PlainLineIcons(
       child: Padding(
         padding: EdgeInsets.fromLTRB(20, 8, 20, 12 + bottom),
-        child: Center(
-          heightFactor: 1,
-          // Wide on a phone, capped so it stays a pill on a tablet.
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _maxWidth),
-            child: Container(
-              padding: const EdgeInsets.all(_gap),
-              decoration: BoxDecoration(
-                color: _bar,
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadow,
-                    offset: const Offset(0, 10),
-                    blurRadius: 28,
+        // Always the full bar's height, so the page's bottom padding (which
+        // the Scaffold derives from it) doesn't move while the pill shrinks.
+        child: SizedBox(
+          height: _button + _gap * 2,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(end: compact ? 1 : 0),
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero
+                : _duration,
+            curve: appEmphasizedDecelerate,
+            builder: (context, t, _) {
+              final button = lerpDouble(_button, _compactButton, t)!;
+              return Align(
+                alignment: Alignment.bottomCenter,
+                // Wide on a phone, capped so it stays a pill on a tablet.
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: lerpDouble(_maxWidth, _compactMaxWidth, t)!,
                   ),
-                ],
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: _button,
-                child: Stack(
-                  children: [
-                    // The light disc, sliding between Нүүр and Профайл.
-                    Positioned.fill(
-                      child: AnimatedAlign(
-                        duration: _duration,
-                        curve: appEmphasizedDecelerate,
-                        alignment: Alignment(index == 0 ? -1 : 1, 0),
-                        child: _SelectedDisc(color: _disc, ring: _dotRing),
-                      ),
-                    ),
-                    // The three buttons spread across the bar; the disc's -1/1
-                    // ends land on the outer two.
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _NavButton(
-                          icon: LineGlyph.home,
-                          label: 'Нүүр',
-                          selected: index == 0,
-                          onTap: () => onTab(0),
-                        ),
-                        _NavButton(
-                          icon: LineGlyph.scan,
-                          label: 'QR уншуулах',
-                          selected: false,
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            onQr();
-                          },
-                        ),
-                        _NavButton(
-                          icon: LineGlyph.profile,
-                          label: 'Профайл',
-                          selected: index == 1,
-                          onTap: () => onTab(1),
+                  child: Container(
+                    padding: const EdgeInsets.all(_gap),
+                    decoration: BoxDecoration(
+                      color: _bar,
+                      borderRadius: BorderRadius.circular(999),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadow,
+                          offset: const Offset(0, 10),
+                          blurRadius: 28,
                         ),
                       ],
                     ),
-                  ],
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: button,
+                      child: _buttons(button, lerpDouble(26, 23.4, t)!),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buttons(double size, double iconSize) {
+    final drag = dragPosition;
+    // During a drag the tab nearest the disc takes the selected look.
+    final selected = drag?.round() ?? index;
+    return Stack(
+      children: [
+        // The light disc, sliding between the three tabs.
+        Positioned.fill(
+          child: AnimatedAlign(
+            // Under the finger while dragging; eased into place otherwise,
+            // from wherever the drag left it.
+            duration: drag != null ? Duration.zero : _duration,
+            curve: appEmphasizedDecelerate,
+            alignment: Alignment((drag ?? index.toDouble()) - 1, 0),
+            child: _SelectedDisc(color: _disc, ring: _dotRing, size: size),
+          ),
+        ),
+        // The three buttons spread across the bar; the disc's -1/0/1 land
+        // on them in turn.
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _NavButton(
+              icon: LineGlyph.home,
+              label: 'Нүүр',
+              selected: selected == 0,
+              size: size,
+              iconSize: iconSize,
+              onTap: () => onTab(0),
+            ),
+            _NavButton(
+              icon: LineGlyph.scan,
+              label: 'QR уншуулах',
+              selected: selected == 1,
+              size: size,
+              iconSize: iconSize,
+              onTap: () => onTab(1),
+            ),
+            _NavButton(
+              icon: LineGlyph.profile,
+              label: 'Профайл',
+              selected: selected == 2,
+              size: size,
+              iconSize: iconSize,
+              onTap: () => onTab(2),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -142,14 +182,18 @@ class FloatingNavBar extends StatelessWidget {
 /// The disc under the selected tab, with a dot in the theme's accent on
 /// its upper-right edge, ringed so it stands apart from what it overlaps.
 class _SelectedDisc extends StatelessWidget {
-  const _SelectedDisc({required this.color, required this.ring});
+  const _SelectedDisc({
+    required this.color,
+    required this.ring,
+    required this.size,
+  });
 
   final Color color;
   final Color ring;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
-    const size = FloatingNavBar._button;
     return SizedBox.square(
       dimension: size,
       child: Stack(
@@ -186,12 +230,16 @@ class _NavButton extends StatefulWidget {
     required this.icon,
     required this.label,
     required this.selected,
+    required this.size,
+    required this.iconSize,
     required this.onTap,
   });
 
   final LineGlyph icon;
   final String label;
   final bool selected;
+  final double size;
+  final double iconSize;
   final VoidCallback onTap;
 
   @override
@@ -228,8 +276,8 @@ class _NavButtonState extends State<_NavButton> {
           duration: const Duration(milliseconds: 140),
           curve: appEmphasizedDecelerate,
           child: Container(
-            width: FloatingNavBar._button,
-            height: FloatingNavBar._button,
+            width: widget.size,
+            height: widget.size,
             decoration: BoxDecoration(
               // The faint disc; the light one slides in under the selected
               // tab instead.
@@ -241,8 +289,11 @@ class _NavButtonState extends State<_NavButton> {
               duration: FloatingNavBar._duration,
               curve: appEmphasizedDecelerate,
               tween: ColorTween(end: color),
-              builder: (context, tint, _) =>
-                  LineIcon(widget.icon, size: 26, color: tint ?? color),
+              builder: (context, tint, _) => LineIcon(
+                widget.icon,
+                size: widget.iconSize,
+                color: tint ?? color,
+              ),
             ),
           ),
         ),

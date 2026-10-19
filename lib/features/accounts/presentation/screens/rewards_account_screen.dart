@@ -51,6 +51,10 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen>
 
   late int _tab = widget.initialTab;
 
+  /// Where the tabs' pill sits while the content is swiped, in tabs; null
+  /// otherwise.
+  double? _tabDrag;
+
   /// The eye button's state, shared by both tabs: hides every account
   /// number and balance on the screen.
   bool _hidden = false;
@@ -82,24 +86,32 @@ class _RewardsAccountScreenState extends State<RewardsAccountScreen>
                 index: _tab,
                 dotOnActive: true,
                 style: AppTabsStyle.card,
+                dragPosition: _tabDrag,
                 onChanged: (i) => setState(() => _tab = i),
               ),
             ),
             const SizedBox(height: 14),
             KeyedSubtree(
               key: _paneKey,
-              child: AppTabView(
+              // Swiping the content moves between Урамшуулал and Койн.
+              child: AppTabSwipe(
                 index: _tab,
-                child: coins
-                    ? CoinAccountPane(
-                        hidden: _hidden,
-                        onToggleHidden: _toggleHidden,
-                      )
-                    : RewardsPane(
-                        hidden: _hidden,
-                        onToggleHidden: _toggleHidden,
-                        onOpen: (r) => context.push(r),
-                      ),
+                count: 2,
+                onChanged: (i) => setState(() => _tab = i),
+                onDrag: (p) => setState(() => _tabDrag = p),
+                child: AppTabView(
+                  index: _tab,
+                  child: coins
+                      ? CoinAccountPane(
+                          hidden: _hidden,
+                          onToggleHidden: _toggleHidden,
+                        )
+                      : RewardsPane(
+                          hidden: _hidden,
+                          onToggleHidden: _toggleHidden,
+                          onOpen: (r) => context.push(r),
+                        ),
+                ),
               ),
             ),
           ]),

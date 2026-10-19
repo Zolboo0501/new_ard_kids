@@ -35,9 +35,11 @@ abstract final class AppLayout {
   static const paneGap = 24.0;
 
   /// Bottom padding a shell tab's scroll view needs to clear the floating
-  /// bottom bar.
+  /// bottom bar. The shell's `Scaffold(extendBody: true)` already reports the
+  /// bar's height (safe area included) as the bottom padding, so only a small
+  /// gap goes on top of it.
   static double navClearance(BuildContext context) =>
-      120 + MediaQuery.paddingOf(context).bottom;
+      16 + MediaQuery.paddingOf(context).bottom;
 
   /// [base] with its horizontal padding grown so that, in [available] width,
   /// the content between is at most [maxWidth] wide and centered.

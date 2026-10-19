@@ -104,6 +104,10 @@ class AppTabsStyle {
 /// Segmented control: equal-width tabs in a track, with a single pill that
 /// slides to the selected one rather than fading in and out in place.
 ///
+/// The pill can also be dragged: it follows the finger along the track and
+/// on release settles on the nearest tab, or the next one its way on a
+/// fling, like the floating bottom bar's disc.
+///
 /// ```dart
 /// AppTabs(
 ///   tabs: const [AppTab('Данс'), AppTab('Нэхэмжлэх'), AppTab('Карт')],
@@ -111,7 +115,7 @@ class AppTabsStyle {
 ///   onChanged: (i) => setState(() => _tab = i),
 /// )
 /// ```
-class AppTabs extends StatelessWidget {
+class AppTabs extends StatefulWidget {
   const AppTabs({
     super.key,
     required this.tabs,
@@ -119,11 +123,17 @@ class AppTabs extends StatelessWidget {
     required this.onChanged,
     this.dotOnActive = false,
     this.style,
+    this.dragPosition,
   });
 
   final List<AppTab> tabs;
   final int index;
   final ValueChanged<int> onChanged;
+
+  /// Where the pill sits while the screen drags it from outside (a swipe on
+  /// the tab's content), in tabs; it follows instead of animating. Null when
+  /// no such drag is under way.
+  final double? dragPosition;
 
   /// Shows a small dot after the selected tab's label.
   final bool dotOnActive;
@@ -134,13 +144,79 @@ class AppTabs extends StatelessWidget {
 
   static const _duration = Duration(milliseconds: 280);
 
+  /// How fast (logical px/s) a drag must end to count as a fling.
+  static const _flingVelocity = 300.0;
+
+  @override
+  State<AppTabs> createState() => _AppTabsState();
+}
+
+class _AppTabsState extends State<AppTabs> {
+  /// Where the pill sits while it is dragged, in tabs (fractions between
+  /// them); null otherwise.
+  double? _drag;
+
+  /// The tab a released drag picked, until the parent rebuilds with it, so
+  /// the pill doesn't swing back to the old tab for a frame in between.
+  int? _target;
+
+  /// One segment's width, from the last layout; drags move by it.
+  double _segment = 1;
+
+  @override
+  void didUpdateWidget(AppTabs old) {
+    super.didUpdateWidget(old);
+    _target = null;
+  }
+
+  int get _last => widget.tabs.length - 1;
+
+  void _onDragStart(DragStartDetails _) {
+    setState(() => _drag = widget.index.toDouble());
+  }
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    final drag = _drag;
+    if (drag == null) return;
+    setState(
+      () => _drag = (drag + details.primaryDelta! / _segment).clamp(
+        0,
+        _last.toDouble(),
+      ),
+    );
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    final from = widget.index;
+    final v = details.primaryVelocity ?? 0;
+    final next =
+        (v.abs() >= AppTabs._flingVelocity
+                ? from + (v > 0 ? 1 : -1)
+                : (_drag ?? from).round())
+            .clamp(0, _last);
+    setState(() {
+      _drag = null;
+      if (next != from) _target = next;
+    });
+    if (next != from) {
+      HapticFeedback.selectionClick();
+      widget.onChanged(next);
+    }
+  }
+
+  void _onDragCancel() => setState(() => _drag = null);
+
   @override
   Widget build(BuildContext context) {
-    final style = this.style ?? AppTabsStyle.pill;
-    final count = tabs.length;
-    // Maps the selected index onto Alignment's -1..1 axis. A single tab has
+    final style = widget.style ?? AppTabsStyle.pill;
+    final count = widget.tabs.length;
+    final drag = _drag ?? widget.dragPosition;
+    final position = drag ?? (_target ?? widget.index).toDouble();
+    // During a drag the tab nearest the pill takes the selected look.
+    final selected = position.round();
+    // Maps the pill's position onto Alignment's -1..1 axis. A single tab has
     // nowhere to travel, so it sits at the start.
-    final x = count > 1 ? -1 + 2 * (index / (count - 1)) : -1.0;
+    final x = count > 1 ? -1 + 2 * (position / (count - 1)) : -1.0;
 
     return Container(
       padding: const EdgeInsets.all(4),
@@ -151,40 +227,67 @@ class AppTabs extends StatelessWidget {
             ? null
             : Border.all(color: style.trackBorder!),
       ),
-      child: Stack(
-        children: [
-          // One pill that travels between the segments.
-          Positioned.fill(
-            child: AnimatedAlign(
-              duration: _duration,
-              curve: appEmphasizedDecelerate,
-              alignment: Alignment(x, 0),
-              child: FractionallySizedBox(
-                widthFactor: 1 / count,
-                heightFactor: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(style.pillRadius),
-                    color: style.pillColor,
-                    gradient: style.pillGradient,
-                    boxShadow: style.pillShadow,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              for (final (i, tab) in tabs.indexed) _buildTab(style, i, tab),
-            ],
-          ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          _segment = constraints.maxWidth / count;
+          return GestureDetector(
+            onHorizontalDragStart: count > 1 ? _onDragStart : null,
+            onHorizontalDragUpdate: count > 1 ? _onDragUpdate : null,
+            onHorizontalDragEnd: count > 1 ? _onDragEnd : null,
+            onHorizontalDragCancel: count > 1 ? _onDragCancel : null,
+            child: _track(style, count, x, selected, dragging: drag != null),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTab(AppTabsStyle style, int i, AppTab tab) {
-    final selected = i == index;
+  Widget _track(
+    AppTabsStyle style,
+    int count,
+    double x,
+    int selected, {
+    required bool dragging,
+  }) {
+    return Stack(
+      children: [
+        // One pill that travels between the segments: under the finger
+        // while dragged, eased into place otherwise.
+        Positioned.fill(
+          child: AnimatedAlign(
+            duration: dragging ? Duration.zero : AppTabs._duration,
+            curve: appEmphasizedDecelerate,
+            alignment: Alignment(x, 0),
+            child: FractionallySizedBox(
+              widthFactor: 1 / count,
+              heightFactor: 1,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(style.pillRadius),
+                  color: style.pillColor,
+                  gradient: style.pillGradient,
+                  boxShadow: style.pillShadow,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            for (final (i, tab) in widget.tabs.indexed)
+              _buildTab(style, i, tab, selected: i == selected),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTab(
+    AppTabsStyle style,
+    int i,
+    AppTab tab, {
+    required bool selected,
+  }) {
     final color = selected ? style.selectedColor : style.unselectedColor;
 
     return Expanded(
@@ -196,7 +299,7 @@ class AppTabs extends StatelessWidget {
           onTap: () {
             // Only a real switch clicks; tapping the current tab is silent.
             if (!selected) HapticFeedback.selectionClick();
-            onChanged(i);
+            widget.onChanged(i);
           },
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: style.verticalPadding),
@@ -207,7 +310,7 @@ class AppTabs extends StatelessWidget {
                   // Crossing the same colours as the label, so the icon and
                   // text change together as the pill passes under them.
                   TweenAnimationBuilder<Color?>(
-                    duration: _duration,
+                    duration: AppTabs._duration,
                     curve: appEmphasizedDecelerate,
                     tween: ColorTween(end: color),
                     builder: (context, value, _) =>
@@ -220,7 +323,7 @@ class AppTabs extends StatelessWidget {
                   // is the one place a raw Text is correct over AppText; the
                   // style still comes from inter().
                   child: AnimatedDefaultTextStyle(
-                    duration: _duration,
+                    duration: AppTabs._duration,
                     curve: appEmphasizedDecelerate,
                     style: inter(
                       size: style.labelSize,
@@ -237,7 +340,7 @@ class AppTabs extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (dotOnActive && selected) ...[
+                if (widget.dotOnActive && selected) ...[
                   const SizedBox(width: 6),
                   Container(
                     width: style.dotSize,
@@ -253,6 +356,109 @@ class AppTabs extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Lets the content under an [AppTabs] be swiped through its tabs: left to
+/// the next tab, right to the one before, the pill following the finger the
+/// way the floating bottom bar's disc does.
+///
+/// The screen keeps the drag position ([onDrag]) and hands it to its
+/// [AppTabs] as `dragPosition`. On release a fling moves one tab its way and
+/// a slow drag settles on the tab nearest the pill. A fling past the first or
+/// last tab calls [onPastStart] / [onPastEnd] (a shell tab hands it on to
+/// the bar's neighbouring tab). Sideways lists inside the content sit deeper
+/// and keep their own drags; this sits deeper than the shell's swipe, so it
+/// wins over it.
+///
+/// ```dart
+/// AppTabSwipe(
+///   index: _tab,
+///   count: 2,
+///   onChanged: (i) => setState(() => _tab = i),
+///   onDrag: (p) => setState(() => _tabDrag = p),
+///   child: AppTabView(index: _tab, child: ...),
+/// )
+/// ```
+class AppTabSwipe extends StatefulWidget {
+  const AppTabSwipe({
+    super.key,
+    required this.index,
+    required this.count,
+    required this.onChanged,
+    required this.onDrag,
+    this.onPastStart,
+    this.onPastEnd,
+    required this.child,
+  });
+
+  final int index;
+  final int count;
+  final ValueChanged<int> onChanged;
+
+  /// Where the pill should sit while a drag is under way, in tabs
+  /// (fractions between them); null once it ends.
+  final ValueChanged<double?> onDrag;
+
+  final VoidCallback? onPastStart;
+  final VoidCallback? onPastEnd;
+  final Widget child;
+
+  /// How much of the screen's width a drag covers to move one tab, as on
+  /// the bottom bar.
+  static const _perTab = 0.5;
+
+  @override
+  State<AppTabSwipe> createState() => _AppTabSwipeState();
+}
+
+class _AppTabSwipeState extends State<AppTabSwipe> {
+  double? _drag;
+
+  void _set(double? drag) {
+    _drag = drag;
+    widget.onDrag(drag);
+  }
+
+  void _onStart(DragStartDetails _) => _set(widget.index.toDouble());
+
+  void _onUpdate(DragUpdateDetails details) {
+    final drag = _drag;
+    if (drag == null) return;
+    final perTab = MediaQuery.sizeOf(context).width * AppTabSwipe._perTab;
+    _set((drag - details.primaryDelta! / perTab).clamp(0, widget.count - 1.0));
+  }
+
+  void _onEnd(DragEndDetails details) {
+    final from = widget.index;
+    final v = details.primaryVelocity ?? 0;
+    final next = v.abs() >= AppTabs._flingVelocity
+        ? from + (v < 0 ? 1 : -1)
+        : (_drag ?? from).round();
+    _set(null);
+    final past = next < 0
+        ? widget.onPastStart
+        : next >= widget.count
+        ? widget.onPastEnd
+        : null;
+    if (past != null) {
+      HapticFeedback.selectionClick();
+      past();
+    } else if (next != from && next >= 0 && next < widget.count) {
+      HapticFeedback.selectionClick();
+      widget.onChanged(next);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragStart: _onStart,
+      onHorizontalDragUpdate: _onUpdate,
+      onHorizontalDragEnd: _onEnd,
+      onHorizontalDragCancel: () => _set(null),
+      child: widget.child,
     );
   }
 }

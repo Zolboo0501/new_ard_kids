@@ -24,11 +24,14 @@ import '../widgets/scan_result_sheet.dart';
 import '../../../../widgets/avatar_tour.dart';
 
 /// "QR уншуулах": a live camera QR scanner (mobile_scanner) plus the
-/// "Миний QR" tab.
+/// "Миний QR" tab. It is the middle tab of the signed-in shell, so the
+/// floating bar stays under it and there is no back button.
 ///
 /// The screen owns the camera (`autoStart: false`): it starts it once the
 /// scanner is on screen, stops it when the tab switches to "Миний QR" and
-/// starts it again on the way back, and follows the app lifecycle (stopped
+/// starts it again on the way back, stops it while another shell tab is
+/// showing (the shell turns [TickerMode] off for hidden tabs), and follows
+/// the app lifecycle (stopped
 /// while the app is not in the foreground, which includes the iOS permission
 /// prompt). The [MobileScanner] widget can't do this itself here: the tab
 /// view keeps the outgoing pane mounted while the incoming one appears, so
@@ -64,6 +67,14 @@ class _QrScanScreenState extends State<QrScanScreen>
 
   int _tab = 0;
 
+  /// Where the tabs' pill sits while the content is swiped, in tabs; null
+  /// otherwise.
+  double? _tabDrag;
+
+  /// Whether this shell tab is the one on screen ([TickerMode] is off for
+  /// the hidden ones).
+  bool _active = true;
+
   /// Set while a scanned code is being shown, so further frames that still
   /// see the code don't open a second sheet.
   bool _handling = false;
@@ -96,7 +107,7 @@ class _QrScanScreenState extends State<QrScanScreen>
   /// start() while one is in progress throws). Errors surface through the
   /// scanner's own error state, so the screen shows [CameraError].
   Future<void> _startCamera() async {
-    if (!mounted || _tab != 0 || _handling) return;
+    if (!mounted || !_active || _tab != 0 || _handling) return;
     final state = _camera.value;
     if (state.isRunning || state.isStarting) return;
     try {
@@ -120,6 +131,19 @@ class _QrScanScreenState extends State<QrScanScreen>
   Future<void> _retryCamera() async {
     await _stopCamera();
     await _startCamera();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final active = TickerMode.valuesOf(context).enabled;
+    if (active == _active) return;
+    _active = active;
+    if (active) {
+      unawaited(_startCamera());
+    } else {
+      unawaited(_stopCamera());
+    }
   }
 
   void _setTab(int i) {
@@ -195,6 +219,7 @@ class _QrScanScreenState extends State<QrScanScreen>
       backgroundColor: AppColors.dsSurface,
       appBar: SubPageHeader(
         title: 'QR уншуулах',
+        showBack: false,
         background: AppColors.dsSurface,
         trailing: _tab == 0
             ? ValueListenableBuilder(
@@ -222,7 +247,7 @@ class _QrScanScreenState extends State<QrScanScreen>
             16,
             12,
             16,
-            24 + MediaQuery.paddingOf(context).bottom,
+            AppLayout.navClearance(context),
           ),
           children: EntranceItem.list([
             KeyedSubtree(
@@ -234,15 +259,27 @@ class _QrScanScreenState extends State<QrScanScreen>
                 ],
                 index: _tab,
                 style: AppTabsStyle.solid,
+                dragPosition: _tabDrag,
                 onChanged: _setTab,
               ),
             ),
             const SizedBox(height: 16),
-            AppTabView(
+            // Swiping the content moves between the two tabs; past them it
+            // goes on to the bar's neighbours, Нүүр and Профайл.
+            AppTabSwipe(
               index: _tab,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _tab == 0 ? _buildScan() : _buildMyQr(),
+              count: 2,
+              onChanged: _setTab,
+              onDrag: (p) => setState(() => _tabDrag = p),
+              onPastStart: () =>
+                  StatefulNavigationShell.of(context).goBranch(0),
+              onPastEnd: () => StatefulNavigationShell.of(context).goBranch(2),
+              child: AppTabView(
+                index: _tab,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: _tab == 0 ? _buildScan() : _buildMyQr(),
+                ),
               ),
             ),
           ]),

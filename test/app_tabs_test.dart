@@ -62,6 +62,123 @@ void main() {
     expect(taps, [1, 0]);
   });
 
+  testWidgets('AppTabs: the pill follows a drag and settles on release', (
+    tester,
+  ) async {
+    const tabs = [AppTab('Данс'), AppTab('Нэхэмжлэх'), AppTab('Карт')];
+    final changes = <int>[];
+    await _pump(tester, tabs: tabs, index: 0, onChanged: changes.add);
+    final segment = tester.getSize(find.byType(Row).first).width / 3;
+
+    // Half a segment to the right: the pill sits halfway to Нэхэмжлэх
+    // (a quarter of the -1..1 axis) while the finger is down.
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('Данс')),
+    );
+    await gesture.moveBy(const Offset(20, 0)); // past the drag slop
+    await gesture.moveBy(Offset(segment / 2, 0));
+    await tester.pump();
+    expect(_pillX(tester), closeTo(-0.5, 0.1));
+
+    // Back short of halfway and let go slowly: it settles on Данс.
+    await gesture.moveBy(Offset(-segment / 4, 0));
+    await tester.pump(const Duration(seconds: 1));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(changes, isEmpty);
+    expect(_pillX(tester), -1);
+
+    // Past halfway: Нэхэмжлэх.
+    await tester.timedDrag(
+      find.text('Данс'),
+      Offset(segment * 0.8, 0),
+      const Duration(seconds: 2),
+    );
+    await tester.pump();
+    expect(changes, [1]);
+
+    // A quick flick moves one tab its way: from Нэхэмжлэх back to Данс.
+    await _pump(tester, tabs: tabs, index: 1, onChanged: changes.add);
+    await tester.pumpAndSettle();
+    await tester.fling(find.text('Нэхэмжлэх'), const Offset(-100, 0), 1000);
+    await tester.pump();
+    expect(changes, [1, 0]);
+  });
+
+  testWidgets('AppTabSwipe: swiping the content moves the tabs', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390 * 3, 844 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    var tab = 0;
+    double? drag;
+    var pastStart = 0, pastEnd = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) => Column(
+              children: [
+                AppTabs(
+                  tabs: const [AppTab('Урамшуулал'), AppTab('Койн')],
+                  index: tab,
+                  dragPosition: drag,
+                  onChanged: (i) => setState(() => tab = i),
+                ),
+                Expanded(
+                  child: AppTabSwipe(
+                    index: tab,
+                    count: 2,
+                    onChanged: (i) => setState(() => tab = i),
+                    onDrag: (p) => setState(() => drag = p),
+                    onPastStart: () => pastStart++,
+                    onPastEnd: () => pastEnd++,
+                    child: const ColoredBox(
+                      color: Color(0xFFEEEEEE),
+                      child: SizedBox.expand(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    final content = find.byType(ColoredBox).last;
+
+    // 85pt to the left, under half a tab (a tab is half the 390pt width):
+    // the pill moves that far towards Койн while the finger is down.
+    final gesture = await tester.startGesture(tester.getCenter(content));
+    await gesture.moveBy(const Offset(-20, 0)); // past the drag slop
+    await gesture.moveBy(const Offset(-65, 0));
+    await tester.pump();
+    expect(_pillX(tester), closeTo(-1 + 2 * 85 / 195, 0.05));
+    await tester.pump(const Duration(seconds: 1));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(tab, 0);
+    expect(_pillX(tester), -1);
+
+    await tester.fling(content, const Offset(-150, 0), 1000);
+    await tester.pumpAndSettle();
+    expect(tab, 1);
+    expect(_pillX(tester), 1);
+
+    // Past either end, the callbacks take over.
+    await tester.fling(content, const Offset(-150, 0), 1000);
+    await tester.pumpAndSettle();
+    expect((tab, pastEnd), (1, 1));
+
+    await tester.fling(content, const Offset(150, 0), 1000);
+    await tester.pumpAndSettle();
+    await tester.fling(content, const Offset(150, 0), 1000);
+    await tester.pumpAndSettle();
+    expect((tab, pastStart), (0, 1));
+  });
+
   testWidgets('AppTabs: a single tab does not divide by zero', (tester) async {
     await _pump(
       tester,

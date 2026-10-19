@@ -206,7 +206,7 @@ class _TransferScreenState extends State<TransferScreen> {
         trailing: CircleIconButton(
           icon: Iconsax.scan_barcode_copy,
           label: 'QR код уншуулах',
-          onPressed: () => context.push(AppRoutes.qrScan),
+          onPressed: () => context.go(AppRoutes.qrScan),
         ),
       ),
       body: Column(

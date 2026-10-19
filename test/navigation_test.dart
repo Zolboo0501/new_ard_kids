@@ -6,7 +6,9 @@ import 'package:new_ard_kids/app/routes.dart';
 import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar.dart';
 import 'package:new_ard_kids/features/home/presentation/screens/home_shell.dart';
 import 'package:new_ard_kids/features/onboarding/presentation/screens/avatar_picker_screen.dart';
+import 'package:new_ard_kids/features/transfer/presentation/screens/qr_scan_screen.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
+import 'package:new_ard_kids/widgets/app_tabs.dart';
 import 'package:new_ard_kids/widgets/common.dart';
 
 /// A bottom-bar tab, by its screen-reader label (the bar shows icons only).
@@ -64,6 +66,123 @@ void main() {
     expect(find.text('•••• 5521'), findsOneWidget);
   });
 
+  testWidgets('sideways swipes move along Нүүр, QR and Профайл', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, AppRoutes.home);
+    Future<void> swipe(double dx) async {
+      // On the bar, clear of the balance carousel that keeps sideways drags.
+      await tester.fling(find.byType(FloatingNavBar), Offset(dx, 0), 800);
+      // The scanner animates forever, so pump past the transition instead
+      // of settling.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 800));
+    }
+
+    await swipe(-200);
+    expect(_location(router), AppRoutes.qrScan);
+    await swipe(-200);
+    expect(_location(router), AppRoutes.profile);
+
+    // Nothing after Профайл: a further left swipe stays put.
+    await swipe(-200);
+    expect(_location(router), AppRoutes.profile);
+
+    await swipe(200);
+    expect(_location(router), AppRoutes.qrScan);
+    await swipe(200);
+    expect(_location(router), AppRoutes.home);
+  });
+
+  testWidgets('the bar\'s disc follows a sideways drag', (tester) async {
+    final router = await _pumpApp(tester, AppRoutes.home);
+    final bar = find.byType(FloatingNavBar);
+    double discX() =>
+        (tester
+                    .widget<AnimatedAlign>(
+                      find.descendant(
+                        of: bar,
+                        matching: find.byType(AnimatedAlign),
+                      ),
+                    )
+                    .alignment
+                as Alignment)
+            .x;
+    expect(discX(), -1);
+
+    // A third of a tab to the left (a tab is half the 390pt width): the
+    // disc sits that far towards QR while the finger is down.
+    final gesture = await tester.startGesture(tester.getCenter(bar));
+    await gesture.moveBy(const Offset(-20, 0)); // past the drag slop
+    await gesture.moveBy(const Offset(-65, 0));
+    await tester.pump();
+    expect(discX(), closeTo(-1 + 1 / 3, 0.15));
+
+    // Let go slowly short of halfway: the disc settles back on Нүүр.
+    await tester.pump(const Duration(seconds: 1));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(_location(router), AppRoutes.home);
+    expect(discX(), -1);
+
+    // A slow drag past halfway moves on to QR.
+    await tester.timedDrag(
+      bar,
+      const Offset(-160, 0),
+      const Duration(seconds: 2),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+    expect(_location(router), AppRoutes.qrScan);
+  });
+
+  testWidgets('swiping Home\'s tab content moves through its tabs', (
+    tester,
+  ) async {
+    final router = await _pumpApp(tester, AppRoutes.home);
+    final content = find.byType(AppTabView);
+    await tester.ensureVisible(content);
+    await tester.pumpAndSettle();
+    double pillX() =>
+        (tester
+                    .widget<AnimatedAlign>(
+                      find.descendant(
+                        of: find.byType(AppTabs),
+                        matching: find.byType(AnimatedAlign),
+                      ),
+                    )
+                    .alignment
+                as Alignment)
+            .x;
+    expect(pillX(), -1);
+
+    // The pill follows the finger: a third of a tab towards Нэхэмжлэх (a
+    // tab is half the 390pt width).
+    final gesture = await tester.startGesture(tester.getCenter(content));
+    await gesture.moveBy(const Offset(-20, 0)); // past the drag slop
+    await gesture.moveBy(const Offset(-65, 0));
+    await tester.pump();
+    expect(pillX(), closeTo(-1 + 1 / 3, 0.1));
+    await tester.pump(const Duration(seconds: 1));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(pillX(), -1);
+
+    // Flings move a tab at a time, and the page stays on Home.
+    for (final x in [0.0, 1.0]) {
+      await tester.fling(content, const Offset(-150, 0), 1000);
+      await tester.pumpAndSettle();
+      expect(pillX(), x);
+      expect(_location(router), AppRoutes.home);
+    }
+
+    // Past Карт, the bar moves on to QR.
+    await tester.fling(content, const Offset(-150, 0), 1000);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 800));
+    expect(_location(router), AppRoutes.qrScan);
+  });
+
   testWidgets('pushed screens cover the nav bar and pop back to the tab', (
     tester,
   ) async {
@@ -82,12 +201,17 @@ void main() {
     expect(find.byType(FloatingNavBar), findsOneWidget);
   });
 
-  testWidgets('QR button opens the scanner above the shell', (tester) async {
+  testWidgets('QR is a tab: the bar stays under the scanner', (tester) async {
     final router = await _pumpApp(tester, AppRoutes.home);
     await tester.tap(_semantic('QR уншуулах'));
     // The scanner line animates forever, so pump past the transition.
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(_location(router), AppRoutes.qrScan);
+    expect(find.byType(QrScanScreen), findsOneWidget);
+    expect(find.byType(FloatingNavBar), findsOneWidget);
+    // A tab, so no back button.
+    expect(find.byType(CircleBackButton), findsNothing);
   });
 
   testWidgets('unlinked home keeps its state in the URL', (tester) async {

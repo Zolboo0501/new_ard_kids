@@ -72,7 +72,7 @@ class ProfileScreen extends StatelessWidget {
     final bg = AppColors.pageBackgroundMuted;
     void go(String r) => context.push(r);
     final bottom = embedded
-        ? AppLayout.navClearance(context) - 10
+        ? AppLayout.navClearance(context)
         : MediaQuery.paddingOf(context).bottom + 24;
 
     // Split on wide windows: who the teen is on the left, settings on the

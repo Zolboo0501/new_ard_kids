@@ -154,7 +154,6 @@ abstract final class AppRoutes {
     transfer: (_, state) => TransferScreen(initialAmount: state.extra as int?),
     transferSuccess: (_, state) =>
         TransferSuccessScreen(receipt: state.extra as TransferReceipt?),
-    qrScan: (_, _) => const QrScanScreen(),
     requestAmount: (_, _) => const TransferAmountScreen(request: true),
     requestMoney: (_, state) =>
         RequestMoneyScreen(initialAmount: state.extra as int?),
@@ -189,7 +188,6 @@ abstract final class AppRoutes {
     auth: AppTransition.fade,
     welcome: AppTransition.fade,
     // Task-style screens opened and dismissed as a unit.
-    qrScan: AppTransition.rise,
     transferSuccess: AppTransition.rise,
   };
 
@@ -198,6 +196,7 @@ abstract final class AppRoutes {
   static Iterable<String> get paths => [
     ..._builders.keys,
     home,
+    qrScan,
     homeUnlinked,
     parentLinkOnboarding,
     profile,
@@ -229,6 +228,17 @@ abstract final class AppRoutes {
                           state.uri.queryParameters['linked'] != 'false',
                     ),
                   ),
+                ),
+              ],
+            ),
+            // QR sits between them, a tab like the other two so the bar
+            // stays put under it.
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: qrScan,
+                  pageBuilder: (context, state) =>
+                      const NoTransitionPage(child: QrScanScreen()),
                 ),
               ],
             ),

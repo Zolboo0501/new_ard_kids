@@ -36,6 +36,10 @@ class _HomeScreenState extends State<HomeScreen> with AvatarTourHost {
   final _pages = PageController();
   int _page = 0;
   int _tab = 0;
+
+  /// Where the tabs' pill sits while the content under it is swiped, in
+  /// tabs (fractions between them); null otherwise.
+  double? _tabDrag;
   int _invoiceFilter = 0;
   bool _hideBalance = false;
 
@@ -218,25 +222,36 @@ class _HomeScreenState extends State<HomeScreen> with AvatarTourHost {
                       index: _tab,
                       dotOnActive: true,
                       style: AppTabsStyle.night,
+                      dragPosition: _tabDrag,
                       onChanged: (i) => setState(() => _tab = i),
                     ),
                     const SizedBox(height: 14),
-                    AppTabView(
+                    // Swiping the content moves through the tabs too; past
+                    // Карт it goes on to the bar's next tab (QR).
+                    AppTabSwipe(
                       index: _tab,
-                      child: switch (_tab) {
-                        0 =>
-                          linked
-                              ? AccountsPane(onOpen: _go)
-                              : LockedAccountsPane(
-                                  onLink: () => _go(AppRoutes.parentLink),
-                                ),
-                        1 => InvoicesPane(
-                          filter: _invoiceFilter,
-                          onFilter: (i) => setState(() => _invoiceFilter = i),
-                          onOpen: _go,
-                        ),
-                        _ => CardsPane(onOpen: _go),
-                      },
+                      count: 3,
+                      onChanged: (i) => setState(() => _tab = i),
+                      onDrag: (p) => setState(() => _tabDrag = p),
+                      onPastEnd: () =>
+                          StatefulNavigationShell.of(context).goBranch(1),
+                      child: AppTabView(
+                        index: _tab,
+                        child: switch (_tab) {
+                          0 =>
+                            linked
+                                ? AccountsPane(onOpen: _go)
+                                : LockedAccountsPane(
+                                    onLink: () => _go(AppRoutes.parentLink),
+                                  ),
+                          1 => InvoicesPane(
+                            filter: _invoiceFilter,
+                            onFilter: (i) => setState(() => _invoiceFilter = i),
+                            onOpen: _go,
+                          ),
+                          _ => CardsPane(onOpen: _go),
+                        },
+                      ),
                     ),
                   ],
                 ),
