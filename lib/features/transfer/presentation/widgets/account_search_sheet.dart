@@ -6,12 +6,15 @@ import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
 import '../../../../widgets/input_formatters.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/bank.dart';
 import '../../data/known_account.dart';
+import 'bank_picker.dart';
 import 'search_button.dart';
 import 'transfer_label.dart';
 
-/// The bottom sheet Хайх opens: the kid types a plain account number (no
-/// IBAN), searches, and sees whose account it is. Pops the account on Сонгох.
+/// The bottom sheet Хайх opens: the kid picks the bank by its logo, types a
+/// plain account number (no IBAN), searches, and sees whose account it is.
+/// Pops the account on Сонгох.
 ///
 /// Every search succeeds: a number in [accounts] shows its holder, any other
 /// number gets a mock holder ([lookup]) until the backend does the lookup.
@@ -51,20 +54,21 @@ class AccountSearchSheet extends StatefulWidget {
     'Ц. Батзориг',
   ];
 
-  /// The account behind [number] (any digits): a known one, or a mock Хаан
-  /// банк account with a valid IBAN, its holder picked from the number so
-  /// the same number always finds the same person.
-  static KnownAccount lookup(String number) {
+  /// The account behind [number] (any digits) at [bank] (Хаан банк by
+  /// default): a known one, or a mock account with a valid IBAN, its holder
+  /// picked from the number so the same number always finds the same person.
+  static KnownAccount lookup(String number, {Bank? bank}) {
+    bank ??= Bank.all.first;
     final known = accounts[number];
-    if (known != null) return known;
+    if (known != null && known.bank == bank.name) return known;
     final digits = number.padLeft(10, '0');
     final account = digits.substring(digits.length - 10);
-    final bban = '000500$account';
+    final bban = '${bank.code}00$account';
     final iban = 'MN${_checkDigits(bban)}$bban';
     final seed = account.codeUnits.fold(0, (a, c) => a + c);
     return KnownAccount(
       holder: _holders[seed % _holders.length],
-      bank: 'Хаан банк',
+      bank: bank.name,
       iban: [
         for (var i = 0; i < iban.length; i += 4)
           iban.substring(i, (i + 4).clamp(0, iban.length)),
@@ -89,6 +93,9 @@ class AccountSearchSheet extends StatefulWidget {
 
 class _AccountSearchSheetState extends State<AccountSearchSheet> {
   final _number = TextEditingController();
+
+  /// Index into [Bank.all].
+  int _bank = 0;
   Timer? _timer;
   bool _searching = false;
   KnownAccount? _found;
@@ -113,7 +120,7 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
     _timer = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         _searching = false;
-        _found = AccountSearchSheet.lookup(number);
+        _found = AccountSearchSheet.lookup(number, bank: Bank.all[_bank]);
       });
     });
   }
@@ -162,6 +169,16 @@ class _AccountSearchSheetState extends State<AccountSearchSheet> {
                 ),
               ),
               const SizedBox(height: 16),
+              const TransferLabel('Банк'),
+              BankPicker(
+                selected: _bank,
+                onChanged: (i) {
+                  // Another bank needs a new search.
+                  _reset();
+                  setState(() => _bank = i);
+                },
+              ),
+              const SizedBox(height: 14),
               const TransferLabel('Дансны дугаар'),
               AppTextField(
                 controller: _number,

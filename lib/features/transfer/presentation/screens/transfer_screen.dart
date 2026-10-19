@@ -14,6 +14,7 @@ import '../../../../widgets/entrance.dart';
 import '../../../../widgets/input_formatters.dart';
 import '../../../../widgets/pin_code_sheet.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/bank.dart';
 import '../../data/known_account.dart';
 import '../../data/transfer_contact.dart';
 import '../../data/transfer_receipt.dart';
@@ -53,7 +54,7 @@ class TransferScreen extends StatefulWidget {
 }
 
 class _TransferScreenState extends State<TransferScreen> {
-  static const _banks = ['Хаан банк', 'Голомт банк', 'ХХБ', 'Төрийн банк'];
+  static final _banks = [for (final b in Bank.all) b.name];
   static const _contacts = TransferContact.saved;
   static const _purposes = ['Хоол', 'Тээвэр', 'Хувцас', 'Тоглоом/Апп', 'Бусад'];
 

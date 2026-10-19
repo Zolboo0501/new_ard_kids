@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
+import 'package:new_ard_kids/features/transfer/data/bank.dart';
 import 'package:new_ard_kids/features/transfer/presentation/widgets/account_search_sheet.dart';
+import 'package:new_ard_kids/features/transfer/presentation/widgets/bank_picker.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
 
 Future<void> _openSearchSheet(WidgetTester tester) async {
@@ -77,9 +79,30 @@ void main() {
     expect(find.text(account.iban), findsOneWidget);
   });
 
+  testWidgets('Дансаар: the bank is picked by its logo', (tester) async {
+    await _openSearchSheet(tester);
+    expect(find.byType(BankLogo), findsNWidgets(Bank.all.length));
+
+    await tester.tap(find.text('Голомт'));
+    await tester.pump();
+    // A known Хаан банк number is another account at Голомт.
+    await _search(tester, '5049821902');
+    final account = AccountSearchSheet.lookup('5049821902', bank: Bank.all[1]);
+    expect(find.text('Голомт банк'), findsOneWidget);
+    expect(find.text(account.iban), findsOneWidget);
+    expect(account.iban, startsWith('MN'));
+    expect(account.iban.replaceAll(' ', '').substring(4, 8), '0015');
+  });
+
   test('Дансаар: mock accounts get a valid IBAN', () {
-    for (final number in ['1234567890', '42', '9999999999']) {
-      final iban = AccountSearchSheet.lookup(number).iban.replaceAll(' ', '');
+    for (final (number, bank) in [
+      for (final n in ['1234567890', '42', '9999999999'])
+        for (final b in Bank.all) (n, b),
+    ]) {
+      final iban = AccountSearchSheet.lookup(
+        number,
+        bank: bank,
+      ).iban.replaceAll(' ', '');
       // ISO 13616: move the first four to the end, letters to numbers.
       final digits = '${iban.substring(4)}2223${iban.substring(2, 4)}';
       var rest = 0;
