@@ -10,6 +10,7 @@ import '../../../../widgets/app_text.dart';
 import '../../../../widgets/avatar_card_art.dart';
 import '../../../../widgets/entrance.dart';
 import '../../../../widgets/ui.dart';
+import '../../data/money_request.dart';
 import '../widgets/parent_card.dart';
 import '../widgets/source_card.dart';
 import '../widgets/transfer_label.dart';
@@ -45,14 +46,35 @@ class _RequestMoneyScreenState extends State<RequestMoneyScreen> {
 
   int get _value => widget.initialAmount ?? 20000;
 
+  /// Each type's glyph on the request list.
+  static const _typeGlyphs = [
+    LineGlyph.food,
+    LineGlyph.bus,
+    LineGlyph.book,
+    LineGlyph.shirt,
+    LineGlyph.wallet,
+  ];
+
   void _submit() {
     FocusScope.of(context).unfocus();
+    final now = DateTime.now();
+    String two(int v) => v.toString().padLeft(2, '0');
     // TODO: send the request to the parent's app.
+    MoneyRequests.add(
+      MoneyRequest(
+        from: _parents[_parent].$1,
+        when: 'Өнөөдөр, ${two(now.hour)}:${two(now.minute)}',
+        title: _note.text.trim().isEmpty ? _types[_type] : _note.text.trim(),
+        amount: _value,
+        glyph: _typeGlyphs[_type],
+        status: RequestStatus.pending,
+      ),
+    );
     showAppSnack(
       context,
       '${_parents[_parent].$1} руу ${formatMnt(_value)} хүсэлт илгээлээ',
     );
-    context.pushReplacement(AppRoutes.requestList);
+    context.pushReplacement(AppRoutes.requestListPending);
   }
 
   @override

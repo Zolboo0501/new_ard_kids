@@ -10,13 +10,13 @@ flutter_native_splash:
   # white. The background must match that white or the logo shows as a square
   # patch; that is why this is #FFFFFF and not AppColors.surface (#F8FAFF).
   color: "#FFFFFF"
-  image: assets/images/logo.jpeg
+  image: assets/splash/splash_logo.png
 
   # The app is light-only (AppColors are compile-time constants), so the dark
   # splash uses the same colors rather than a dark variant that the UI would
   # not match.
   color_dark: "#FFFFFF"
-  image_dark: assets/images/logo.jpeg
+  image_dark: assets/splash/splash_logo.png
 
   android: true
   ios: true
@@ -28,7 +28,7 @@ flutter_native_splash:
   # Android 12+ draws its own splash: a centered icon on a solid background,
   # masked to a circle. It ignores the settings above.
   android_12:
-    image: assets/images/logo.jpeg
+    image: assets/splash/splash_android12.png
     icon_background_color: "#FFFFFF"
-    image_dark: assets/images/logo.jpeg
+    image_dark: assets/splash/splash_android12.png
     icon_background_color_dark: "#FFFFFF"

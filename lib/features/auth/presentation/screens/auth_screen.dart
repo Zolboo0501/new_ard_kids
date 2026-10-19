@@ -26,7 +26,7 @@ enum AuthMode { login, register }
 enum _RegisterStep { registerNumber, name, phone }
 
 /// "Нэвтрэх & Бүртгүүлэх": the sign-in screen. Нэвтрэх is an open form
-/// under the Ard Kids logo; Бүртгүүлэх asks one question per page (register
+/// under the ArdZ logo; Бүртгүүлэх asks one question per page (register
 /// number, login name, phone) with the button at the bottom. The other mode
 /// is a link at the bottom of each.
 class AuthScreen extends StatefulWidget {
@@ -362,7 +362,7 @@ class _AuthScreenState extends State<AuthScreen>
     );
   }
 
-  /// Нэвтрэх: the Ard Kids logo and the form a little above the middle, the
+  /// Нэвтрэх: the ArdZ logo and the form a little above the middle, the
   /// link at the bottom. Spare height on a tall phone is shared out instead
   /// of piling up under the button.
   List<Widget> _buildLogin(BoxConstraints constraints) {
@@ -374,12 +374,15 @@ class _AuthScreenState extends State<AuthScreen>
         t: _titleIn,
         child: Center(
           child: Image.asset(
-            'assets/images/ard_kids_logo.webp',
+            // White letters on the dark canvas, black ones on the light.
+            AppColors.isDark
+                ? 'assets/images/ardz_logo_dark.webp'
+                : 'assets/images/ardz_logo.webp',
             // Grows with the screen's height.
             height: (constraints.maxHeight * 0.22).clamp(120.0, 200.0),
             fit: BoxFit.contain,
             filterQuality: FilterQuality.high,
-            semanticLabel: 'Ard Kids',
+            semanticLabel: 'ArdZ',
           ),
         ),
       ),

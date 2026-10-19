@@ -6,6 +6,7 @@ import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import '../../theme/app_theme.dart';
 import '../app_text.dart';
+import '../avatar_toast.dart';
 import 'chips.dart';
 import 'mascots.dart';
 
@@ -123,33 +124,8 @@ class ProgressTrack extends StatelessWidget {
   }
 }
 
-/// Shows a short confirmation snack bar in the app style.
-///
-/// [mascot] (a [Mascots] asset) shows an animal before the message, e.g. a
-/// celebrating bear for a success.
-void showAppSnack(BuildContext context, String message, {String? mascot}) {
-  ScaffoldMessenger.of(context)
-    ..hideCurrentSnackBar()
-    ..showSnackBar(
-      SnackBar(
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.slate50,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: mascot == null
-            ? AppText(message, size: 13, color: AppColors.slate900)
-            : Row(
-                children: [
-                  MascotIcon(mascot, size: 28),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: AppText(
-                      message,
-                      size: 13,
-                      color: AppColors.slate900,
-                    ),
-                  ),
-                ],
-              ),
-      ),
-    );
-}
+/// Shows the message an action leaves ("Хуулагдлаа", "Хадгалагдлаа"…): the
+/// teen's avatar says it at the top of the screen, and it goes by itself or
+/// when dragged up (see [showAvatarToast]).
+void showAppSnack(BuildContext context, String message) =>
+    showAvatarToast(context, message);

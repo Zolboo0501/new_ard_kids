@@ -95,7 +95,7 @@ class _AvatarPickerScreenState extends State<AvatarPickerScreen>
       context.push(AppRoutes.friendCode);
       return;
     }
-    showAppSnack(context, 'Аватар солигдлоо', mascot: avatar.portrait);
+    showAppSnack(context, 'Аватар солигдлоо');
     context.pop();
   }
 

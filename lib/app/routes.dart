@@ -99,6 +99,10 @@ abstract final class AppRoutes {
   /// `extra`: the amount (an [int]) typed on [requestAmount], if any.
   static const requestMoney = '/request';
   static const requestList = '/request/list';
+
+  /// [requestList] opened on its Хүлээгдэж буй filter, after a request is
+  /// sent.
+  static const requestListPending = '$requestList?filter=pending';
   static const invoiceHistory = '/invoices/history';
 
   static const savingsAccount = '/savings';
@@ -154,7 +158,9 @@ abstract final class AppRoutes {
     requestAmount: (_, _) => const TransferAmountScreen(request: true),
     requestMoney: (_, state) =>
         RequestMoneyScreen(initialAmount: state.extra as int?),
-    requestList: (_, _) => const RequestListScreen(),
+    requestList: (_, state) => RequestListScreen(
+      showPending: state.uri.queryParameters['filter'] == 'pending',
+    ),
     invoiceHistory: (_, _) => const InvoiceHistoryScreen(),
     savingsAccount: (_, _) => const SavingsAccountScreen(),
     savingsHistory: (_, _) => const SavingsHistoryScreen(),

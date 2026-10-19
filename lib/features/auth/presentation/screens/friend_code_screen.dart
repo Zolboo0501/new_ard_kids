@@ -124,17 +124,10 @@ class _FriendCodeScreenState extends State<FriendCodeScreen>
       }
       FocusScope.of(context).unfocus();
       // TODO: send the friend request to the backend.
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: AppText(
-              '${_username.text.trim()} рүү найзын хүсэлт илгээлээ',
-              size: 13,
-              color: AppColors.slate900,
-            ),
-          ),
-        );
+      showAppSnack(
+        context,
+        '${_username.text.trim()} рүү найзын хүсэлт илгээлээ',
+      );
     }
     // Offers biometric sign-in next, unless the phone has no sensor for it.
     final hasSensor = await Biometrics.instance.hasSensor();

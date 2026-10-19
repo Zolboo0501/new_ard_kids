@@ -14,51 +14,22 @@ import '../widgets/request_list_summary.dart';
 
 /// "Мөнгө хүсэх - Хүсэлтийн жагсаалт": history of money requests.
 class RequestListScreen extends StatefulWidget {
-  const RequestListScreen({super.key});
+  const RequestListScreen({super.key, this.showPending = false});
+
+  /// Opens on the Хүлээгдэж буй filter ([AppRoutes.requestListPending]).
+  final bool showPending;
 
   @override
   State<RequestListScreen> createState() => _RequestListScreenState();
 }
 
 class _RequestListScreenState extends State<RequestListScreen> {
-  final _requests = [
-    const MoneyRequest(
-      from: 'Ээж',
-      when: 'Өнөөдөр, 14:20',
-      title: 'Сургуулийн аялал',
-      amount: 20000,
-      glyph: LineGlyph.bus,
-      status: RequestStatus.pending,
-    ),
-    const MoneyRequest(
-      from: 'Аав',
-      when: 'Өчигдөр, 18:45',
-      title: 'Чихэвч',
-      amount: 45000,
-      glyph: LineGlyph.bag,
-      status: RequestStatus.approved,
-      reply: 'Аав: "Хадгалж хэрэглээрэй"',
-    ),
-    const MoneyRequest(
-      from: 'Ээж',
-      when: '2026.09.09',
-      title: 'Долоо хоногийн өдрийн хоол',
-      amount: 10000,
-      glyph: LineGlyph.food,
-      status: RequestStatus.approved,
-    ),
-    const MoneyRequest(
-      from: 'Аав',
-      when: '2026.09.05',
-      title: 'Шинэ пүүз',
-      amount: 80000,
-      glyph: LineGlyph.shirt,
-      status: RequestStatus.declined,
-      reason: 'Энэ сарын төсөв хүрэхгүй',
-    ),
-  ];
+  /// The shared list, so a request just sent is in it (see [MoneyRequests]).
+  List<MoneyRequest> get _requests => MoneyRequests.all;
 
-  int _filter = 0;
+  /// Right after a request is sent the list opens on Хүлээгдэж буй, where
+  /// the new one sits at the top.
+  late int _filter = widget.showPending ? 1 : 0;
 
   List<MoneyRequest> get _visible => switch (_filter) {
     1 => _requests.where((r) => r.status == RequestStatus.pending).toList(),
@@ -154,7 +125,7 @@ class _RequestListScreenState extends State<RequestListScreen> {
                           context,
                           '${r.fromDative} сануулга илгээлээ',
                         ),
-                        onCancel: () => setState(() => _requests.remove(r)),
+                        onCancel: () => setState(() => MoneyRequests.remove(r)),
                       ),
                     ),
                     const SizedBox(height: 12),

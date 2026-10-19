@@ -8,9 +8,10 @@ import 'app_text.dart';
 
 /// Shows the teen's avatar with a short [text] at the top of the screen, on
 /// its own card shadow over the page (nothing behind it is dimmed or
-/// blurred), and takes it away by itself
-/// after [duration] (or on a tap). For a passing piece of good news, such as
-/// the reward a transfer earned; tours use `showAvatarTour` instead.
+/// blurred), and takes it away by itself after [duration], on a tap, or when
+/// it is dragged up. Every message an action leaves (`showAppSnack`, the
+/// rewards) goes through it; tours use `showAvatarTour` instead. A new one
+/// replaces the one showing.
 ///
 /// [top] is measured from under the status bar; by default it sits at the
 /// very top, over the screen's header.
@@ -21,6 +22,7 @@ void showAvatarToast(
   Duration duration = const Duration(milliseconds: 4500),
 }) {
   final overlay = Overlay.of(context);
+  _current?.remove();
   late final OverlayEntry entry;
   entry = OverlayEntry(
     builder: (_) => AvatarToast(
@@ -29,11 +31,16 @@ void showAvatarToast(
       duration: duration,
       onDone: () {
         if (entry.mounted) entry.remove();
+        if (identical(_current, entry)) _current = null;
       },
     ),
   );
+  _current = entry;
   overlay.insert(entry);
 }
+
+/// The toast on screen, if any, so the next one can replace it.
+OverlayEntry? _current;
 
 /// What each rewarded action earns: a transfer, a savings deposit, a new
 /// goal, an invite shared.
@@ -88,6 +95,13 @@ class _AvatarToastState extends State<AvatarToast>
   Timer? _timer;
   bool _leaving = false;
 
+  /// How far the card has been dragged: up follows the finger, down only
+  /// gives a little.
+  double _drag = 0;
+
+  /// Past this (or a quick flick up) a drag dismisses it.
+  static const _dismissDrag = 36.0;
+
   @override
   void initState() {
     super.initState();
@@ -101,6 +115,26 @@ class _AvatarToastState extends State<AvatarToast>
     _timer?.cancel();
     await _controller.reverse();
     widget.onDone();
+  }
+
+  void _onDragUpdate(DragUpdateDetails d) {
+    if (_leaving) return;
+    _timer?.cancel();
+    setState(() {
+      final next = _drag + d.delta.dy;
+      _drag = next < 0 ? next : next * 0.3;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails d) {
+    if (_leaving) return;
+    if (_drag < -_dismissDrag || d.velocity.pixelsPerSecond.dy < -400) {
+      _leave();
+      return;
+    }
+    // Let go short of it: back into place, and the clock starts again.
+    setState(() => _drag = 0);
+    _timer = Timer(widget.duration, _leave);
   }
 
   @override
@@ -130,7 +164,7 @@ class _AvatarToastState extends State<AvatarToast>
           builder: (context, child) => Opacity(
             opacity: _curve.value,
             child: Transform.translate(
-              offset: Offset(0, still ? 0 : -24 * (1 - _curve.value)),
+              offset: Offset(0, (still ? 0 : -24 * (1 - _curve.value)) + _drag),
               child: child,
             ),
           ),
@@ -142,6 +176,8 @@ class _AvatarToastState extends State<AvatarToast>
               liveRegion: true,
               child: GestureDetector(
                 onTap: _leave,
+                onVerticalDragUpdate: _onDragUpdate,
+                onVerticalDragEnd: _onDragEnd,
                 child: Padding(
                   padding: const EdgeInsets.only(top: _guideRise),
                   child: Stack(

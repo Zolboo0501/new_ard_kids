@@ -79,4 +79,44 @@ void main() {
     await tester.tap(find.text('Урилга хуваалцах'));
     await _expectRewardToast(tester, 'Урилгын код хуулагдлаа.');
   });
+
+  testWidgets('Action messages: the avatar says them and a drag up closes it', (
+    tester,
+  ) async {
+    await _pump(tester, AppRoutes.inviteFriends);
+    await tester.tap(find.text('Хуулах'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Урилгын код хуулагдлаа'), findsOneWidget);
+    expect(find.byType(SnackBar), findsNothing);
+
+    // A short, slow drag snaps back and keeps it.
+    await tester.timedDrag(
+      find.text('Урилгын код хуулагдлаа'),
+      const Offset(0, -28),
+      const Duration(milliseconds: 600),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Урилгын код хуулагдлаа'), findsOneWidget);
+
+    // Dragged up past the threshold, it goes at once.
+    await tester.drag(
+      find.text('Урилгын код хуулагдлаа'),
+      const Offset(0, -80),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Урилгын код хуулагдлаа'), findsNothing);
+  });
+
+  testWidgets('Action messages: a new one replaces the one showing', (
+    tester,
+  ) async {
+    await _pump(tester, AppRoutes.inviteFriends);
+    await tester.tap(find.text('Хуулах'));
+    await tester.pump(const Duration(milliseconds: 400));
+    await _scrollTo(tester, 'Урилга хуваалцах');
+    await tester.tap(find.text('Урилга хуваалцах'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('Урилгын код хуулагдлаа'), findsNothing);
+    expect(find.textContaining(_reward), findsOneWidget);
+  });
 }

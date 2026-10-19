@@ -115,7 +115,7 @@ class _AppLoaderState extends State<AppLoader>
 }
 
 /// The first Flutter frame, on the native splash's white: a calm, cinematic
-/// logo moment. The Ard Kids logo fades in while it grows gently into
+/// logo moment. The ArdZ logo fades in while it grows gently into
 /// place, a soft band of light glides across it as it keeps pushing in, and
 /// it then zooms through towards the viewer and fades as the app comes in.
 /// Smooth ease-in-out throughout, no overshoot. A spinner fades in only if
@@ -273,11 +273,11 @@ class _AppLoadingScreenState extends State<AppLoadingScreen>
                       );
                     },
                     child: Image.asset(
-                      'assets/images/ard_kids_logo.webp',
+                      'assets/images/ardz_logo.webp',
                       width: 260,
                       fit: BoxFit.contain,
                       filterQuality: FilterQuality.medium,
-                      semanticLabel: 'Ard Kids',
+                      semanticLabel: 'ArdZ',
                     ),
                   ),
                 ),

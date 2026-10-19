@@ -471,24 +471,25 @@ class _RollingDigitState extends State<_RollingDigit>
                     // line), so a face that has landed isn't faded.
                     stops: [0, 0.18, 0.82, 1],
                   ).createShader(rect),
+                  // Each face moves by a fraction of its own height, which is
+                  // the slot's (same style), rather than measuring the slot
+                  // with a LayoutBuilder: that can't be measured ahead of
+                  // layout, so a rolling amount inside an IntrinsicHeight
+                  // (the request list's summary) threw.
                   child: ClipRect(
-                    child: LayoutBuilder(
-                      builder: (context, box) {
-                        final h = box.maxHeight;
-                        Widget face(int n, double offset) =>
-                            Transform.translate(
-                              offset: Offset(0, offset * h),
-                              child: Text('${n % 10}', style: widget.style),
-                            );
+                    child: Stack(
+                      children: [
                         // The digit rolling out moves up and away while the
                         // next one rises in from below.
-                        return Stack(
-                          children: [
-                            face(below, -progress),
-                            face(below + 1, 1 - progress),
-                          ],
-                        );
-                      },
+                        for (final (n, offset) in [
+                          (below, -progress),
+                          (below + 1, 1 - progress),
+                        ])
+                          FractionalTranslation(
+                            translation: Offset(0, offset),
+                            child: Text('${n % 10}', style: widget.style),
+                          ),
+                      ],
                     ),
                   ),
                 ),
