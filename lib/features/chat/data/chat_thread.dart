@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../app/avatar.dart';
+import 'chat_emoji.dart';
 
 /// One message in a [ChatThread]. [mine] is true for what the teen sent.
 class ChatMessage {
@@ -8,21 +9,65 @@ class ChatMessage {
     required this.text,
     required this.at,
     this.mine = false,
-    this.liked = false,
-  }) : heart = false;
+    this.reaction,
+  }) : heart = false,
+       sticker = null,
+       emoji = false;
 
   /// A heart sent with the composer's heart button: drawn big, no bubble.
-  ChatMessage.heart({required this.at, this.mine = false, this.liked = false})
+  ChatMessage.heart({required this.at, this.mine = false, this.reaction})
     : text = '❤',
-      heart = true;
+      heart = true,
+      sticker = null,
+      emoji = false;
 
+  /// A bean sticker ([sticker] is its asset path): drawn big, no bubble.
+  ChatMessage.sticker(
+    String this.sticker, {
+    required this.at,
+    this.mine = false,
+    this.reaction,
+  }) : text = 'Стикер',
+       heart = false,
+       emoji = false;
+
+  /// A GIF ([sticker] is its asset path), drawn like a sticker; it plays on
+  /// its own. The sheet's GIF tab has none yet.
+  ChatMessage.gif(
+    String this.sticker, {
+    required this.at,
+    this.mine = false,
+    this.reaction,
+  }) : text = 'GIF',
+       heart = false,
+       emoji = false;
+
+  /// One of the app's 3D emoji ([sticker] is its asset path): drawn on its
+  /// own like a sticker, smaller.
+  ChatMessage.emoji(
+    String this.sticker, {
+    required this.at,
+    this.mine = false,
+    this.reaction,
+  }) : text = 'Эможи',
+       heart = false,
+       emoji = true;
+
+  /// The bubble's text, or what a sticker or heart reads as in the inbox.
   final String text;
   final DateTime at;
   final bool mine;
   final bool heart;
 
-  /// Double-tapping a message likes it (a small heart under the bubble).
-  bool liked;
+  /// The asset of a sticker, GIF or emoji message; null for text and hearts.
+  final String? sticker;
+
+  /// Whether [sticker] is one of the 3D emoji.
+  final bool emoji;
+
+  /// The reaction on the message (one of [chatReactions], drawn small on
+  /// the bubble's corner): long-press to pick one, double-tap for a heart.
+  String? reaction;
 }
 
 /// Another Ard KIDS user the teen can write to, found on "Шинэ мессеж" by
@@ -168,27 +213,36 @@ final mockChatThreads = <ChatThread>[
         at: _ago(const Duration(hours: 3, minutes: 10)),
       ),
       ChatMessage(
-        text: 'За тэгье',
+        text: 'За тэгье 👍',
         at: _ago(const Duration(hours: 3, minutes: 5)),
         mine: true,
-        liked: true,
+        reaction: chatReactions.first,
       ),
       ChatMessage(
-        text: 'Хадгаламжийн зорилгоо биелүүлчихлээ!',
+        text: 'Хадгаламжийн зорилгоо биелүүлчихлээ! 🎉',
         at: _ago(const Duration(minutes: 12)),
       ),
       ChatMessage(
         text: 'Одоо PS5-даа ойртлоо.',
         at: _ago(const Duration(minutes: 11)),
       ),
+      ChatMessage(text: '🎮🔥', at: _ago(const Duration(minutes: 10))),
     ],
   ),
   ChatThread(
     user: mockChatUsers[2],
     unread: 1,
     messages: [
+      ChatMessage.sticker(
+        'assets/images/avatars/bean/purple/chat/hello.webp',
+        at: _ago(const Duration(minutes: 41)),
+      ),
+      ChatMessage.emoji(
+        'assets/images/chat_emoji/celebrate/star_eyes.webp',
+        at: _ago(const Duration(minutes: 40, seconds: 30)),
+      ),
       ChatMessage(
-        text: 'Маргааш кино үзэх үү?',
+        text: 'Маргааш кино үзэх үү? 🍿',
         at: _ago(const Duration(minutes: 40)),
       ),
     ],
@@ -223,6 +277,10 @@ final mockChatThreads = <ChatThread>[
       ),
       ChatMessage(
         text: 'За, би өөрийнхөө хэсгийг явуулчихлаа.',
+        at: _ago(const Duration(days: 3, hours: 3, minutes: 58)),
+      ),
+      ChatMessage.sticker(
+        'assets/images/avatars/bean/orange/chat/thumbsup.webp',
         at: _ago(const Duration(days: 3, hours: 3, minutes: 58)),
       ),
       ChatMessage(

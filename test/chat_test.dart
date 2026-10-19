@@ -3,11 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:new_ard_kids/app/routes.dart';
+import 'dart:io';
+
+import 'package:new_ard_kids/features/chat/data/chat_emoji.dart';
+import 'package:new_ard_kids/features/chat/data/chat_stickers.dart';
 import 'package:new_ard_kids/features/chat/data/chat_thread.dart';
 import 'package:new_ard_kids/features/chat/presentation/widgets/chat_composer.dart';
+import 'package:new_ard_kids/features/chat/presentation/widgets/chat_reaction_bar.dart';
 import 'package:new_ard_kids/features/home/presentation/widgets/floating_nav_bar.dart';
 import 'package:new_ard_kids/theme/app_theme.dart';
-import 'package:new_ard_kids/widgets/ui.dart';
+import 'package:new_ard_kids/widgets/app_text.dart';
 
 Future<GoRouter> _pumpApp(WidgetTester tester, String location) async {
   tester.view.physicalSize = const Size(390 * 3, 844 * 3);
@@ -23,9 +28,22 @@ Future<GoRouter> _pumpApp(WidgetTester tester, String location) async {
   return router;
 }
 
-/// The heart icons drawn at [size]: 12 for a like, 44 for a sent heart.
-Finder _heart(double size) => find.byWidgetPredicate(
-  (w) => w is LineIcon && w.glyph == LineGlyph.heart && w.size == size,
+/// The reaction badges on bubbles showing [path].
+Finder _reaction(String path) => find.byWidgetPredicate(
+  (w) =>
+      w is Image &&
+      w.image is AssetImage &&
+      (w.image as AssetImage).assetName == path &&
+      w.width == 18,
+);
+
+/// The hearts sent from the composer: the ❤️ emoji drawn 56pt.
+Finder _sentHeart() => find.byWidgetPredicate(
+  (w) =>
+      w is Image &&
+      w.image is AssetImage &&
+      (w.image as AssetImage).assetName == chatReactions.first &&
+      w.width == 56,
 );
 
 void main() {
@@ -49,7 +67,7 @@ void main() {
     await tester.tap(find.text('Анужин Ганбат'));
     await tester.pumpAndSettle();
     expect(router.state.uri.toString(), AppRoutes.chatThreadOf('anujin'));
-    expect(find.text('Маргааш кино үзэх үү?'), findsOneWidget);
+    expect(find.text('Маргааш кино үзэх үү? 🍿'), findsOneWidget);
 
     await tester.enterText(
       find.descendant(
@@ -111,7 +129,7 @@ void main() {
       await _pumpApp(tester, AppRoutes.chatThreadOf('saraa'));
       expect(find.text('Одоо PS5-даа ойртлоо.'), findsOneWidget);
 
-      final liked = _heart(12);
+      final liked = _reaction(chatReactions.first);
       final before = liked.evaluate().length;
       await tester.tap(find.text('Одоо PS5-даа ойртлоо.'));
       await tester.pump(const Duration(milliseconds: 50));
@@ -119,7 +137,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(liked, findsNWidgets(before + 1));
 
-      final hearts = _heart(44);
+      final hearts = _sentHeart();
       final sent = hearts.evaluate().length;
       await tester.tap(find.bySemanticsLabel('Зүрх илгээх'));
       await tester.pumpAndSettle();
@@ -143,5 +161,144 @@ void main() {
     expect(chatAgo(const Duration(minutes: 12)), '12 мин');
     expect(chatAgo(const Duration(hours: 3)), '3 ц');
     expect(chatAgo(const Duration(days: 9)), '1 долоо хоног');
+  });
+
+  test('Stickers: every pose of every set is bundled', () {
+    for (final set in chatStickerSets) {
+      expect(set.poses, hasLength(9));
+      for (final path in set.paths) {
+        expect(File(path).existsSync(), isTrue, reason: path);
+      }
+    }
+  });
+
+  for (final (tab, path) in [
+    ('Стикер', 'assets/images/avatars/bean/orange/chat/party.webp'),
+  ]) {
+    testWidgets('$tab: the tab shows your own character first and sends', (
+      tester,
+    ) async {
+      await _pumpApp(tester, AppRoutes.chatThreadOf('erdene'));
+      Finder sent() => find.byWidgetPredicate(
+        (w) =>
+            w is Image &&
+            w.image is AssetImage &&
+            (w.image as AssetImage).assetName == path &&
+            w.width == 120,
+      );
+      expect(sent(), findsNothing);
+
+      await tester.tap(find.bySemanticsLabel('GIF, эможи, стикер'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(tab));
+      await tester.pumpAndSettle();
+      // The sheet opens on Эможи; on Стикер the fox (the default avatar) comes first, so its party pose is on
+      // show without switching characters.
+      await tester.tap(find.byKey(ValueKey(path)));
+      await tester.pumpAndSettle();
+      expect(sent(), findsOneWidget);
+    });
+  }
+
+  test('Emoji: only emoji (and spaces) count as emoji-only', () {
+    expect(isEmojiOnly('😀'), isTrue);
+    expect(isEmojiOnly('🎮 🔥'), isTrue);
+    expect(isEmojiOnly('❤️👍🏽'), isTrue);
+    expect(isEmojiOnly('Сайн уу 😀'), isFalse);
+    expect(isEmojiOnly('123'), isFalse);
+    expect(isEmojiOnly('  '), isFalse);
+  });
+
+  testWidgets('Emoji: a few typed alone send large', (tester) async {
+    await _pumpApp(tester, AppRoutes.chatThreadOf('khulan'));
+    // Emoji come from the phone's keyboard, as plain text.
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(ChatComposer),
+        matching: find.byType(TextField),
+      ),
+      '😀🔥',
+    );
+    await tester.pump();
+    await tester.tap(find.bySemanticsLabel('Илгээх'));
+    await tester.pumpAndSettle();
+    final sent = tester.widget<AppText>(find.widgetWithText(AppText, '😀🔥'));
+    expect(sent.size, 40);
+  });
+
+  testWidgets('GIF: the tab is there but empty', (tester) async {
+    await _pumpApp(tester, AppRoutes.chatThreadOf('erdene'));
+    await tester.tap(find.bySemanticsLabel('GIF, эможи, стикер'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('GIF'));
+    await tester.pumpAndSettle();
+    expect(find.text('GIF алга байна'), findsOneWidget);
+  });
+
+  test('Emoji: every 3D emoji is bundled, with a label', () {
+    expect(chatEmojiPacks.map((p) => p.label), [
+      'Баяр',
+      'Хайр',
+      'Мэдрэмж',
+      'Тэмдэг',
+    ]);
+    for (final pack in chatEmojiPacks) {
+      for (final path in pack.paths) {
+        expect(File(path).existsSync(), isTrue, reason: path);
+        expect(chatEmojiLabel(path), isNot('Эможи'), reason: path);
+      }
+    }
+  });
+
+  testWidgets('Emoji: the tab opens on Баяр, a chip switches, a tap sends', (
+    tester,
+  ) async {
+    await _pumpApp(tester, AppRoutes.chatThreadOf('erdene'));
+    const heart = 'assets/images/chat_emoji/love/heart_eyes.webp';
+    Finder sent(String path) => find.byWidgetPredicate(
+      (w) =>
+          w is Image &&
+          w.image is AssetImage &&
+          (w.image as AssetImage).assetName == path &&
+          w.width == 64,
+    );
+
+    await tester.tap(find.bySemanticsLabel('GIF, эможи, стикер'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(
+        const ValueKey('assets/images/chat_emoji/celebrate/smile.webp'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.bySemanticsLabel('Хайр'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey(heart)));
+    await tester.pumpAndSettle();
+    expect(sent(heart), findsOneWidget);
+  });
+
+  testWidgets('Reactions: a long press offers them; picking twice clears', (
+    tester,
+  ) async {
+    await _pumpApp(tester, AppRoutes.chatThreadOf('bilguun'));
+    const message = 'Тоглоомын мөнгийг хуваая.';
+    final laugh = _reaction(chatReactions[1]);
+    expect(laugh, findsNothing);
+
+    await tester.longPress(find.text(message));
+    await tester.pumpAndSettle();
+    expect(find.byType(ChatReactionBar), findsOneWidget);
+    await tester.tap(find.byKey(ValueKey(chatReactions[1])));
+    await tester.pumpAndSettle();
+    expect(find.byType(ChatReactionBar), findsNothing);
+    expect(laugh, findsOneWidget);
+
+    // The same one again takes it off.
+    await tester.longPress(find.text(message));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ValueKey(chatReactions[1])));
+    await tester.pumpAndSettle();
+    expect(laugh, findsNothing);
   });
 }

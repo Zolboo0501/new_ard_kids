@@ -129,6 +129,14 @@ flutter:
     - assets/images/avatars/bean/orange/
     - assets/images/avatars/bean/pink/
     - assets/images/avatars/bean/purple/
+    - assets/images/avatars/bean/green/chat/
+    - assets/images/avatars/bean/orange/chat/
+    - assets/images/avatars/bean/pink/chat/
+    - assets/images/avatars/bean/purple/chat/
+    - assets/images/chat_emoji/celebrate/
+    - assets/images/chat_emoji/love/
+    - assets/images/chat_emoji/feelings/
+    - assets/images/chat_emoji/symbols/
     - assets/sound/
     - assets/images/welcome/
     - assets/svg/

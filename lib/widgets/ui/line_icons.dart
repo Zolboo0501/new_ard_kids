@@ -100,6 +100,7 @@ enum LineGlyph {
   minus,
   chevronLeft,
   chat,
+  sticker,
 }
 
 class LineIcon extends StatelessWidget {
@@ -202,6 +203,7 @@ class LineIcon extends StatelessWidget {
     LineGlyph.minus => Iconsax.minus_copy,
     LineGlyph.chevronLeft => Iconsax.arrow_left_2_copy,
     LineGlyph.chat => Iconsax.message_copy,
+    LineGlyph.sticker => Iconsax.sticker_copy,
   };
   final String? semanticLabel;
 

@@ -3,14 +3,19 @@ import 'package:flutter/services.dart';
 
 import '../../../../theme/app_theme.dart';
 import '../../../../widgets/app_text.dart';
-import '../../../../widgets/ui.dart';
+import '../../data/chat_emoji.dart';
+import '../../data/chat_stickers.dart';
 import '../../data/chat_thread.dart';
 import 'chat_avatar.dart';
+import 'chat_reaction_bar.dart';
 
-/// One message, DM style: the teen's own on the right in an accent
-/// gradient, the other person's on the left in grey with their avatar
-/// beside the last of a run. Messages in a run ([first]/[last]) share
-/// tighter corners on the sender's side. Double-tap likes it.
+/// One message, DM style: the teen's own on the right in the theme's
+/// accent (flat), the other person's on the left in grey with their avatar
+/// beside the last of a run; a sticker or a heart stands on its own, with no
+/// bubble. Messages in a run ([first]/[last]) share tighter corners on the
+/// sender's side. Long-press opens the reactions ([showChatReactionBar]);
+/// double-tap puts a heart on it, or takes it off. The reaction sits on the
+/// bubble's lower corner.
 class ChatBubble extends StatelessWidget {
   const ChatBubble({
     super.key,
@@ -18,7 +23,7 @@ class ChatBubble extends StatelessWidget {
     required this.user,
     required this.first,
     required this.last,
-    required this.onLike,
+    required this.onReact,
   });
 
   final ChatMessage message;
@@ -27,7 +32,9 @@ class ChatBubble extends StatelessWidget {
   final ChatUser user;
   final bool first;
   final bool last;
-  final VoidCallback onLike;
+
+  /// Called with the new reaction, or null when it's taken off.
+  final ValueChanged<String?> onReact;
 
   static const _round = Radius.circular(20);
   static const _joined = Radius.circular(5);
@@ -36,42 +43,53 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mine = message.mine;
-    final liked = message.liked;
-    final body = message.heart ? _heart() : _bubble(context, mine);
+    final reaction = message.reaction;
+    final reacted = reaction != null;
+    final sticker = message.sticker;
+    final body = sticker != null
+        ? (message.emoji ? _emojiArt(sticker) : _sticker(sticker))
+        : message.heart
+        ? _heart()
+        : _bigEmoji(message.text) ?? _bubble(context, mine);
 
-    final likeable = GestureDetector(
-      onDoubleTap: () {
-        HapticFeedback.lightImpact();
-        onLike();
-      },
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: liked ? 14 : 0),
-            child: body,
-          ),
-          if (liked)
-            Positioned(
-              bottom: 0,
-              left: mine ? null : 10,
-              right: mine ? 10 : null,
-              child: Container(
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: AppColors.card,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.surface, width: 2),
-                ),
-                child: LineIcon(
-                  LineGlyph.heart,
-                  size: 12,
-                  color: AppColors.rose500,
-                  semanticLabel: 'Таалагдсан',
+    final reactable = Builder(
+      builder: (context) => GestureDetector(
+        onDoubleTap: () {
+          HapticFeedback.lightImpact();
+          final heart = chatReactions.first;
+          onReact(reaction == heart ? null : heart);
+        },
+        onLongPress: () => _pickReaction(context),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(bottom: reacted ? 16 : 0),
+              child: body,
+            ),
+            if (reacted)
+              Positioned(
+                bottom: 0,
+                left: mine ? null : 10,
+                right: mine ? 10 : null,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.surface, width: 2),
+                  ),
+                  child: Image.asset(
+                    reaction,
+                    width: 18,
+                    height: 18,
+                    filterQuality: FilterQuality.high,
+                    semanticLabel: chatEmojiLabel(reaction),
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -88,7 +106,7 @@ class ChatBubble extends StatelessWidget {
               width: _avatar,
               child: last
                   ? Padding(
-                      padding: EdgeInsets.only(bottom: liked ? 14 : 0),
+                      padding: EdgeInsets.only(bottom: reacted ? 16 : 0),
                       child: ChatAvatar(
                         user: user,
                         size: _avatar,
@@ -105,7 +123,7 @@ class ChatBubble extends StatelessWidget {
               widthFactor: 0.82,
               child: Align(
                 alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
-                child: likeable,
+                child: reactable,
               ),
             ),
           ),
@@ -114,14 +132,56 @@ class ChatBubble extends StatelessWidget {
     );
   }
 
-  Widget _heart() => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-    child: LineIcon(
-      LineGlyph.heart,
-      size: 44,
-      color: AppColors.rose500,
-      semanticLabel: 'Зүрх',
-    ),
+  Future<void> _pickReaction(BuildContext context) async {
+    HapticFeedback.mediumImpact();
+    final current = message.reaction;
+    final picked = await showChatReactionBar(
+      context,
+      target: context.findRenderObject()! as RenderBox,
+      alignEnd: message.mine,
+      current: current,
+    );
+    if (picked == null) return;
+    onReact(picked == current ? null : picked);
+  }
+
+  Widget _sticker(String path) => Image.asset(
+    path,
+    width: 120,
+    height: 120,
+    filterQuality: FilterQuality.high,
+    semanticLabel: chatStickerLabel(path),
+  );
+
+  /// One of the app's 3D emoji: the size of a large Unicode one.
+  Widget _emojiArt(String path) => Image.asset(
+    path,
+    width: 64,
+    height: 64,
+    filterQuality: FilterQuality.high,
+    semanticLabel: chatEmojiLabel(path),
+  );
+
+  /// One to three emoji on their own are drawn large with no bubble;
+  /// anything else (more emoji, or any text) stays in the bubble.
+  Widget? _bigEmoji(String text) {
+    if (!isEmojiOnly(text)) return null;
+    final emoji = text.replaceAll(RegExp(r'\s'), '').characters.length;
+    if (emoji > 3) return null;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: AppText(text.trim(), size: emoji == 1 ? 48 : 40, height: 1.2),
+    );
+  }
+
+  /// A heart sent from the composer: the ❤️ emoji, the size of a large
+  /// Unicode one.
+  Widget _heart() => Image.asset(
+    chatReactions.first,
+    width: 56,
+    height: 56,
+    filterQuality: FilterQuality.high,
+    semanticLabel: 'Зүрх',
   );
 
   Widget _bubble(BuildContext context, bool mine) {
@@ -131,14 +191,8 @@ class ChatBubble extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: mine ? null : AppColors.slate100,
-        gradient: mine
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.sky400, AppColors.sky600],
-              )
-            : null,
+        // The accent picked in Харагдац, flat.
+        color: mine ? AppColors.sky500 : AppColors.slate100,
         borderRadius: BorderRadius.only(
           topLeft: mine ? _round : top,
           bottomLeft: mine ? _round : bottom,

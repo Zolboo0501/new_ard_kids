@@ -133,6 +133,10 @@ enum AppAvatar {
   /// `assets/images/avatars/bean/` (only `picker/` is bundled).
   String get portrait => 'assets/images/avatars/bean/picker/$_bean.png';
 
+  /// The colour of this character's bean ("orange", "green", "pink",
+  /// "purple"): the chat stickers are grouped by it.
+  String get bean => _bean;
+
   /// The colour of this character's bean, which names its art folders.
   String get _bean => switch (this) {
     fox => 'orange',

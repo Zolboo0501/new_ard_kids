@@ -6,6 +6,7 @@ import '../../data/chat_thread.dart';
 import '../widgets/chat_avatar.dart';
 import '../widgets/chat_bubble.dart';
 import '../widgets/chat_composer.dart';
+import '../widgets/chat_sticker_sheet.dart';
 import '../widgets/chat_thread_header.dart';
 
 /// One conversation, opened from the Чат tab, DM style: the person's card
@@ -49,6 +50,15 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
   void _send(String text) =>
       _add(ChatMessage(text: text, at: DateTime.now(), mine: true));
 
+  void _sendMedia(ChatMediaPick pick) {
+    final at = DateTime.now();
+    _add(switch (pick.kind) {
+      ChatMedia.gif => ChatMessage.gif(pick.path, at: at, mine: true),
+      ChatMedia.emoji => ChatMessage.emoji(pick.path, at: at, mine: true),
+      ChatMedia.sticker => ChatMessage.sticker(pick.path, at: at, mine: true),
+    });
+  }
+
   void _sendHeart() => _add(ChatMessage.heart(at: DateTime.now(), mine: true));
 
   /// The conversation top to bottom; the list shows it reversed so it
@@ -69,7 +79,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
           user: _thread.user,
           first: prev == null || !joins(prev, m),
           last: next == null || !joins(m, next),
-          onLike: () => setState(() => m.liked = !m.liked),
+          onReact: (r) => setState(() => m.reaction = r),
         ),
       );
     }
@@ -106,7 +116,7 @@ class _ChatThreadScreenState extends State<ChatThreadScreen> {
               itemBuilder: (context, i) => items[items.length - 1 - i],
             ),
           ),
-          ChatComposer(onSend: _send, onHeart: _sendHeart),
+          ChatComposer(onSend: _send, onHeart: _sendHeart, onMedia: _sendMedia),
         ],
       ),
     );

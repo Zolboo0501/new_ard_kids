@@ -25,9 +25,6 @@ class ChatThreadHeader extends StatelessWidget implements PreferredSizeWidget {
         child: Container(
           height: 64,
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(color: AppColors.line)),
-          ),
           child: Row(
             children: [
               const CircleBackButton(),
