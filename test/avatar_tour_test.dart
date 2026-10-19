@@ -25,13 +25,25 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-/// Taps Дараах through every step, then the last button.
+/// Taps Дараах through every step, then the last button, checking each
+/// button is fully on screen (a tall spotlight once pushed it off).
 Future<void> _walk(WidgetTester tester) async {
+  void expectOnScreen(String label) {
+    final rect = tester.getRect(find.text(label));
+    expect(
+      const Rect.fromLTWH(0, 0, 390, 844).intersect(rect),
+      rect,
+      reason: '$label off screen',
+    );
+  }
+
   var guard = 0;
   while (find.text('Дараах').evaluate().isNotEmpty && guard++ < 10) {
+    expectOnScreen('Дараах');
     await tester.tap(find.text('Дараах'));
     await _settle(tester);
   }
+  expectOnScreen('Эхэлцгээе');
   await tester.tap(find.text('Эхэлцгээе'));
   await _settle(tester);
 }

@@ -1,4 +1,4 @@
-package mn.afs.ard.kids
+package mn.afs.ardz
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

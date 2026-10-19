@@ -110,9 +110,31 @@ class _AvatarTourState extends State<AvatarTour> {
           final hole = _hole;
           final size = constraints.biggest;
           final padding = MediaQuery.paddingOf(context);
-          // The bubble goes on the roomier side of the spotlight, or in the
-          // middle when there is none.
-          final below = hole == null || size.height - hole.bottom > hole.top;
+          // The bubble goes under the spotlight, or over it, wherever it
+          // fits; a target taller than the screen (a whole list) leaves room
+          // on neither side, so the bubble then sits at the bottom of the
+          // screen, over the spotlight, and its buttons stay reachable.
+          final screen = Rect.fromLTRB(
+            0,
+            padding.top,
+            size.width,
+            size.height - padding.bottom,
+          );
+          final shown = hole?.intersect(screen);
+          final double? top;
+          final double? bottom;
+          if (shown == null) {
+            top = bottom = null;
+          } else if (screen.bottom - shown.bottom >= _bubbleRoom) {
+            top = shown.bottom + 12;
+            bottom = null;
+          } else if (shown.top - screen.top >= _bubbleRoom) {
+            top = null;
+            bottom = size.height - shown.top + 12;
+          } else {
+            top = null;
+            bottom = padding.bottom + 16;
+          }
           return Stack(
             children: [
               // The dim with the spotlight cut out; it takes the taps, so
@@ -153,16 +175,8 @@ class _AvatarTourState extends State<AvatarTour> {
                 curve: appEmphasizedDecelerate,
                 left: 16,
                 right: 16,
-                top: hole == null
-                    ? null
-                    : below
-                    ? hole.bottom + 12
-                    : null,
-                bottom: hole == null
-                    ? null
-                    : below
-                    ? null
-                    : size.height - hole.top + 12,
+                top: top,
+                bottom: bottom,
                 child: hole == null
                     ? SizedBox(
                         height: size.height - padding.vertical,
@@ -180,6 +194,10 @@ class _AvatarTourState extends State<AvatarTour> {
   /// How tall the guide stands, and how far it rises out of the bubble.
   static const _guideHeight = 132.0;
   static const _guideRise = 28.0;
+
+  /// The height the bubble needs beside a spotlight (the guide's head
+  /// included, with a margin), at the default text size.
+  static const _bubbleRoom = 230.0;
 
   Widget _bubble(AppAvatar avatar) {
     return _BubbleIn(

@@ -121,7 +121,7 @@ class _ArdKidsAppState extends State<ArdKidsApp> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Ard',
+      title: 'ArdZ',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       routerConfig: _router,
