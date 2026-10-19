@@ -241,81 +241,104 @@ class _QrScanScreenState extends State<QrScanScreen>
               )
             : null,
       ),
+      // Not a list: the scan tab's camera takes all the height between the
+      // tabs and the bar, and the "Миний QR" tab scrolls on its own.
       body: EntranceScope(
-        child: AdaptiveListView(
+        child: Padding(
           padding: EdgeInsets.fromLTRB(
-            16,
+            16 + MediaQuery.paddingOf(context).left,
             12,
-            16,
-            AppLayout.navClearance(context),
+            16 + MediaQuery.paddingOf(context).right,
+            0,
           ),
-          children: EntranceItem.list([
-            KeyedSubtree(
-              key: _tabsKey,
-              child: AppTabs(
-                tabs: const [
-                  AppTab('QR унших', icon: Iconsax.scan_barcode_copy),
-                  AppTab('Миний QR', icon: Iconsax.scanner_copy),
-                ],
-                index: _tab,
-                style: AppTabsStyle.solid,
-                dragPosition: _tabDrag,
-                onChanged: _setTab,
-              ),
-            ),
-            const SizedBox(height: 16),
-            // Swiping the content moves between the two tabs; past them it
-            // goes on to the bar's neighbours, Нүүр and Профайл.
-            AppTabSwipe(
-              index: _tab,
-              count: 2,
-              onChanged: _setTab,
-              onDrag: (p) => setState(() => _tabDrag = p),
-              onPastStart: () =>
-                  StatefulNavigationShell.of(context).goBranch(0),
-              onPastEnd: () => StatefulNavigationShell.of(context).goBranch(2),
-              child: AppTabView(
-                index: _tab,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: _tab == 0 ? _buildScan() : _buildMyQr(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              EntranceItem(
+                index: 0,
+                child: KeyedSubtree(
+                  key: _tabsKey,
+                  child: AppTabs(
+                    tabs: const [
+                      AppTab('QR унших', icon: Iconsax.scan_barcode_copy),
+                      AppTab('Миний QR', icon: Iconsax.scanner_copy),
+                    ],
+                    index: _tab,
+                    style: AppTabsStyle.solid,
+                    dragPosition: _tabDrag,
+                    onChanged: _setTab,
+                  ),
                 ),
               ),
-            ),
-          ]),
+              const SizedBox(height: 16),
+              Expanded(
+                child: EntranceItem(
+                  index: 1,
+                  // Swiping the content moves between the two tabs; past
+                  // them it goes on to the bar's neighbours, Нүүр and
+                  // Профайл.
+                  child: AppTabSwipe(
+                    index: _tab,
+                    count: 2,
+                    onChanged: _setTab,
+                    onDrag: (p) => setState(() => _tabDrag = p),
+                    onPastStart: () =>
+                        StatefulNavigationShell.of(context).goBranch(0),
+                    onPastEnd: () =>
+                        StatefulNavigationShell.of(context).goBranch(2),
+                    // Each pane gets the full height itself: the tab view
+                    // lays a leaving pane out unbounded.
+                    child: LayoutBuilder(
+                      builder: (context, constraints) => AppTabView(
+                        index: _tab,
+                        child: SizedBox(
+                          height: constraints.maxHeight,
+                          child: _tab == 0 ? _buildScan() : _buildMyQr(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildScan() {
-    return [
-      // The camera runs edge to edge, past the page's side padding; the
-      // frame inside takes 85% of its width.
-      KeyedSubtree(
-        key: _cameraKey,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final width = constraints.maxWidth + _bleed * 2;
-            return SizedBox(
-              height: width / 0.82,
-              child: OverflowBox(
-                minWidth: width,
-                maxWidth: width,
-                child: _cameraView(),
-              ),
-            );
-          },
+  Widget _buildScan() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // The camera fills what the tabs, the note and the bar leave, and
+        // runs edge to edge past the page's side padding; the frame inside
+        // takes 85% of its shorter side.
+        Expanded(
+          child: KeyedSubtree(
+            key: _cameraKey,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.maxWidth + _bleed * 2;
+                return OverflowBox(
+                  minWidth: width,
+                  maxWidth: width,
+                  child: _cameraView(),
+                );
+              },
+            ),
+          ),
         ),
-      ),
-      const SizedBox(height: 16),
-      InfoNote(
-        icon: Iconsax.shield_tick_copy,
-        text:
-            'Өдрийн шилжүүлгийн эрх ${formatMnt(Limits.dailyTransfer)}. '
-            'Өнөөдөр ${formatMnt(Limits.leftToday)} үлдсэн.',
-      ),
-    ];
+        const SizedBox(height: 16),
+        InfoNote(
+          icon: Iconsax.shield_tick_copy,
+          text:
+              'Өдрийн шилжүүлгийн эрх ${formatMnt(Limits.dailyTransfer)}. '
+              'Өнөөдөр ${formatMnt(Limits.leftToday)} үлдсэн.',
+        ),
+        SizedBox(height: AppLayout.navClearance(context)),
+      ],
+    );
   }
 
   /// How far the camera reaches past the page's side padding: all of it.
@@ -364,130 +387,134 @@ class _QrScanScreenState extends State<QrScanScreen>
     );
   }
 
-  List<Widget> _buildMyQr() {
-    return [
-      AppCard(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: AppColors.sky100,
-                    shape: BoxShape.circle,
-                  ),
-                  child: ClipOval(
-                    child: Container(
-                      color: AppColors.sky50,
-                      // The kid's chosen companion, as on Home and Profile.
-                      child: Image.asset(
-                        appAvatar.value.portrait,
-                        fit: BoxFit.cover,
-                        semanticLabel: Kid.shortName,
+  Widget _buildMyQr() {
+    return ListView(
+      // The page's side padding is already applied; only clear the bar.
+      padding: EdgeInsets.only(bottom: AppLayout.navClearance(context)),
+      children: [
+        AppCard(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: AppColors.sky100,
+                      shape: BoxShape.circle,
+                    ),
+                    child: ClipOval(
+                      child: Container(
+                        color: AppColors.sky50,
+                        // The kid's chosen companion, as on Home and Profile.
+                        child: Image.asset(
+                          appAvatar.value.portrait,
+                          fit: BoxFit.cover,
+                          semanticLabel: Kid.shortName,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: AppColors.emerald400,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.card, width: 2),
-                    ),
-                    alignment: Alignment.center,
-                    child: LineIcon(
-                      LineGlyph.check,
-                      size: 12,
-                      stroke: 2.5,
-                      color: AppColors.onBright,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            AppText(Kid.shortName, size: 20, weight: FontWeight.w700),
-            const SizedBox(height: 2),
-            AppText(
-              formatIban(Accounts.main),
-              size: 13,
-              color: AppColors.dsOnSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Container(
-              width: 220,
-              height: 220,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                // The code keeps its own white quiet zone so it scans.
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  const Positioned.fill(
-                    child: CustomPaint(
-                      painter: FakeQrPainter(seed: 5049821900),
-                    ),
-                  ),
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.sky500,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white, width: 4),
-                    ),
-                    child: Icon(
-                      Iconsax.wallet_2_copy,
-                      size: 22,
-                      color: AppColors.onAccent,
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color: AppColors.emerald400,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.card, width: 2),
+                      ),
+                      alignment: Alignment.center,
+                      child: LineIcon(
+                        LineGlyph.check,
+                        size: 12,
+                        stroke: 2.5,
+                        color: AppColors.onBright,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 16),
-            // Sharing is the tab's main action, so it leads in the accent;
-            // saving sits beside it as the softer secondary. The labels are
-            // wider than a narrow phone at their natural size, so they share
-            // the row and ellipsize instead of overflowing.
-            Row(
-              children: [
-                Expanded(
-                  child: PrimaryButton(
-                    label: 'QR Хуваалцах',
-                    leadingIcon: Iconsax.share_copy,
-                    height: 48,
-                    onPressed: () => showAppSnack(context, 'QR хуваалцах'),
-                  ),
+              const SizedBox(height: 12),
+              AppText(Kid.shortName, size: 20, weight: FontWeight.w700),
+              const SizedBox(height: 2),
+              AppText(
+                formatIban(Accounts.main),
+                size: 13,
+                color: AppColors.dsOnSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: 220,
+                height: 220,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  // The code keeps its own white quiet zone so it scans.
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: SoftButton(
-                    label: 'Зураг хадгалах',
-                    icon: Iconsax.document_download_copy,
-                    height: 48,
-                    onPressed: () =>
-                        showAppSnack(context, 'Зураг хадгалагдлаа'),
-                  ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Positioned.fill(
+                      child: CustomPaint(
+                        painter: FakeQrPainter(seed: 5049821900),
+                      ),
+                    ),
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: AppColors.sky500,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.white, width: 4),
+                      ),
+                      child: Icon(
+                        Iconsax.wallet_2_copy,
+                        size: 22,
+                        color: AppColors.onAccent,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 16),
+              // Sharing is the tab's main action, so it leads in the accent;
+              // saving sits beside it as the softer secondary. The labels are
+              // wider than a narrow phone at their natural size, so they share
+              // the row and ellipsize instead of overflowing.
+              Row(
+                children: [
+                  Expanded(
+                    child: PrimaryButton(
+                      label: 'QR Хуваалцах',
+                      leadingIcon: Iconsax.share_copy,
+                      height: 48,
+                      onPressed: () => showAppSnack(context, 'QR хуваалцах'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: SoftButton(
+                      label: 'Зураг хадгалах',
+                      icon: Iconsax.document_download_copy,
+                      height: 48,
+                      onPressed: () =>
+                          showAppSnack(context, 'Зураг хадгалагдлаа'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-    ];
+      ],
+    );
   }
 }
